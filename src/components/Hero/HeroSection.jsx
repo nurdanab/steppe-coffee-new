@@ -26,7 +26,7 @@ const HeroSection = () => {
           
           <div className={styles.heroImage}>
             <img 
-              src="/public/images/hero-sgk.png" 
+              src="/images/hero-sgk.png" 
               alt="Steppe Coffee Character"
               className={styles.character}
             />

@@ -28,7 +28,7 @@ const Header = () => {
           <div className={styles.logo}>
             <a href="/" className={styles.logoLink}>
               <img 
-                src="/public/images/logo-header.png" 
+                src="/images/logo-header.png" 
                 alt="Steppe Coffee Logo" 
                 className={styles.logoImage} // Добавим новый класс для стилизации изображения
               />
@@ -51,7 +51,7 @@ const Header = () => {
               <li className={styles.navigationItem}>
                 <a href="#" className={styles.profileLink}>
                   <img 
-                    src="/public/images/profile-icon.png" 
+                    src="/images/profile-icon.png" 
                     alt="Profile"
                     className={styles.profileIcon}
                   />
