@@ -9,7 +9,7 @@ public_folder: "/images/promos"
 collections:
   - name: "promotions"
     label: "Промо-акции"
-    files:
+    file:
       - name: "promoData"
         label: "Данные промо-акций"
         file: "src/data/promotionsData.json"
