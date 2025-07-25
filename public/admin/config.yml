@@ -3,13 +3,13 @@ backend:
   repo: nurdanab/steppe-coffee-new
   branch: main
 
-media_folder: "public/images/promos"  
-public_folder: "/images/promos" 
+media_folder: "public/images/promos"
+public_folder: "/images/promos"
 
 collections:
   - name: "promotions"
     label: "Промо-акции"
-    file: "src/data/promotionsData.json"  
+    file: "src/data/promotionsData.json"
     format: "json"
     editor:
       preview: false
