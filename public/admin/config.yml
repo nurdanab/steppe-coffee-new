@@ -7,22 +7,35 @@ media_folder: "public/images/promos"
 public_folder: "/images/promos"
 
 collections:
-   - name: "promotions"
-     label: "Промо-акции"
-     file: "src/data/promotionsData.json"
-     format: "json"
-     editor:
-     preview: false
+  - name: "promotions"
+    label: "Промо-акции"
+    file: "src/data/promotionsData.json"
+    format: "json"
+    editor: {}
+    preview: false
     fields:
-       - name: "promoSlot1"
-         label: "Промо Слот 1"
-         widget: "object"
-         fields:
-            - {label: "ID Слота 1", name: "id", widget: "string", default: "promo_card_1"}
-            - {label: "Изображение Слота 1", name: "imageUrl", widget: "image", allow_multiple: false}
-       - name: "promoSlot2"
-         label: "Промо Слот 2"
-         widget: "object"
-         fields:
-            - {label: "ID Слота 2", name: "id", widget: "string", default: "promo_card_2"}
-            - {label: "Изображение Слота 2", name: "imageUrl", widget: "image", allow_multiple: false}
+      - name: "promoSlot1"
+        label: "Промо Слот 1"
+        widget: "object"
+        fields:
+          - label: "ID Слота 1"
+            name: "id"
+            widget: "string"
+            default: "promo_card_1"
+          - label: "Изображение Слота 1"
+            name: "imageUrl"
+            widget: "image"
+            allow_multiple: false
+
+      - name: "promoSlot2"
+        label: "Промо Слот 2"
+        widget: "object"
+        fields:
+          - label: "ID Слота 2"
+            name: "id"
+            widget: "string"
+            default: "promo_card_2"
+          - label: "Изображение Слота 2"
+            name: "imageUrl"
+            widget: "image"
+            allow_multiple: false
