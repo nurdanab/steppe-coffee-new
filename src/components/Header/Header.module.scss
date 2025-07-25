@@ -1,0 +1,130 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    padding: $spacing-md 0;
+    transition: all $transition-medium;
+    background-color: rgba(0, 0, 0, 0.809); 
+  }
+  
+.headerContent {
+  @include flex-between;
+  width: 100%;
+}
+
+.logo {
+  .logoLink {
+    transition: all $transition-fast;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+  }
+  .logoImage {
+    height: 40px; 
+    width: auto; 
+    max-width: 100%; 
+    display: block; 
+  }
+}
+
+.navigation {
+  @include mobile {
+    display: none;
+  }
+}
+
+.navigationList {
+  @include flex-center;
+  gap: $spacing-md;
+}
+
+.navigationItem {
+  position: relative;
+}
+
+.navigationLink {
+    @extend .gilroy-16;
+    font-weight: 400;
+    color: $white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-lg;
+    transition: all $transition-medium;
+    position: relative; 
+
+    &:hover {
+      color: $black;
+      border-radius: $border-radius-lg;
+      background-color: rgb(255, 255, 255);
+      transform: translateY(-2px);
+    }
+}  
+
+.profileLink {
+    @include flex-center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    transition: all $transition-fast; 
+  
+    &:hover {
+      box-shadow: none;
+      .profileIcon {
+        transform: scale(1.2);
+      }
+    }
+  }
+  
+
+.mobileMenuButton {
+  @include flex-column;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  gap: 4px;
+
+  @include mobile-up {
+    display: none;
+  }
+
+  .hamburger {
+    width: 100%;
+    height: 2px;
+    background-color: $black;
+    transition: all $transition-fast;
+    border-radius: 2px;
+
+    &:nth-child(1) {
+      transform-origin: top left;
+    }
+
+    &:nth-child(3) {
+      transform-origin: bottom left;
+    }
+  }
+
+  &:hover .hamburger {
+    background-color: $maroon;
+  }
+}
+
+// Responsive adjustments
+@include mobile {
+  .headerContent {
+    padding: 0 $spacing-sm;
+  }
+
+  .header.scrolled {
+    padding: $spacing-xs 0;
+  }
+}

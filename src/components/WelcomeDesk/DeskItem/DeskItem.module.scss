@@ -1,0 +1,184 @@
+// src/components/WelcomeDesk/DeskItem/DeskItem.module.scss
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+@use '../../../styles/typography' as *;
+
+
+.deskItem {
+  // background-color: rgb(232, 232, 232); 
+  // padding: 0px;
+  border-radius: 2px;
+  position: relative; 
+  z-index: 1; 
+
+.pin { 
+  position: absolute;
+  width: 30px; 
+  height: auto;
+  top: -15px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  z-index: 10; 
+
+  @include mobile {
+    width: 20px; 
+    top: -10px;
+  }
+}
+
+.mediaContainer {
+  padding: 10px; 
+  border-radius: 1px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+  .media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .hidden {
+    opacity: 0; // урааа!
+    pointer-events: none;
+  }
+
+  .itemTitle {
+    @extend .gilroy-12;
+    font-weight: 600;
+    color: $black;
+    text-align: center;
+    margin-top: 7px;
+  }
+
+  // --- Стили для разных полароидов ---
+  // --- 3 ---
+  &.small {
+    .mediaContainer {
+      width: 220px;
+      height: 140px;
+      padding: 10px;
+      align-items: center;
+      margin-bottom: 9px;
+    }
+  }
+// --- 1 ---
+  &.medium {
+    .mediaContainer {
+      margin: 1px;
+      width: 200px;
+      height: 150px;
+    }
+  }
+// --- 2 ---
+  &.large {
+    .mediaContainer {
+      width: 150px;
+      height: 200px;
+      padding: 8px;
+    }
+    .itemTitle {
+        font-size: 12px;
+    }
+  }
+
+  // мобильных устр
+  @include mobile {
+    &.small .mediaContainer {
+      width: 100px;
+      height: 120px;
+      padding: 5px;
+    }
+    &.medium .mediaContainer {
+      width: 120px;
+      height: 150px;
+      padding: 5px;
+    }
+    &.large .mediaContainer {
+      width: 150px;
+      height: 180px;
+      padding: 7px;
+    }
+  }
+
+  // --- Стили для 5 LIVE-PHOTO ---
+  &.livePhotoSize-1 { 
+    .mediaContainer {
+      width: 170px; 
+      height: 300px; 
+      border: 3px solid #E5BA7A; 
+      // padding: 5px; 
+    }
+  }
+  &.livePhotoSize-2 { 
+    .mediaContainer {
+      width: 170px; 
+      height: 200px; 
+      border: 4px solid #682901; 
+
+      // padding: 5px; 
+    }
+  }
+  &.livePhotoSize-3 { 
+    .mediaContainer {
+      width: 270px; 
+      height: 180px; 
+      // padding: 5px; 
+      border: 2px solid #1c1c1c; 
+
+    }
+  }
+  &.livePhotoSize-4 { 
+    // background-color: #F0F8FF;
+    .mediaContainer {
+      width: 290px; 
+      height: 310px; 
+      border: 2px solid #3d1a04; 
+
+      // padding: 0px; 
+    }
+  }
+  &.livePhotoSize-5 { 
+    .mediaContainer {
+      width: 220px; 
+      height: 210px; 
+      border: 3px solid #ca9340; 
+
+      // padding: 5px; 
+    }
+  }
+
+  // Пример для мобильных устройств - корректируем размеры
+  @include mobile {
+    &.small .mediaContainer {
+      width: 100px;
+      height: 120px;
+      padding: 5px;
+    }
+    &.medium .mediaContainer {
+      width: 120px;
+      height: 150px;
+      padding: 5px;
+    }
+    &.large .mediaContainer {
+      width: 150px;
+      height: 180px;
+      padding: 7px;
+    }
+    // Также добавь адаптивные стили для .livePhotoSize
+    &.livePhotoSize {
+      .mediaContainer {
+        width: 120px; // Меньше для мобильных
+        height: 90px;
+      }
+    }
+  }
+}

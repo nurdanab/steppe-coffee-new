@@ -1,0 +1,228 @@
+// src/components/MapSection/MapSection.module.scss
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
+
+.mapSection {
+    background-color: $light-yellow;
+    padding: 100px 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    overflow: hidden;
+
+    @media (max-width: 768px) {
+        padding: 40px 15px;
+        gap: 30px;
+    }
+}
+
+.title {
+    @extend .riffic-medium; // Применяем стили из typography.scss
+    color: $black;
+    text-align: center;
+    margin-bottom: 40px;
+    z-index: 2; // Увеличиваем z-index, чтобы быть выше декоративных элементов
+
+    @media (max-width: 1024px) {
+        margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+        margin-bottom: 20px;
+    }
+}
+
+/* Декоративные элементы */
+.mapDecor1,
+.mapDecor2,
+.mapDecor3 {
+    position: absolute;
+    z-index: 0; // Эти элементы должны быть на самом заднем плане
+    opacity: 1;
+}
+
+.mapDecor1 {
+    top: -5%;
+    right: 10%;
+    width: 400px;
+    height: auto;
+
+    @media (max-width: 1024px) {
+        width: 150px;
+    }
+    @media (max-width: 768px) {
+        width: 100px;
+    }
+}
+
+.mapDecor2 {
+    left: -10%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 500px;
+    height: auto;
+
+    @media (max-width: 1024px) {
+        width: 130px;
+    }
+    @media (max-width: 768px) {
+        width: 90px;
+        left: 5%;
+        top: 60%;
+    }
+}
+
+.mapDecor3 {
+    bottom: 0;
+    right: 0;
+    width: 300px;
+    height: auto;
+
+    @media (max-width: 1024px) {
+        width: 170px;
+    }
+    @media (max-width: 768px) {
+        width: 120px;
+    }
+}
+
+
+.contentWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 50px;
+    max-width: 1200px;
+    width: 100%;
+    flex-wrap: wrap;
+    z-index: 1; // Основной контент выше декоративных элементов
+
+    @media (max-width: 1024px) {
+        gap: 30px;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.infoBlock {
+    border-radius: 15px;
+    color: $white; // Цвет текста теперь $white
+    width: 400px;
+    position: relative; // Очень важно! Для позиционирования overlayContent и addressBackgroundImage
+    overflow: hidden; // Для скругления углов
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+
+    // Задаем явную высоту, чтобы изображение и наложенный контент имели размер
+    height: 400px;
+
+    // Используем grid для размещения элементов друг над другом
+    display: grid;
+    grid-template-areas: "content"; // Определение области
+
+    & > * { // Применяем к прямым потомкам
+        grid-area: content; // Все потомки в одной и той же области
+    }
+
+
+    @media (max-width: 1024px) {
+        width: 80%;
+        max-width: 400px;
+        height: 350px; // Уменьшаем высоту на планшетах
+    }
+
+    @media (max-width: 768px) {
+        padding: 0; // Padding будет внутри overlayContent
+        width: 90%;
+        height: 300px; // Уменьшаем высоту на мобильных
+    }
+}
+
+.addressBackgroundImage { // Переименованный класс
+    width: 100%;
+    height: 100%;
+    object-fit: cover; // Растягиваем изображение на весь блок, обрезая лишнее
+    border-radius: 15px; // Слегка скругляем углы изображения (унаследует от infoBlock)
+    z-index: 1; // Изображение под overlayContent
+    display: block; // Убедимся, что img является блочным элементом
+}
+
+.overlayContent { // Новый класс для текста и кнопки
+    z-index: 2; // Важно! Находится поверх изображения
+    padding: 30px; // Отступы для текста и кнопки
+    border-radius: 15px; // Скругление углов, как у родителя infoBlock
+
+    display: flex;
+    flex-direction: column; // Элементы располагаются сверху вниз
+    justify-content: center; // Центрируем содержимое по вертикали (если есть свободное место)
+    align-items: center; // Центрируем по горизонтали
+    text-align: center; // Центрируем текст внутри
+
+    @media (max-width: 768px) {
+        padding: 20px;
+    }
+}
+
+.textInfo {
+    width: 100%;
+    margin-bottom: 20px; // Добавляем отступ снизу, чтобы отделить текст от кнопки
+    text-align: center; // Центрируем текст внутри overlayContent
+
+    p {
+        margin: 5px 0;
+        font-size: 18px;
+        color: $white; // Убедимся, что текст белый
+
+        @media (max-width: 768px) {
+            font-size: 16px;
+        }
+    }
+}
+
+.scheduleTitle,
+.addressTitle {
+    font-weight: bold;
+    font-size: 20px;
+    margin-top: 15px;
+    color: $white; // Убедимся, что заголовки белые
+    @media (max-width: 768px) {
+        font-size: 18px;
+    }
+}
+
+.routeButton {
+    @include button-primary;
+    min-width: 220px;
+    // Удаляем или уменьшаем margin-top, так как margin-bottom у .textInfo уже создает отступ
+    // margin-top: 20px; // Если нужно дополнительное пространство
+
+    @include mobile {
+      min-width: 180px;
+    }
+}
+
+// src/components/MapSection/MapSection.module.scss
+
+// ... (весь твой текущий CSS)
+
+.mapContainer {
+    width: 700px; /* Убедись, что эти размеры соответствуют желаемым */
+    height: 400px; /* Убедись, что эти размеры соответствуют желаемым */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+        width: 90%;
+        height: 400px; /* Здесь тоже можно задать фиксированную высоту или использовать aspect-ratio */
+        max-width: 700px;
+    }
+
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 350px; /* Мобильная высота */
+    }
+}

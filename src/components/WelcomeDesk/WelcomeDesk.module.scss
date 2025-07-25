@@ -1,0 +1,138 @@
+// src/components/WelcomeDesk/WelcomeDesk.module.scss
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
+
+.welcomeSection {
+  width: 100%;
+  background-color: $light-yellow;
+  padding: 70px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @include mobile {
+    padding: 40px 0;
+  }
+}
+
+.corkBoard {
+  width: 100%;
+  max-width: 1200px;
+  height: 700px;
+  background-image: url('/images/caffe-desk.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  border-radius: 1px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  margin: 0 auto;
+  overflow: hidden;
+  border: 10px solid rgb(237, 213, 179);
+
+  @include mobile {
+    height: 500px;
+    margin: 0 auto;
+    background-size: contain;
+  }
+}
+
+.boardTitle {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  z-index: 10;
+  
+  .titleImage {
+    display: block; 
+    max-width: 100%; 
+    height: auto;  
+    width: 400px; 
+  
+    @include mobile {
+      width: 250px;  
+    }}
+}
+.imageString {
+  position: absolute;
+  top: 15%;
+  width: 100%; 
+  left: 0;
+  z-index: 15;
+
+  .stringImage{
+    max-width: 100%; 
+    height: auto;
+    display: block;
+  }
+  
+}
+.livePhotoWrapper1,
+.livePhotoWrapper2,
+.livePhotoWrapper3,
+.livePhotoWrapper4,
+.livePhotoWrapper5 {
+  position: absolute;  
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
+  z-index: 1;  
+
+   &:hover {
+     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+    z-index: 20; 
+  }
+}
+
+.polaroidWrapper1,
+.polaroidWrapper2,
+.polaroidWrapper3 {
+  position: absolute;  
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
+  z-index: 1;  
+background-color: antiquewhite;
+padding: 5px;
+   &:hover {
+     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
+    z-index: 20; 
+  }
+}
+
+.stickerWrapper {
+  position: absolute;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease;
+  z-index: 1;  
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 20; // Поднимаем при наведении, чтобы был над другими элементами
+  }
+}
+
+
+.pin {
+  position: absolute;
+  width: 22px;  
+  height: auto;
+  pointer-events: none;
+  transform-origin: center center;
+  z-index: 100; 
+}
+.tape { // НОВЫЙ СТИЛЬ ДЛЯ ИЗОБРАЖЕНИЯ СКОТЧА
+  position: absolute; // Важно: позиционирование относительно родителя (.stickerWrapper)
+  width: 60px; // Ширина изображения скотча, подбери по размеру твоего файла
+  height: auto;
+  pointer-events: none; // Не реагирует на клики мыши
+  // transform-origin: center center; // Может понадобиться, если будем поворачивать
+  // top, left, transform будут заданы инлайн-стилями в WelcomeDesk.jsx
+}
+// ...
+.saigakStickerWrapper { // НОВЫЙ КЛАСС ДЛЯ ОБЕРТКИ НАКЛЕЙКИ САЙГАКА
+  position: absolute; 
+  // transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; 
+  z-index: 1; 
+
+  // &:hover {
+  //   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  //   z-index: 20; 
+  // }
+}

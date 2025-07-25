@@ -1,0 +1,72 @@
+{
+    "yellowPart": {
+      "title": "Книжный уголок",
+      "description": "У нас можно не только насладиться ароматным кофе, но и почитать книгу из нашей полки или обменять ее на свою. Присоединяйтесь к книжным встречам и уютным вечерам для любителей книг!",
+      "buttonText": "Просмотреть события",
+      "decorImage": "/images/book-yellowPart-decor.png"
+    },
+    "mainBook": {
+      "imageSrc": "/images/bookShelf/mainBook.png",
+      "stampImage": "/images/book-stamp.png",
+      "stampOffset": { "top": 80, "right": -15, "rotate": "0deg" }
+        },
+    "bookShelf": {
+      "subtitle": "Полка в Steppe Coffee - Книги для чтения и обмена",
+      "books": [
+        {
+          "id": "book1",
+          "title": "The Iron Heel: 100th Anniversary Collection",
+          "author": "Jack London",
+          "coverImage": "/images/bookShelf/book1.jpg"
+        },
+        {
+          "id": "book2",
+          "title": "David Copperfield",
+          "author": "Charles Dickens",
+          "coverImage": "/images/bookShelf/book2.jpg"
+        },
+        {
+          "id": "book3",
+          "title": "The Count of Monte Cristo",
+          "author": "Alexandre Dumas père",
+          "coverImage": "/images/bookShelf/book3.jpg"
+        },
+        {
+          "id": "book4",
+          "title": "The Frozen River: A GMA Book Club Pick: A Novel",
+          "author": "Ariel Lawhon",
+          "coverImage": "/images/bookShelf/book4.jpg"
+        },
+        {
+          "id": "book5",
+          "title": "Red Rising",
+          "author": "Pierce Brown",
+          "coverImage": "/images/bookShelf/book5.jpg"
+        },
+        {
+          "id": "book6",
+          "title": "Fahrenheit 451",
+          "author": "Ray Bradbury",
+          "coverImage": "/images/bookShelf/book6.jpg"
+        },
+        {
+          "id": "book7",
+          "title": "The Midnight Library",
+          "author": "Matt Haig",
+          "coverImage": "/images/bookShelf/book7.jpg"
+        },
+        {
+          "id": "book8",
+          "title": "Reshuffle: Who wins when AI restacks the knowledge economy",
+          "author": "Sangeet Paul Choudary",
+          "coverImage": "/images/bookShelf/book8.jpg"
+        }
+      ]
+    },
+    "eventsSection": {
+      "subtitle": "Ближайшие события",
+      "emptyMessage": "На сегодня событий нет. Загляните на страницу 'События'!",
+      "viewMoreButtonText": "Увидеть больше",
+      "eventsLink": "/events"
+    }
+  }

@@ -1,0 +1,40 @@
+// Color Variables
+$black: #000000;
+$orange: #ED9354;
+$yellow: #FDE515;
+$maroon: #7F2529;
+$white: #FFFFFF;
+$light-yellow: #FEF8BC;
+
+// Additional UI Colors
+$gray-light: #F5F5F5;
+$gray-medium: #CCCCCC;
+$gray-dark: #666666;
+$lightBlue: #e0f2f7;
+// Breakpoints
+$mobile: 768px;
+$tablet: 1024px;
+$desktop: 1200px;
+
+// Spacing
+$spacing-xs: 8px;
+$spacing-sm: 16px;
+$spacing-md: 24px;
+$spacing-lg: 32px;
+$spacing-xl: 48px;
+$spacing-xxl: 64px;
+
+// Border Radius
+$border-radius-sm: 8px;
+$border-radius-md: 12px;
+$border-radius-lg: 24px;
+
+// Transitions
+$transition-fast: 0.2s ease;
+$transition-medium: 0.3s ease;
+$transition-slow: 0.6s ease;
+
+// Shadows
+$shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+$shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+$shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.2);

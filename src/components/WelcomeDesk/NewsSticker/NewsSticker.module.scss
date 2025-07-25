@@ -1,0 +1,58 @@
+// src/components/WelcomeDesk/NewsSticker/NewsSticker.module.scss
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+@use '../../../styles/typography' as *;
+
+.sticker {
+  position: relative;
+  width: 250px; // Ширина стикера
+  padding: 20px;
+  border-radius: 1px;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+//   min-height: 150px;  
+  transition: transform 0.3s ease, box-shadow 0.3s ease; // Плавность при наведении (если hover на wrapper)
+
+  // Цвета стикеров - используем ваши переменные
+  &.yellow {
+    background-color: $light-yellow; 
+  }
+  
+}
+
+.stickerText {
+  @extend .gilroy-18; 
+  font-weight: 600;
+  color: $black;
+  margin: 0;
+  line-height: 1.3;
+  word-break: break-word;  
+  white-space: pre-wrap;  
+}
+
+.stickerWrapper {
+  position: absolute;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease;
+  z-index: 1;  
+  &:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    z-index: 20; 
+  }
+}
+
+ 
+// Медиазапросы для адаптивности стикера
+@include mobile {
+  .sticker {
+    width: 180px;
+    min-height: 100px;
+    padding: 15px;
+  }
+  .stickerText {
+    font-size: 18px; // Используем прямое указание font-size
+  }
+}

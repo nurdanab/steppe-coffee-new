@@ -1,0 +1,184 @@
+@use "sass:color"; 
+@use 'variables' as *;
+// Responsive Mixins
+@mixin mobile {
+    @media (max-width: #{$mobile - 1px}) {
+      @content;
+    }
+  }
+  
+  @mixin tablet {
+    @media (min-width: #{$mobile}) and (max-width: #{$tablet - 1px}) {
+      @content;
+    }
+  }
+  
+  @mixin desktop {
+    @media (min-width: #{$tablet}) {
+      @content;
+    }
+  }
+  
+  @mixin mobile-up {
+    @media (min-width: #{$mobile}) {
+      @content;
+    }
+  }
+  
+  // Flexbox Mixins
+  @mixin flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  @mixin flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  @mixin flex-column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  // Button Mixins
+  @mixin button-base {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-sm $spacing-lg;
+    border: none;
+    border-radius: $border-radius-lg;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all $transition-medium;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // White buttin
+  @mixin button-base-2 {
+    background-color: $white;
+    color: $black;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-sm $spacing-lg;
+    border: none;
+    border-radius: $border-radius-lg;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all $transition-medium;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+      background-color: color.adjust($white, $lightness: -10%); 
+
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  // White black
+  @mixin button-base-3 {
+    background-color: $black;
+    color: $white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-sm $spacing-lg;
+    border: none;
+    border-radius: $border-radius-lg;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: 'Gilroy', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all $transition-medium;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-medium;
+      background-color: color.adjust($black, $lightness: -10%); 
+
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+  
+  @mixin button-primary {
+    @include button-base;
+    background-color: $yellow;
+    color: $black;
+  
+    &:hover {
+      background-color: color.adjust($yellow, $lightness: -10%); 
+    }
+  }
+  
+  // Animation Mixins
+  @mixin fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+    
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @mixin fade-in-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.8s ease;
+    
+    &.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  @mixin fade-in-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: all 0.8s ease;
+    
+    &.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+@mixin wave-background($color: $yellow) {
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 150px; // Высота волны (может потребоваться корректировка)
+    background: $color;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 85%); // Твой clip-path для волны снизу
+    z-index: 3; // <-- ИЗМЕНЯЕМ: Делаем волну поверх содержимого Hero-секции
+  }
+}

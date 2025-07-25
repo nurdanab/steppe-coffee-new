@@ -1,0 +1,169 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
+
+.hero {
+  min-height: 100vh;
+  background-image: url('/public/images/hero-back.png'); 
+  background-size: auto 100%; 
+  background-position: center; 
+  background-attachment: fixed;
+  @include flex-center;
+
+  @include mobile {
+    background-attachment: scroll;
+    min-height: 90vh;
+    background-size: auto 100%;
+    background-position: center; 
+  }
+
+  &::after { 
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px; 
+    height: 170px; // <-- Высота, чтобы волна была хорошо видна и выходила
+    background-image: url('/public/images/promo-back.png'); 
+    background-size: cover; 
+    background-position: center top; 
+    background-repeat: no-repeat; 
+    z-index: 3; 
+  }
+}
+.heroContent {
+  display: grid;
+  grid-template-columns: 1.0fr 0.5fr;
+  align-items: center;
+  gap: $spacing-lg; // Отступ
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  width: 100%;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: $spacing-xl;
+  }
+}
+
+.heroText {
+  @include fade-in-left;
+  transition-delay: 0.2s; 
+}
+
+.headline {
+  @extend .riffic-large;
+  color: $white;
+  margin-bottom: $spacing-xxl;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .highlight {
+    color: $yellow;
+  }
+
+  @include mobile {
+    margin-bottom: $spacing-sm;
+  }
+}
+.subheadline {
+  @extend .gilroy-24;
+  color: $white;
+  margin-bottom: $spacing-md;
+  font-weight: 300;
+  opacity: 1;
+
+  @include mobile {
+    margin-bottom: $spacing-md;
+  }
+}
+
+.ctaButton {
+  @include button-primary;
+  font-size: 18px;
+  padding: $spacing-sm $spacing-lg;
+  position: relative;
+  overflow: hidden;
+  color: $black;
+  box-shadow: $shadow-medium;
+  position: relative; 
+  overflow: hidden;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgb(255, 255, 255); // Твой цвет
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all $transition-slow;
+    z-index: -1; 
+  }
+
+  // При наведении на &::before
+  &:hover::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  &:active {
+    transform: translateY(-2px) scale(0.98);
+  }
+}
+
+.heroImage {
+  @include fade-in-right;
+  transition-delay: 0.4s; 
+  position: relative;
+
+  @include mobile {
+    order: -1;
+  }
+}
+
+.character {
+  position: absolute; 
+  right: -50px; 
+  bottom: -300px; 
+  transform: none;
+  width: 100%;
+  max-width: 350px; 
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  animation: float 4s ease-in-out infinite; 
+  z-index: 1; 
+
+  @include mobile {
+    max-width: 200px; 
+    right: 0px; 
+    bottom: -70px; 
+  }
+}
+.hero.visible {
+  .heroText {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .heroImage {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: rotate(-45deg) translateY(0);
+  }
+  40% {
+    transform: rotate(-45deg) translateY(-10px);
+  }
+  60% {
+    transform: rotate(-45deg) translateY(-5px);
+  }
+}
