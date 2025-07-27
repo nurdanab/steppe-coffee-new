@@ -1,5 +1,5 @@
 backend:
-  name: github
+  name: git-gateway
   repo: nurdanab/steppe-coffee-new
   branch: main
 
