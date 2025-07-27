@@ -9,13 +9,14 @@ public_folder: "/images/promos"
 collections:
   - name: "promotions"
     label: "Промо-акции"
-    file:
+    files:
       - name: "promoData"
         label: "Данные промо-акций"
         file: "src/data/promotionsData.json"
         format: "json"
         editor: {}
-        preview: false
+          preview: false
+          
         fields:
           - name: "promoSlot1"
             label: "Промо Слот 1"
