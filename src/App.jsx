@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async'; 
 import Header from './components/Header/Header';
 import HeroSection from './components/Hero/HeroSection';
 import Promo from './components/Promo/Promo';
@@ -12,6 +13,16 @@ import FooterSection from './components/FooterSection/FooterSection';
 function App() {
   return (
     <div className="App">
+      <Helmet>
+        <title>Steppe Coffee - Уютная кофейня в Алматы: насладитесь лучшим кофе!</title>
+        <meta name="description" content="Пространство для общения, вдохновения и новых впечатлений." />
+        {/* Дополнительные мета-теги Open Graph для социальных сетей */}
+        <meta property="og:title" content="Steppe Coffee - Кофейня которую вы запомните" />
+        <meta property="og:description" content="Посетите Steppe Coffee в Алматы с кофейной подпиской." />
+        <meta property="og:image" content="https://steppecoffee.netlify.app/images/og/og-image.webp" /> 
+        <meta property="og:url" content="https://steppecoffee.netlify.app/" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Header />
       <main>
         <HeroSection />
