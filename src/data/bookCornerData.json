@@ -6,7 +6,7 @@
       "decorImage": "/images/book-yellowPart-decor.png"
     },
     "mainBook": {
-      "imageSrc": "/images/bookShelf/mainBook.png",
+      "imageSrc": "/images/bookShelf/mainBook.webp",
       "stampImage": "/images/book-stamp.png",
       "stampOffset": { "top": 80, "right": -15, "rotate": "0deg" }
         },

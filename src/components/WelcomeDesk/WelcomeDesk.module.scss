@@ -20,7 +20,7 @@
   width: 100%;
   max-width: 1200px;
   height: 700px;
-  background-image: url('/images/caffe-desk.png');
+  background-image: url('/images/caffe-desk.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -75,7 +75,7 @@
 .livePhotoWrapper4,
 .livePhotoWrapper5 {
   position: absolute;  
-  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease;  
   z-index: 1;  
 
    &:hover {
@@ -88,7 +88,7 @@
 .polaroidWrapper2,
 .polaroidWrapper3 {
   position: absolute;  
-  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; 
   z-index: 1;  
 background-color: antiquewhite;
 padding: 5px;
@@ -104,10 +104,9 @@ padding: 5px;
   z-index: 1;  
   &:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    z-index: 20; // Поднимаем при наведении, чтобы был над другими элементами
+    z-index: 20;  
   }
 }
-
 
 .pin {
   position: absolute;
@@ -117,22 +116,13 @@ padding: 5px;
   transform-origin: center center;
   z-index: 100; 
 }
-.tape { // НОВЫЙ СТИЛЬ ДЛЯ ИЗОБРАЖЕНИЯ СКОТЧА
-  position: absolute; // Важно: позиционирование относительно родителя (.stickerWrapper)
-  width: 60px; // Ширина изображения скотча, подбери по размеру твоего файла
+.tape {
+  position: absolute;
+  width: 60px;
   height: auto;
-  pointer-events: none; // Не реагирует на клики мыши
-  // transform-origin: center center; // Может понадобиться, если будем поворачивать
-  // top, left, transform будут заданы инлайн-стилями в WelcomeDesk.jsx
+  pointer-events: none;
 }
-// ...
-.saigakStickerWrapper { // НОВЫЙ КЛАСС ДЛЯ ОБЕРТКИ НАКЛЕЙКИ САЙГАКА
+.saigakStickerWrapper {
   position: absolute; 
-  // transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; 
   z-index: 1; 
-
-  // &:hover {
-  //   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  //   z-index: 20; 
-  // }
 }

@@ -28,7 +28,7 @@ const WelcomeDesk = () => {
         {
           id: 'polaroid1',
           imageSrc: '/images/desk/polaroid1.png',
-          videoSrc: '/videos/desk/video1.mp4',
+          videoSrc: '/videos/desk/video1.webm',
           title: 'Моменты ♥',
           position: { top: 20, left: 4, transform: 'rotate(7deg)', zIndex: 12 },  
           size: 'medium',
@@ -39,7 +39,7 @@ const WelcomeDesk = () => {
         {
           id: 'polaroid2',
           imageSrc: '/images/desk/polaroid2.png',
-          videoSrc: '/videos/desk/video2.mp4',
+          videoSrc: '/videos/desk/video2.webm',
           title: '★☺♫♪',
           position: { top: 23, left: 42, transform: 'rotate(-4deg)', zIndex: 11 },  
           size: 'large',
@@ -50,7 +50,7 @@ const WelcomeDesk = () => {
         {
           id: 'polaroid3',
           imageSrc: '/images/desk/polaroid3.png',
-          videoSrc: '/videos/desk/video3.mp4',
+          videoSrc: '/videos/desk/video3.webm',
           position: { top: 20, left: 74, transform: 'rotate(-4deg)', zIndex: 10 }, 
           size: 'small',
           wrapperClass: styles.polaroidWrapper3,
@@ -66,7 +66,7 @@ const WelcomeDesk = () => {
         {
           id: 'live-photo-1',
           imageSrc: '/images/desk/live/live-1.png',
-          videoSrc: '/videos/desk/video-live-1.mp4',
+          videoSrc: '/videos/desk/video-live-1.webm',
           position: { top: 52, left: 1, transform: 'rotate(0deg)', zIndex: 9 }, 
           size: 'livePhotoSize-1',
           wrapperClass: styles.livePhotoWrapper1, 
@@ -76,7 +76,7 @@ const WelcomeDesk = () => {
         {
           id: 'live-photo-2',
           imageSrc: '/images/desk/live/live-2.png',
-          videoSrc: '/videos/desk/video-live-1.mp4',
+          videoSrc: '/videos/desk/video-live-1.webm',
           position: { top: 65, left: 18, transform: 'rotate(1deg)', zIndex: 8 },
           size: 'livePhotoSize-2',
           wrapperClass: styles.livePhotoWrapper2,
@@ -86,7 +86,7 @@ const WelcomeDesk = () => {
         {
             id: 'live-photo-3',
             imageSrc: '/images/desk/live/live-3.png', 
-            videoSrc: '/videos/desk/video-live-1.mp4', 
+            videoSrc: '/videos/desk/video-live-1.webm', 
             position: { top: 62, left: 35, transform: 'rotate(-1deg)', zIndex: 7 },
             size: 'livePhotoSize-3',
             wrapperClass: styles.livePhotoWrapper3,
@@ -96,7 +96,7 @@ const WelcomeDesk = () => {
         {
             id: 'live-photo-4',
             imageSrc: '/images/desk/live/live-4.png',
-            videoSrc: '/videos/desk/video-live-1.mp4',
+            videoSrc: '/videos/desk/video-live-1.webm',
             position: { top: 48, left: 60, transform: 'rotate(0deg)', zIndex: 5 },
             size: 'livePhotoSize-4',
             wrapperClass: styles.livePhotoWrapper4,
@@ -106,7 +106,7 @@ const WelcomeDesk = () => {
         {
             id: 'live-photo-5',
             imageSrc: '/images/desk/live/live-5.png', 
-            videoSrc: '/videos/desk/video-live-1.mp4', 
+            videoSrc: '/videos/desk/video-live-1.webm', 
             position: { top: 65, left: 80, transform: 'rotate(1deg)', zIndex: 6 },
             size: 'livePhotoSize-5',
             wrapperClass: styles.livePhotoWrapper5,
@@ -275,7 +275,7 @@ const WelcomeDesk = () => {
                 top: `calc(${item.position.top}% + ${item.pinOffset.top}px)`,
                 left: `calc(${item.position.left}% + ${item.pinOffset.left}px)`,
                 transform: `rotate(${item.pinOffset.rotate || '0deg'})`, 
-                zIndex: item.position.zIndex + 1, // Прищепка чуть выше
+                zIndex: item.position.zIndex + 1,  
               }}
             />
           </React.Fragment>
@@ -298,8 +298,8 @@ const WelcomeDesk = () => {
                 backgroundShape={saigakSticker.backgroundShape}
                 backgroundColor={saigakSticker.backgroundColor}
                 textColor={saigakSticker.textColor}
-                pinImageSrc={pinImageMap[saigakSticker.pinType] || pinImageMap.wood} // <--- ВОТ ЭТО ДОБАВЛЕНО!
-                pinOffset={saigakSticker.pinOffset} // <--- И ЭТО ДОБАВЛЕНО!
+                pinImageSrc={pinImageMap[saigakSticker.pinType] || pinImageMap.wood}  
+                pinOffset={saigakSticker.pinOffset}
               />
             </div>
           </React.Fragment>

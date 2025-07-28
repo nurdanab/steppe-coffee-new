@@ -70,15 +70,16 @@ const FooterSection = () => {
                     </p>
                     <div className={styles.socialIcons}>
                         <a href="https://www.instagram.com/steppecoffeekz/" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
-                            <img src="/images/instagram-icon.png" alt="Instagram" className={styles.icon} />
+                            <img src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
                         </a>
-                        <a href="tel:+77004792109" className={styles.socialLink} aria-label="Call">                             <img src="/images/phone-icon.png" alt="Телефон" className={styles.icon} />
+                        <a href="tel:+77004792109" className={styles.socialLink} aria-label="Call">                             
+                        <img src="/images/phone-icon.webp" alt="Телефон" className={styles.icon} />
                         </a>
                         <a href="https://www.threads.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Threads">
-                            <img src="/images/threads-icon.png" alt="Threads" className={styles.icon} />
+                            <img src="/images/threads-icon.webp" alt="Threads" className={styles.icon} />
                         </a>
                         <a href="https://www.tiktok.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="TikTok">
-                            <img src="/images/tiktok-icon.png" alt="TikTok" className={styles.icon} />
+                            <img src="/images/tiktok-icon.webp" alt="TikTok" className={styles.icon} />
                         </a>
                     </div>
                 </div>

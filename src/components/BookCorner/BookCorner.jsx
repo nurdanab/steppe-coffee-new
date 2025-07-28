@@ -12,7 +12,7 @@ const BookCorner = () => {
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const shelfRef = useRef(null);
 
-  const booksToScroll = 1; // Прокручиваем по одной книге за раз
+  const booksToScroll = 1;
 
   const totalBooks = bookCornerData.bookShelf.books.length;
   const canScrollLeft = currentBookIndex > 0;
@@ -49,7 +49,7 @@ const BookCorner = () => {
 
   const getWeekDates = (date) => {
     const today = new Date(date);
-    const dayOfWeek = today.getDay(); // 0 - Вс, 1 - Пн, ..., 6 - Сб
+    const dayOfWeek = today.getDay();
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); 
 
@@ -72,16 +72,15 @@ const BookCorner = () => {
 
   const dayNamesShort = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']; 
 
-  // Новая функция для форматирования текущей даты
   const getFormattedCurrentDate = () => {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0'); // Получаем день и добавляем "0" спереди, если нужно
-    const month = String(today.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0, поэтому добавляем 1
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0'); 
     const year = today.getFullYear();
     return `${day}.${month}.${year}`;
   };
 
-  const formattedEventDate = getFormattedCurrentDate(); // Получаем отформатированную дату
+  const formattedEventDate = getFormattedCurrentDate(); 
 
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>

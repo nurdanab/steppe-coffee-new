@@ -28,9 +28,9 @@ const Header = () => {
           <div className={styles.logo}>
             <a href="/" className={styles.logoLink}>
               <img 
-                src="/images/logo-header.png" 
+                src="/images/logo-header.webp" 
                 alt="Steppe Coffee Logo" 
-                className={styles.logoImage} // Добавим новый класс для стилизации изображения
+                className={styles.logoImage}  
               />
             </a>
           </div>
