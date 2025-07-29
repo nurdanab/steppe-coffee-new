@@ -132,12 +132,62 @@ collections:
                 widget: "object"
                 fields:
                   - { name: "text", label: "Текст Стикера", widget: "string", required: true }
+                  - name: "position"
+                    label: "Позиция"
+                    widget: "object"
+                    fields:
+                      - { name: "top", label: "Top (%)", widget: "number", value_type: "float", min: 0, max: 100, step: 0.1 }
+                      - { name: "left", label: "Left (%)", widget: "number", value_type: "float", min: 0, max: 100, step: 0.1 }
+                      - { name: "transform", label: "Transform (CSS)", widget: "string", required: false }
+                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }
+                  - { name: "stickerColor", label: "Цвет Стикера", widget: "string", required: false }
+
               - name: "decoration_with_pin"
                 label: "Декорация с Булавкой"
                 widget: "object"
                 fields:
+                  - { name: "imageSrc", label: "Изображение", widget: "image", allow_multiple: false, media_folder: "public/images/desk/detail", public_folder: "/images/desk/detail" }
+                  - name: "position"
+                    label: "Позиция"
+                    widget: "object"
+                    fields:
+                      - { name: "top", label: "Top (%)", widget: "number", value_type: "float", min: 0, max: 100, step: 0.1 }
+                      - { name: "left", label: "Left (%)", widget: "number", value_type: "float", min: 0, max: 100, step: 0.1 }
+                      - { name: "transform", label: "Transform (CSS)", widget: "string", required: false }
+                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }
+                  - { name: "pinType", label: "Тип Булавки", widget: "string", required: false }
+                  - name: "pinOffset"
+                    label: "Смещение Булавки"
+                    widget: "object"
+                    fields:
+                      - { name: "top", label: "Top (px)", widget: "number", value_type: "int" }
+                      - { name: "left", label: "Left (px)", widget: "number", value_type: "int" }
+                      - { name: "rotate", label: "Поворот (deg)", widget: "string", required: false }
+                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }
+
               - name: "saigak_sticker"
                 label: "Стикер Сайгак"
                 widget: "object"
                 fields:
-                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }                  
+                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
+                  - { name: "saigakImageSrc", label: "Изображение Сайгака", widget: "image", allow_multiple: false, media_folder: "public/images/desk/detail", public_folder: "/images/desk/detail" }
+                  - { name: "backgroundShape", label: "Форма Фона", widget: "select", options: ["oval", "circle", "rectangle"], default: "oval" }
+                  - { name: "backgroundColor", label: "Цвет Фона", widget: "string", required: false }
+                  - { name: "textColor", label: "Цвет Текста", widget: "string", required: false }
+                  - name: "position"
+                    label: "Позиция"
+                    widget: "object"
+                    fields:
+                      - { name: "top", label: "Top (%)", widget: "number", value_type: "float", min: 0, max: 100, step: 0.1 }
+                      - { name: "left", label: "Left (%)", widget: "number", value_type: "float", min: 0, max: 100, step: 0.1 }
+                      - { name: "transform", label: "Transform (CSS)", widget: "string", required: false }
+                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }
+                  - { name: "pinType", label: "Тип Булавки", widget: "string", required: false }
+                  - name: "pinOffset"
+                    label: "Смещение Булавки"
+                    widget: "object"
+                    fields:
+                      - { name: "top", label: "Top (px)", widget: "number", value_type: "int" }
+                      - { name: "left", label: "Left (px)", widget: "number", value_type: "int" }
+                      - { name: "rotate", label: "Поворот (deg)", widget: "string", required: false }
+                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }          
