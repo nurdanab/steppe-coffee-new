@@ -99,41 +99,33 @@ collections:
                     public_folder: "/images/bookShelf"
 
   - name: "deskItems"
-    label: "Новости/Стикеры"
-    files:
-      - name: "deskData"
-        label: "Данные Элементов на Доске"
-        file: "src/data/deskData.json"
-        format: "json"
-        editor: {}
-        preview: false
+    label: "Элементы на доске"
+    file: "src/data/deskData.json"
+    format: "json"
+    widget: "list"
+    allow_add: true
+    allow_delete: true
+    collapsed: true
+    types:
+      - name: "sticker"
+        label: "Текстовый Стикер"
+        widget: "object"
         fields:
-          - name: "items"
-            label: "Список Элементов"
-            widget: "list"
-            allow_add: true
-            allow_delete: true
-            collapsed: true
-            types:
-              - name: "sticker"
-                label: "Текстовый Стикер"
-                widget: "object"
-                fields:
-                  - { name: "id", label: "ID", widget: "string", required: true }
-                  - { name: "type", label: "Тип", widget: "select", options: ["sticker"], default: "sticker" }
-                  - { name: "text", label: "Текст Стикера", widget: "string", required: true }
+          - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
+          - { name: "type", label: "Тип", widget: "hidden", default: "sticker" }
+          - { name: "text", label: "Текст Стикера", widget: "string", required: true }
 
-              - name: "decoration_with_pin"
-                label: "Декорация с Булавкой"
-                widget: "object"
-                fields:
-                  - { name: "id", label: "ID", widget: "string", required: true }
-                  - { name: "type", label: "Тип", widget: "select", options: ["decoration_with_pin"], default: "decoration_with_pin" }
+      - name: "decoration_with_pin"
+        label: "Декорация с Булавкой"
+        widget: "object"
+        fields:
+          - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
+          - { name: "type", label: "Тип", widget: "hidden", default: "decoration_with_pin" }
 
-              - name: "saigak_sticker"
-                label: "Стикер Сайгак"
-                widget: "object"
-                fields:
-                  - { name: "id", label: "ID", widget: "string", required: true }
-                  - { name: "type", label: "Тип", widget: "select", options: ["saigak_sticker"], default: "saigak_sticker" }
-                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
+      - name: "saigak_sticker"
+        label: "Стикер Сайгак"
+        widget: "object"
+        fields:
+          - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
+          - { name: "type", label: "Тип", widget: "hidden", default: "saigak_sticker" }
+          - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
