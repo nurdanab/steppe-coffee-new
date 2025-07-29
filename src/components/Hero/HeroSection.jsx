@@ -2,7 +2,7 @@ import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import styles from './HeroSection.module.scss'; 
 
-const HeroSection = () => {
+const HeroSection = ({ onOpenBookingModal }) => {
   const { ref, inView } = useInView({
     threshold: 0.1,
     triggerOnce: true,
@@ -20,7 +20,7 @@ const HeroSection = () => {
             <p className={styles.subheadline}>
               Пространство для общения, вдохновения и новых впечатлений.
             </p>
-            <button className={styles.ctaButton}>
+            <button className={styles.ctaButton} onClick={onOpenBookingModal}>
               Забронировать столик
             </button>
           </div>
