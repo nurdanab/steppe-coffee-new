@@ -119,19 +119,37 @@ collections:
                 label: "ID стикера"
                 widget: "string"
                 disabled: true
-            types:
-              - name: "sticker"
-                label: "Новостной Стикер"
-                widget: "object"
-                fields:
-                  - { name: "text", label: "Текст Стикера", widget: "string", required: true }         
-              - name: "decoration_with_pin"
-                label: "Декорация (не редактируется)"
-                widget: "object"
-                fields:
-                  - { name: "dummy_field", label: "Скрытое поле", widget: "hidden" }
-              - name: "saigak_sticker"
-                label: "Стикер Сайгак"
-                widget: "object"
-                fields:
-                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
+              - name: "type"
+                label: "Тип стикера"
+                widget: "hidden"
+              - name: "text"
+                label: "Текст Стикера"
+                widget: "string"
+                required: true
+              - name: "position"
+                label: "Позиция"
+                widget: "hidden"
+              - name: "stickerColor"
+                label: "Цвет Стикера"
+                widget: "hidden"
+              - name: "imageSrc"
+                label: "Путь к изображению"
+                widget: "hidden"
+              - name: "pinType"
+                label: "Тип булавки"
+                widget: "hidden"
+              - name: "pinOffset"
+                label: "Смещение булавки"
+                widget: "hidden"
+              - name: "saigakImageSrc"
+                label: "Изображение Сайгака"
+                widget: "hidden"
+              - name: "backgroundShape"
+                label: "Форма фона"
+                widget: "hidden"
+              - name: "backgroundColor"
+                label: "Цвет фона"
+                widget: "hidden"
+              - name: "textColor"
+                label: "Цвет текста"
+                widget: "hidden"
