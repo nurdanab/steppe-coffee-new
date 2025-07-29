@@ -114,26 +114,34 @@ collections:
             allow_add: true
             allow_delete: true
             collapsed: true
+            fields:
+              - name: "type"
+                label: "Тип Элемента"
+                widget: "select"
+                options:
+                  - { label: "Текстовый Стикер", value: "sticker" }
+                  - { label: "Декорация с Булавкой", value: "decoration_with_pin" }
+                  - { label: "Стикер Сайгак", value: "saigak_sticker" }
+                required: true
+              - name: "id"
+                label: "ID"
+                widget: "uuid"
+              - name: "text"
+                label: "Текст"
+                widget: "string"
+                required: false
             types:
               - name: "sticker"
                 label: "Текстовый Стикер"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "uuid" }
-                  - { name: "type", label: "Тип", widget: "hidden", default: "sticker" }
                   - { name: "text", label: "Текст Стикера", widget: "string", required: true }
-
               - name: "decoration_with_pin"
                 label: "Декорация с Булавкой"
                 widget: "object"
-                fields:
-                  - { name: "id", label: "ID", widget: "uuid" }
-                  - { name: "type", label: "Тип", widget: "hidden", default: "decoration_with_pin" }
-
+                fields: []
               - name: "saigak_sticker"
                 label: "Стикер Сайгак"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "uuid" }
-                  - { name: "type", label: "Тип", widget: "hidden", default: "saigak_sticker" }
                   - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
