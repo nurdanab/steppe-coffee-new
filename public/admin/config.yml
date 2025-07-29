@@ -128,7 +128,8 @@ collections:
               - name: "decoration_with_pin"
                 label: "Декорация (не редактируется)"
                 widget: "object"
-                fields: []
+                fields:
+                  - { name: "dummy_field", label: "Скрытое поле", widget: "hidden" }
               - name: "saigak_sticker"
                 label: "Стикер Сайгак"
                 widget: "object"
