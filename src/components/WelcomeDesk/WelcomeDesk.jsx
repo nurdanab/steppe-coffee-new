@@ -6,7 +6,8 @@ import DeskItem from './DeskItem/DeskItem';
 import NewsSticker from './NewsSticker/NewsSticker';
 import SaigakSticker from './SaigakSticker/SaigakSticker';
 
-import deskItemsData from '../../data/deskData.json';
+// import deskItemsData from '../../data/deskData.json';
+import deskItemsDataWrapper from '../../data/deskData.json';
 
 const WelcomeDesk = () => {
   const { ref, inView } = useInView({
@@ -21,6 +22,7 @@ const WelcomeDesk = () => {
     white: '/images/desk/detail/whitePin.png',
     paperClip: '/images/desk/detail/paper-clip.png',
   };
+  const allDeskItems = deskItemsDataWrapper.items;
       // --- Верхние 3 полароидных фоток ---
 
   const polaroidItems = [
@@ -115,10 +117,14 @@ const WelcomeDesk = () => {
         },
   ];
 
-  const stickerItems = deskItemsData.filter(item => item.type === 'sticker'); 
-  const decorationItems = deskItemsData.filter(item => item.type === 'decoration'); 
-  const decorationWithPinItems = deskItemsData.filter(item => item.type === 'decoration_with_pin');  
-  const saigakStickerItems = deskItemsData.filter(item => item.type === 'saigak_sticker');
+  // const stickerItems = deskItemsData.filter(item => item.type === 'sticker'); 
+  // const decorationItems = deskItemsData.filter(item => item.type === 'decoration'); 
+  // const decorationWithPinItems = deskItemsData.filter(item => item.type === 'decoration_with_pin');  
+  // const saigakStickerItems = deskItemsData.filter(item => item.type === 'saigak_sticker');
+  const stickerItems = allDeskItems.filter(item => item.type === 'sticker'); //
+  const decorationItems = allDeskItems.filter(item => item.type === 'decoration'); //
+  const decorationWithPinItems = allDeskItems.filter(item => item.type === 'decoration_with_pin'); //
+  const saigakStickerItems = allDeskItems.filter(item => item.type === 'saigak_sticker'); //
 
   return (
     <section ref={ref} className={`${styles.welcomeSection} ${inView ? styles.visible : ''}`}>
