@@ -1,106 +1,93 @@
 @use 'variables' as *;
-@use 'mixins' as *;  
-// CSS Reset and Base Styles
+@use 'mixins' as *;
+
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px; // Базовый размер шрифта для root em-единиц
+  width: 100%;
+  overflow-x: hidden; // Предотвращает горизонтальную прокрутку
+}
+
+body {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  color: $black;
+  background-color: $white;
+  width: 100%;
+}
+
+.container {
+  max-width: 1200px; // Базовая максимальная ширина для контейнера
+  margin: 0 auto;
+  @include container-padding; // Используем миксин для адаптивных отступов
+}
+
+.section {
+  @include section-padding; // Используем миксин для адаптивных отступов секций
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: all $transition-fast;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+// Утилитарные классы
+.no-scrollbar {
+  -ms-overflow-style: none; // Для IE и Edge
+  scrollbar-width: none; // Для Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Для Chrome, Safari и Opera
   }
-  
-  html {
-    scroll-behavior: smooth;
-    font-size: 16px;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
   }
-  
-  body {
-    font-family: 'Gilroy', sans-serif;
-    font-weight: 400;
-    line-height: 1.6;
-    color: $black;
-    background-color: $white;
-    overflow-x: hidden;
+  50% {
+    transform: translateY(-10px);
   }
-  
-  // Global Container
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 $spacing-md;
-    
-    @include mobile {
-      padding: 0 $spacing-sm;
-    }
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
   }
-  
-  // Section Base
-  .section {
-    padding: $spacing-xxl 0;
-    
-    @include mobile {
-      padding: $spacing-xl 0;
-    }
+  50% {
+    opacity: 0.7;
   }
-  
-  // Links
-  a {
-    color: inherit;
-    text-decoration: none;
-    transition: all $transition-fast;
-  }
-  
-  // Images
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-  
-  // Buttons
-  button {
-    font-family: inherit;
-    border: none;
-    background: none;
-    cursor: pointer;
-  }
-  
-  // List styles
-  ul, ol {
-    list-style: none;
-  }
-  
-  // Hide scrollbar for smooth animations
-  .no-scrollbar {
-    -ms-overflow-style: none; /* Для Internet Explorer и Edge */
-    scrollbar-width: none; /* Для Firefox */
-  
-    &::-webkit-scrollbar { /* Для Chrome, Safari, Opera */
-      display: none;
-    }
-  }
-  
-  // Animation utilities
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-  
-  .animate-pulse {
-    animation: pulse 2s ease-in-out infinite;
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
-    }
-  }
+}

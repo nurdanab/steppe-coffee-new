@@ -1,21 +1,18 @@
 // src/styles/main.scss
 @use "sass:color";
 
-// Import global styles
-@use 'variables' as *;   
-@use 'mixins' as *;       
-@use 'typography' as *;   
-@use 'base' as *;         
+@use 'variables' as *;
+@use 'mixins' as *;    // Moved before typography
+@use 'typography' as *;
+@use 'base' as *;
 
-// Import component styles
 @use '../components/Header/Header.module.scss';
 @use '../components/Hero/HeroSection.module.scss';
 @use '../components/Promo/Promo.module.scss';
 @use '../components/Welcome/Welcome.module.scss';
-@use '../components/BookCorner/BookCorner.module.scss'; 
+@use '../components/WelcomeDesk/WelcomeDesk.module.scss';
+@use '../components/BookCorner/BookCorner.module.scss';
 
-
-// Additional global utilities
 .fade-in {
   animation: fadeIn 0.6s ease-in-out;
 }
@@ -31,13 +28,6 @@
   }
 }
 
-// Smooth scrolling for the entire page
-html {
-  scroll-behavior: smooth;
-}
-
-
-// Print styles
 @media print {
   * {
     background: transparent !important;
@@ -45,20 +35,18 @@ html {
     box-shadow: none !important;
     text-shadow: none !important;
   }
-  
+
   .no-print {
     display: none !important;
   }
 }
 
-// Focus styles for accessibility
 :focus-visible {
   outline: 2px solid $maroon;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-// Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

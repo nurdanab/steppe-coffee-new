@@ -122,6 +122,7 @@ const WelcomeDesk = () => {
 
   return (
     <section ref={ref} className={`${styles.welcomeSection} ${inView ? styles.visible : ''}`}>
+                <div className="headerFullWidthContainer"> 
       <div className={styles.corkBoard}>
 
         {/* заголовок фото */}
@@ -304,7 +305,7 @@ const WelcomeDesk = () => {
             </div>
           </React.Fragment>
         ))}
-
+      </div>
       </div>
     </section>
   );

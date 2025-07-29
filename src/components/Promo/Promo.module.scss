@@ -9,10 +9,7 @@
     background-color: $yellow; 
     position: relative;
     overflow: hidden; 
-    @include mobile {
-        background-color: $yellow; 
 
-    }
     &::before {
         content: '';
         position: absolute;
@@ -25,110 +22,295 @@
         background-repeat: no-repeat;
         background-position: top left; 
         z-index: 0; 
-        transform: none;
         pointer-events: none;
-      }
+        opacity: 1;
+
+        @include xs-only { 
+          width: 100px;
+          height: 100px;
+          top: 5px;
+          left: 10px;
+        }
+        @include sm-up {
+          width: 150px;
+          height: 150px;
+          top: 5px;
+          left: 10px;
+        }
+        @include md-up {
+          width: 180px;
+          height: 180px;
+          top: 0px;
+          left: 10px;
+        }
+        @include lg-up {
+          width: 200px;
+          height: 200px;
+          top: 0px;
+          left: 15px;
+        }
+        @include xl-up {
+          width: 250px;
+          height: 250px;
+          top: 0px;
+          left: 20px;
+        }
+        @include xxl-up {
+          width: 250px;
+          height: 250px;
+          top: 0px;
+          left: 20px;
+        }
+        @include xxxl-up {
+          width: 300px;
+          height: 300px;
+          top: 0px;
+          left: 20px;
+        }
+        @include full-hd-up {
+          width: 350px;
+          height: 350px;
+          top: 0px;
+          left: 20px;
+        }
+        @include uhd-up {
+          width: 450px;
+          height: 450px;
+          top: 0px;
+          left: 50px;
+        }
+        @include uhd-4k-up {
+          width: 600px;
+          height: 600px;
+          top: 0px;
+          left: 50px;
+        }
+    }
     
-      &::after { 
+    &::after { 
         content: '';
         position: absolute;
         bottom: 0;
         right: 0;
-        width: 350px;
-        height: 350px;
         background-image: url('/public/images/promo-decor-2.png');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: bottom right;
         z-index: 0;
         pointer-events: none;
-        transform: none;
-      }
-    
+        opacity: 1;
+
+        @include xs-only { 
+          width: 100px;
+          height: 100px;
+        }
+        @include sm-up {
+          width: 150px;
+          height: 150px;
+        }
+        @include md-up {
+          width: 180px;
+          height: 180px;
+        }
+        @include lg-up {
+          width: 200px;
+          height: 200px;
+        }
+        @include xl-up {
+          width: 250px;
+          height: 250px;
+        }
+        @include xxl-up {
+          width: 250px;
+          height: 250px;
+        }
+        @include xxxl-up {
+          width: 300px;
+          height: 300px;
+        }
+        @include full-hd-up {
+          width: 350px;
+          height: 350px;
+        }
+        @include uhd-up {
+          width: 450px;
+          height: 450px;
+        }
+        @include uhd-4k-up {
+          width: 600px;
+          height: 600px;
+        }
+    }
 }
 
-  .promoTitle {
-    @extend .riffic-medium;
-    color: $black;
-    margin-bottom: 80px;
-    text-align: left;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s;
-    &.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .promoCardsContainer {
-    display: flex; // Используем Flexbox для расположения карточек
-    flex-direction: column; // По умолчанию: карточки друг под другом
-    gap: 120px; 
-    margin: 0 auto; 
-    padding: 0 15px; 
-    margin-bottom: 80px;
+.promoTitle {
+  @extend .riffic-medium;
+  color: $black;
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-xxl;
+  text-align: center;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s;
+  opacity: 0;
 
-    @media (min-width: 768px) {
-      flex-direction: row; // Карточки в ряд
-      justify-content: center; // Центрируем их
-      align-items: flex-start; // Выравниваем по верху, если они разной высоты
-    }
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .promoCard {
-    z-index: 2;
-    background-color: $white;
-    border: 2px solid $black; 
-    border-radius: 14px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5);
-    overflow: hidden; 
-    flex: 1; 
-    min-width: 500px; 
-    max-width: 350px; 
-    display: flex;
-    flex-direction: column;
+}
+
+.promoCardsContainer {
+  width: 100%;
+  z-index: 2;
+
+  @include xs-only { 
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  
-    &:hover {
-      transform: translateY(-8px); 
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6); 
-    }
-  
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  
-    &.cardVisible { // Класс добавляется через JS, когда inView становится true
-      opacity: 1;
-      transform: translateY(0);
-    }
+    gap: $spacing-xs;
   }
-  
-  .promoImage {
-    width: 100%;
-    height: 350px; 
-    object-fit: cover; 
-    border-radius: 14px; 
-    display: block; 
+  @include sm-up {
+    flex-direction: row;
+    justify-content: center;
+    gap: $spacing-sm;
   }
+  @include md-up {
+    flex-direction: row;
+    justify-content: center;
+  }
+  @include lg-up {
+    max-width: 1000px;
+    gap: $spacing-lg;
+    @include flex-center;
+
+  }
+  @include xl-up {
+    max-width: 1300px;
+    gap: $spacing-xl;
+    @include flex-center;
+  }
+  @include xxl-up {
+    max-width: 1400px;
+    gap: $spacing-xl;
+    @include flex-center;
+  }
+  @include xxxl-up {
+    max-width: 1700px;
+    gap: $spacing-xxl;  
+    @include flex-center;
+  }
+  @include full-hd-up {
+    max-width: 2000px;
+    gap: $spacing-xxxl;
+    @include flex-center;
+  }
+  @include uhd-up {
+    max-width: 2500px;
+    gap: $spacing-xxxxl;
+    @include flex-center;
+
+  }
+  @include uhd-4k-up {
+    max-width: 3800px;
+    gap: $spacing-xxxxl;
+    @include flex-center;
+  }
+}
+
+.promoCard {
+  z-index: 2;
+  background-color: $white;
+  border: 2px solid $black; 
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-medium;
+  overflow: hidden; 
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    transform: translateY(-8px); 
+    box-shadow: $shadow-heavy;
+  }
+
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+
+  &.cardVisible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @include xs-only { 
+    min-width: unset;
+    max-width: 100%;
+    margin: 16px auto;
+  }
+  @include sm-up {
+    min-width: unset;
+    max-width: 100%;
+    margin: 20px auto;
+  }
+  @include md-up {
+    min-width: unset;
+    max-width: 100%;
+    margin: 30px auto;
+  }
+}
+
+.promoImage {
+  width: 100%;
+  object-fit: cover; 
+  border-radius: $border-radius-lg;
+  display: block; 
+
+  @include xs-only { 
+    height: 250px;
+  }
+  @include sm-up {
+    height: 250px;
+  }
+  @include md-up {
+    height: 450px;
+  }
+  @include lg-up {
+    height: 350px;
+  }
+  @include xl-up {
+    height: 350px;
+  }
+  @include xxl-up {
+    height: 400px;
+  }
+  @include xxxl-up {
+    height: 400px;
+  }
+  @include full-hd-up {
+    height: 500px;
+  }
+  @include uhd-up {
+    height: 600px;
+  }
+  @include uhd-4k-up {
+    height: 1200px;
+  }
+}
 
 .menuButton {
-    @include button-base-2;
-  font-size: 18px;
+  @include button-base-2;
+  font-size: 14px;
   padding: $spacing-sm $spacing-lg;
   position: relative;
   overflow: hidden;
   color: $black;
-  box-shadow: $shadow-heavy;
-  margin-left: auto;
-  margin-right: auto;
-
-  display: block;
-  position: relative; 
-  overflow: hidden;
+  box-shadow: $shadow-medium;
   z-index: 0;
+  display: block;
+  margin: $spacing-lg auto 0 auto;
+
 
   &::before {
     content: '';
@@ -141,31 +323,68 @@
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all $transition-slow;
-    z-index: -1; 
+    z-index: -1;
   }
 
-  // При наведении на &::before
   &:hover::before {
-    width: 300px;
-    height: 300px;
+    width: 1000px;
+    height: 1000px;
   }
 
   &:active {
     transform: translateY(-2px) scale(0.98);
   }
-  
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease-out 0.4s, transform 0.6s ease-out 0.4s; 
-  
-    &.buttonVisible { 
-       opacity: 1;
-      transform: translateY(0);
-    }
-  
-    @include mobile {
-      padding: 12px 25px;
-      font-size: 1.1rem;
-      margin-top: 80px; 
-    }
+
+  @include xs-only { 
+    font-size: 10px;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius-xxxxl;
   }
+  @include sm-up {
+    font-size: 14px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include md-up {
+    font-size: 16px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include lg-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xl-up {
+    font-size: 22px;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xxl-up {
+    font-size: 24px;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xxxl-up {
+    font-size: 28px;
+    padding: $spacing-lg $spacing-xxl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include full-hd-up {
+    font-size: 32px;
+    padding: $spacing-lg $spacing-xxl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include uhd-up {
+    font-size: 44px;
+    padding: $spacing-xl $spacing-xxxl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include uhd-4k-up {
+    font-size: 50px;
+    padding: $spacing-xxl $spacing-xxxxl;
+    border-radius: $border-radius-xxxxl;
+    
+  }
+}
+

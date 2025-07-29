@@ -2,17 +2,79 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as *;
 
+$header-bg-color: rgba($black, 0.8);
+
 .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    padding: $spacing-md 0;
-    transition: all $transition-medium;
-    background-color: rgba(0, 0, 0, 0.809); 
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: $spacing-lg 0;
+  transition: all $transition-medium;
+  background-color: $header-bg-color;
+  width: 100%;
+
+  @include xs-only {
+    padding: $spacing-sm 0;
+    
   }
+
+  @include sm-up {
+    padding: $spacing-sm 0;
   
+  }
+
+  @include md-up {
+    padding: $spacing-md 0;
+  
+  }
+
+  @include lg-up {
+    padding: $spacing-lg 0;
+    
+  }
+  @include full-hd-up {
+    padding: $spacing-xl 0;
+    
+  }
+  @include uhd-up {
+    padding: $spacing-xxl 0;
+  }
+}
+
+// All correct
+.headerFullWidthContainer {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+
+  @include sm-up {
+    padding: 0 $spacing-xl;
+  }
+
+  @include md-up {
+    padding: 0 $spacing-xxl;
+  }
+
+  @include lg-up {
+    padding: 0 $spacing-xxxl;
+  }
+  @include xl-up {
+    padding: 0 $spacing-xxxl * 1.2;
+  }
+  @include xxl-up {
+    padding: 0 $spacing-xxxl * 1.6;
+  }
+  @include xxxl-up {
+    padding: 0 $spacing-xxxl * 2.2;
+  }
+  @include full-hd-up {
+    padding: 0 $spacing-xxxl * 2.6;
+  }
+} // All correct
+
+
 .headerContent {
   @include flex-between;
   width: 100%;
@@ -25,25 +87,81 @@
     &:hover {
       transform: scale(1.05);
     }
-
   }
   .logoImage {
-    height: 40px; 
-    width: auto; 
-    max-width: 100%; 
-    display: block; 
+    height: 24px;
+    width: auto;
+    max-width: 100%;
+    display: block;
+
+    @include sm-up {
+      height: 36px;
+    }
+    @include md-up {
+      height: 40px;
+    }
+    @include lg-up {
+      height: 44px;
+    }
+    @include xl-up {
+      height: 48px;
+    }
+    @include xxl-up {
+      height: 52px;
+    }
+    @include xxxl-up {
+      height: 56px;
+    }
+    @include full-hd-up {
+      height: 60px;
+    }
+    @include uhd-up {
+      height: 90px;
+    }
+  }
+}
+
+.headerRightContent {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  @include md-up {
+    gap: $spacing-xs;
+  }
+
+  @include lg-up {
+    gap: $spacing-xs;
+  }
+  @include xl-up {
+    gap: $spacing-sm;
+  }
+  @include xxl-up {
+    gap: $spacing-md;
   }
 }
 
 .navigation {
-  @include mobile {
-    display: none;
+  display: none;
+
+  @include md-up {
+    display: block;
   }
 }
 
 .navigationList {
   @include flex-center;
   gap: $spacing-md;
+
+  @include lg-up {
+    gap: $spacing-lg;
+  }
+  @include xl-up {
+    gap: $spacing-xl;
+  }
+  @include xxl-up {
+    gap: $spacing-xxl;
+  }
 }
 
 .navigationItem {
@@ -51,56 +169,119 @@
 }
 
 .navigationLink {
-    @extend .gilroy-16;
-    font-weight: 400;
-    color: $white;
-    padding: $spacing-xs $spacing-sm;
-    border-radius: $border-radius-lg;
-    transition: all $transition-medium;
-    position: relative; 
+  @extend .gilroy-16;
+  font-weight: 400;
+  color: $white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-xxxxl;
+  transition: all $transition-medium;
+  position: relative;
 
-    &:hover {
-      color: $black;
-      border-radius: $border-radius-lg;
-      background-color: rgb(255, 255, 255);
-      transform: translateY(-2px);
-    }
-}  
+  &:hover {
+    color: $black;
+    background-color: $white;
+    transform: translateY(-2px);
+  }
+
+  @include lg-up {
+    font-size: 17px;
+    padding: $spacing-xs $spacing-md;
+  }
+  @include xl-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-md;
+  }
+  @include xxl-up {
+    font-size: 22px;
+    padding: $spacing-sm $spacing-lg;
+  }
+  @include full-hd-up {
+    font-size: 28px;
+    padding: $spacing-md $spacing-lg;
+  }
+  @include uhd-up {
+    font-size: 36px;
+    padding: $spacing-md $spacing-lg;
+  }
+}
 
 .profileLink {
-    @include flex-center;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    transition: all $transition-fast; 
-  
-    &:hover {
-      box-shadow: none;
-      .profileIcon {
-        transform: scale(1.2);
-      }
+  @include flex-center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: all $transition-fast;
+
+  .profileIcon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  &:hover {
+    .profileIcon {
+      transform: scale(1.2);
     }
   }
-  
+  @include sm-up {
+    width: 20px;
+    height: 20px;
+  }
+  @include md-up {
+    width: 22px;
+    height: 22px;
+  }
+  @include lg-up {
+    width: 26px;
+    height: 26px;
+  }
+  @include xl-up {
+    width: 28px;
+    height: 28px;
+  }
+  @include xxl-up {
+    width: 30px;
+    height: 30px;
+  }
+  @include xxxl-up {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.headerActions {
+  @include flex-center;
+  gap: $spacing-sm;
+
+  @include lg-up {
+    gap: $spacing-md;
+  }
+  @include xl-up {
+    gap: $spacing-lg;
+  }
+}
 
 .mobileMenuButton {
   @include flex-column;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 20px;
+  height: 20px;
   background: none;
   border: none;
   cursor: pointer;
   gap: 4px;
+  z-index: 1001;
 
-  @include mobile-up {
+  display: flex;
+
+  @include md-up {
     display: none;
   }
 
   .hamburger {
     width: 100%;
     height: 2px;
-    background-color: $black;
+    background-color: $white;
     transition: all $transition-fast;
     border-radius: 2px;
 
@@ -113,18 +294,82 @@
     }
   }
 
-  &:hover .hamburger {
-    background-color: $maroon;
+  &:hover {
+    .hamburger {
+      background-color: $yellow;
+    }
   }
 }
 
-// Responsive adjustments
-@include mobile {
-  .headerContent {
-    padding: 0 $spacing-sm;
+.mobileMenuButton.open {
+  .hamburger {
+    &:nth-child(1) {
+      transform: rotate(45deg);
+      background-color: $white;
+    }
+    &:nth-child(2) {
+      opacity: 0;
+    }
+    &:nth-child(3) {
+      transform: rotate(-45deg);
+      background-color: $white;
+    }
+  }
+}
+
+.mobileMenuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($black, 0.9);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(100%);
+  transition: transform $transition-medium ease-in-out;
+  padding: $spacing-xl;
+
+  &.open {
+    transform: translateX(0);
   }
 
-  .header.scrolled {
-    padding: $spacing-xs 0;
+  .mobileNavigationList {
+    @include flex-column;
+    gap: $spacing-lg;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+
+    @include md-up {
+      gap: $spacing-xl;
+    }
+    @include lg-up {
+      gap: $spacing-xxl;
+    }
+
+    .mobileNavigationItem {
+      .mobileNavigationLink {
+        @extend .gilroy-32;
+        color: $white;
+        text-decoration: none;
+        transition: color $transition-fast;
+
+        &:hover {
+          color: $yellow;
+        }
+
+        @include md-up {
+          font-size: 36px;
+        }
+        @include lg-up {
+          font-size: 40px;
+        }
+      }
+    }
   }
 }

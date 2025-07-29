@@ -20,7 +20,7 @@
   transform: translateX(-50%); 
   z-index: 10; 
 
-  @include mobile {
+  @include mobile-only { // ИСПРАВЛЕНО
     width: 20px; 
     top: -10px;
   }
@@ -91,7 +91,7 @@
   }
 
   // мобильных устр
-  @include mobile {
+  @include mobile-only { // ИСПРАВЛЕНО
     &.small .mediaContainer {
       width: 100px;
       height: 120px;
@@ -107,77 +107,247 @@
       height: 180px;
       padding: 7px;
     }
+ 
   }
 
   // --- Стили для 5 LIVE-PHOTO ---
   &.livePhotoSize-1 { 
-    .mediaContainer {
-      width: 170px; 
-      height: 300px; 
-      border: 3px solid #E5BA7A; 
-      // padding: 5px; 
+    @include xs-only { 
+      .mediaContainer {
+        width: 50px; 
+        height: 80px; 
+        border: 1px solid #682901; 
+      }
+    }
+    @include sm-up {
+      .mediaContainer {
+        width: 60px; 
+        height: 90px; 
+        border: 1px solid #682901; 
+      }
+    }
+    @include md-up {
+      .mediaContainer {
+        width: 120px; 
+        height: 180px; 
+        border: 2px solid #682901; 
+      }
+    }
+    @include lg-up {
+      .mediaContainer {
+        width: 150px; 
+        height: 220px; 
+        border: 3px solid #682901; 
+      }
+    }
+    @include xl-up {
+      .mediaContainer {
+        width: 180px; 
+        height: 270px; 
+        border: 4px solid #682901; 
+      }
+    }
+    @include xxl-up {
+      .mediaContainer {
+        width: 200px; 
+        height: 320px; 
+        border: 4px solid #682901; 
+      }
+    }
+    @include xxxl-up {
+      .mediaContainer {
+        width: 230px; 
+        height: 370px; 
+        border: 5px solid #682901; 
+      }
+    }
+    @include full-hd-up {
+      .mediaContainer {
+        width: 250px; 
+        height: 400px; 
+        border: 6px solid #682901; 
+      }
+    }
+    @include uhd-up {
+      .mediaContainer {
+        width: 270px; 
+        height: 500px; 
+        border: 8px solid #682901; 
+      }
+    }
+    @include uhd-4k-up {
+      .mediaContainer {
+        width: 470px; 
+        height: 800px; 
+        border: 12px solid #682901; 
+      }
     }
   }
   &.livePhotoSize-2 { 
-    .mediaContainer {
-      width: 170px; 
-      height: 200px; 
-      border: 4px solid #682901; 
+    @include xs-only { 
 
-      // padding: 5px; 
+    }
+    @include sm-up {
+     
+    }
+    @include md-up {
+  
+    }
+    @include lg-up {
+  
+    }
+    @include xl-up {
+    
+    }
+    @include xxl-up {
+  
+    }
+    @include xxxl-up {
+      .mediaContainer {
+        width: 250px; 
+        height: 160px; 
+        border: 5px solid #682901; 
+      }
+    }
+    @include full-hd-up {
+      .mediaContainer {
+        width: 260px; 
+        height: 180px; 
+        border: 6px solid #682901; 
+      }
+    }
+    @include uhd-up {
+      .mediaContainer {
+        width: 250px; 
+        height: 300px; 
+        border: 8px solid #682901; 
+      }
+    }
+    @include uhd-4k-up {
+      .mediaContainer {
+        width: 450px; 
+        height: 500px; 
+        border: 12px solid #682901; 
+      }
     }
   }
   &.livePhotoSize-3 { 
-    .mediaContainer {
-      width: 270px; 
-      height: 180px; 
-      // padding: 5px; 
-      border: 2px solid #1c1c1c; 
+    @include xs-only { 
 
+    }
+    @include sm-up {
+     
+    }
+    @include md-up {
+  
+    }
+    @include lg-up {
+  
+    }
+    @include xl-up {
+    
+    }
+    @include xxl-up {
+  
+    }
+    @include xxxl-up {
+  
+    }
+    @include full-hd-up {
+   
+    }
+    @include uhd-up {
+      .mediaContainer {
+        width: 400px; 
+        height: 300px; 
+        border: 8px solid #682901; 
+      }
+    }
+    @include uhd-4k-up {
+      .mediaContainer {
+        width: 600px; 
+        height: 400px; 
+        border: 12px solid #682901; 
+      }
     }
   }
   &.livePhotoSize-4 { 
-    // background-color: #F0F8FF;
-    .mediaContainer {
-      width: 290px; 
-      height: 310px; 
-      border: 2px solid #3d1a04; 
+    @include xs-only { 
 
-      // padding: 0px; 
+    }
+    @include sm-up {
+     
+    }
+    @include md-up {
+  
+    }
+    @include lg-up {
+  
+    }
+    @include xl-up {
+    
+    }
+    @include xxl-up {
+  
+    }
+    @include xxxl-up {
+  
+    }
+    @include full-hd-up {
+   
+    }
+    @include uhd-up {
+      .mediaContainer {
+        width: 300px; 
+        height: 500px; 
+        border: 8px solid #682901; 
+      }
+    }
+    @include uhd-4k-up {
+      .mediaContainer {
+        width: 500px; 
+        height: 700px; 
+        border: 14px solid #682901; 
+      }
     }
   }
   &.livePhotoSize-5 { 
-    .mediaContainer {
-      width: 220px; 
-      height: 210px; 
-      border: 3px solid #ca9340; 
+    @include xs-only { 
 
-      // padding: 5px; 
     }
-  }
-
-  // Пример для мобильных устройств - корректируем размеры
-  @include mobile {
-    &.small .mediaContainer {
-      width: 100px;
-      height: 120px;
-      padding: 5px;
+    @include sm-up {
+     
     }
-    &.medium .mediaContainer {
-      width: 120px;
-      height: 150px;
-      padding: 5px;
+    @include md-up {
+  
     }
-    &.large .mediaContainer {
-      width: 150px;
-      height: 180px;
-      padding: 7px;
+    @include lg-up {
+  
     }
-    // Также добавь адаптивные стили для .livePhotoSize
-    &.livePhotoSize {
+    @include xl-up {
+    
+    }
+    @include xxl-up {
+  
+    }
+    @include xxxl-up {
+  
+    }
+    @include full-hd-up {
+   
+    }
+    @include uhd-up {
       .mediaContainer {
-        width: 120px; // Меньше для мобильных
-        height: 90px;
+        width: 400px; 
+        height: 300px; 
+        border: 8px solid #682901; 
+      }
+    }
+    @include uhd-4k-up {
+      .mediaContainer {
+        width: 600px; 
+        height: 500px; 
+        border: 12px solid #682901; 
       }
     }
   }

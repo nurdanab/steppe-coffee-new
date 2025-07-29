@@ -6,22 +6,17 @@
 .welcomeSection {
   width: 100%;
   background-color: $light-yellow;
-  padding: 70px 0;
   display: flex;
   justify-content: center;
   align-items: center;
 
-  @include mobile {
-    padding: 40px 0;
-  }
+  @include section-padding;
 }
 
 .corkBoard {
   width: 100%;
-  max-width: 1200px;
-  height: 700px;
   background-image: url('/images/caffe-desk.jpg');
-  background-size: cover;
+  background-size: cover; 
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
@@ -29,12 +24,66 @@
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
   overflow: hidden;
-  border: 10px solid rgb(237, 213, 179);
 
-  @include mobile {
+  @include xs-only { 
+    max-width: 800px;
+    height: 200px;
+    background-size: cover;
+    border: 1px solid rgb(237, 213, 179);
+  }
+  @include sm-up {
+    max-width: 1000px;
+    height: 300px;
+    background-size: cover;
+    border: 2px solid rgb(237, 213, 179);
+  }
+  @include md-up {
+    max-width: 1200px;
+    height: 400px;
+    background-size: cover;
+    border: 3px solid rgb(237, 213, 179);
+  }
+  @include lg-up {
+    max-width: 1200px;
     height: 500px;
-    margin: 0 auto;
-    background-size: contain;
+    background-size: cover;
+    border: 4px solid rgb(237, 213, 179);
+  }
+  @include xl-up {
+    max-width: 1400px;
+    height: 600px;
+    background-size: cover;
+    border: 6px solid rgb(237, 213, 179);
+  }
+  @include xxl-up {
+    max-width: 1400px;
+    height: 700px;
+    background-size: cover;
+    border: 8px solid rgb(237, 213, 179);
+  }
+  @include xxxl-up {
+    max-width: 1600px;
+    height: 900px;
+    background-size: cover;
+    border: 12px solid rgb(237, 213, 179);
+  }
+  @include full-hd-up {
+    max-width: 2000px;
+    height: 900px;
+    background-size: cover;
+    border: 12px solid rgb(237, 213, 179);
+  }
+  @include uhd-up {
+    max-width: 2600px;
+    height: 1150px;
+    background-size: cover;
+    border: 24px solid rgb(237, 213, 179);
+  }
+  @include uhd-4k-up {
+    max-width: 4000px;
+    height: 1800px;
+    background-size: cover;
+    border: 30px solid rgb(237, 213, 179);
   }
 }
 
@@ -50,10 +99,38 @@
     max-width: 100%; 
     height: auto;  
     width: 400px; 
-  
-    @include mobile {
-      width: 250px;  
-    }}
+
+    @include xs-only { 
+      width: 150px;  
+    }
+    @include sm-up {
+      width: 200px;
+    }
+    @include md-up {
+      width: 270px;
+    }
+    @include lg-up {
+      width: 330px;
+    }
+    @include xl-up {
+      width: 370px;
+    }
+    @include xxl-up {
+      width: 400px;
+    }
+    @include xxxl-up {
+      width: 450px;
+    }
+    @include full-hd-up {
+      width: 470px;
+    }
+    @include uhd-up {
+      width: 500px;
+    }
+    @include uhd-4k-up {
+      width: 900px;
+    }
+  }
 }
 .imageString {
   position: absolute;
@@ -63,11 +140,42 @@
   z-index: 15;
 
   .stringImage{
-    max-width: 100%; 
-    height: auto;
     display: block;
-  }
-  
+    max-width: 100%; 
+    height: auto;  
+    width: 400px; 
+
+    @include xs-only { 
+      min-width: 400px;
+    }
+    @include sm-up {
+      min-width: 700px;
+    }
+    @include md-up {
+      min-width: 800px;
+    }
+    @include lg-up {
+      min-width: 900px;
+    }
+    @include xl-up {
+      min-width: 1200px;
+    }
+    @include xxl-up {
+      min-width: 1250px;
+    }
+    @include xxxl-up {
+      min-width: 1300px;
+    }
+    @include full-hd-up {
+      min-width: 1500px;
+    }
+    @include uhd-up {
+      min-width: 2300px;
+    }
+    @include uhd-4k-up {
+      min-width: 3400px;
+    }
+}
 }
 .livePhotoWrapper1,
 .livePhotoWrapper2,
@@ -75,23 +183,24 @@
 .livePhotoWrapper4,
 .livePhotoWrapper5 {
   position: absolute;  
-  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease;  
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
   z-index: 1;  
 
    &:hover {
      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
     z-index: 20; 
   }
+    width: auto; 
 }
 
 .polaroidWrapper1,
 .polaroidWrapper2,
 .polaroidWrapper3 {
   position: absolute;  
-  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; 
+  transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
   z-index: 1;  
-background-color: antiquewhite;
-padding: 5px;
+  background-color: antiquewhite;
+  padding: 5px;
    &:hover {
      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
     z-index: 20; 
@@ -104,9 +213,10 @@ padding: 5px;
   z-index: 1;  
   &:hover {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    z-index: 20;  
+    z-index: 20; // Поднимаем при наведении, чтобы был над другими элементами
   }
 }
+
 
 .pin {
   position: absolute;
@@ -115,14 +225,33 @@ padding: 5px;
   pointer-events: none;
   transform-origin: center center;
   z-index: 100; 
+  
+  @include mobile-only { // ИСПРАВЛЕНО
+    width: 15px; // Уменьшаем размер прищепки на мобильных
+  }
 }
-.tape {
-  position: absolute;
-  width: 60px;
+.tape { // НОВЫЙ СТИЛЬ ДЛЯ ИЗОБРАЖЕНИЯ СКОТЧА
+  position: absolute; // Важно: позиционирование относительно родителя (.stickerWrapper)
+  width: 60px; // Ширина изображения скотча, подбери по размеру твоего файла
   height: auto;
-  pointer-events: none;
+  pointer-events: none; // Не реагирует на клики мыши
+  // transform-origin: center center; // Может понадобиться, если будем поворачивать
+  // top, left, transform будут заданы инлайн-стилями в WelcomeDesk.jsx
+
+  @include mobile-only { // Добавляем адаптацию для скотча на мобильных
+    width: 40px; // Уменьшаем размер скотча
+    top: -10px !important; // Если инлайн-стили не перебивают, можно использовать !important
+    left: -5px !important; 
+  }
 }
-.saigakStickerWrapper {
+// ...
+.saigakStickerWrapper { // НОВЫЙ КЛАСС ДЛЯ ОБЕРТКИ НАКЛЕЙКИ САЙГАКА
   position: absolute; 
+  // transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; 
   z-index: 1; 
+
+  // &:hover {
+  //   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  //   z-index: 20; 
+  // }
 }

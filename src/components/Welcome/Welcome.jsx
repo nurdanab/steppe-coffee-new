@@ -10,6 +10,7 @@ const Welcome = () => {
 
   return (
     <section ref={ref} className={`${styles.welcome} ${inView ? styles.visible : ''}`}>
+           <div className="headerFullWidthContainer"> 
       <div className={styles.welcomeContent}>
         {/* Заголовок */}
         <div className={`${styles.welcomeTitleBox} ${inView ? styles.titleBoxVisible : ''}`}>
@@ -34,6 +35,7 @@ const Welcome = () => {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

@@ -1,184 +1,355 @@
-@use "sass:color"; 
+// _mixins.scss
+@use "sass:color";
 @use 'variables' as *;
-// Responsive Mixins
-@mixin mobile {
-    @media (max-width: #{$mobile - 1px}) {
-      @content;
+
+$breakpoint-xs: map-get($breakpoints, xs);
+$breakpoint-sm: map-get($breakpoints, sm);
+$breakpoint-md: map-get($breakpoints, md);
+$breakpoint-lg: map-get($breakpoints, lg);
+$breakpoint-xl: map-get($breakpoints, xl);
+$breakpoint-xxl: map-get($breakpoints, xxl);
+$breakpoint-xxxl: map-get($breakpoints, xxxl);
+$breakpoint-xxxxl: map-get($breakpoints, full-hd); 
+$breakpoint-uhd: map-get($breakpoints, uhd);  
+$breakpoint-uhd-4k: map-get($breakpoints, uhd-4k); 
+
+
+// Медиа-запросы "от и выше"
+@mixin sm-up {
+    @media (min-width: #{$breakpoint-sm}) {
+        @content;
     }
-  }
-  
-  @mixin tablet {
-    @media (min-width: #{$mobile}) and (max-width: #{$tablet - 1px}) {
-      @content;
+}
+
+@mixin md-up {
+    @media (min-width: #{$breakpoint-md}) {
+        @content;
     }
-  }
-  
-  @mixin desktop {
-    @media (min-width: #{$tablet}) {
-      @content;
+}
+
+@mixin lg-up {
+    @media (min-width: #{$breakpoint-lg}) {
+        @content;
     }
-  }
-  
-  @mixin mobile-up {
-    @media (min-width: #{$mobile}) {
-      @content;
+}
+
+@mixin xl-up {
+    @media (min-width: #{$breakpoint-xl}) {
+        @content;
     }
+}
+
+@mixin xxl-up {
+    @media (min-width: #{$breakpoint-xxl}) {
+        @content;
+    }
+}
+
+@mixin xxxl-up {
+    @media (min-width: #{$breakpoint-xxxl}) {
+        @content;
+    }
+}
+
+@mixin full-hd-up {
+    @media (min-width: #{$breakpoint-xxxxl}) {
+        @content;
+    }
+}
+@mixin uhd-up {
+    @media (min-width: #{$breakpoint-uhd}) {
+        @content;
+    }
+}
+
+@mixin uhd-4k-up {
+    @media (min-width: #{$breakpoint-uhd-4k}) {
+        @content;
+    }
+}
+
+// Медиа-запросы "только для" определенных диапазонов
+@mixin xs-only {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
   }
+}
+
+@mixin mobile-only {
+    @media (min-width: #{$breakpoint-xs}) and (max-width: #{$breakpoint-md - 1px}) {
+        @content;
+    }
+}
+
+@mixin tablet-only {
+    @media (min-width: #{$breakpoint-md}) and (max-width: #{$breakpoint-lg - 1px}) {
+        @content;
+    }
+}
+
+@mixin desktop-only {
+    @media (min-width: #{$breakpoint-lg}) and (max-width: #{$breakpoint-xl - 1px}) {
+        @content;
+    }
+}
+
+@mixin large-desktop-only {
+    @media (min-width: #{$breakpoint-xl}) and (max-width: #{$breakpoint-xxl - 1px}) {
+        @content;
+    }
+}
+
+@mixin extra-large-desktop-only {
+    @media (min-width: #{$breakpoint-xxl}) and (max-width: #{$breakpoint-xxxl - 1px}) {
+        @content;
+    }
+}
+
+@mixin full-hd-only {
+    @media (min-width: #{$breakpoint-xxxl}) and (max-width: #{$breakpoint-xxxxl - 1px}) {
+        @content;
+    }
+}
+@mixin uhd-only {
+    @media (min-width: #{$breakpoint-uhd}) and (max-width: #{$breakpoint-uhd-4k - 1px}) {
+        @content;
+    }
+}
+
+
+// Медиа-запросы "от и ниже"
+@mixin sm-down {
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
+  }
+}
+
+@mixin md-down {
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
+}
+
+@mixin lg-down {
+  @media (max-width: #{$breakpoint-lg - 1px}) {
+    @content;
+  }
+}
+
+@mixin xl-down {
+  @media (max-width: #{$breakpoint-xl - 1px}) {
+    @content;
+  }
+}
+
+@mixin xxl-down {
+  @media (max-width: #{$breakpoint-xxl - 1px}) {
+    @content;
+  }
+}
+
+@mixin xxxl-down {
+  @media (max-width: #{$breakpoint-xxxl - 1px}) {
+    @content;
+  }
+}
+
+@mixin full-hd-down {
+  @media (max-width: #{$breakpoint-xxxxl - 1px}) {
+    @content;
+  }
+}
+@mixin uhd-down {
+    @media (max-width: #{$breakpoint-uhd - 1px}) {
+        @content;
+    }
+}
+
+// Миксины для отступов
+@mixin section-padding {
+  @include xs-only { 
+    padding: $spacing-md 0;
+  }
+  @include sm-up {
+    padding: $spacing-lg 0;
+  }
+  @include md-up {
+    padding: $spacing-lg 0;
+  }
+  @include lg-up {
+    padding: $spacing-xl 0;
+  }
+  @include xl-up {
+    padding: $spacing-xl 0;
+  }
+  @include xxl-up {
+    padding: $spacing-xxl 0;
+  }
+  @include xxxl-up {
+    padding: $spacing-xxl 0;
+  }
+  @include full-hd-up {
+    padding: $spacing-xxxl 0;
+  }
+  @include uhd-up {
+    padding: $spacing-xxxxl 0;
+  }
+  @include uhd-4k-up {
+    padding: $spacing-xxxxl 0;
+  }
+
+}
+
+@mixin container-padding {
+  padding: 0 $spacing-md;
   
-  // Flexbox Mixins
-  @mixin flex-center {
+  @include uhd-4k-up {
+    padding: 0 160px; 
+  }
+  @include uhd-up {
+    padding: 0 120px; 
+  }
+  @include full-hd-up {
+    padding: 0 100px;
+  }
+  @include xxxl-up {
+    padding: 0 $spacing-xxl;
+  }
+  @include xxl-up {
+    padding: 0 $spacing-xl;
+  }
+  @include xl-up {
+    padding: 0 $spacing-lg;
+  }
+  @include lg-down { // Применяем сверху вниз
+    padding: 0 $spacing-md;
+  }
+  @include md-down {
+    padding: 0 $spacing-sm;
+  }
+  @include sm-down { // Для экранов меньше SM, но больше XS
+    padding: 0 $spacing-sm;
+  }
+  @include xs-only { // Только для самых маленьких экранов
+    padding: 0 $spacing-xs;
+  }
+}
+
+// Миксины для флексбокса
+@mixin flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  @mixin flex-between {
+}
+
+@mixin flex-between {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  @mixin flex-column {
+}
+
+@mixin flex-column {
     display: flex;
     flex-direction: column;
-  }
-  
-  // Button Mixins
-  @mixin button-base {
+}
+
+// Миксины для кнопок
+@mixin button-base {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: $spacing-sm $spacing-lg;
     border: none;
-    border-radius: $border-radius-lg;
+    // border-radius: $border-radius-xxxxl;
     text-decoration: none;
     cursor: pointer;
     font-family: 'Gilroy', sans-serif;
     font-weight: 600;
-    font-size: 16px;
+    font-size: 14px;
     transition: all $transition-medium;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-medium;
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
-  }
 
-  // White buttin
-  @mixin button-base-2 {
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-medium;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+@mixin button-base-2 {
+    @include button-base;
     background-color: $white;
     color: $black;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: $spacing-sm $spacing-lg;
-    border: none;
-    border-radius: $border-radius-lg;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: 'Gilroy', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    transition: all $transition-medium;
     
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-medium;
-      background-color: color.adjust($white, $lightness: -10%); 
+        background-color: color.adjust($white, $lightness: -10%);
+    }
+}
 
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
-  }
-  // White black
-  @mixin button-base-3 {
+@mixin button-base-3 {
+    @include button-base;
     background-color: $black;
     color: $white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: $spacing-sm $spacing-lg;
-    border: none;
-    border-radius: $border-radius-lg;
-    text-decoration: none;
-    cursor: pointer;
-    font-family: 'Gilroy', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    transition: all $transition-medium;
-    
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-medium;
-      background-color: color.adjust($black, $lightness: -10%); 
+        background-color: color.adjust($black, $lightness: 10%);
+    }
+}
 
-    }
-    
-    &:active {
-      transform: translateY(0);
-    }
-  }
-  
-  @mixin button-primary {
+@mixin button-primary {
     @include button-base;
     background-color: $yellow;
     color: $black;
-  
     &:hover {
-      background-color: color.adjust($yellow, $lightness: -10%); 
+        background-color: color.adjust($yellow, $lightness: -10%);
     }
-  }
-  
-  // Animation Mixins
-  @mixin fade-in-up {
+}
+
+// Миксины для анимаций
+@mixin fade-in-up {
     opacity: 0;
     transform: translateY(30px);
     transition: all 0.8s ease;
-    
+
     &.visible {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
-  
-  @mixin fade-in-left {
+}
+
+@mixin fade-in-left {
     opacity: 0;
     transform: translateX(-30px);
     transition: all 0.8s ease;
-    
+
     &.visible {
-      opacity: 1;
-      transform: translateX(0);
+        opacity: 1;
+        transform: translateX(0);
     }
-  }
-  
-  @mixin fade-in-right {
+}
+
+@mixin fade-in-right {
     opacity: 0;
     transform: translateX(30px);
     transition: all 0.8s ease;
-    
+
     &.visible {
-      opacity: 1;
-      transform: translateX(0);
+        opacity: 1;
+        transform: translateX(0);
     }
-  }
-  
+}
+
 @mixin wave-background($color: $yellow) {
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 150px; // Высота волны (может потребоваться корректировка)
-    background: $color;
-    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 85%); // Твой clip-path для волны снизу
-    z-index: 3; // <-- ИЗМЕНЯЕМ: Делаем волну поверх содержимого Hero-секции
-  }
+    &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 150px;
+        background: $color;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 85%);
+        z-index: 3;
+    }
 }

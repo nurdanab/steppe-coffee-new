@@ -30,6 +30,8 @@ const MapSection = () => {
             <img src="/images/map-decor1.png" alt="Декоративный элемент" className={styles.mapDecor1} />
             <img src="/images/map-decor2.png" alt="Декоративный элемент" className={styles.mapDecor2} />
             <img src="/images/map-decor3.png" alt="Декоративный элемент" className={styles.mapDecor3} />
+            
+            <div className="headerFullWidthContainer"> 
 
             <h2 className={styles.title}>Steppe Coffee на карте</h2>
 
@@ -68,6 +70,7 @@ const MapSection = () => {
                         </Marker>
                     </MapContainer>
                 </div>
+            </div>
             </div>
         </section>
     );

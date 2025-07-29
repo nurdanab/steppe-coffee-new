@@ -3,118 +3,158 @@
 @use '../../styles/typography' as *;
 
 .welcome {
-  min-height: 100vh;
+  @include section-padding;
   background-color: $light-yellow;
   position: relative;
   overflow: hidden;
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
 
-  @include mobile {
+  @include md-down {
     background-attachment: scroll;
-    min-height: 90vh;
     background-size: auto 100%;
     background-position: center;
   }
-
 }
 
 .welcomeContent {
   width: 100%;
-  max-width: 1100px;
-  padding: -40px 40px;
   display: flex;
   flex-direction: column;
-  align-items: flex-end; 
+  justify-content: center;
+  align-items: center;
   gap: 50px;
   z-index: 5;
   position: relative;
-  padding-top: 100px;
-  padding-bottom: 100px;
 
-  @include mobile {
+  @include md-down {
     gap: 40px;
-    padding: 30px 20px;
-    align-items: center; 
+    align-items: center;
   }
 }
 
 .welcomeTitleBox {
-  margin-left: auto;  
-  margin-right: 10px; 
+  margin-left: auto;
   background-color: $white;
-  padding: 30px 40px;
-  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: center;
-  max-width: 750px;
+  text-align: right;
   width: 100%;
-  border: 5px solid $yellow; 
-
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
 
+  @include lg-down {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 5px solid $yellow;
+  }
+  @include lg-up {
+    padding: 30px 40px;
+    border-radius: 10px;
+    border: 5px solid $yellow;
+    }
   &.titleBoxVisible {
     opacity: 1;
     transform: translateY(0);
   }
 
-  // Стили для "хвостика" сообщения (speech bubble tail)
   position: relative;
   &::after {
     content: '';
     position: absolute;
-    bottom: -50px; // Поднять хвостик ближе к блоку
-    left: 50px;
-    transform: translateX(-50%) rotate(0deg); // Убираем rotate, если был, и центрируем по left
     width: 0;
     height: 0;
-    border-left: 0px solid transparent; 
-    border-right: 50px solid transparent;  
-    border-top: 50px solid $white; 
     z-index: 1;
+    @include lg-down {
+      right: 150px;
+      transform: translateX(50%);
+      bottom: -20px;
+      border-left: 0px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid $white;
+    }
+    @include lg-up {
+      left: 50px;
+      transform: translateX(-50%);
+      bottom: -50px;
+      border-left: 0px solid transparent;
+    border-right: 50px solid transparent;
+    border-top: 50px solid $white;
+    }
   }
-  &::before { // Добавляем еще один псевдоэлемент для желтой обводки хвоста
+  &::before {
     content: '';
     position: absolute;
-    bottom: -65px; // Чуть ниже белого хвоста
-    left: 50px;
-    transform: translateX(-50%) rotate(0deg);
     width: 0;
     height: 0;
-    border-left: 0px solid transparent; // Чуть шире, чем белый хвост
-    border-right: 60px solid transparent;
-    border-top: 60px solid $yellow; // Цвет обводки хвоста - желтый
-    z-index: 0; // Должен быть под белым хвостом
-  }
-}
+    border-left: 0px solid transparent;
 
+    z-index: 0;
+    @include lg-down {
+    right: 150px;
+    transform: translateX(50%);
+    bottom: -35px;
+    border-right: 35px solid transparent;
+    border-top: 35px solid $yellow;
+    }
+    @include lg-up {
+    left: 50px;
+    transform: translateX(-50%);
+    bottom: -65px;
+    border-right: 60px solid transparent;
+    border-top: 60px solid $yellow;
+    }
+  }
+  
+  @include lg-up {
+    max-width: 700px;
+  }
+  @include xl-up {
+    max-width: 900px;
+  }
+  @include xxl-up {
+    max-width: 950px;
+  }
+  @include xxxl-up {
+    max-width: 1000px;
+  }
+  @include full-hd-up {
+    max-width: 1200px;
+  }
+  @include uhd-up {
+    max-width: 1500px;
+  }
+  @include uhd-4k-up {
+    max-width: 2500px;
+  }
+
+}
 .welcomeTitle {
   @extend .riffic-32;
   color: $black;
-  margin: 0;
-  line-height: 1.2;
-  text-align: center; 
-
-  @include mobile {
-    font-size: 2rem;
+  text-align: center;
+  opacity: 1;
   }
-}
 
 .welcomeMainInfo {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   width: 100%;
-
-  @include desktop {
-    flex-direction: row;
-    justify-content: flex-start; // Выравниваем персонажа и текст влево
-    align-items: flex-center; // Выравнивание по нижнему краю, чтобы текст и персонаж "сидели" на одной линии
-    gap: 70px;
+  @include lg-down {
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
   }
+  @include lg-up {
+    flex-direction: row;
+    justify-content: flex-start;
+    // align-items: flex-center;
+    gap: 50px;
+
+    }
+  
 }
 
 .characterImage {
@@ -123,7 +163,6 @@
   object-fit: contain;
   display: block;
 
-  // Анимация появления персонажа
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.8s ease-out 0.4s, transform 0.8s ease-out 0.4s;
@@ -133,16 +172,44 @@
     transform: translateY(0);
   }
 
-  @include mobile {
+  @include xs-only { 
+    width: 150px;
+  }
+  @include sm-up {
+    width: 170px;
+  }
+  @include md-up {
     width: 200px;
   }
+  @include lg-up {
+    width: 230px;
+  }
+  @include xl-up {
+    width: 250px;
+  }
+  @include xxl-up {
+    width: 270px;
+  }
+  @include xxxl-up {
+    width: 300px;
+  }
+  @include full-hd-up {
+    width: 400px;
+  }
+  @include uhd-up {
+    width: 600px;
+  }
+  @include uhd-4k-up {
+    width: 900px;
+  }
+
 }
 
 .textContainer {
   flex: 1;
   text-align: left;
   @extend .gilroy-18;
-  max-width: 600px;
+  // max-width: 600px;
 
   p {
     margin-bottom: 1.2em;
@@ -151,7 +218,6 @@
     }
   }
 
-  // Анимация появления текста
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.8s ease-out 0.6s, transform 0.8s ease-out 0.6s;
@@ -159,5 +225,9 @@
   &.textVisible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  @include md-down {
+    text-align: center;
   }
 }

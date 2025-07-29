@@ -10,12 +10,12 @@
   align-items: center; 
   justify-content: flex-start; 
   
-  width: 100; 
+  width: 100%; // ИСПРАВЛЕНО: добавлена единица измерения %
   height: auto;
   pointer-events: none; 
   padding: 5px; 
 
-  @include mobile {
+  @include mobile-only { // ИСПРАВЛЕНО
     padding: 3px;
   }
 }
@@ -26,12 +26,11 @@
   flex-shrink: 0; 
   z-index: 7; // <--- САЙГАК ПОВЕРХ ПРИЩЕПКИ И ТЕКСТОВОГО ФОНА
   pointer-events: none;
-  margin-right: -6px; // Отступ справа от сайгака до текста 
   margin-left: -20px; 
-  margin-right: -10px;
+  margin-right: -10px; // ИСПРАВЛЕНО: Удалено дублирование margin-right
   transform: rotate(-5deg); 
   
-  @include mobile {
+  @include mobile-only { // ИСПРАВЛЕНО
     width: 60px;
     margin-left: -15px;
     margin-right: -5px;
@@ -107,7 +106,7 @@
   border: 1px solid darken($yellow, 10%);
 }
 
-@include mobile {
+@include mobile-only { // ИСПРАВЛЕНО
   .saigakImage {
     width: 60px;
   }

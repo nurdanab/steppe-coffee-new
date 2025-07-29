@@ -4,39 +4,33 @@
 
 .bookCornerSection {
   width: 100%;
-  background-color: $maroon; // Фон всей секции  
+  // background-color: $maroon;
   display: flex;
   flex-direction: column;
-  align-items: center; // Центрирует .bookCornerContent
+  align-items: center;
   overflow: hidden;
   position: relative;
-  min-height: 700px;
+  // min-height: 700px;
   justify-content: center;
-//   right: -20px;
 
-  @include mobile {
-    padding-top: 50px;
-    min-height: auto;
-  }
+  // @include mobile-only {
+  //   padding-top: 50px;
+  //   min-height: auto;
+  // }
 }
 
 .bookCornerContent {
-
   width: 100%;
-   position: relative;
-//   right: -100px;
-
+  position: relative;
   height: auto;
-  background-color: $yellow; // Фон контейнера теперь желтый
-
+  background-color: $yellow;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-areas:
     "yellowContent whiteContent";
-  column-gap: 60px;
-//   align-items: stretch;
+  column-gap: 0px;
 
-  @include mobile {
+  @include mobile-only {
     grid-template-columns: 1fr;
     grid-template-areas:
       "yellowContent"
@@ -45,7 +39,7 @@
     gap: 30px;
     padding: 0 20px;
     margin-bottom: 50px;
-    background-color: $yellow; // Фон на мобильных остается желтым
+    background-color: $yellow;
     border-radius: $border-radius-md;
   }
 }
@@ -60,8 +54,31 @@
   align-items: center;
   overflow: hidden;
   z-index: 2;
+  // padding-bottom: 100px;
 
-  padding-bottom: 100px;
+  @include sm-up {
+    padding: 0 $spacing-xl;
+  }
+
+  @include md-up {
+    padding-left: $spacing-xxl;
+  }
+
+  @include lg-up {
+    padding-left: $spacing-xxxl;
+  }
+  @include xl-up {
+    padding-left: $spacing-xxxl * 1.2;
+  }
+  @include xxl-up {
+    padding-left: $spacing-xxxl * 1.6;
+  }
+  @include xxxl-up {
+    padding-left: $spacing-xxxl * 2.2;
+  }
+  @include full-hd-up {
+    padding-left: $spacing-xxxl * 2.6;
+  }
 
   .yellowPartInner {
     display: flex;
@@ -69,10 +86,8 @@
     align-items: flex-start;
     width: 100%;
     position: relative;
-    // margin-bottom: 170px;
-    // padding: 0 40px;
 
-    @include mobile {
+    @include mobile-only {
       flex-direction: column;
       align-items: center;
       text-align: center;
@@ -81,7 +96,7 @@
     }
   }
 
-  @include mobile {
+  @include mobile-only {
     padding: 40px 0;
     align-items: center;
     text-align: center;
@@ -89,15 +104,18 @@
 }
 
 .yellowPartTextContent {
-  max-width: 500px;
+  // max-width: 500px;
   z-index: 2;
   flex-grow: 1;
   margin-top: 100px;
-  margin-left: 120px;
+  // margin-left: 120px;
   margin-bottom: 170px;
 
-  @include mobile {
+  @include mobile-only {
     max-width: 100%;
+    margin-left: auto;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
 }
 
@@ -105,10 +123,6 @@
   @extend .riffic-medium;
   color: $black;
   margin-bottom: $spacing-md;
-
-  @include mobile {
-    font-size: 36px;
-  }
 }
 
 .yellowPartDescription {
@@ -119,10 +133,89 @@
 
 .yellowPartButton {
   @include button-base-2;
-  min-width: 220px;
+  font-size: 14px;
+  padding: $spacing-sm $spacing-lg;
+  position: relative;
+  overflow: hidden;
+  color: $black;
+  box-shadow: $shadow-medium;
+  z-index: 0;
+  display: inline-flex; 
 
-  @include mobile {
-    min-width: 180px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: $light-yellow; 
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all $transition-slow;
+    z-index: -1;
+  }
+
+  &:hover::before {
+    width: 1000px;
+    height: 1000px;
+  }
+
+  &:active {
+    transform: translateY(-2px) scale(0.98);
+  }
+
+  @include xs-only { 
+    font-size: 10px;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include sm-up {
+    font-size: 14px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include md-up {
+    font-size: 16px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include lg-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xl-up {
+    font-size: 22px;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xxl-up {
+    font-size: 24px;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xxxl-up {
+    font-size: 28px;
+    padding: $spacing-lg $spacing-xxl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include full-hd-up {
+    font-size: 32px;
+    padding: $spacing-lg $spacing-xxl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include uhd-up {
+    font-size: 44px;
+    padding: $spacing-xl $spacing-xxxl;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include uhd-4k-up {
+    font-size: 50px;
+    padding: $spacing-xxl $spacing-xxxxl;
+    border-radius: $border-radius-xxxxl;
+    
   }
 }
 
@@ -134,7 +227,7 @@
   height: auto;
   z-index: 1;
 
-  @include mobile {
+  @include mobile-only {
     position: relative;
     right: auto;
     top: auto;
@@ -143,23 +236,16 @@
   }
 }
 
-/* Главная открытая книга */
 .mainBookContainer {
   position: absolute;
-  left: calc( (100% * (2/3)) + (var(--column-gap, 0px) / 2) - (422px / 2) );
-  top: 30%;
+  left: calc(66.66% + 30px - 250px);
+  top: 50%;
   transform: translateY(-50%);
   width: 500px;
   height: auto;
   z-index: 5;
 
-  @property --column-gap {
-    syntax: '<length>';
-    inherits: false;
-    initial-value: 40px;
-  }
-
-  @include mobile {
+  @include mobile-only {
     position: relative;
     top: auto;
     left: auto;
@@ -183,6 +269,12 @@
   align-items: center;
   text-align: center;
   z-index: 6;
+  
+  @include mobile-only {
+    .bookStampImage {
+      width: 80px;
+    }
+  }
 }
 
 .bookStampImage {
@@ -191,21 +283,18 @@
 }
 
 .whitePart {
-    // right: -100;
   grid-area: whiteContent;
   background-color: $white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
-
-//   align-items: flex-start;
   z-index: 1;
   min-height: 500px;
   padding-right: 120px;
   padding-left: 40px;
 
-  @include mobile {
+  @include mobile-only {
     padding: 30px;
     align-items: center;
     text-align: center;
@@ -218,41 +307,42 @@
   color: $gray-dark;
   text-align: center;
   flex-grow: 1;
-
 }
 
-/* Секция "Полка в Steppe Coffee" (теперь внутри yellowPart) */
 .bookShelfSection {
   width: 100%;
   max-width: 100%;
-//   padding-right: 0px;
   position: relative;
 
-  @include mobile {
+  @include mobile-only {
     padding: 30px 0 0;
   }
 }
 
 .bookShelfSubtitle {
-    padding-left: 120px;
-
+  padding-left: 120px;
   @extend .gilroy-24;
   color: $black;
   margin-bottom: $spacing-md;
   text-align: left;
 
-  @include mobile {
+  @include mobile-only {
     font-size: 24px;
     margin-bottom: $spacing-sm;
+    padding-left: 0;
+    text-align: center;
   }
 }
 
 .bookShelfCarousel {
-    padding-left: 45px;
-
+  padding-left: 45px;
   display: flex;
-  align-items: center; //ggg
+  align-items: center;
   justify-content: center;
+  
+  @include mobile-only {
+    padding-left: 0;
+  }
 }
 
 .booksContainer {
@@ -275,7 +365,7 @@
   text-align: center;
   scroll-snap-align: start;
 
-  @include mobile {
+  @include mobile-only {
     width: 90px;
   }
 }
@@ -288,7 +378,7 @@
   box-shadow: $shadow-light;
   margin-bottom: $spacing-xs;
  
-  @include mobile {
+  @include mobile-only {
     height: 140px;
   }
 }
@@ -306,15 +396,11 @@
 }
 
 .carouselButton {
-//   @include button-base;
-//   background-color: transparent;
   border: none;
-//   padding: 0px;
   margin-bottom: 70px;
   img {
     width: 80px;
     height: auto;
-    // filter: invert(0.2);
   }
 
   &.leftButton {
@@ -325,12 +411,9 @@
   }
 
   &:hover {
-    // background-color: rgba($black, 0.05);
     img {
-        // width: 80px;
-        // height: auto;
-        filter: invert(0.06);
-      }
+      filter: invert(0.06);
+    }
   }
 
   &.disabled {
@@ -338,21 +421,20 @@
     cursor: not-allowed;
   }
 
-  @include mobile {
+  @include mobile-only {
     padding: 5px;
+    margin-bottom: 30px;
     img {
       width: 25px;
     }
   }
 }
 
-/* Блок "Ближайшие события" (внутри whitePart) */
 .eventsBlock {
   width: 100%;
   padding-bottom: 100px;
-    // margin-top: 100px;
-    // margin-bottom: 100px;
-  @include mobile {
+
+  @include mobile-only {
     padding-top: 10px;
   }
 }
@@ -363,7 +445,7 @@
   margin-bottom: $spacing-md;
   text-align: left;
 
-  @include mobile {
+  @include mobile-only {
     font-size: 20px;
     text-align: center;
   }
@@ -431,7 +513,7 @@
   margin-bottom: $spacing-sm;
   text-align: left;
 
-  @include mobile {
+  @include mobile-only {
     text-align: center;
   }
 }
@@ -443,14 +525,17 @@
   padding: $spacing-sm;
   border: 1px dashed $gray-medium;
   border-radius: $border-radius-sm;
-//   margin-bottom: $spacing-lg;
 }
 
 .viewMoreButton {
-//   @include button-primary;
-text-align: right;
-margin-top: $spacing-sm;
-// display: flex;
-//   align-items: flex-end;
+  text-align: right;
+  margin-top: $spacing-sm;
 
+  @include mobile-only {
+    text-align: center;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
 }

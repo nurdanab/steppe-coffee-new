@@ -46,7 +46,7 @@
 
  
 // Медиазапросы для адаптивности стикера
-@include mobile {
+@include mobile-only { // ИСПРАВЛЕНО
   .sticker {
     width: 180px;
     min-height: 100px;

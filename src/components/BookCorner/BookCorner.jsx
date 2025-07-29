@@ -84,6 +84,8 @@ const BookCorner = () => {
 
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
+                  {/* <div className="headerFullWidthContainer">  */}
+
       <div className={styles.bookCornerContent}>
         {/* Желтая часть */}
         <div className={styles.yellowPart}>
@@ -199,6 +201,8 @@ const BookCorner = () => {
           </div>
         </div>
       </div>
+      {/* </div> */}
+
     </section>
   );
 };
