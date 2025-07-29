@@ -10,6 +10,7 @@
       {
         "id": "decoration-food-sticker",  
         "type": "decoration_with_pin", 
+        "text": "м",
         "imageSrc": "/images/desk/detail/еда-стикер.png",  
         "position": { "top": 21, "left": 27, "transform": "rotate(-11deg)", "zIndex": 15 },
         "pinType": "paperClip",  
