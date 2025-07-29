@@ -1,4 +1,5 @@
-[
+{
+  "items": [
     {
         "id": "news-sticker-1",
         "type": "sticker",
@@ -63,3 +64,4 @@
         "pinOffset": { "top": -25, "left": 20, "rotate": "0deg" }
       }
   ]
+}
