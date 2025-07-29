@@ -69,31 +69,31 @@ collections:
                 public_folder: "/images/bookShelf"
 
       - name: "bookShelf"
-            label: "Книжная Полка"
-            widget: "object"
+        label: "Книжная Полка"
+        widget: "object"
+        fields:
+          - name: "books"
+            label: "Книги"
+            widget: "list"
+            allow_add: true
+            allow_delete: true
+            collapsed: true
             fields:
-              - name: "books"
-                label: "Книги"
-                widget: "list"
-                allow_add: true
-                allow_delete: true
-                collapsed: true
-                fields:
-                  - label: "ID Книги"
-                  name: "id"
-                    widget: "string"
-                    required: true
-                    hint: "Используется для внутренней идентификации книги. Не меняйте, если не уверены."
-                  - label: "Название Книги"
-                    name: "title"
-                    widget: "string"
-                    required: true
-                  - label: "Автор"
-                    name: "author"
-                    widget: "string"
-                  - label: "Обложка Книги"
-                    name: "coverImage"
-                    widget: "image"
-                    allow_multiple: false
-                    media_folder: "public/images/bookShelf"
-                    public_folder: "/images/bookShelf"
+              - label: "ID Книги"
+                name: "id"
+                widget: "string"
+                required: true
+                hint: "Используется для внутренней идентификации книги. Не меняйте, если не уверены."
+              - label: "Название Книги"
+                name: "title"
+                widget: "string"
+                required: true
+              - label: "Автор"
+                name: "author"
+                widget: "string"
+              - label: "Обложка Книги"
+                name: "coverImage"
+                widget: "image"
+                allow_multiple: false
+                media_folder: "public/images/bookShelf"
+                public_folder: "/images/bookShelf"
