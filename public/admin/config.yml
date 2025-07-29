@@ -99,44 +99,44 @@ collections:
                     public_folder: "/images/bookShelf"
 
   - name: "deskItems"
-      label: "Элементы на доске"
-      files:
-        - name: "deskData"
-          label: "Данные Элементов на доске"
-          file: "src/data/deskData.json"
-          format: "json"
-          editor: {}
-          preview: false
-          fields:
-            - name: "items"
-              label: "Список Элементов"
-              widget: "list"
-              allow_add: true
-              allow_delete: true
-              collapsed: true
-              fields:
-                - name: "id"
-                  label: "ID"
-                  widget: "uuid"
-                - name: "type"
-                  label: "Тип Элемента"
-                  widget: "select"
-                  options:
-                    - { label: "Текстовый Стикер", value: "sticker" }
-                    - { label: "Декорация с Булавкой", value: "decoration_with_pin" }
-                    - { label: "Стикер Сайгак", value: "saigak_sticker" }
-                  required: true
-              types:
-                - name: "sticker"
-                  label: "Текстовый Стикер"
-                  widget: "object"
-                  fields:
-                    - { name: "text", label: "Текст Стикера", widget: "string", required: true }
-                - name: "decoration_with_pin"
-                  label: "Декорация с Булавкой"
-                  widget: "object"
-                - name: "saigak_sticker"
-                  label: "Стикер Сайгак"
-                  widget: "object"
-                  fields:
-                    - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
+    label: "Элементы на доске"
+    files:
+      - name: "deskData"
+        label: "Данные Элементов на доске"
+        file: "src/data/deskData.json"
+        format: "json"
+        editor: {}
+        preview: false
+        fields:
+          - name: "items"
+            label: "Список Элементов"
+            widget: "list"
+            allow_add: true
+            allow_delete: true
+            collapsed: true
+            fields:
+              - name: "id"
+                label: "ID"
+                widget: "uuid"
+              - name: "type"
+                label: "Тип Элемента"
+                widget: "select"
+                options:
+                  - { label: "Текстовый Стикер", value: "sticker" }
+                  - { label: "Декорация с Булавкой", value: "decoration_with_pin" }
+                  - { label: "Стикер Сайгак", value: "saigak_sticker" }
+                required: true
+            types:
+              - name: "sticker"
+                label: "Текстовый Стикер"
+                widget: "object"
+                fields:
+                  - { name: "text", label: "Текст Стикера", widget: "string", required: true }
+              - name: "decoration_with_pin"
+                label: "Декорация с Булавкой"
+                widget: "object"
+              - name: "saigak_sticker"
+                label: "Стикер Сайгак"
+                widget: "object"
+                fields:
+                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
