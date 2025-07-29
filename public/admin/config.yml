@@ -135,8 +135,9 @@ collections:
               - name: "decoration_with_pin"
                 label: "Декорация с Булавкой"
                 widget: "object"
+                fields:
               - name: "saigak_sticker"
                 label: "Стикер Сайгак"
                 widget: "object"
                 fields:
-                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
+                  - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }                  
