@@ -98,7 +98,7 @@ collections:
                     media_folder: "public/images/bookShelf"
                     public_folder: "/images/bookShelf"
 
-  - name: "deskItems"
+  - name: "deskItem"
     label: "Элементы на доске"
     files:
       - name: "deskData"
@@ -190,4 +190,4 @@ collections:
                       - { name: "top", label: "Top (px)", widget: "number", value_type: "int" }
                       - { name: "left", label: "Left (px)", widget: "number", value_type: "int" }
                       - { name: "rotate", label: "Поворот (deg)", widget: "string", required: false }
-                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }          
+                      - { name: "zIndex", label: "Z-Index", widget: "number", value_type: "int" }      
