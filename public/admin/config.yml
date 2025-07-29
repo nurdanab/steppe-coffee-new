@@ -119,7 +119,7 @@ collections:
                 label: "Текстовый Стикер"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
+                  - { name: "id", label: "ID", widget: "uuid" }
                   - { name: "type", label: "Тип", widget: "hidden", default: "sticker" }
                   - { name: "text", label: "Текст Стикера", widget: "string", required: true }
 
@@ -127,13 +127,13 @@ collections:
                 label: "Декорация с Булавкой"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
+                  - { name: "id", label: "ID", widget: "uuid" }
                   - { name: "type", label: "Тип", widget: "hidden", default: "decoration_with_pin" }
 
               - name: "saigak_sticker"
                 label: "Стикер Сайгак"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
+                  - { name: "id", label: "ID", widget: "uuid" }
                   - { name: "type", label: "Тип", widget: "hidden", default: "saigak_sticker" }
                   - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
