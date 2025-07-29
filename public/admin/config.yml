@@ -119,21 +119,21 @@ collections:
                 label: "Текстовый Стикер"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
-                  - { name: "type", label: "Тип", widget: "hidden", default: "sticker" }
+                  - { name: "id", label: "ID", widget: "string", required: true }
+                  - { name: "type", label: "Тип", widget: "select", options: ["sticker"], default: "sticker" }
                   - { name: "text", label: "Текст Стикера", widget: "string", required: true }
 
               - name: "decoration_with_pin"
                 label: "Декорация с Булавкой"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
-                  - { name: "type", label: "Тип", widget: "hidden", default: "decoration_with_pin" }
+                  - { name: "id", label: "ID", widget: "string", required: true }
+                  - { name: "type", label: "Тип", widget: "select", options: ["decoration_with_pin"], default: "decoration_with_pin" }
 
               - name: "saigak_sticker"
                 label: "Стикер Сайгак"
                 widget: "object"
                 fields:
-                  - { name: "id", label: "ID", widget: "string", required: true, hint: "Уникальный идентификатор." }
-                  - { name: "type", label: "Тип", widget: "hidden", default: "saigak_sticker" }
+                  - { name: "id", label: "ID", widget: "string", required: true }
+                  - { name: "type", label: "Тип", widget: "select", options: ["saigak_sticker"], default: "saigak_sticker" }
                   - { name: "text", label: "Текст Сайгак Стикера", widget: "string", required: true }
