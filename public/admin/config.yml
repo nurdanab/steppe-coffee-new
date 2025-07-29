@@ -3,8 +3,8 @@ backend:
   repo: nurdanab/steppe-coffee-new
   branch: main
 
-media_folder: "public/images/promos"
-public_folder: "/images/promos"
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
 
 collections:
   - name: "promotions"
@@ -29,6 +29,8 @@ collections:
                 name: "imageUrl"
                 widget: "image"
                 allow_multiple: false
+                media_folder: "public/images/promos"
+                public_folder: "/images/promos"
 
           - name: "promoSlot2"
             label: "Промо Слот 2"
@@ -42,3 +44,56 @@ collections:
                 name: "imageUrl"
                 widget: "image"
                 allow_multiple: false
+                media_folder: "public/images/promos"
+                public_folder: "/images/promos"
+
+  - name: "bookCorner"
+    label: "Книжный Уголок"
+    files:
+      - name: "bookCornerData"
+        label: "Данные Книжного Уголка"
+        file: "src/data/bookCornerData.json"
+        format: "json"
+        editor: {}
+        preview: false
+        fields:
+          - name: "mainBook"
+            label: "Основная Книга"
+            widget: "object"
+            fields:
+              - label: "Изображение Основной Книги"
+                name: "imageSrc"
+                widget: "image"
+                allow_multiple: false
+                media_folder: "public/images/bookShelf"
+                public_folder: "/images/bookShelf"
+
+      - name: "bookShelf"
+            label: "Книжная Полка"
+            widget: "object"
+            fields:
+              - name: "books"
+                label: "Книги"
+                widget: "list"
+                allow_add: true
+                allow_delete: true
+                collapsed: true
+                fields:
+                  - label: "ID Книги"
+                  name: "id"
+                    widget: "string"
+                    required: true
+                    hint: "Используется для внутренней идентификации книги. Не меняйте, если не уверены."
+                  - label: "Название Книги"
+                    name: "title"
+                    widget: "string"
+                    required: true
+                  - label: "Автор"
+                    name: "author"
+                    widget: "string"
+                  - label: "Обложка Книги"
+                    name: "coverImage"
+                    widget: "image"
+                    allow_multiple: false
+                    media_folder: "public/images/bookShelf"
+                    public_folder: "/images/bookShelf"
