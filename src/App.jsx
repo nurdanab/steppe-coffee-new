@@ -15,14 +15,15 @@ import PublicCalendar from './components/PublicCalendar.jsx';
 import BookingModal from './components/BookingModal/BookingModal.jsx';
 import Auth from './components/Auth/Auth.jsx';
 import ProfilePage from './components/ProfilePage/ProfilePage.jsx';
-import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx'; 
+import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx';
 
 
 import { supabase } from './supabaseClient';
 
-const EventsPageContent = ({ handleOpenBookingModal }) => (
+// Изменено: handleOpenBookingModal больше не передается
+const EventsPageContent = () => ( // <-- ИЗМЕНЕНО ЗДЕСЬ
   <main>
-    <PublicCalendar handleOpenBookingModal={handleOpenBookingModal} />
+    <PublicCalendar /> {/* <-- handleOpenBookingModal УДАЛЕНО ЗДЕСЬ */}
   </main>
 );
 
@@ -114,9 +115,8 @@ function App() {
         } />
 
         <Route path="/events" element={
-          <EventsPageContent
-            handleOpenBookingModal={handleOpenBookingModal}
-          />
+          // Изменено: handleOpenBookingModal больше не передается в EventsPageContent
+          <EventsPageContent />
         } />
 
         <Route path="/profile" element={
