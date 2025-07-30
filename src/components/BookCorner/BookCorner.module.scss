@@ -539,3 +539,50 @@
     display: block;
   }
 }
+.todayEventItem {
+  background-color: gray; 
+  padding: 10px;
+  border-radius: $border-radius-sm;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  border-left: 3px solid $yellow;  
+
+  @include mobile-only {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.todayEventTime {
+  @extend .gilroy-16;
+  font-weight: 600;
+  color: $black;
+  margin-bottom: 5px;
+}
+
+.todayEventTitle {
+  @extend .gilroy-14;
+  color: $gray-dark;
+}
+
+.viewMoreLink {
+  @extend .gilroy-14; 
+  color: $light-yellow;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: darken($yellow, 10%);
+    text-decoration: underline;
+  }
+
+  @include mobile-only {
+    display: block;
+    width: fit-content; // Или 100%
+    margin: 0 auto; // Центрирование
+  }
+}

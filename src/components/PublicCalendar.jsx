@@ -6,7 +6,13 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
-import { fetchAllBookings } from '../supabaseClient'; 
+import { supabase } from '../supabaseClient'; // Импортируем supabase клиент
+
+// Функция fetchAllBookings теперь будет встроена или изменена
+// в зависимости от того, как ты ее используешь.
+// Я предполагаю, что она вызывается напрямую в PublicCalendar.
+// Если fetchAllBookings экспортируется из supabaseClient.js и используется там,
+// то тебе нужно будет изменить ее там.
 
 function PublicCalendar() {
   const [events, setEvents] = useState([]);
@@ -15,17 +21,28 @@ function PublicCalendar() {
 
   useEffect(() => {
     const loadEvents = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        setLoading(true);
-        const bookings = await fetchAllBookings();
+        // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Добавляем фильтр по статусу 'confirmed' ---
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('id, booking_date, start_time, end_time, status, organizer_name, comments')
+          .eq('status', 'confirmed') // <-- Добавляем этот фильтр
+          .order('booking_date', { ascending: true }) // Сортируем по дате
+          .order('start_time', { ascending: true }); // Затем по времени
 
-        const calendarEvents = bookings.map(booking => ({
+        if (error) {
+          throw error;
+        }
+
+        const calendarEvents = data.map(booking => ({
           id: booking.id,
           title: `Занято: ${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`,
           start: `${booking.booking_date}T${booking.start_time}`,
           end: `${booking.booking_date}T${booking.end_time}`,
-          backgroundColor: booking.status === 'confirmed' ? '#28a745' : '#ffc107',
-          borderColor: booking.status === 'confirmed' ? '#28a745' : '#ffc107',
+          backgroundColor: '#28a745', // Всегда зеленый, так как все подтверждены
+          borderColor: '#28a745',
           extendedProps: {
             numPeople: booking.num_people,
             organizerName: booking.organizer_name,
@@ -35,14 +52,14 @@ function PublicCalendar() {
         }));
         setEvents(calendarEvents);
       } catch (err) {
-        console.error("Не удалось загрузить бронирования для календаря:", err);
+        console.error("Не удалось загрузить события для календаря:", err);
         setError("Не удалось загрузить расписание. Попробуйте позже.");
       } finally {
         setLoading(false);
       }
     };
     loadEvents();
-  }, []);
+  }, []); // Пустой массив зависимостей означает, что эффект запустится один раз после первого рендера
 
   if (loading) {
     return <p>Загрузка расписания...</p>;
@@ -70,7 +87,8 @@ function PublicCalendar() {
         height="auto"
         eventClick={(info) => {
           alert(`Бронирование: ${info.event.title}\n` +
-                `С ${info.event.startStr.substring(11, 16)} по ${info.event.endStr.substring(11, 16)}\n` +
+                `Дата: ${info.event.startStr.substring(0, 10)}\n` +
+                `Время: ${info.event.startStr.substring(11, 16)} - ${info.event.endStr.substring(11, 16)}\n` +
                 `Статус: ${info.event.extendedProps.status}`);
         }}
       />

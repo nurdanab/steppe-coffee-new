@@ -1,6 +1,8 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
-import PublicCalendar from './components/PublicCalendar.jsx';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+
 import Header from './components/Header/Header';
 import HeroSection from './components/Hero/HeroSection';
 import Promo from './components/Promo/Promo';
@@ -9,14 +11,27 @@ import WelcomeDesk from './components/WelcomeDesk/WelcomeDesk';
 import BookCorner from './components/BookCorner/BookCorner';
 import MapSection from './components/MapSection/MapSection';
 import FooterSection from './components/FooterSection/FooterSection';
+import PublicCalendar from './components/PublicCalendar.jsx';
 import BookingModal from './components/BookingModal/BookingModal.jsx';
 import Auth from './components/Auth/Auth.jsx';
+import ProfilePage from './components/ProfilePage/ProfilePage.jsx';
+import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx'; 
+
+
 import { supabase } from './supabaseClient';
+
+const EventsPageContent = ({ handleOpenBookingModal }) => (
+  <main>
+    <PublicCalendar handleOpenBookingModal={handleOpenBookingModal} />
+  </main>
+);
 
 function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [session, setSession] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -55,12 +70,16 @@ function App() {
 
   const handleAuthSuccess = (user) => {
     console.log('Пользователь успешно авторизован:', user);
+    setIsAuthModalOpen(false);
   };
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.error('Ошибка выхода:', error.message);
-    else alert('Вы вышли из системы.');
+    else {
+      alert('Вы вышли из системы.');
+      navigate('/');
+    }
   };
 
   return (
@@ -70,26 +89,49 @@ function App() {
         <meta name="description" content="Пространство для общения, вдохновения и новых впечатлений." />
         <meta property="og:title" content="Steppe Coffee - Кофейня которую вы запомните" />
         <meta property="og:description" content="Посетите Steppe Coffee в Алматы с кофейной подпиской." />
-        <meta property="og:image" content="https://steppecoffee.netlify.app/images/og/og-image.webp" /> 
+        <meta property="og:image" content="https://steppecoffee.netlify.app/images/og/og-image.webp" />
         <meta property="og:url" content="https://steppecoffee.netlify.app/" />
         <meta property="og:type" content="website" />
       </Helmet>
+
       <Header
         session={session}
         onOpenAuthModal={handleOpenAuthModal}
         onLogout={handleLogout}
       />
-      <main>
-        <HeroSection onOpenBookingModal={handleOpenBookingModal} />
-        <Promo />
-        <PublicCalendar />
-        <Welcome />
-        <WelcomeDesk /> 
-        <BookCorner />
-        <MapSection />
-        <FooterSection />
 
-      </main>
+      <Routes>
+        <Route path="/" element={
+          <main>
+            <HeroSection onOpenBookingModal={handleOpenBookingModal} />
+            <Promo />
+            <Welcome />
+            <WelcomeDesk />
+            <BookCorner />
+            <MapSection />
+            <FooterSection />
+          </main>
+        } />
+
+        <Route path="/events" element={
+          <EventsPageContent
+            handleOpenBookingModal={handleOpenBookingModal}
+          />
+        } />
+
+        <Route path="/profile" element={
+          <ProfilePage
+            session={session}
+            isAuthModalOpen={isAuthModalOpen}
+            onOpenAuthModal={handleOpenAuthModal}
+            onCloseAuthModal={handleCloseAuthModal}
+            onAuthSuccess={handleAuthSuccess}
+            onLogout={handleLogout}
+          />
+        } />
+          <Route path="/update-password" element={<UpdatePassword />} />
+      </Routes>
+
       <BookingModal
         isOpen={isBookingModalOpen}
         onClose={handleCloseBookingModal}
@@ -102,7 +144,7 @@ function App() {
         onClose={handleCloseAuthModal}
         onAuthSuccess={handleAuthSuccess}
       />
-  </div>
+    </div>
   );
 }
 

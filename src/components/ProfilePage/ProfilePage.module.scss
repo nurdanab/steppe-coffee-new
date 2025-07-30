@@ -1,0 +1,156 @@
+// /* src/components/ProfilePage/ProfilePage.module.scss */
+
+// @import '../../styles/variables'; // Убедись, что путь к variables.scss правильный
+// @import '../../styles/mixins'; // Убедись, что путь к mixins.scss правильный
+
+.profilePage {
+  padding: 80px 20px; // Отступы сверху, чтобы не перекрывалось хедером
+  max-width: 960px;
+  margin: 0 auto;
+  min-height: calc(100vh - 150px); // Чтобы страница не была слишком короткой
+
+}
+
+// .profileHeader {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   margin-bottom: 40px;
+//   border-bottom: 1px solid $gray-light;
+//   padding-bottom: 20px;
+
+//   h1 {
+//     @extend .gilroy-28; // Используй свой стиль для заголовка
+//     color: $primary-color;
+//     margin: 0;
+//   }
+// }
+
+// .logoutButton {
+//   @extend .gilroy-16; // Используй свой стиль для кнопки
+//   background-color: $red; // Красный цвет для кнопки выхода
+//   color: white;
+//   padding: 10px 20px;
+//   border: none;
+//   border-radius: $border-radius-sm;
+//   cursor: pointer;
+//   transition: background-color 0.3s ease;
+
+//   &:hover {
+//     background-color: darken($red, 10%);
+//   }
+// }
+
+// .notLoggedInMessage {
+//   text-align: center;
+//   padding: 50px 20px;
+//   background-color: $white;
+//   border-radius: $border-radius-md;
+//   box-shadow: $shadow-light;
+
+//   h2 {
+//     @extend .gilroy-24;
+//     color: $text-color-dark;
+//     margin-bottom: 20px;
+//   }
+
+//   p {
+//     @extend .gilroy-16;
+//     color: $text-color-light;
+//     margin-bottom: 30px;
+//   }
+// }
+
+// .loginButton {
+//   @extend .gilroy-16;
+//   background-color: $primary-color;
+//   color: white;
+//   padding: 12px 25px;
+//   border: none;
+//   border-radius: $border-radius-sm;
+//   cursor: pointer;
+//   transition: background-color 0.3s ease;
+
+//   &:hover {
+//     background-color: darken($primary-color, 10%);
+//   }
+// }
+
+// .bookingHistory {
+//   margin-top: 40px;
+
+//   h2 {
+//     @extend .gilroy-24;
+//     color: $text-color-dark;
+//     margin-bottom: 30px;
+//     text-align: center;
+//   }
+// }
+
+// .bookingsList {
+//   display: grid;
+//   gap: 20px;
+//   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // Адаптивная сетка
+
+//   @include mobile-only {
+//     grid-template-columns: 1fr;
+//   }
+// }
+
+// .bookingItem {
+//   background-color: $white;
+//   padding: 20px;
+//   border-radius: $border-radius-md;
+//   box-shadow: $shadow-light;
+//   border-left: 5px solid $primary-color; // Акцентный цвет
+
+//   p {
+//     @extend .gilroy-16;
+//     color: $text-color-dark;
+//     margin-bottom: 8px;
+
+//     &:last-child {
+//       margin-bottom: 0;
+//     }
+//   }
+
+//   .bookingDate, .bookingTime {
+//     font-weight: 600;
+//   }
+
+//   .bookingStatus {
+//     font-weight: 600;
+//     span {
+//       padding: 3px 8px;
+//       border-radius: $border-radius-sm;
+//       font-size: 0.9em;
+//       font-weight: 700;
+//     }
+//     .confirmed {
+//       background-color: $green-light;
+//       color: $green-dark;
+//     }
+//     .pending {
+//       background-color: $yellow-light;
+//       color: $yellow-dark;
+//     }
+//     .cancelled {
+//       background-color: $red-light;
+//       color: $red-dark;
+//     }
+//   }
+
+//   .bookingComments {
+//     font-style: italic;
+//     color: $text-color-light;
+//     margin-top: 10px;
+//     border-top: 1px dashed $gray-light;
+//     padding-top: 10px;
+//   }
+// }
+
+// .errorMessage {
+//   color: $red;
+//   text-align: center;
+//   font-weight: 600;
+// }

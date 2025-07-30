@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
 
-// Добавляем пропсы session, onOpenAuthModal, onLogout
 const Header = ({ session, onOpenAuthModal, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,13 +18,13 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // document.body.style.overflow = isMobileMenuOpen ? 'auto' : 'hidden'; // Эта строка может конфликтовать со стилями модальных окон
+    // document.body.style.overflow = isMobileMenuOpen ? 'auto' : 'hidden'; // Закомментировано из-за конфликтов с модальными окнами
   };
 
   const navigationItems = [
     { name: 'Главная', href: '/' },
-    { name: 'Меню', href: '#' },
-    { name: 'События', href: '#' },
+    { name: 'Меню', href: '#' }, // Если меню - это секция на главной, а не отдельная страница
+    { name: 'События', href: '/events' },
   ];
 
   return (
@@ -33,13 +33,13 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
         <div className={styles.headerFullWidthContainer}>
           <div className={styles.headerContent}>
             <div className={styles.logo}>
-              <a href="/" className={styles.logoLink}>
+              <Link to="/" className={styles.logoLink}>
                 <img
                   src="/images/logo-header.webp"
                   alt="Steppe Coffee Logo"
                   className={styles.logoImage}
                 />
-              </a>
+              </Link>
             </div>
 
             <div className={styles.headerRightContent}>
@@ -47,28 +47,21 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                 <ul className={styles.navigationList}>
                   {navigationItems.map((item, index) => (
                     <li key={index} className={styles.navigationItem}>
-                      <a
-                        href={item.href}
-                        className={styles.navigationLink}
-                      >
+                      <Link to={item.href} className={styles.navigationLink}>
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
-                  {/* Добавляем элемент списка для кнопки входа/выхода для десктопа */}
+                  {/* Иконка профиля/кнопка Входа/Выхода для десктопа - теперь отдельный пункт */}
                   <li className={styles.navigationItem}>
                     {session ? (
-                      // Если пользователь авторизован, показываем его email и кнопку "Выйти"
-                      <div className={styles.profileStatus}>
-                        <span className={styles.loggedInUser}>
-                          Привет, {session.user.email}!
-                        </span>
-                        <button onClick={onLogout} className={styles.logoutButton}>
-                          Выйти
-                        </button>
-                      </div>
+                      // Если пользователь авторизован, ссылка на профиль и email
+                      <Link to="/profile" className={styles.profileLink}>
+                        <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                        <span className={styles.userEmail}>Привет, {session.user.email}!</span>
+                      </Link>
                     ) : (
-                      // Если пользователь не авторизован, показываем кнопку "Войти"
+                      // Если не авторизован, кнопка "Войти"
                       <button onClick={onOpenAuthModal} className={styles.loginButton}>
                         Войти
                       </button>
@@ -78,24 +71,16 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
               </nav>
 
               <div className={styles.headerActions}>
-                {/* Иконка профиля, которая теперь будет частью логики входа/выхода */}
+                {/* Отдельная кнопка иконки профиля для мобильных (или просто как иконка) */}
                 {session ? (
-                  <button onClick={onLogout} className={styles.profileButton}> {/* Кнопка для выхода */}
-                    <img
-                      src="/images/profile-icon.png"
-                      alt="Profile"
-                      className={styles.profileIcon}
-                    />
-                  </button>
-                ) : (
-                  <button onClick={onOpenAuthModal} className={styles.profileButton}> {/* Кнопка для входа */}
-                    <img
-                      src="/images/profile-icon.png"
-                      alt="Profile"
-                      className={styles.profileIcon}
-                    />
-                  </button>
-                )}
+                   <Link to="/profile" className={styles.profileButton}> {/* Ссылка на профиль */}
+                     <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                   </Link>
+                 ) : (
+                   <button onClick={onOpenAuthModal} className={styles.profileButton}> {/* Кнопка для входа */}
+                     <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                   </button>
+                 )}
 
                 <button
                   className={`${styles.mobileMenuButton} ${isMobileMenuOpen ? styles.open : ''}`}
@@ -118,22 +103,22 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
             <ul className={styles.mobileNavigationList}>
               {navigationItems.map((item, index) => (
                 <li key={index} className={styles.mobileNavigationItem}>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className={styles.mobileNavigationLink}
                     onClick={toggleMobileMenu} // Закрываем меню при клике на ссылку
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
-              {/* Добавляем кнопку входа/выхода в мобильное меню */}
+              {/* Элементы для мобильного меню (Вход/Выход/Профиль) */}
               <li className={styles.mobileNavigationItem}>
                 {session ? (
                   <div className={styles.mobileProfileStatus}>
-                    <span className={styles.mobileLoggedInUser}>
-                      Привет, {session.user.email}!
-                    </span>
+                    <Link to="/profile" className={styles.mobileLoggedInUserLink} onClick={toggleMobileMenu}>
+                       Привет, {session.user.email}!
+                    </Link>
                     <button onClick={() => { onLogout(); toggleMobileMenu(); }} className={styles.mobileLogoutButton}>
                       Выйти
                     </button>

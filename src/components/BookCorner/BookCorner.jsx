@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { Link } from 'react-router-dom'; // <-- Добавляем Link для кнопки "Увидеть больше"
 import styles from './BookCorner.module.scss';
 import bookCornerData from '../../data/bookCornerData.json';
+import { supabase } from '../../supabaseClient'; // <-- Импортируем supabase клиент
 
 const BookCorner = () => {
   const { ref, inView } = useInView({
@@ -45,13 +47,15 @@ const BookCorner = () => {
   }, [currentBookIndex]);
 
 
-  const [currentCalendarDate] = useState(new Date());
+  const [currentCalendarDate] = useState(new Date()); // Это для недельного календаря, который у тебя уже есть
+  const todayDate = new Date(); // Сегодняшняя дата
 
   const getWeekDates = (date) => {
     const today = new Date(date);
     const dayOfWeek = today.getDay();
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)); 
+    // Для Monday-first week: 0 (Вс) -> 6, 1 (Пн) -> 0, ..., 6 (Сб) -> 5
+    startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
     const weekDates = [];
     for (let i = 0; i < 7; i++) {
@@ -63,85 +67,118 @@ const BookCorner = () => {
   };
 
   const weekDates = getWeekDates(currentCalendarDate);
-  
-  const todayDate = new Date();
-  const isSameDay = (d1, d2) => 
+
+  const isSameDay = (d1, d2) =>
     d1.getDate() === d2.getDate() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getFullYear() === d2.getFullYear();
 
-  const dayNamesShort = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']; 
+  const dayNamesShort = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
   const getFormattedCurrentDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const month = String(today.getMonth() + 1).padStart(2, '0');
     const year = today.getFullYear();
     return `${day}.${month}.${year}`;
   };
 
-  const formattedEventDate = getFormattedCurrentDate(); 
+  const formattedEventDate = getFormattedCurrentDate();
+
+  // --- НОВОЕ: Состояние для событий за сегодня ---
+  const [todayEvents, setTodayEvents] = useState([]);
+  const [todayEventsLoading, setTodayEventsLoading] = useState(true);
+  const [todayEventsError, setTodayEventsError] = useState(null);
+
+  // --- НОВОЕ: Функция для получения событий за сегодня ---
+  useEffect(() => {
+    const fetchTodayEvents = async () => {
+      setTodayEventsLoading(true);
+      setTodayEventsError(null);
+      try {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const todayFormatted = `${year}-${month}-${day}`; // Формат YYYY-MM-DD для запроса
+
+        const { data, error } = await supabase
+          .from('bookings')
+          .select('id, booking_date, start_time, end_time, status, organizer_name') // Выбираем нужные поля
+          .eq('booking_date', todayFormatted) // Фильтруем по сегодняшней дате
+          .eq('status', 'confirmed') // Только подтвержденные события (можно изменить)
+          .order('start_time', { ascending: true }); // Сортируем по времени начала
+
+        if (error) {
+          throw error;
+        }
+        setTodayEvents(data);
+      } catch (err) {
+        console.error('Ошибка при получении сегодняшних событий:', err.message);
+        setTodayEventsError('Не удалось загрузить события за сегодня.');
+      } finally {
+        setTodayEventsLoading(false);
+      }
+    };
+
+    fetchTodayEvents();
+  }, []); // Запускаем один раз при монтировании
 
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
-                  {/* <div className="headerFullWidthContainer">  */}
-
       <div className={styles.bookCornerContent}>
         {/* Желтая часть */}
         <div className={styles.yellowPart}>
-          <div className={styles.yellowPartInner}>  
+          <div className={styles.yellowPartInner}>
             <div className={styles.yellowPartTextContent}>
               <h2 className={styles.yellowPartTitle}>{bookCornerData.yellowPart.title}</h2>
               <p className={styles.yellowPartDescription}>{bookCornerData.yellowPart.description}</p>
               <button className={styles.yellowPartButton}>{bookCornerData.yellowPart.buttonText}</button>
             </div>
-            {/* Декоративный элемент - теперь внутри yellowPartInner */}
-            <img 
-              src={bookCornerData.yellowPart.decorImage} 
+            <img
+              src={bookCornerData.yellowPart.decorImage}
               alt="Декоративный элемент книжного уголка"
               className={styles.yellowPartDecor}
             />
           </div>
 
-          {/* Полка с книгами, теперь она внутри yellowPart, но отдельным блоком */}
-          <div className={styles.bookShelfSection}> 
-              <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>
-              <div className={styles.bookShelfCarousel}>
-                <button
-                  className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
-                  onClick={() => scrollShelf(-booksToScroll)}
-                  disabled={!canScrollLeft}
-                >
-                  <img src="/images/left-vis.png" alt="Прокрутить влево" />
-                </button>
-                <div className={styles.booksContainer} ref={shelfRef}>
-                  {bookCornerData.bookShelf.books.map(book => (
-                    <div key={book.id} className={styles.bookCard}>
-                      <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
-                      <p className={styles.bookTitle}>{book.title}</p>
-                      <p className={styles.bookAuthor}>{book.author}</p>
-                    </div>
-                  ))}
-                </div>
-                <button
-                  className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
-                  onClick={() => scrollShelf(booksToScroll)}
-                  disabled={!canScrollRight}
-                >
-                  <img src="/images/right-vis.png" alt="Прокрутить вправо" />
-                </button>
+          <div className={styles.bookShelfSection}>
+            <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>
+            <div className={styles.bookShelfCarousel}>
+              <button
+                className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
+                onClick={() => scrollShelf(-booksToScroll)}
+                disabled={!canScrollLeft}
+              >
+                <img src="/images/left-vis.png" alt="Прокрутить влево" />
+              </button>
+              <div className={styles.booksContainer} ref={shelfRef}>
+                {bookCornerData.bookShelf.books.map(book => (
+                  <div key={book.id} className={styles.bookCard}>
+                    <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                    <p className={styles.bookTitle}>{book.title}</p>
+                    <p className={styles.bookAuthor}>{book.author}</p>
+                  </div>
+                ))}
               </div>
+              <button
+                className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
+                onClick={() => scrollShelf(booksToScroll)}
+                disabled={!canScrollRight}
+              >
+                <img src="/images/right-vis.png" alt="Прокрутить вправо" />
+              </button>
             </div>
+          </div>
         </div>
 
-        {/* Главная открытая книга (расположена между желтой и белой частями) */}
+        {/* Главная открытая книга */}
         <div className={styles.mainBookContainer}>
           <img
             src={bookCornerData.mainBook.imageSrc}
             alt="Открытая книга"
             className={styles.mainBookImage}
           />
-          {/* Печать на книге */}
           <div className={styles.bookStampContainer} style={{
             top: `${bookCornerData.mainBook.stampOffset.top}%`,
             right: `${bookCornerData.mainBook.stampOffset.right}%`,
@@ -158,8 +195,7 @@ const BookCorner = () => {
 
         {/* Белая часть */}
         <div className={styles.whitePart}>
-          {/* Пустой заголовок, если нужен отступ или если здесь будет другой контент */}
-          <h3 className={styles.whitePartPlaceholder}></h3> 
+          <h3 className={styles.whitePartPlaceholder}></h3>
 
           {/* Блок "Ближайшие события" */}
           <div className={styles.eventsBlock}>
@@ -175,11 +211,9 @@ const BookCorner = () => {
               <div className={styles.calendarDates}>
                 {weekDates.map((dateObj, index) => {
                   const isToday = isSameDay(dateObj, todayDate);
-                  // 0 - Вс, 6 - Сб. Для Пн-Вс: Вс - это 6, Сб - это 5.
-                  const currentDay = dateObj.getDay(); // 0 (Вс) - 6 (Сб)
-                  // Если Пн (1) по Пт (5) это рабочие, а Вс (0) и Сб (6) - выходные
-                  const isWeekend = currentDay === 0 || currentDay === 6; 
-                  
+                  const currentDay = dateObj.getDay();
+                  const isWeekend = currentDay === 0 || currentDay === 6;
+
                   return (
                     <span
                       key={index}
@@ -191,18 +225,38 @@ const BookCorner = () => {
                 })}
               </div>
             </div>
-            {/* Дата события (теперь динамическая) */}
             <p className={styles.eventDate}>{formattedEventDate}</p>
-            {/* Сообщения о событиях */}
-            <div className={styles.eventList}>
-              <p className={styles.emptyEventsMessage}>{bookCornerData.eventsSection.emptyMessage}</p>
+
+             <div className={styles.eventList}>
+              {todayEventsLoading ? (
+                <p className={styles.emptyEventsMessage}>Загрузка событий...</p>
+              ) : todayEventsError ? (
+                <p className={styles.emptyEventsMessage} style={{ color: 'red' }}>{todayEventsError}</p>
+              ) : todayEvents.length > 0 ? (
+                todayEvents.map(event => (
+                  <div key={event.id} className={styles.todayEventItem}> {/* Добавим стили для этого */}
+                    <p className={styles.todayEventTime}>
+                      {event.start_time.substring(0, 5)} - {event.end_time.substring(0, 5)}
+                    </p>
+                    <p className={styles.todayEventTitle}>
+                      {event.organizer_name ? `Бронь: ${event.organizer_name}` : 'Забронировано'}
+                    </p>
+                    {/* Если нужно показать статус или другие детали */}
+                  </div>
+                ))
+              ) : (
+                <p className={styles.emptyEventsMessage}>{bookCornerData.eventsSection.emptyMessage}</p>
+              )}
             </div>
-            <button className={styles.viewMoreButton}>{bookCornerData.eventsSection.viewMoreButtonText}</button>
+
+            <div className={styles.viewMoreButton}>
+              <Link to="/events" className={styles.viewMoreLink}> 
+                {bookCornerData.eventsSection.viewMoreButtonText}
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-      {/* </div> */}
-
     </section>
   );
 };
