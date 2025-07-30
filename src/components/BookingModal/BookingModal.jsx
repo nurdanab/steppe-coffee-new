@@ -3,8 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import styles from './BookingModal.module.css';
 import { IMaskInput } from 'react-imask'; // Импортируем IMaskInput
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
