@@ -1,94 +1,19 @@
-/* src/components/BookingModal/BookingModal.module.scss */
-@use '../../styles/variables' as *;
-@use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
-
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  background-color: $white;
-  padding: 30px;
-//   border-radius: $border-radius-large; // Пример радиуса
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
-  width: 90%;
-  max-width: 500px;
-  animation: fadeIn 0.3s ease-out;
-
-  @include md-down {
-    padding: 20px;
-  }
-}
-
-.closeButton {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: $black; // Предполагая $black
-  &:hover {
-    color: $yellow;
-  }
-}
-
-h2 {
-  @extend .riffic-medium; // Если у тебя есть такие классы типографики
-  color: $black; 
-  margin-bottom: 25px;
-  text-align: center;
-}
-
-.formGroup {
-  margin-bottom: 15px;
-  label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: $black;
-  }
-  input[type="text"],
-  input[type="date"],
-  input[type="time"],
-  input[type="number"],
-  textarea {
-    width: calc(100% - 20px); 
+.errorMessage {
+    color: #dc3545; // Красный цвет для ошибок
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
     padding: 10px;
-    border: 1px solid $black; 
-    // border-radius: $border-radius-small;
-    font-size: 16px;
-    &:focus {
-      outline: none;
-      border-color: $yellow;
-    }
+    border-radius: 4px;
+    margin-top: 10px;
+    text-align: center;
   }
-  textarea {
-    resize: vertical;
+  
+  .successMessage {
+    color: #28a745; // Зеленый цвет для успеха
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    text-align: center;
   }
-}
-
-.submitButton {
-  @include button-primary; 
-  width: 100%;
-  padding: 12px;
-  font-size: 18px;
-  margin-top: 20px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
