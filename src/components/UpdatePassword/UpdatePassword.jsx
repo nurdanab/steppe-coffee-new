@@ -1,8 +1,10 @@
 // src/components/UpdatePassword/UpdatePassword.jsx
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
-import { useNavigate } from 'react-router-dom'; // Для перенаправления после сброса
-// import styles from './UpdatePassword.module.scss'; // Создадим этот SCSS файл
+import { useNavigate } from 'react-router-dom';
+
+// Временно убираем импорт styles, чтобы обойти ошибку
+// import styles from './UpdatePassword.module.scss';
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
@@ -12,19 +14,13 @@ const UpdatePassword = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // useEffect для проверки сессии и сброса пароля
   useEffect(() => {
-    // Supabase автоматически обрабатывает токен сброса пароля из URL
-    // и устанавливает временную сессию.
-    // Нам нужно просто проверить, что есть сессия, и можно обновлять.
-    // Если сессии нет, это означает, что пользователь зашел на страницу напрямую, без токена
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
       }
     });
 
-    // Можно также слушать изменения состояния аутентификации
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session && session.user) {
             setMessage('Вы можете обновить свой пароль.');
@@ -48,7 +44,7 @@ const UpdatePassword = () => {
       setLoading(false);
       return;
     }
-    if (password.length < 6) { // Минимальная длина пароля
+    if (password.length < 6) {
       setError('Пароль должен быть не менее 6 символов.');
       setLoading(false);
       return;
@@ -65,8 +61,7 @@ const UpdatePassword = () => {
       } else {
         setMessage('Пароль успешно обновлен! Вы можете войти с новым паролем.');
         alert('Пароль успешно обновлен! Пожалуйста, войдите.');
-        // Перенаправляем пользователя на страницу входа или главную
-        navigate('/'); // Или на страницу входа, если у тебя есть такая
+        navigate('/');
       }
     } catch (err) {
       setError('Произошла непредвиденная ошибка.');
@@ -76,18 +71,93 @@ const UpdatePassword = () => {
     }
   };
 
-  return (
-    <main className={styles.updatePasswordPage}>
-      <div className={styles.formContainer}>
-        <h2>Сброс пароля</h2>
-        {message && <p className={styles.successMessage}>{message}</p>}
-        {error && <p className={styles.errorMessage}>{error}</p>}
+  // Простые инлайн-стили или глобальные классы, если они определены в main.scss
+  const pageStyle = {
+    padding: '80px 20px',
+    maxWidth: '500px',
+    margin: '0 auto',
+    minHeight: 'calc(100vh - 150px)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+  };
 
-        {/* Форма доступна только если нет критических ошибок и пользователь потенциально может сбросить пароль */}
+  const formContainerStyle = {
+    backgroundColor: '#ffffff', // Белый фон
+    padding: '30px',
+    borderRadius: '8px',
+    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
+    width: '100%',
+  };
+
+  const formGroupStyle = {
+    marginBottom: '15px',
+  };
+
+  const labelStyle = {
+    display: 'block',
+    textAlign: 'left',
+    marginBottom: '8px',
+    fontWeight: 'bold',
+    color: '#333', // Темный текст
+  };
+
+  const inputStyle = {
+    width: 'calc(100% - 20px)', // Учитываем padding
+    padding: '10px',
+    border: '1px solid #ddd', // Светлая граница
+    borderRadius: '4px',
+    fontSize: '16px',
+  };
+
+  const buttonStyle = {
+    backgroundColor: '#007bff', // Синяя кнопка
+    color: 'white',
+    padding: '12px',
+    fontSize: '18px',
+    marginTop: '20px',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    width: '100%',
+  };
+
+  const successMessageStyle = {
+    color: '#155724',
+    backgroundColor: '#d4edda',
+    padding: '10px',
+    borderRadius: '4px',
+    marginBottom: '15px',
+  };
+
+  const errorMessageStyle = {
+    color: '#721c24',
+    backgroundColor: '#f8d7da',
+    padding: '10px',
+    borderRadius: '4px',
+    marginBottom: '15px',
+  };
+
+  const instructionsStyle = {
+    fontSize: '14px',
+    color: '#666',
+    marginTop: '20px',
+  };
+
+
+  return (
+    <main style={pageStyle}>
+      <div style={formContainerStyle}>
+        <h2>Сброс пароля</h2>
+        {message && <p style={successMessageStyle}>{message}</p>}
+        {error && <p style={errorMessageStyle}>{error}</p>}
+
         {!error ? (
           <form onSubmit={handlePasswordUpdate}>
-            <div className={styles.formGroup}>
-              <label htmlFor="new-password">Новый пароль:</label>
+            <div style={formGroupStyle}>
+              <label htmlFor="new-password" style={labelStyle}>Новый пароль:</label>
               <input
                 type="password"
                 id="new-password"
@@ -95,10 +165,11 @@ const UpdatePassword = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                style={inputStyle}
               />
             </div>
-            <div className={styles.formGroup}>
-              <label htmlFor="confirm-password">Подтвердите пароль:</label>
+            <div style={formGroupStyle}>
+              <label htmlFor="confirm-password" style={labelStyle}>Подтвердите пароль:</label>
               <input
                 type="password"
                 id="confirm-password"
@@ -106,14 +177,15 @@ const UpdatePassword = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
+                style={inputStyle}
               />
             </div>
-            <button type="submit" disabled={loading} className={styles.updateButton}>
+            <button type="submit" disabled={loading} style={buttonStyle}>
               {loading ? 'Обновление...' : 'Обновить пароль'}
             </button>
           </form>
         ) : (
-          <p className={styles.instructions}>
+          <p style={instructionsStyle}>
             Если вы видите это сообщение об ошибке, пожалуйста, <a href="#" onClick={() => navigate('/')}>вернитесь на главную страницу</a> и снова запросите сброс пароля через форму входа.
           </p>
         )}
