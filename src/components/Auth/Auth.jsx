@@ -73,8 +73,8 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
 
       // Отправляем запрос на сброс пароля
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/update-password', // <-- Важно: URL для страницы сброса пароля
-      });
+        redirectTo: window.location.origin + '/update-password',
+          });
 
       if (error) {
         setMessage(error.message);
