@@ -1,48 +1,84 @@
+// src/components/BookingModal/BookingModal.jsx
 import React, { useState, useEffect } from 'react';
-import styles from './BookingModal.module.scss'; // <-- ИСПРАВЛЕНО
-import { supabase } from '../../supabaseClient'; // <-- Правильный импорт
-import { IMaskInput } from 'react-imask'; // Импортируем IMaskInput
+import styles from './BookingModal.module.scss'; // Убедись, что это .scss
+import { supabase } from '../../supabaseClient';
+import { IMaskInput } from 'react-imask';
 
-// const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-// const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Проверь, что здесь нет повторной инициализации supabaseClient
+// const supabaseUrl = import.meta.env.VITE_SUPABASE_URL; // Эти строки должны быть удалены
+// const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY; // Эти строки должны быть удалены
+// const supabase = createClient(supabaseUrl, supabaseAnonKey); // Эта строка должна быть удалена
 
-// const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-const BookingModal = ({ isOpen, onClose }) => {
+const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => { // <-- ИСПРАВЛЕНО
   const [bookingDate, setBookingDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
-  const [selectedRoom, setSelectedRoom] = useState('main_hall'); // По умолчанию "Главный зал"
-  const [numberOfPeople, setNumberOfPeople] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState(''); // Изначально пусто, чтобы требовать выбор
+  const [numberOfPeople, setNumberOfPeople] = useState(1); // По умолчанию 1
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(''); // Теперь userName
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState(null); // Добавлено для явного управления ошибками
 
-  // Сбрасываем состояние при открытии/закрытии модального окна
+
+  // Сбрасываем состояние при открытии/закрытии модального окна и предзаполняем
   useEffect(() => {
     if (isOpen) {
+      // Предзаполняем имя пользователя его email, если есть сессия
+      if (currentUserId) {
+        setUserName(currentUserEmail || '');
+      } else {
+        setUserName('');
+      }
+
       // Устанавливаем сегодняшнюю дату по умолчанию при открытии
       const today = new Date().toISOString().split('T')[0];
       setBookingDate(today);
       setStartTime('');
       setEndTime('');
-      setSelectedRoom('main_hall');
-      setNumberOfPeople('');
+      setSelectedRoom(''); // Сбрасываем выбор зала
+      setNumberOfPeople(1); // Сбрасываем количество людей
       setPhoneNumber('');
-      setUserName('');
       setComment('');
-      setMessage('');
+      setMessage(''); // Очищаем сообщения
+      setError(null); // Очищаем ошибки
     }
-  }, [isOpen]);
+  }, [isOpen, currentUserId, currentUserEmail]); // Добавляем зависимости для реагирования на изменение сессии
 
   if (!isOpen) return null;
 
   const cafeOpenTime = '08:00';
   const cafeCloseTime = '22:00';
 
-  const checkAvailability = async (date, start, end, room) => {
+  const checkAvailability = async (date, start, end, room, numPpl) => { // Добавили numPpl как параметр
+    setError(null); // Сбрасываем ошибки перед проверкой
+
+    // Валидация: количество человек для залов (перемещено сюда для ранней проверки)
+    let minPeople = 0;
+    let maxPeople = 0;
+
+    switch (room) { // Используем 'room' из параметров функции
+      case 'second_hall':
+        minPeople = 1; // Уточни минимальное количество
+        maxPeople = 20; // Максимум 20 человек
+        break;
+      case 'summer_terrace': // Уточни название "Летник" на "summer_terrace" или то, что в БД
+        minPeople = 1; // Уточни минимальное количество
+        maxPeople = 10; // Максимум 10 человек
+        break;
+      // Добавь другие залы, если они есть
+      default:
+        minPeople = 1; // Общее минимальное значение по умолчанию
+        maxPeople = 50; // Общее максимальное значение по умолчанию
+        break;
+    }
+
+    if (numPpl < minPeople || numPpl > maxPeople) {
+      return { available: false, message: `Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.` };
+    }
+
     // Валидация: время начала должно быть раньше времени окончания
     if (start >= end) {
       return { available: false, message: 'Время начала не может быть позже или равно времени окончания.' };
@@ -50,7 +86,7 @@ const BookingModal = ({ isOpen, onClose }) => {
 
     // Валидация: время должно быть в рамках рабочего дня кафе
     if (start < cafeOpenTime || end > cafeCloseTime) {
-      return { available: false, message: `Кафе работает с ${cafeOpenTime} до ${cafeCloseTime}.` };
+      return { available: false, message: `Кофейня работает с ${cafeOpenTime} до ${cafeCloseTime}.` };
     }
 
     // Валидация: нельзя бронировать на прошедшее время/дату
@@ -82,25 +118,22 @@ const BookingModal = ({ isOpen, onClose }) => {
       const existingStart = booking.start_time;
       const existingEnd = booking.end_time;
 
-      // Проверка на пересечение
-      if (
-        (start < existingEnd && end > existingStart) || // Новое бронирование пересекается с существующим
-        (start >= existingStart && start < existingEnd) || // Начало нового бронирования внутри существующего
-        (end > existingStart && end <= existingEnd) || // Конец нового бронирования внутри существующего
-        (start <= existingStart && end >= existingEnd) // Новое бронирование полностью охватывает существующее
-      ) {
-        // Специальное правило для "Второго зала внутри"
+      // Проверка на пересечение интервалов
+      // (start < existingEnd && end > existingStart) - базовая проверка на пересечение
+      if ((start < existingEnd) && (end > existingStart)) {
+        // Если есть пересечение, применяем правило 1 часа для "Второго зала внутри"
         if (room === 'second_hall') {
           // Вычисляем время окончания предыдущего бронирования + 1 час
-          const prevBookingEndTime = new Date(`${date}T${existingEnd}:00`);
-          prevBookingEndTime.setHours(prevBookingEndTime.getHours() + 1);
-          const requiredStartTime = prevBookingEndTime.toTimeString().substring(0, 5);
+          const existingEndTimeDate = new Date(`${date}T${existingEnd}`);
+          existingEndTimeDate.setHours(existingEndTimeDate.getHours() + 1);
+          const requiredStartTime = existingEndTimeDate.toTimeString().substring(0, 5);
 
-          // Если новое бронирование начинается раньше, чем через 1 час после окончания предыдущего
+          // Если новое бронирование начинается раньше, чем через 1 час после окончания существующего
           if (start < requiredStartTime) {
             return { available: false, message: 'Выбранное время для "Второго зала внутри" занято или недоступно с учетом правил интервала. Пожалуйста, выберите другое время.' };
           }
         } else {
+          // Для других залов просто сообщаем о занятости
           return { available: false, message: 'Выбранное время уже занято для данного зала.' };
         }
       }
@@ -113,44 +146,26 @@ const BookingModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
+    setError(null); // Сбрасываем ошибки
 
-    // Валидация количества человек для залов
-    let minPeople = 0;
-    let maxPeople = 0;
-
-    switch (selectedRoom) {
-      case 'main_hall':
-        minPeople = 2;
-        maxPeople = 6;
-        break;
-      case 'second_hall':
-        minPeople = 4;
-        maxPeople = 10;
-        break;
-      case 'terrace':
-        minPeople = 2;
-        maxPeople = 8;
-        break;
-      default:
-        break;
+    // Проверка авторизации
+    if (!currentUserId) {
+        setMessage('Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.');
+        setLoading(false);
+        return;
     }
 
-    if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
-      setMessage(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
-      setLoading(false);
-      return;
-    }
+    // Вызываем функцию проверки доступности перед отправкой
+    const availabilityCheckResult = await checkAvailability(bookingDate, startTime, endTime, selectedRoom, numberOfPeople);
 
-    const availability = await checkAvailability(bookingDate, startTime, endTime, selectedRoom);
-
-    if (!availability.available) {
-      setMessage(availability.message);
+    if (!availabilityCheckResult.available) {
+      setError(availabilityCheckResult.message); // Устанавливаем ошибку
       setLoading(false);
       return;
     }
 
     try {
-      const { data, error } = await supabase
+      const { data, error: insertError } = await supabase
         .from('bookings')
         .insert([
           {
@@ -158,17 +173,19 @@ const BookingModal = ({ isOpen, onClose }) => {
             start_time: startTime,
             end_time: endTime,
             selected_room: selectedRoom,
-            number_of_people: numberOfPeople,
+            num_people: numberOfPeople, // Убедись, что это `num_people` в БД
             phone_number: phoneNumber,
-            user_name: userName,
-            comment: comment,
+            organizer_name: userName, // Используем userName как organizer_name
+            comments: comment, // Используем comment как comments
+            user_id: currentUserId, // Используем currentUserId из пропсов
             status: 'pending', // Всегда 'pending' при создании
-            created_at: new Date().toISOString(),
+            // created_at: new Date().toISOString(), // Supabase добавит это автоматически
           },
-        ]);
+        ])
+        .select(); // Добавим .select() для получения вставленных данных
 
-      if (error) {
-        throw error;
+      if (insertError) {
+        throw insertError;
       }
 
       setMessage('Ваша бронь успешно отправлена! Ожидайте подтверждения.');
@@ -176,32 +193,34 @@ const BookingModal = ({ isOpen, onClose }) => {
       setBookingDate(new Date().toISOString().split('T')[0]);
       setStartTime('');
       setEndTime('');
-      setSelectedRoom('main_hall');
-      setNumberOfPeople('');
+      setSelectedRoom('');
+      setNumberOfPeople(1);
       setPhoneNumber('');
-      setUserName('');
+      setUserName(currentUserEmail || ''); // Сбрасываем, но предзаполняем если авторизован
       setComment('');
 
-      // Закрываем модальное окно через 3 секунды
+      // Закрываем модальное окно через 3 секунды (можно убрать, если не нужно)
       setTimeout(() => {
         onClose();
       }, 3000);
 
-    } catch (error) {
-      console.error('Ошибка при отправке брони:', error.message);
-      setMessage(`Ошибка при отправке брони: ${error.message}. Пожалуйста, попробуйте снова.`);
+    } catch (err) { // Изменено с 'error' на 'err' чтобы избежать конфликта имен
+      console.error('Ошибка при отправке брони:', err.message);
+      setError(`Ошибка при отправке брони: ${err.message}. Пожалуйста, попробуйте снова.`);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent}>
-        <button className={styles.closeButton} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={onClose}> {/* Добавил onClick={onClose} для закрытия по клику вне модалки */}
+      <div className={styles.modalContent} onClick={e => e.stopPropagation()}> {/* Предотвращает закрытие по клику внутри модалки */}
+        <button className={styles.closeButton} onClick={onClose} disabled={loading}>
           &times;
         </button>
         <h2>Забронировать столик</h2>
+        {error && <p className={styles.errorMessage}>{error}</p>} {/* Отображение ошибки */}
+        {message && <p className={styles.successMessage}>{message}</p>} {/* Отображение сообщения об успехе */}
         <form onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="bookingDate">Дата бронирования:</label>
@@ -253,9 +272,11 @@ const BookingModal = ({ isOpen, onClose }) => {
               required
               disabled={loading}
             >
-              <option value="main_hall">Главный зал</option>
-              <option value="second_hall">Второй зал внутри</option>
-              <option value="terrace">Терраса</option>
+              <option value="">-- Выберите зал --</option> {/* Пустая опция для обязательного выбора */}
+              <option value="second_hall">Второй зал внутри (до 20 человек)</option>
+              <option value="summer_terrace">Летник (до 10 человек)</option>
+              {/* Если у тебя есть другие залы, добавь их здесь, например: */}
+              {/* <option value="main_hall">Главный зал</option> */}
             </select>
           </div>
 
@@ -265,7 +286,7 @@ const BookingModal = ({ isOpen, onClose }) => {
               type="number"
               id="numberOfPeople"
               value={numberOfPeople}
-              onChange={(e) => setNumberOfPeople(e.target.value)}
+              onChange={(e) => setNumberOfPeople(Number(e.target.value))}
               min="1"
               required
               disabled={loading}
@@ -289,7 +310,7 @@ const BookingModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="userName">Ваше имя:</label>
+            <label htmlFor="userName">Ваше имя (или название организации):</label>
             <input
               type="text"
               id="userName"
@@ -301,21 +322,20 @@ const BookingModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="comment">Комментарий (по желанию):</label>
+            <label htmlFor="comment">Комментарий (необязательно):</label>
             <textarea
               id="comment"
+              rows="3"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              rows="3"
               disabled={loading}
             ></textarea>
           </div>
 
-          <button type="submit" disabled={loading} className={styles.submitButton}>
-            {loading ? 'Отправка...' : 'Забронировать'}
+          <button type="submit" className={styles.submitButton} disabled={loading}>
+            {loading ? 'Отправка...' : 'Подтвердить бронирование'}
           </button>
         </form>
-        {message && <p className={styles.message}>{message}</p>}
       </div>
     </div>
   );
