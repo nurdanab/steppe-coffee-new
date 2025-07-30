@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import styles from './BookingModal.module.css';
+import styles from './BookingModal.module.scss'; // <-- ИСПРАВЛЕНО
+import { supabase } from '../../supabaseClient'; // <-- Правильный импорт
 import { IMaskInput } from 'react-imask'; // Импортируем IMaskInput
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+// const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const BookingModal = ({ isOpen, onClose }) => {
   const [bookingDate, setBookingDate] = useState('');
