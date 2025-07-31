@@ -4,34 +4,25 @@ import { supabase } from '../../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 const UpdatePassword = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
+  // ... (остальной код)
 
   useEffect(() => {
-    // Этот слушатель будет срабатывать, когда Supabase обработает URL и установит сессию
+    console.log('UpdatePassword component mounted.'); // Добавлено для отладки
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      // event может быть 'SIGNED_IN' или 'SIGNED_OUT'
-      console.log('Auth State Change Event:', _event, 'Session:', session); // Для отладки
+      console.log('UpdatePassword Auth State Change Event:', _event, 'Session:', session); // Добавлено для отладки
 
       if (session && session.user) {
-        // Проверяем, является ли это сессией восстановления пароля
-        // Supabase устанавливает тип "recovery" в сессии, когда пользователь переходит по ссылке для сброса.
-        // Хотя явно type в session.user не всегда есть, но _event будет 'SIGNED_IN'.
         setMessage('Вы можете обновить свой пароль.');
-        setError(''); // Очищаем ошибку, если сессия активна
+        setError(''); 
       } else {
-        // Если сессия неактивна, показываем ошибку
         setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
       }
     });
 
-    // Дополнительная проверка сессии при первом рендере
     const checkInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      console.log('UpdatePassword Initial Session Check:', session); // Добавлено для отладки
       if (session && session.user) {
         setMessage('Вы можете обновить свой пароль.');
         setError('');
@@ -41,11 +32,11 @@ const UpdatePassword = () => {
     };
     checkInitialSession();
 
-
     return () => {
       subscription.unsubscribe();
+      console.log('UpdatePassword component unmounted.'); // Добавлено для отладки
     };
-  }, []); // Пустой массив зависимостей, чтобы useEffect запускался один раз
+  }, []);
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();

@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'; // Импортируем useLocation
 import { Helmet } from 'react-helmet-async';
 
 import Header from './components/Header/Header';
@@ -32,6 +32,7 @@ function App() {
   const [session, setSession] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation(); // Используем useLocation для получения текущего пути
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -48,7 +49,8 @@ function App() {
   }, []);
 
   const handleOpenBookingModal = () => {
-    if (!session) {
+    // Открываем модалку авторизации, только если пользователь не на странице UpdatePassword
+    if (!session && location.pathname !== '/update-password') { // Добавлено условие
       setIsAuthModalOpen(true);
       alert("Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.");
       return;
@@ -61,6 +63,10 @@ function App() {
   };
 
   const handleOpenAuthModal = () => {
+    // Не открываем модалку авторизации, если мы на странице UpdatePassword
+    if (location.pathname === '/update-password') { // Добавлено условие
+        return;
+    }
     setIsAuthModalOpen(true);
   };
 
@@ -81,6 +87,9 @@ function App() {
       navigate('/');
     }
   };
+
+  // Определяем, должен ли быть открыт AuthModal
+  const shouldOpenAuthModal = isAuthModalOpen && location.pathname !== '/update-password'; // Новое условие
 
   return (
     <div className="App">
@@ -120,7 +129,7 @@ function App() {
         <Route path="/profile" element={
           <ProfilePage
             session={session}
-            isAuthModalOpen={isAuthModalOpen}
+            isAuthModalOpen={isAuthModalOpen} // Передаем это, но оно будет зависеть от shouldOpenAuthModal
             onOpenAuthModal={handleOpenAuthModal}
             onCloseAuthModal={handleCloseAuthModal}
             onAuthSuccess={handleAuthSuccess}
@@ -137,8 +146,9 @@ function App() {
         currentUserEmail={session?.user?.email || ''}
       />
 
+      {/* Передаем shouldOpenAuthModal в пропс isOpen для Auth */}
       <Auth
-        isOpen={isAuthModalOpen}
+        isOpen={shouldOpenAuthModal} 
         onClose={handleCloseAuthModal}
         onAuthSuccess={handleAuthSuccess}
       />
