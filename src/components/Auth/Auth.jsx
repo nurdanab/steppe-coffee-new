@@ -9,7 +9,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState('');
-  const [showResetPassword, setShowResetPassword] = useState(false); // <-- Новое состояние для сброса пароля
+  const [showResetPassword, setShowResetPassword] = useState(false); 
 
   if (!isOpen) {
     return null;
@@ -58,8 +58,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
     }
   };
 
-  // --- НОВАЯ ФУНКЦИЯ ДЛЯ СБРОСА ПАРОЛЯ ---
-  const handlePasswordReset = async (e) => {
+   const handlePasswordReset = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
@@ -71,8 +70,8 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
         return;
       }
 
-      // Отправляем запрос на сброс пароля
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+       // Этот URL redirectTo очень важен. Убедись, что он соответствует настроенным Redirect URLs в Supabase.
+       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + '/update-password?type=recovery',
     });
 
@@ -81,7 +80,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
         console.error('Ошибка сброса пароля:', error.message);
       } else {
         setMessage('Ссылка для сброса пароля отправлена на ваш Email. Пожалуйста, проверьте почту.');
-        setShowResetPassword(false); // Скрываем форму сброса после отправки
+        setShowResetPassword(false);  
       }
     } catch (err) {
       setMessage('Произошла непредвиденная ошибка.');
@@ -90,16 +89,15 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
       setLoading(false);
     }
   };
-  // --- КОНЕЦ НОВОЙ ФУНКЦИИ ---
-
+ 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
         <button className={styles.closeButton} onClick={onClose} disabled={loading}>&times;</button>
-        <h2>{showResetPassword ? 'Сброс пароля' : (isSignUp ? 'Регистрация' : 'Вход')}</h2> {/* Динамический заголовок */}
+        <h2>{showResetPassword ? 'Сброс пароля' : (isSignUp ? 'Регистрация' : 'Вход')}</h2>  
         {message && <p className={styles.message}>{message}</p>}
 
-        {showResetPassword ? ( // Если показываем форму сброса пароля
+        {showResetPassword ? (  
           <form onSubmit={handlePasswordReset}>
             <div className={styles.formGroup}>
               <label htmlFor="email">Ваш Email:</label>
@@ -125,7 +123,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
               </button>
             </p>
           </form>
-        ) : ( // Если показываем форму входа/регистрации
+        ) : (  
           <form onSubmit={handleAuth}>
             <div className={styles.formGroup}>
               <label htmlFor="email">Email:</label>
@@ -162,20 +160,18 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 {isSignUp ? 'Войти' : 'Зарегистрироваться'}
               </button>
             </p>
-            {/* <-- Кнопка "Забыли пароль" --> */}
-            {!isSignUp && ( // Показываем только для формы входа
+             {!isSignUp && (  
               <p className={styles.forgotPassword}>
                 <button
                   onClick={() => setShowResetPassword(true)}
-                  className={styles.toggleButton} // Можешь создать отдельный стиль
+                  className={styles.toggleButton} 
                   disabled={loading}
                 >
                   Забыли пароль?
                 </button>
               </p>
             )}
-            {/* <-- КОНЕЦ Кнопки "Забыли пароль" --> */}
-          </form>
+           </form>
         )}
       </div>
     </div>

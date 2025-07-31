@@ -6,13 +6,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
-import { supabase } from '../supabaseClient'; // Импортируем supabase клиент
-
-// Функция fetchAllBookings теперь будет встроена или изменена
-// в зависимости от того, как ты ее используешь.
-// Я предполагаю, что она вызывается напрямую в PublicCalendar.
-// Если fetchAllBookings экспортируется из supabaseClient.js и используется там,
-// то тебе нужно будет изменить ее там.
+import { supabase } from '../supabaseClient'; 
 
 function PublicCalendar() {
   const [events, setEvents] = useState([]);
@@ -24,13 +18,13 @@ function PublicCalendar() {
       setLoading(true);
       setError(null);
       try {
-        // --- ИЗМЕНЕНИЕ ЗДЕСЬ: Добавляем фильтр по статусу 'confirmed' ---
+
         const { data, error } = await supabase
           .from('bookings')
           .select('id, booking_date, start_time, end_time, status, organizer_name, comments')
-          .eq('status', 'confirmed') // <-- Добавляем этот фильтр
-          .order('booking_date', { ascending: true }) // Сортируем по дате
-          .order('start_time', { ascending: true }); // Затем по времени
+          .eq('status', 'confirmed') 
+          .order('booking_date', { ascending: true }) 
+          .order('start_time', { ascending: true }); 
 
         if (error) {
           throw error;
@@ -41,7 +35,7 @@ function PublicCalendar() {
           title: `Занято: ${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`,
           start: `${booking.booking_date}T${booking.start_time}`,
           end: `${booking.booking_date}T${booking.end_time}`,
-          backgroundColor: '#28a745', // Всегда зеленый, так как все подтверждены
+          backgroundColor: '#28a745', 
           borderColor: '#28a745',
           extendedProps: {
             numPeople: booking.num_people,
@@ -59,7 +53,7 @@ function PublicCalendar() {
       }
     };
     loadEvents();
-  }, []); // Пустой массив зависимостей означает, что эффект запустится один раз после первого рендера
+  }, []); 
 
   if (loading) {
     return <p>Загрузка расписания...</p>;

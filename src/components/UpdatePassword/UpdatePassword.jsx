@@ -3,9 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
-// Временно убираем импорт styles, чтобы обойти ошибку
-// import styles from './UpdatePassword.module.scss';
-
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -15,12 +12,51 @@ const UpdatePassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
-      }
-    });
+    // Этот код будет пытаться установить сессию, если токены присутствуют в URL
+    const handleUrlAuth = async () => {
+      const urlParams = new URLSearchParams(window.location.hash.substring(1)); // Парсим часть после #
+      const accessToken = urlParams.get('access_token');
+      const refreshToken = urlParams.get('refresh_token');
+      const type = urlParams.get('type'); // Обычно 'recovery'
 
+      if (accessToken && refreshToken && type === 'recovery') {
+        try {
+          // Попытаемся установить сессию вручную, если Supabase этого не сделал
+          const { error: setSessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+
+          if (setSessionError) {
+            console.error('Ошибка при установке сессии из URL:', setSessionError.message);
+            setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
+            return;
+          }
+          setMessage('Вы можете обновить свой пароль.');
+          setError('');
+          // Очищаем хэш, чтобы URL выглядел чище после обработки
+          window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+
+        } catch (err) {
+          console.error('Непредвиденная ошибка при обработке URL:', err);
+          setError('Произошла непредвиденная ошибка при обработке ссылки. Пожалуйста, запросите сброс пароля заново.');
+          return;
+        }
+      } else {
+        // Если токенов в URL нет, проверяем обычную сессию
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
+        } else {
+          setMessage('Вы можете обновить свой пароль.');
+          setError('');
+        }
+      }
+    };
+
+    handleUrlAuth();
+
+    // Слушатель изменений состояния аутентификации остается полезным
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session && session.user) {
             setMessage('Вы можете обновить свой пароль.');
@@ -51,17 +87,17 @@ const UpdatePassword = () => {
     }
 
     try {
-      const { error } = await supabase.auth.updateUser({
+       const { error: updateError } = await supabase.auth.updateUser({ // Изменил имя переменной для избежания конфликта
         password: password,
       });
 
-      if (error) {
-        setError(error.message);
-        console.error('Ошибка обновления пароля:', error.message);
+      if (updateError) {
+        setError(updateError.message);
+        console.error('Ошибка обновления пароля:', updateError.message);
       } else {
         setMessage('Пароль успешно обновлен! Вы можете войти с новым паролем.');
         alert('Пароль успешно обновлен! Пожалуйста, войдите.');
-        navigate('/');
+        navigate('/');  
       }
     } catch (err) {
       setError('Произошла непредвиденная ошибка.');
@@ -71,7 +107,6 @@ const UpdatePassword = () => {
     }
   };
 
-  // Простые инлайн-стили или глобальные классы, если они определены в main.scss
   const pageStyle = {
     padding: '80px 20px',
     maxWidth: '500px',
@@ -85,7 +120,7 @@ const UpdatePassword = () => {
   };
 
   const formContainerStyle = {
-    backgroundColor: '#ffffff', // Белый фон
+    backgroundColor: '#ffffff',
     padding: '30px',
     borderRadius: '8px',
     boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
@@ -101,19 +136,19 @@ const UpdatePassword = () => {
     textAlign: 'left',
     marginBottom: '8px',
     fontWeight: 'bold',
-    color: '#333', // Темный текст
+    color: '#333',
   };
 
   const inputStyle = {
-    width: 'calc(100% - 20px)', // Учитываем padding
+    width: 'calc(100% - 20px)',
     padding: '10px',
-    border: '1px solid #ddd', // Светлая граница
+    border: '1px solid #ddd', 
     borderRadius: '4px',
     fontSize: '16px',
   };
 
   const buttonStyle = {
-    backgroundColor: '#007bff', // Синяя кнопка
+    backgroundColor: '#007bff',
     color: 'white',
     padding: '12px',
     fontSize: '18px',
@@ -154,7 +189,7 @@ const UpdatePassword = () => {
         {message && <p style={successMessageStyle}>{message}</p>}
         {error && <p style={errorMessageStyle}>{error}</p>}
 
-        {!error ? (
+         {!error && (
           <form onSubmit={handlePasswordUpdate}>
             <div style={formGroupStyle}>
               <label htmlFor="new-password" style={labelStyle}>Новый пароль:</label>
@@ -184,7 +219,8 @@ const UpdatePassword = () => {
               {loading ? 'Обновление...' : 'Обновить пароль'}
             </button>
           </form>
-        ) : (
+        )}
+        {error && ( 
           <p style={instructionsStyle}>
             Если вы видите это сообщение об ошибке, пожалуйста, <a href="#" onClick={() => navigate('/')}>вернитесь на главную страницу</a> и снова запросите сброс пароля через форму входа.
           </p>

@@ -1,8 +1,7 @@
 // src/components/ProfilePage/ProfilePage.jsx
-
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../../supabaseClient'; // Импорт supabase клиента
-import styles from './ProfilePage.module.scss'; // Создадим этот файл стилей позже
+import { supabase } from '../../supabaseClient'; 
+import styles from './ProfilePage.module.scss'; 
 
 const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthModal, onAuthSuccess, onLogout }) => {
   const [userBookings, setUserBookings] = useState([]);
@@ -10,22 +9,20 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
   const [errorBookings, setErrorBookings] = useState(null);
 
   useEffect(() => {
-    // Если сессии нет, открываем модальное окно аутентификации
     if (!session) {
       onOpenAuthModal();
-      return; // Прекращаем выполнение, пока пользователь не войдет
+      return; 
     }
 
-    // Если сессия есть, загружаем бронирования пользователя
     const fetchUserBookings = async () => {
       setLoadingBookings(true);
       setErrorBookings(null);
       try {
         const { data, error } = await supabase
           .from('bookings')
-          .select('*') // Выбираем все поля для истории
-          .eq('user_id', session.user.id) // Фильтруем по ID текущего пользователя
-          .order('booking_date', { ascending: false }) // Сортируем от новых к старым
+          .select('*')
+          .eq('user_id', session.user.id) 
+          .order('booking_date', { ascending: false }) 
           .order('start_time', { ascending: false });
 
         if (error) {
@@ -41,17 +38,14 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
     };
 
     fetchUserBookings();
-  }, [session, onOpenAuthModal]); // Зависимости: session и onOpenAuthModal
+  }, [session, onOpenAuthModal]); 
 
   if (!session) {
-    // Если сессии нет, и модалка аутентификации уже открыта (или скоро откроется),
-    // просто показываем заглушку. Модалка Auth управляется в App.jsx.
     return (
       <main className={styles.profilePage}>
         <div className={styles.notLoggedInMessage}>
           <h2>Для просмотра профиля необходимо войти</h2>
           <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы получить доступ к истории бронирований.</p>
-          {/* Кнопка для повторного открытия модалки, если пользователь ее закрыл */}
           {!isAuthModalOpen && (
             <button onClick={onOpenAuthModal} className={styles.loginButton}>Войти / Зарегистрироваться</button>
           )}
@@ -60,7 +54,6 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
     );
   }
 
-  // Если пользователь авторизован, показываем его профиль
   return (
     <main className={styles.profilePage}>
       <div className={styles.profileHeader}>
@@ -92,7 +85,6 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
                   Статус: <span className={styles[booking.status]}>{booking.status === 'confirmed' ? 'Подтверждено' : booking.status === 'pending' ? 'В ожидании' : 'Отменено'}</span>
                 </p>
                 {booking.comments && <p className={styles.bookingComments}>Комментарий: {booking.comments}</p>}
-                {/* Дополнительные детали бронирования, если нужны */}
               </div>
             ))}
           </div>

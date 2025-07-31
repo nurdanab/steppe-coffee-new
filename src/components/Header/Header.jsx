@@ -18,12 +18,11 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // document.body.style.overflow = isMobileMenuOpen ? 'auto' : 'hidden'; // Закомментировано из-за конфликтов с модальными окнами
-  };
+   };
 
   const navigationItems = [
     { name: 'Главная', href: '/' },
-    { name: 'Меню', href: '#' }, // Если меню - это секция на главной, а не отдельная страница
+    { name: 'Меню', href: '#' },  
     { name: 'События', href: '/events' },
   ];
 
@@ -52,17 +51,14 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                       </Link>
                     </li>
                   ))}
-                  {/* Иконка профиля/кнопка Входа/Выхода для десктопа - теперь отдельный пункт */}
-                  <li className={styles.navigationItem}>
+                   <li className={styles.navigationItem}>
                     {session ? (
-                      // Если пользователь авторизован, ссылка на профиль и email
-                      <Link to="/profile" className={styles.profileLink}>
+                       <Link to="/profile" className={styles.profileLink}>
                         <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
                         <span className={styles.userEmail}>Привет, {session.user.email}!</span>
                       </Link>
                     ) : (
-                      // Если не авторизован, кнопка "Войти"
-                      <button onClick={onOpenAuthModal} className={styles.loginButton}>
+                       <button onClick={onOpenAuthModal} className={styles.loginButton}>
                         Войти
                       </button>
                     )}
@@ -71,13 +67,12 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
               </nav>
 
               <div className={styles.headerActions}>
-                {/* Отдельная кнопка иконки профиля для мобильных (или просто как иконка) */}
-                {session ? (
-                   <Link to="/profile" className={styles.profileButton}> {/* Ссылка на профиль */}
+                 {session ? (
+                   <Link to="/profile" className={styles.profileButton}> 
                      <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
                    </Link>
                  ) : (
-                   <button onClick={onOpenAuthModal} className={styles.profileButton}> {/* Кнопка для входа */}
+                   <button onClick={onOpenAuthModal} className={styles.profileButton}> 
                      <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
                    </button>
                  )}
@@ -106,13 +101,13 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                   <Link
                     to={item.href}
                     className={styles.mobileNavigationLink}
-                    onClick={toggleMobileMenu} // Закрываем меню при клике на ссылку
+                    onClick={toggleMobileMenu}  
                   >
                     {item.name}
                   </Link>
                 </li>
               ))}
-              {/* Элементы для мобильного меню (Вход/Выход/Профиль) */}
+
               <li className={styles.mobileNavigationItem}>
                 {session ? (
                   <div className={styles.mobileProfileStatus}>

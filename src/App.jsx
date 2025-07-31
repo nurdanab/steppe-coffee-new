@@ -20,10 +20,9 @@ import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx';
 
 import { supabase } from './supabaseClient';
 
-// Изменено: handleOpenBookingModal больше не передается
-const EventsPageContent = () => ( // <-- ИЗМЕНЕНО ЗДЕСЬ
+const EventsPageContent = () => ( 
   <main>
-    <PublicCalendar /> {/* <-- handleOpenBookingModal УДАЛЕНО ЗДЕСЬ */}
+    <PublicCalendar /> 
   </main>
 );
 
@@ -115,7 +114,6 @@ function App() {
         } />
 
         <Route path="/events" element={
-          // Изменено: handleOpenBookingModal больше не передается в EventsPageContent
           <EventsPageContent />
         } />
 
