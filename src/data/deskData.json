@@ -3,7 +3,7 @@
     {
       "id": "news-sticker-1",
       "type": "sticker",
-      "text": "Привет привет!",
+      "text": "TEST",
       "position": {
         "top": 50,
         "left": 17,
@@ -15,7 +15,7 @@
     {
       "id": "decoration-food-sticker",
       "type": "decoration_with_pin",
-      "text": "пусто",
+      "text": "nana",
       "imageSrc": "/images/desk/detail/еда-стикер.png",
       "position": {
         "top": 21,
