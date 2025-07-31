@@ -4,8 +4,13 @@ import { supabase } from '../../supabaseClient';
 import { useNavigate } from 'react-router-dom';
 
 const UpdatePassword = () => {
-  // ... (остальной код)
-
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(''); // Эта переменная уже есть
+  const [error, setError] = useState('');     // Эта переменная уже есть
+  const navigate = useNavigate();
+  
   useEffect(() => {
     console.log('UpdatePassword component mounted.'); // Добавлено для отладки
 
