@@ -75,7 +75,8 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
         }
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + '/update-password', // <--- ВОТ ЗДЕСЬ ИЗМЕНЕНИЕ
+            // Убедись, что здесь нет никаких дополнительных параметров запроса, таких как ?type=recovery
+            redirectTo: window.location.origin + '/update-password',
         });
 
         if (error) {
