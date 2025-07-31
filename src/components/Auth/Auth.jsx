@@ -62,37 +62,36 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
     }
   };
 
-   const handlePasswordReset = async (e) => {
+  const handlePasswordReset = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
     try {
-      if (!email) {
-        setMessage('Пожалуйста, введите ваш Email для сброса пароля.');
-        setLoading(false);
-        return;
-      }
+        if (!email) {
+            setMessage('Пожалуйста, введите ваш Email для сброса пароля.');
+            setLoading(false);
+            return;
+        }
 
-       // Этот URL redirectTo очень важен. Убедись, что он соответствует настроенным Redirect URLs в Supabase.
-       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/update-password?type=recovery',
-    });
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/update-password', // <--- ВОТ ЗДЕСЬ ИЗМЕНЕНИЕ
+        });
 
-      if (error) {
-        setMessage(error.message);
-        console.error('Ошибка сброса пароля:', error.message);
-      } else {
-        setMessage('Ссылка для сброса пароля отправлена на ваш Email. Пожалуйста, проверьте почту.');
-        setShowResetPassword(false);  
-      }
+        if (error) {
+            setMessage(error.message);
+            console.error('Ошибка сброса пароля:', error.message);
+        } else {
+            setMessage('Ссылка для сброса пароля отправлена на ваш Email. Пожалуйста, проверьте почту.');
+            setShowResetPassword(false);
+        }
     } catch (err) {
-      setMessage('Произошла непредвиденная ошибка.');
-      console.error('Непредвиденная ошибка сброса пароля:', err);
+        setMessage('Произошла непредвиденная ошибка.');
+        console.error('Непредвиденная ошибка сброса пароля:', err);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
  
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
