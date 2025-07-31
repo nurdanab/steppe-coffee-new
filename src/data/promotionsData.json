@@ -1,10 +1,10 @@
 {
   "promoSlot1": {
     "id": "promo_card_1",
-    "imageUrl": "/images/promos/promo-1.png"
+    "imageUrl": "public/images/promos/promo-1.png"
   },
   "promoSlot2": {
     "id": "promo_card_2",
-    "imageUrl": "/images/promos/test.jpeg"
+    "imageUrl": "public/images/promos/test.jpeg"
   }
 }
