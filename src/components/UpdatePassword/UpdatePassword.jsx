@@ -12,62 +12,40 @@ const UpdatePassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Этот код будет пытаться установить сессию, если токены присутствуют в URL
-    const handleUrlAuth = async () => {
-      const urlParams = new URLSearchParams(window.location.hash.substring(1)); // Парсим часть после #
-      const accessToken = urlParams.get('access_token');
-      const refreshToken = urlParams.get('refresh_token');
-      const type = urlParams.get('type'); // Обычно 'recovery'
+    // Этот слушатель будет срабатывать, когда Supabase обработает URL и установит сессию
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      // event может быть 'SIGNED_IN' или 'SIGNED_OUT'
+      console.log('Auth State Change Event:', _event, 'Session:', session); // Для отладки
 
-      if (accessToken && refreshToken && type === 'recovery') {
-        try {
-          // Попытаемся установить сессию вручную, если Supabase этого не сделал
-          const { error: setSessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-
-          if (setSessionError) {
-            console.error('Ошибка при установке сессии из URL:', setSessionError.message);
-            setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
-            return;
-          }
-          setMessage('Вы можете обновить свой пароль.');
-          setError('');
-          // Очищаем хэш, чтобы URL выглядел чище после обработки
-          window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-
-        } catch (err) {
-          console.error('Непредвиденная ошибка при обработке URL:', err);
-          setError('Произошла непредвиденная ошибка при обработке ссылки. Пожалуйста, запросите сброс пароля заново.');
-          return;
-        }
+      if (session && session.user) {
+        // Проверяем, является ли это сессией восстановления пароля
+        // Supabase устанавливает тип "recovery" в сессии, когда пользователь переходит по ссылке для сброса.
+        // Хотя явно type в session.user не всегда есть, но _event будет 'SIGNED_IN'.
+        setMessage('Вы можете обновить свой пароль.');
+        setError(''); // Очищаем ошибку, если сессия активна
       } else {
-        // Если токенов в URL нет, проверяем обычную сессию
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
-        } else {
-          setMessage('Вы можете обновить свой пароль.');
-          setError('');
-        }
+        // Если сессия неактивна, показываем ошибку
+        setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
       }
-    };
-
-    handleUrlAuth();
-
-    // Слушатель изменений состояния аутентификации остается полезным
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-        if (session && session.user) {
-            setMessage('Вы можете обновить свой пароль.');
-            setError('');
-        } else {
-            setError('Сессия не активна. Пожалуйста, запросите сброс пароля заново.');
-        }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    // Дополнительная проверка сессии при первом рендере
+    const checkInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user) {
+        setMessage('Вы можете обновить свой пароль.');
+        setError('');
+      } else {
+        setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
+      }
+    };
+    checkInitialSession();
+
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []); // Пустой массив зависимостей, чтобы useEffect запускался один раз
 
   const handlePasswordUpdate = async (e) => {
     e.preventDefault();
@@ -87,7 +65,7 @@ const UpdatePassword = () => {
     }
 
     try {
-       const { error: updateError } = await supabase.auth.updateUser({ // Изменил имя переменной для избежания конфликта
+       const { error: updateError } = await supabase.auth.updateUser({ 
         password: password,
       });
 
@@ -189,7 +167,7 @@ const UpdatePassword = () => {
         {message && <p style={successMessageStyle}>{message}</p>}
         {error && <p style={errorMessageStyle}>{error}</p>}
 
-         {!error && (
+         {!error && ( // Форма показывается только если нет ошибки, которая мешает обновлению
           <form onSubmit={handlePasswordUpdate}>
             <div style={formGroupStyle}>
               <label htmlFor="new-password" style={labelStyle}>Новый пароль:</label>

@@ -37,7 +37,11 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
       const { data, error } = authResponse;
 
       if (error) {
-        setMessage(error.message);
+        if (error.message.includes('User already registered') || error.message.includes('Email already registered')) {
+          setMessage('Пользователь с таким Email уже зарегистрирован. Пожалуйста, войдите или используйте другой Email.');
+        } else {
+          setMessage(error.message);
+        }
         console.error('Ошибка аутентификации:', error.message);
       } else {
         if (isSignUp) {
