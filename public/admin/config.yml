@@ -65,8 +65,8 @@ collections:
                 name: "imageSrc"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "public/images/bookShelf"
-                public_folder: "/images/bookShelf"
+                media_folder: "public/images/uploads"
+                public_folder: "/images/uploads"
 
           - name: "bookShelf"
             label: "Книжная Полка"
@@ -95,8 +95,8 @@ collections:
                     name: "coverImage"
                     widget: "image"
                     allow_multiple: false
-                    media_folder: "public/images/bookShelf"
-                    public_folder: "/images/bookShelf"
+                    media_folder: "public/images/uploads"
+                    public_folder: "/images/uploads"
 
   - name: "deskItems"
     label: "Элементы на доске"
