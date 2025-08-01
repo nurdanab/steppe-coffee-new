@@ -9,6 +9,7 @@
   @include container-padding; // Используем миксин для адаптивных отступов контейнера
   max-width: 1200px; // Увеличим max-width, чтобы соответствовал .container
   margin: 0 auto;
+  margin-top: 50px;
   min-height: calc(100vh - 150px); // Чтобы страница не была слишком короткой, учти высоту футера
   display: flex;
   flex-direction: column;
