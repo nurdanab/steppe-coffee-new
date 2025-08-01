@@ -3,7 +3,7 @@ backend:
   repo: nurdanab/steppe-coffee-new
   branch: main
 
-media_folder: "src/data/public/images/uploads"
+media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
@@ -29,8 +29,8 @@ collections:
                 name: "imageUrl"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "src/data/public/images/uploads"
-                public_folder: "/images/uploads"
+                media_folder: "public/images/promos"
+                public_folder: "/images/promos"
 
           - name: "promoSlot2"
             label: "Промо Слот 2"
@@ -44,8 +44,8 @@ collections:
                 name: "imageUrl"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "src/data/public/images/uploads"
-                public_folder: "/images/uploads"
+                media_folder: "public/images/promos"
+                public_folder: "/images/promos"
 
   - name: "bookCorner"
     label: "Книжный Уголок"
@@ -65,8 +65,8 @@ collections:
                 name: "imageSrc"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "src/data/public/images/uploads"
-                public_folder: "/images/uploads"
+                media_folder: "public/images/bookShelf"
+                public_folder: "/images/bookShelf"
 
           - name: "bookShelf"
             label: "Книжная Полка"
@@ -95,8 +95,8 @@ collections:
                     name: "coverImage"
                     widget: "image"
                     allow_multiple: false
-                    media_folder: "src/data/public/images/uploads"
-                    public_folder: "/images/uploads"
+                    media_folder: "public/images/bookShelf"
+                    public_folder: "/images/bookShelf"
 
   - name: "deskItems"
     label: "Элементы на доске"
