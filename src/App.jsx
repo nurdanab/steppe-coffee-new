@@ -11,7 +11,7 @@ import WelcomeDesk from './components/WelcomeDesk/WelcomeDesk';
 import BookCorner from './components/BookCorner/BookCorner';
 import MapSection from './components/MapSection/MapSection';
 import FooterSection from './components/FooterSection/FooterSection';
-import PublicCalendar from './components/PublicCalendar.jsx';
+import PublicCalendar from './components/PublicCalendar/PublicCalendar';
 import BookingModal from './components/BookingModal/BookingModal.jsx';
 import Auth from './components/Auth/Auth.jsx';
 import ProfilePage from './components/ProfilePage/ProfilePage.jsx';
