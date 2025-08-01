@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'; // Импортируем useLocation
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import Header from './components/Header/Header';
@@ -16,13 +16,14 @@ import BookingModal from './components/BookingModal/BookingModal.jsx';
 import Auth from './components/Auth/Auth.jsx';
 import ProfilePage from './components/ProfilePage/ProfilePage.jsx';
 import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx';
+import AdminDashboard from './components/AdminDashboard/AdminDashboard';
 
 
 import { supabase } from './supabaseClient';
 
-const EventsPageContent = () => ( 
+const EventsPageContent = () => (
   <main>
-    <PublicCalendar /> 
+    <PublicCalendar />
   </main>
 );
 
@@ -32,7 +33,7 @@ function App() {
   const [session, setSession] = useState(null);
 
   const navigate = useNavigate();
-  const location = useLocation(); // Используем useLocation для получения текущего пути
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -49,8 +50,7 @@ function App() {
   }, []);
 
   const handleOpenBookingModal = () => {
-    // Открываем модалку авторизации, только если пользователь не на странице UpdatePassword
-    if (!session && location.pathname !== '/update-password') { // Добавлено условие
+    if (!session && location.pathname !== '/update-password') {
       setIsAuthModalOpen(true);
       alert("Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.");
       return;
@@ -63,8 +63,7 @@ function App() {
   };
 
   const handleOpenAuthModal = () => {
-    // Не открываем модалку авторизации, если мы на странице UpdatePassword
-    if (location.pathname === '/update-password') { // Добавлено условие
+    if (location.pathname === '/update-password') {
         return;
     }
     setIsAuthModalOpen(true);
@@ -88,8 +87,7 @@ function App() {
     }
   };
 
-  // Определяем, должен ли быть открыт AuthModal
-  const shouldOpenAuthModal = isAuthModalOpen && location.pathname !== '/update-password'; // Новое условие
+  const shouldOpenAuthModal = isAuthModalOpen && location.pathname !== '/update-password';
 
   return (
     <div className="App">
@@ -129,14 +127,16 @@ function App() {
         <Route path="/profile" element={
           <ProfilePage
             session={session}
-            isAuthModalOpen={isAuthModalOpen} // Передаем это, но оно будет зависеть от shouldOpenAuthModal
+            isAuthModalOpen={isAuthModalOpen}
             onOpenAuthModal={handleOpenAuthModal}
             onCloseAuthModal={handleCloseAuthModal}
             onAuthSuccess={handleAuthSuccess}
             onLogout={handleLogout}
           />
         } />
-          <Route path="/update-password" element={<UpdatePassword />} />
+        <Route path="/update-password" element={<UpdatePassword />} />
+        {/* Добавляем маршрут для AdminDashboard */}
+        <Route path="/dashboard" element={<AdminDashboard session={session} />} />
       </Routes>
 
       <BookingModal
@@ -146,9 +146,8 @@ function App() {
         currentUserEmail={session?.user?.email || ''}
       />
 
-      {/* Передаем shouldOpenAuthModal в пропс isOpen для Auth */}
       <Auth
-        isOpen={shouldOpenAuthModal} 
+        isOpen={shouldOpenAuthModal}
         onClose={handleCloseAuthModal}
         onAuthSuccess={handleAuthSuccess}
       />

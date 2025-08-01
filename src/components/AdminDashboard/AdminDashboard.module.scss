@@ -1,0 +1,253 @@
+/* src/components/AdminDashboard/AdminDashboard.module.scss */
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
+@use "sass:color";
+
+.adminDashboard {
+  @include section-padding; // Используем миксин для адаптивных отступов
+  @include container-padding; // Используем миксин для адаптивных отступов
+  max-width: 1600px; // Максимальная ширина для админ-панели
+  margin: 0 auto;
+  min-height: calc(100vh - 150px); // Чтобы страница не была слишком короткой
+  background-color: $gray-light; // Легкий фон для панели
+
+  @include md-up {
+    min-height: calc(100vh - 200px);
+  }
+}
+
+.title {
+  @extend .riffic-medium;
+  color: $maroon;
+  text-align: center;
+  margin-bottom: $spacing-xl;
+
+  @include sm-up {
+    margin-bottom: $spacing-xxl;
+  }
+}
+
+.authRequired {
+  text-align: center;
+  padding: $spacing-xxl;
+  background-color: $white;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-medium;
+
+  h2 {
+    @extend .riffic-24;
+    color: $maroon;
+    margin-bottom: $spacing-md;
+  }
+  p {
+    @extend .gilroy-16;
+    color: $gray-dark;
+  }
+}
+
+.loadingMessage,
+.errorMessage,
+.noBookingsMessage {
+  @extend .gilroy-18;
+  text-align: center;
+  padding: $spacing-md;
+  border-radius: $border-radius-sm;
+  margin-top: $spacing-lg;
+}
+
+.loadingMessage {
+  background-color: $light-yellow;
+  color: $black;
+}
+
+.errorMessage {
+  background-color: color.adjust($maroon, $lightness: 60%);
+  color: $maroon;
+}
+
+.noBookingsMessage {
+  background-color: $white;
+  color: $gray-dark;
+  border: 1px dashed $gray-medium;
+}
+
+.controls {
+  @include flex-column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  padding: $spacing-md;
+  background-color: $white;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-light;
+
+  @include md-up {
+    @include flex-between; // Распределяем по горизонтали на больших экранах
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-lg; // Увеличиваем отступы
+  }
+}
+
+.filterGroup,
+.searchGroup,
+.sortGroup {
+  @include flex-column;
+  gap: $spacing-xs;
+  flex-grow: 1; // Занимают доступное пространство
+
+  @include md-up {
+    flex-direction: row; // Элементы в строку
+    align-items: center;
+    gap: $spacing-sm;
+  }
+
+  label {
+    @extend .gilroy-16;
+    font-weight: 600;
+    color: $black;
+    white-space: nowrap; // Предотвращает перенос текста
+  }
+
+  select,
+  input[type="text"] {
+    flex-grow: 1;
+    padding: $spacing-xs;
+    border: 1px solid $gray-medium;
+    border-radius: $border-radius-sm;
+    font-family: 'Gilroy', sans-serif;
+    font-size: 16px;
+    color: $black;
+    background-color: $white;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $maroon;
+      box-shadow: 0 0 0 2px rgba($maroon, 0.2);
+    }
+  }
+}
+
+.sortOrderButton {
+  @include button-base;
+  background-color: $orange;
+  color: $white;
+  padding: $spacing-xs $spacing-sm;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: color.adjust($orange, $lightness: -10%);
+  }
+}
+
+.bookingsTableContainer {
+  overflow-x: auto; // Горизонтальная прокрутка для таблицы на маленьких экранах
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-medium;
+}
+
+.bookingsTable {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: $white;
+  text-align: left;
+  min-width: 900px; // Минимальная ширина таблицы для предотвращения слишком сильного сжатия
+
+  thead {
+    background-color: $maroon;
+    th {
+      @extend .gilroy-14;
+      color: $white;
+      padding: $spacing-sm $spacing-md;
+      font-weight: 700;
+      white-space: nowrap; // Заголовки не переносятся
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $gray-light;
+      &:last-child {
+        border-bottom: none;
+      }
+      &.pending {
+        background-color: $light-yellow; // Светло-желтый для ожидающих
+      }
+      &.cancelled {
+        background-color: color.adjust($gray-light, $lightness: 5%); // Очень светлый серый для отмененных
+        opacity: 0.7; // Слегка тусклый
+      }
+      &:hover {
+        background-color: $gray-light;
+      }
+    }
+    td {
+      @extend .gilroy-14;
+      padding: $spacing-sm $spacing-md;
+      color: $black;
+      vertical-align: top; // Выравнивание по верхнему краю
+
+      // Обрезание длинного текста в комментариях
+      &.commentsCell {
+        max-width: 200px; // Ограничиваем ширину колонки с комментариями
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; // Добавляем многоточие
+      }
+    }
+  }
+}
+
+.statusSelect {
+  @extend .gilroy-14;
+  padding: 4px $spacing-xs;
+  border: 1px solid $gray-medium;
+  border-radius: $border-radius-sm;
+  background-color: $white;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $maroon;
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($maroon, 0.2);
+  }
+
+  // Стили для опций в зависимости от статуса
+  option[value="pending"] {
+    background-color: $light-yellow;
+    color: $black;
+  }
+  option[value="confirmed"] {
+    background-color: #d4edda; // Зеленый из BookingModal
+    color: #28a745;
+  }
+  option[value="cancelled"] {
+    background-color: color.adjust($gray-light, $lightness: 5%);
+    color: $gray-dark;
+  }
+}
+
+.deleteButton {
+  @include button-base;
+  background-color: $maroon;
+  color: $white;
+  padding: $spacing-xs $spacing-sm;
+  font-size: 14px;
+
+  &:hover {
+    background-color: color.adjust($maroon, $lightness: 10%);
+  }
+  &:disabled {
+    background-color: $gray-medium;
+    cursor: not-allowed;
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
