@@ -1,5 +1,2 @@
-/.netlify/identity /admin/index.html 200
-/.netlify/identity/* /admin/index.html 200
 /admin/* /admin/index.html 200
-
 /* /index.html 200
