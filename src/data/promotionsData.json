@@ -1,10 +1,10 @@
 {
   "promoSlot1": {
     "id": "promo_card_1",
-    "imageUrl": "/images/uploads/coffee-shop-community-photo-1.png"
+    "imageUrl": "/images/uploads/testco.png"
   },
   "promoSlot2": {
     "id": "promo_card_2",
-    "imageUrl": "/images/uploads/testco.png"
+    "imageUrl": "/images/uploads/coffee-shop-community-photo-1.png"
   }
 }
