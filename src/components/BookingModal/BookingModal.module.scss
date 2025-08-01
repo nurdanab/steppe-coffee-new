@@ -9,11 +9,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba($black, 0.7); // Полупрозрачный черный фон
-  @include flex-center; // Центрируем контент по вертикали и горизонтали
+  background-color: rgba($black, 0.7);
+  @include flex-center;
   z-index: 1000;
-  backdrop-filter: blur(5px); // Легкое размытие фона
-  animation: fadeIn 0.3s ease-out; // Плавное появление оверлея
+  backdrop-filter: blur(5px); 
+  animation: fadeIn 0.3s ease-out; 
 
   @keyframes fadeIn {
     from {
@@ -28,14 +28,14 @@
 .modalContent {
   background-color: $white;
   padding: $spacing-lg;
-  border-radius: $border-radius-lg; // Используем переменную для скругления углов
-  box-shadow: $shadow-heavy; // Используем переменную для тени
+  border-radius: $border-radius-lg; 
+  box-shadow: $shadow-heavy;  
   position: relative;
-  width: 90%; // Адаптивная ширина
-  max-width: 600px; // Максимальная ширина
-  max-height: 90vh; // Ограничиваем высоту для скролла
-  overflow-y: auto; // Добавляем прокрутку, если контент не помещается
-  animation: slideIn 0.4s ease-out forwards; // Анимация появления модального окна
+  width: 90%;  
+  max-width: 900px;  
+  max-height: 90vh; 
+  overflow-y: auto;
+  animation: slideIn 0.4s ease-out forwards;
 
   @include sm-up {
     padding: $spacing-xl;
@@ -44,7 +44,7 @@
   h2 {
     font-family: 'Riffic', serif;
     font-size: 28px;
-    color: $maroon;
+    color: $yellow;
     text-align: center;
     margin-bottom: $spacing-md;
 

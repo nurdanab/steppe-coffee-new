@@ -10,7 +10,11 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
 
   useEffect(() => {
     if (!session) {
-      onOpenAuthModal();
+      // Это условие будет срабатывать, если пользователь не авторизован.
+      // onOpenAuthModal() вызывается для отображения модального окна аутентификации.
+      if (!isAuthModalOpen) { // Проверяем, что модальное окно еще не открыто
+        onOpenAuthModal();
+      }
       return; 
     }
 
@@ -20,7 +24,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
       try {
         const { data, error } = await supabase
           .from('bookings')
-          .select('*')
+          .select('id, booking_date, start_time, end_time, selected_room, status, comments') // Добавил selected_room
           .eq('user_id', session.user.id) 
           .order('booking_date', { ascending: false }) 
           .order('start_time', { ascending: false });
@@ -38,7 +42,20 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
     };
 
     fetchUserBookings();
-  }, [session, onOpenAuthModal]); 
+  }, [session, onOpenAuthModal, isAuthModalOpen]); // Добавил isAuthModalOpen в зависимости, чтобы избежать повторных вызовов
+
+  // Определение функции для получения имени зала
+  const getRoomName = (roomKey) => {
+    switch (roomKey) {
+      case 'second_hall':
+        return 'Второй зал';
+      case 'summer_terrace':
+        return 'Летняя терраса';
+      default:
+        return 'Неизвестный зал';
+    }
+  };
+
 
   if (!session) {
     return (
@@ -46,7 +63,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
         <div className={styles.notLoggedInMessage}>
           <h2>Для просмотра профиля необходимо войти</h2>
           <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы получить доступ к истории бронирований.</p>
-          {!isAuthModalOpen && (
+          {!isAuthModalOpen && ( // Отображаем кнопку только если модальное окно не открыто
             <button onClick={onOpenAuthModal} className={styles.loginButton}>Войти / Зарегистрироваться</button>
           )}
         </div>
@@ -66,11 +83,11 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
       <section className={styles.bookingHistory}>
         <h2>История моих бронирований</h2>
         {loadingBookings ? (
-          <p>Загрузка истории бронирований...</p>
+          <p className={styles.noBookingsMessage}>Загрузка истории бронирований...</p> // Применяем стиль
         ) : errorBookings ? (
           <p className={styles.errorMessage}>{errorBookings}</p>
         ) : userBookings.length === 0 ? (
-          <p>У вас пока нет бронирований.</p>
+          <p className={styles.noBookingsMessage}>У вас пока нет бронирований.</p> // Применяем новый класс
         ) : (
           <div className={styles.bookingsList}>
             {userBookings.map(booking => (
@@ -80,6 +97,9 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
                 </p>
                 <p className={styles.bookingTime}>
                   Время: {booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}
+                </p>
+                <p className={styles.bookingRoom}>
+                  Зал: {getRoomName(booking.selected_room)} {/* Используем функцию для получения имени зала */}
                 </p>
                 <p className={styles.bookingStatus}>
                   Статус: <span className={styles[booking.status]}>{booking.status === 'confirmed' ? 'Подтверждено' : booking.status === 'pending' ? 'В ожидании' : 'Отменено'}</span>
