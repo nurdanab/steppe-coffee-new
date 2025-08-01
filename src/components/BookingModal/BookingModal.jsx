@@ -13,6 +13,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState(''); 
   const [comment, setComment] = useState('');
+  // Новые состояния для публичных полей события
+  const [eventName, setEventName] = useState(''); //
+  const [eventDescription, setEventDescription] = useState(''); //
+  const [organizerContact, setOrganizerContact] = useState(''); //
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null); 
@@ -34,14 +39,21 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setNumberOfPeople(1); 
       setPhoneNumber('');
       setComment('');
+      // Сброс новых полей
+      setEventName(''); //
+      setEventDescription(''); //
+      setOrganizerContact(''); //
       setMessage('');  
       setError(null); 
     }
   }, [isOpen, currentUserId, currentUserEmail]); 
+
   if (!isOpen) return null;
 
   const cafeOpenTime = '08:00';
   const cafeCloseTime = '22:00';
+  const maxBookingDurationHours = 3; // Максимальная продолжительность бронирования
+  const cleanupTimeHours = 1; // Время на уборку между бронями
 
   const checkAvailability = async (date, start, end, room, numPpl) => { 
     setError(null); 
@@ -58,7 +70,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         minPeople = 1;
         maxPeople = 10;
         break;
-      default:
+      default: // Если не выбран конкретный зал или общий зал (весь кафе)
         minPeople = 1; 
         maxPeople = 50;  
         break;
@@ -68,10 +80,19 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       return { available: false, message: `Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.` };
     }
 
-    if (start >= end) {
+    // Проверка максимальной продолжительности брони
+    const startDateTime = new Date(`${date}T${start}`);
+    const endDateTime = new Date(`${date}T${end}`);
+    const durationMs = endDateTime - startDateTime;
+    const durationHours = durationMs / (1000 * 60 * 60);
+    
+    if (durationHours <= 0) {
       return { available: false, message: 'Время начала не может быть позже или равно времени окончания.' };
     }
-
+    if (durationHours > maxBookingDurationHours) { //
+      return { available: false, message: `Максимальное время бронирования - ${maxBookingDurationHours} часа.` }; //
+    }
+    
     if (start < cafeOpenTime || end > cafeCloseTime) {
       return { available: false, message: `Кофейня работает с ${cafeOpenTime} до ${cafeCloseTime}.` };
     }
@@ -91,31 +112,40 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       .from('bookings')
       .select('id, start_time, end_time, status')
       .eq('booking_date', date)
-      .eq('selected_room', room)
-      .in('status', ['confirmed', 'pending']);
+      .eq('selected_room', room); // Теперь учитываем все статусы для проверки занятости и постановки в очередь
 
     if (fetchError) {
       console.error('Ошибка при получении существующих бронирований:', fetchError.message);
       return { available: false, message: 'Произошла ошибка при проверке доступности. Пожалуйста, попробуйте снова.' };
     }
 
+    let isConflict = false; // Флаг для определения конфликта
+    let hasConfirmedConflict = false; // Флаг для определения конфликта с подтвержденной бронью
+
     for (const booking of existingBookings) {
       const existingStart = booking.start_time;
       const existingEnd = booking.end_time;
+      const bookingStatus = booking.status;
 
-      if ((start < existingEnd) && (end > existingStart)) {
-        if (room === 'second_hall') {
-          const existingEndTimeDate = new Date(`${date}T${existingEnd}`);
-          existingEndTimeDate.setHours(existingEndTimeDate.getHours() + 1);
-          const requiredStartTime = existingEndTimeDate.toTimeString().substring(0, 5);
+      // Учитываем время на уборку
+      const cleanUpStartTime = new Date(`${date}T${existingEnd}`);
+      cleanUpStartTime.setHours(cleanUpStartTime.getHours() + cleanupTimeHours); //
+      const requiredNextAvailableTime = cleanUpStartTime.toTimeString().substring(0, 5); //
 
-          if (start < requiredStartTime) {
-            return { available: false, message: 'Выбранное время для "Второго зала внутри" занято или недоступно с учетом правил интервала. Пожалуйста, выберите другое время.' };
+      // Проверка на пересечение с учетом времени на уборку
+      if ((start < requiredNextAvailableTime) && (end > existingStart)) {
+          isConflict = true;
+          if (bookingStatus === 'confirmed') { //
+              hasConfirmedConflict = true; //
+              break; // Если есть подтвержденная бронь, дальнейшие проверки не нужны
           }
-        } else {
-          return { available: false, message: 'Выбранное время уже занято для данного зала.' };
-        }
       }
+    }
+
+    if (hasConfirmedConflict) { //
+        return { available: false, message: 'Выбранное время уже занято для данного зала подтвержденной бронью или недоступно с учетом правил интервала.' }; //
+    } else if (isConflict) { //
+        return { available: 'queued', message: 'На выбранное время уже есть ожидающая бронь. Ваша бронь будет добавлена в очередь.' }; //
     }
 
     return { available: true };
@@ -133,12 +163,23 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return;
     }
 
+    // Проверка заполнения обязательных полей
+    if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
+      setError('Пожалуйста, заполните все обязательные поля (Дата, Время начала, Время окончания, Зал, Количество человек, Телефон, Имя).');
+      setLoading(false);
+      return;
+    }
+
     const availabilityCheckResult = await checkAvailability(bookingDate, startTime, endTime, selectedRoom, numberOfPeople);
 
+    let bookingStatusToSet = 'pending'; //
     if (!availabilityCheckResult.available) {
       setError(availabilityCheckResult.message); 
       setLoading(false);
       return;
+    } else if (availabilityCheckResult.available === 'queued') { //
+      bookingStatusToSet = 'queued'; //
+      setMessage(availabilityCheckResult.message); // Показываем сообщение о постановке в очередь
     }
 
     try {
@@ -155,7 +196,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             organizer_name: userName,
             comments: comment,
             user_id: currentUserId,
-            status: 'pending', 
+            status: bookingStatusToSet, // Устанавливаем статус 'pending' или 'queued'
+            event_name: eventName || null, //
+            event_description: eventDescription || null, //
+            organizer_contact: organizerContact || null, //
           },
         ])
         .select(); 
@@ -164,7 +208,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         throw insertError;
       }
 
-      setMessage('Ваша бронь успешно отправлена! Ожидайте подтверждения.');
+      if (bookingStatusToSet === 'pending') {
+        setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
+      } else {
+        setMessage('Ваша бронь успешно отправлена и добавлена в очередь. Ожидайте подтверждения!');
+      }
+      
+      // Сброс формы
       setBookingDate(new Date().toISOString().split('T')[0]);
       setStartTime('');
       setEndTime('');
@@ -173,6 +223,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setPhoneNumber('');
       setUserName(currentUserEmail || '');
       setComment('');
+      setEventName('');
+      setEventDescription('');
+      setOrganizerContact('');
+
 
       setTimeout(() => {
         onClose();
@@ -196,6 +250,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         {error && <p className={styles.errorMessage}>{error}</p>}
         {message && <p className={styles.successMessage}>{message}</p>}
         <form onSubmit={handleSubmit}>
+          {/* Существующие поля */}
           <div className={styles.formGroup}>
             <label htmlFor="bookingDate">Дата бронирования:</label>
             <input
@@ -292,9 +347,46 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               disabled={loading}
             />
           </div>
+          
+          {/* Новые поля для публичного события */}
+          <div className={styles.formGroup}>
+            <label htmlFor="eventName">Название события (для анонса, необязательно):</label>
+            <input
+              type="text"
+              id="eventName"
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+              disabled={loading}
+              placeholder="Например: Мастер-класс по рисованию"
+            />
+          </div>
 
           <div className={styles.formGroup}>
-            <label htmlFor="comment">Комментарий (необязательно):</label>
+            <label htmlFor="eventDescription">Описание события (для анонса, необязательно):</label>
+            <textarea
+              id="eventDescription"
+              rows="3"
+              value={eventDescription}
+              onChange={(e) => setEventDescription(e.target.value)}
+              disabled={loading}
+              placeholder="Расскажите о вашем мероприятии, что будет происходить."
+            ></textarea>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="organizerContact">Контакт для связи с организацией (телефон/Instagram, необязательно):</label>
+            <input
+              type="text"
+              id="organizerContact"
+              value={organizerContact}
+              onChange={(e) => setOrganizerContact(e.target.value)}
+              disabled={loading}
+              placeholder="Например: @наш_инстаграм или +77001234567"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="comment">Комментарий (для администрации, необязательно):</label>
             <textarea
               id="comment"
               rows="3"

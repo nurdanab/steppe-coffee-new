@@ -9,8 +9,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba($black, 0.7);
-  @include flex-center;
+  background-color: rgba($black, 0.7); // Используем переменную $black
+  @include flex-center; // Используем миксин для центрирования
   z-index: 1000;
   backdrop-filter: blur(5px); 
   animation: fadeIn 0.3s ease-out; 
@@ -26,30 +26,34 @@
 }
 
 .modalContent {
-  background-color: $white;
-  padding: $spacing-lg;
-  border-radius: $border-radius-lg; 
-  box-shadow: $shadow-heavy;  
+  background-color: $white; // Используем переменную $white
+  padding: $spacing-lg; // Используем переменную отступа
+  border-radius: $border-radius-lg; // Используем переменную радиуса
+  box-shadow: $shadow-heavy; // Используем переменную тени
   position: relative;
   width: 90%;  
   max-width: 900px;  
   max-height: 90vh; 
-  overflow-y: auto;
+  overflow-y: auto; // Добавлено для прокрутки контента, если он не помещается
   animation: slideIn 0.4s ease-out forwards;
 
-  @include sm-up {
-    padding: $spacing-xl;
+  @include sm-up { // Используем миксин для адаптивности
+    padding: $spacing-xl; // Увеличиваем паддинг на больших экранах
   }
 
+  // Заголовок модального окна
   h2 {
     font-family: 'Riffic', serif;
     font-size: 28px;
-    color: $yellow;
+    color: $yellow; // Используем переменную цвета
     text-align: center;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-md; // Используем переменную отступа
 
     @include sm-up {
       font-size: 36px;
+    }
+    @include md-up { // Добавим для еще большей адаптивности
+        font-size: 42px;
     }
   }
 
@@ -67,36 +71,37 @@
 
 .closeButton {
   position: absolute;
-  top: $spacing-sm;
-  right: $spacing-sm;
+  top: $spacing-sm; // Используем переменную отступа
+  right: $spacing-sm; // Используем переменную отступа
   background: none;
   border: none;
   font-size: 2.5rem;
-  color: $gray-dark;
+  color: $gray-dark; // Используем переменную цвета
   cursor: pointer;
-  transition: color $transition-fast;
-  line-height: 1; // Убираем лишний интервал
-  padding: $spacing-xs; // Добавляем небольшой паддинг для удобства нажатия
-  border-radius: $border-radius-sm; // Слегка скругляем для фокуса
+  transition: color $transition-fast; // Используем переменную перехода
+  line-height: 1; 
+  padding: $spacing-xs; // Используем переменную отступа
+  border-radius: $border-radius-sm; // Используем переменную радиуса
 
   &:hover {
-    color: $maroon;
+    color: $maroon; // Используем переменную цвета
   }
   &:focus-visible {
-    outline: 2px solid $maroon;
+    outline: 2px solid $maroon; // Используем переменную цвета
     outline-offset: 2px;
   }
 }
 
 .formGroup {
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-md; // Используем переменную отступа
 
   label {
     display: block;
-    margin-bottom: $spacing-xs;
+    margin-bottom: $spacing-xs; // Используем переменную отступа
     font-weight: 600;
-    color: $black;
-    font-size: 16px; // Базовый размер шрифта для лейблов
+    color: $black; // Используем переменную цвета
+    font-size: 16px; 
+    @include gilroy-16; // Можно использовать миксин, если хотите, чтобы это был конкретный размер из типографики
   }
 
   input[type="date"],
@@ -106,33 +111,34 @@
   select,
   textarea {
     width: 100%;
-    padding: $spacing-xs $spacing-sm;
-    border: 1px solid $gray-medium;
-    border-radius: $border-radius-sm;
+    padding: $spacing-xs $spacing-sm; // Используем переменные отступов
+    border: 1px solid $gray-medium; // Используем переменную цвета
+    border-radius: $border-radius-sm; // Используем переменную радиуса
     font-family: 'Gilroy', sans-serif;
     font-size: 16px;
-    color: $black;
-    background-color: $white;
-    transition: border-color $transition-fast;
+    color: $black; // Используем переменную цвета
+    background-color: $white; // Используем переменную цвета
+    transition: border-color $transition-fast; // Используем переменную перехода
 
     &:focus {
       outline: none;
-      border-color: $maroon;
-      box-shadow: 0 0 0 2px rgba($maroon, 0.2);
+      border-color: $maroon; // Используем переменную цвета
+      box-shadow: 0 0 0 2px rgba($maroon, 0.2); // Используем переменную цвета
     }
 
     &:disabled {
-      background-color: $gray-light;
+      background-color: $gray-light; // Используем переменную цвета
       cursor: not-allowed;
     }
   }
 
   textarea {
-    resize: vertical; // Разрешить изменение размера только по вертикали
+    resize: vertical; 
+    min-height: 80px; // Добавим минимальную высоту для удобства ввода
   }
 
   // Стили для IMaskInput, если нужно
-  .input { // Используем этот класс для стилизации IMaskInput
+  .input { 
     width: 100%;
     padding: $spacing-xs $spacing-sm;
     border: 1px solid $gray-medium;
@@ -159,13 +165,13 @@
 .submitButton {
   @include button-primary; // Используем миксин для первичной кнопки
   width: 100%;
-  margin-top: $spacing-md;
-  font-size: 18px; // Увеличиваем размер шрифта для кнопки подтверждения
-  padding: $spacing-sm $spacing-xl; // Увеличиваем паддинг
-  border-radius: $border-radius-md; // Немного скругляем углы
+  margin-top: $spacing-md; // Используем переменную отступа
+  font-size: 18px; 
+  padding: $spacing-sm $spacing-xl; // Используем переменные отступов
+  border-radius: $border-radius-md; // Используем переменную радиуса
 
   &:disabled {
-    background-color: $gray-medium;
+    background-color: $gray-medium; // Используем переменную цвета
     cursor: not-allowed;
     &:hover {
       transform: none;
@@ -175,25 +181,51 @@
 }
 
 .errorMessage {
-  color: #dc3545;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  padding: $spacing-xs;
-  border-radius: $border-radius-sm;
-  margin-top: $spacing-sm;
-  margin-bottom: $spacing-md;
+  color: #dc3545; // Можно заменить на переменную, если есть аналог
+  background-color: #f8d7da; // Можно заменить на переменную, если есть аналог
+  border: 1px solid #f5c6cb; // Можно заменить на переменную, если есть аналог
+  padding: $spacing-xs; // Используем переменную отступа
+  border-radius: $border-radius-sm; // Используем переменную радиуса
+  margin-top: $spacing-sm; // Используем переменную отступа
+  margin-bottom: $spacing-md; // Используем переменную отступа
   text-align: center;
   font-size: 14px;
+  font-weight: 500; // Добавим немного жирности для лучшей читаемости
 }
 
 .successMessage {
-  color: #28a745;
-  background-color: #d4edda;
-  border: 1px solid #c3e6cb;
-  padding: $spacing-xs;
-  border-radius: $border-radius-sm;
-  margin-top: $spacing-sm;
-  margin-bottom: $spacing-md;
+  color: #28a745; // Можно заменить на переменную, если есть аналог
+  background-color: #d4edda; // Можно заменить на переменную, если есть аналог
+  border: 1px solid #c3e6cb; // Можно заменить на переменную, если есть аналог
+  padding: $spacing-xs; // Используем переменную отступа
+  border-radius: $border-radius-sm; // Используем переменную радиуса
+  margin-top: $spacing-sm; // Используем переменную отступа
+  margin-bottom: $spacing-md; // Используем переменную отступа
   text-align: center;
   font-size: 14px;
+  font-weight: 500; // Добавим немного жирности
+}
+
+// Дополнительные стили для улучшения внешнего вида формы на мобильных устройствах
+@include sm-down {
+  .formGroup {
+    margin-bottom: $spacing-sm; // Чуть меньше отступ на мобильных
+    label {
+      font-size: 14px;
+    }
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    input[type="text"],
+    select,
+    textarea,
+    .input {
+      font-size: 14px;
+      padding: $spacing-xs;
+    }
+  }
+  .submitButton {
+    font-size: 16px;
+    padding: $spacing-xs $spacing-lg;
+  }
 }
