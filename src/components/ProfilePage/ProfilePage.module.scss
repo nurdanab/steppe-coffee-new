@@ -1,5 +1,5 @@
 /* src/components/ProfilePage/ProfilePage.module.scss */
-
+@use "sass:color"; 
 @use '../../styles/variables' as *; // Убедись, что путь к variables.scss правильный
 @use '../../styles/mixins' as *; // Убедись, что путь к mixins.scss правильный
 @use '../../styles/typography' as *; // Для использования типографических классов
@@ -35,7 +35,7 @@
 
   h1 {
     @extend .riffic-32; // Используем свой стиль для заголовка
-    color: $maroon; // Цвет из переменных
+    color: $yellow; // Цвет из переменных
     margin: 0;
     text-align: left; // Выравнивание для заголовка
   }
@@ -43,13 +43,13 @@
 
 .logoutButton {
   @include button-base; // Используем базовый миксин кнопки
-  background-color: $maroon; // Красный цвет для кнопки выхода
+  background-color: $black; // Красный цвет для кнопки выхода
   color: $white;
   padding: $spacing-xs $spacing-md; // Используем переменные для отступов
   border-radius: $border-radius-sm; // Используем переменную для скругления
   
   &:hover {
-    background-color: color.adjust($maroon, $lightness: 10%); // Затемняем при наведении
+    background-color: color.adjust($yellow, $lightness: 10%); // Затемняем при наведении
   }
 }
 
@@ -87,7 +87,7 @@
 
   h2 {
     @extend .riffic-24; // Используем свой стиль для заголовка
-    color: $maroon; // Цвет из переменных
+    color: $black; // Цвет из переменных
     margin-bottom: $spacing-xl; // Используем переменную для отступа
     text-align: center;
   }
@@ -137,7 +137,7 @@
 
   .bookingDate, .bookingTime {
     font-weight: 600;
-    color: $maroon; // Выделим цветом
+    color: $light-yellow; // Выделим цветом
   }
   
   .bookingRoom { // Добавим класс для отображения зала

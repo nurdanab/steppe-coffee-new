@@ -1,8 +1,8 @@
 /* src/components/PublicCalendar/PublicCalendar.module.scss */
-
+@use "sass:color"; 
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *; // Для использования стилей шрифтов, если нужно
+@use '../../styles/typography' as *;
 
 .publicCalendarWrapper {
   // Базовые стили для обертки компонента календаря
@@ -26,8 +26,8 @@
 }
 
 .calendarTitle {
-  @extend .riffic-medium; // Используем существующий типографический класс
-  color: $maroon;
+  @extend .riffic-32; // Используем существующий типографический класс
+  color: $black;
   text-align: center;
   margin-bottom: $spacing-lg;
 
