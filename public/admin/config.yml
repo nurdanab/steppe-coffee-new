@@ -3,7 +3,7 @@ backend:
   repo: nurdanab/steppe-coffee-new
   branch: main
 
-media_folder: "public/images/uploads"
+media_folder: "./../public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
@@ -29,7 +29,7 @@ collections:
                 name: "imageUrl"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "public/images/promos"
+                media_folder: "../../public/images/promos"
                 public_folder: "/images/promos"
 
           - name: "promoSlot2"
@@ -44,7 +44,7 @@ collections:
                 name: "imageUrl"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "public/images/promos"
+                media_folder: "../../public/images/promos"
                 public_folder: "/images/promos"
 
   - name: "bookCorner"
@@ -65,7 +65,7 @@ collections:
                 name: "imageSrc"
                 widget: "image"
                 allow_multiple: false
-                media_folder: "public/images/bookShelf"
+                media_folder: "../../public/images/bookShelf"
                 public_folder: "/images/bookShelf"
 
           - name: "bookShelf"
@@ -95,7 +95,7 @@ collections:
                     name: "coverImage"
                     widget: "image"
                     allow_multiple: false
-                    media_folder: "public/images/bookShelf"
+                    media_folder: "../../public/images/bookShelf"
                     public_folder: "/images/bookShelf"
 
   - name: "deskItems"
