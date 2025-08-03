@@ -19,7 +19,7 @@ const AdminDashboard = ({ session }) => {
 
   const navigate = useNavigate();
 
-  // Функция для получения имени зала (перенесена, если ещё не была)
+  // Функция для получения имени зала
   const getRoomName = useCallback((roomKey) => {
     switch (roomKey) {
       case 'second_hall':
@@ -101,7 +101,14 @@ const AdminDashboard = ({ session }) => {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const { error: updateError } = await supabase
+      // Получаем текущие данные бронирования для уведомления
+      const currentBooking = bookings.find(b => b.id === id);
+      if (!currentBooking) {
+        console.error('Бронирование не найдено для обновления статуса.');
+        return;
+      }
+
+      const { data, error: updateError } = await supabase
         .from('bookings')
         .update({ status: newStatus })
         .eq('id', id)
@@ -110,7 +117,36 @@ const AdminDashboard = ({ session }) => {
       if (updateError) {
         throw updateError;
       }
-      fetchBookings();
+
+      // --- ДОБАВЛЯЕМ ОТПРАВКУ УВЕДОМЛЕНИЯ В TELEGRAM ---
+      const telegramMessage = `
+        <b>Изменение статуса бронирования:</b>
+        #ID: <code>${currentBooking.id.substring(0, 8)}</code>
+        <b>Статус:</b> ${newStatus === 'confirmed' ? '✅ Подтверждено' : newStatus === 'pending' ? '⏳ В ожидании' : '❌ Отменено'}
+        <b>Дата:</b> ${new Date(currentBooking.booking_date).toLocaleDateString('ru-RU')}
+        <b>Время:</b> ${currentBooking.start_time.substring(0, 5)} - ${currentBooking.end_time.substring(0, 5)}
+        <b>Зал:</b> ${getRoomName(currentBooking.selected_room)}
+        <b>Организатор:</b> ${currentBooking.organizer_name}
+        <b>Телефон:</b> ${currentBooking.phone_number}
+        <b>Комментарий:</b> ${currentBooking.comments || 'Нет'}
+      `;
+
+      try {
+        const { data, error: telegramError } = await supabase.functions.invoke('telegram-notification', {
+          body: { message: telegramMessage },
+        });
+
+        if (telegramError) {
+          console.error('Ошибка отправки уведомления в Telegram:', telegramError);
+        } else {
+          console.log('Уведомление в Telegram успешно отправлено:', data);
+        }
+      } catch (err) {
+        console.error('Ошибка вызова Telegram Edge Function:', err);
+      }
+      // --- КОНЕЦ ОТПРАВКИ УВЕДОМЛЕНИЯ ---
+
+      fetchBookings(); // Обновляем список бронирований после изменения статуса
     } catch (err) {
       console.error('Ошибка при изменении статуса:', err.message);
       alert('Ошибка при изменении статуса: ' + err.message);
@@ -120,6 +156,13 @@ const AdminDashboard = ({ session }) => {
   const handleDeleteBooking = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
       try {
+        // Получаем текущие данные бронирования для уведомления перед удалением
+        const currentBooking = bookings.find(b => b.id === id);
+        if (!currentBooking) {
+          console.error('Бронирование не найдено для удаления.');
+          return;
+        }
+
         const { error: deleteError } = await supabase
           .from('bookings')
           .delete()
@@ -128,6 +171,34 @@ const AdminDashboard = ({ session }) => {
         if (deleteError) {
           throw deleteError;
         }
+
+        // --- ДОБАВЛЯЕМ ОТПРАВКУ УВЕДОМЛЕНИЯ В TELEGRAM ОБ УДАЛЕНИИ ---
+        const telegramMessage = `
+          <b>Бронирование удалено:</b>
+          #ID: <code>${currentBooking.id.substring(0, 8)}</code>
+          <b>Дата:</b> ${new Date(currentBooking.booking_date).toLocaleDateString('ru-RU')}
+          <b>Время:</b> ${currentBooking.start_time.substring(0, 5)} - ${currentBooking.end_time.substring(0, 5)}
+          <b>Зал:</b> ${getRoomName(currentBooking.selected_room)}
+          <b>Организатор:</b> ${currentBooking.organizer_name}
+          <b>Телефон:</b> ${currentBooking.phone_number}
+          <b>Комментарий:</b> ${currentBooking.comments || 'Нет'}
+        `;
+
+        try {
+          const { data, error: telegramError } = await supabase.functions.invoke('telegram-notification', {
+            body: { message: telegramMessage },
+          });
+
+          if (telegramError) {
+            console.error('Ошибка отправки уведомления об удалении в Telegram:', telegramError);
+          } else {
+            console.log('Уведомление об удалении в Telegram успешно отправлено:', data);
+          }
+        } catch (err) {
+          console.error('Ошибка вызова Telegram Edge Function при удалении:', err);
+        }
+        // --- КОНЕЦ ОТПРАВКИ УВЕДОМЛЕНИЯ ---
+
         fetchBookings();
       } catch (err) {
         console.error('Ошибка при удалении бронирования:', err.message);
@@ -219,7 +290,7 @@ const AdminDashboard = ({ session }) => {
             <option value="start_time">Время начала</option>
             <option value="status">Статус</option>
             <option value="num_people">Кол-во человек</option>
-          </select> 
+          </select> {/* <-- Исправленный закрывающий тег */}
           <button
             onClick={() => setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' })}
             className={styles.sortOrderButton}
