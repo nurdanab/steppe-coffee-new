@@ -2,26 +2,34 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../supabaseClient';
 import styles from './AdminDashboard.module.scss';
+import { useNavigate } from 'react-router-dom';
+import BookingEditModal from './BookingEditModal'; // Импортируем новый компонент модального окна редактирования
 
 const AdminDashboard = ({ session }) => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'confirmed', 'cancelled'
+  const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState({ field: 'booking_date', order: 'desc' }); // 'asc' or 'desc'
+  const [sortBy, setSortBy] = useState({ field: 'booking_date', order: 'desc' });
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // Функция для получения имени зала
-  const getRoomName = (roomKey) => {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Стейт для открытия/закрытия модалки редактирования
+  const [bookingToEdit, setBookingToEdit] = useState(null); // Стейт для хранения данных бронирования, которое редактируем
+
+  const navigate = useNavigate();
+
+  // Функция для получения имени зала (перенесена, если ещё не была)
+  const getRoomName = useCallback((roomKey) => {
     switch (roomKey) {
       case 'second_hall':
         return 'Второй зал внутри';
       case 'summer_terrace':
         return 'Летняя терраса';
       default:
-        return 'Неизвестный зал';
+        return 'Неизвестный зал'; // Если появятся новые залы, добавить сюда
     }
-  };
+  }, []);
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -29,17 +37,14 @@ const AdminDashboard = ({ session }) => {
     try {
       let query = supabase.from('bookings').select('*');
 
-      // Фильтрация по статусу
       if (filterStatus !== 'all') {
         query = query.eq('status', filterStatus);
       }
 
-      // Поиск по имени организатора или телефону
       if (searchTerm) {
         query = query.or(`organizer_name.ilike.%${searchTerm}%,phone_number.ilike.%${searchTerm}%`);
       }
 
-      // Сортировка
       query = query.order(sortBy.field, { ascending: sortBy.order === 'asc' });
 
       const { data, error: fetchError } = await query;
@@ -57,43 +62,63 @@ const AdminDashboard = ({ session }) => {
   }, [filterStatus, searchTerm, sortBy]);
 
   useEffect(() => {
-    // В реальном приложении здесь нужна проверка прав администратора
-    // Например, если session.user.app_metadata.role !== 'admin'
-    // if (!session || session.user.app_metadata.role !== 'admin') {
-    //   setError("У вас нет прав для доступа к этой панели.");
-    //   setLoading(false);
-    //   return;
-    // }
+    const checkAdminAccess = async () => {
+      setLoading(true);
+      if (!session) {
+        setError("Пожалуйста, войдите в систему.");
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
 
-    fetchBookings();
-  }, [session, fetchBookings]);
+      try {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
 
-  // Обработчики изменения статуса
+        if (profileError || !profile || profile.role !== 'admin') {
+          setError("У вас нет прав для доступа к этой панели. Только администраторы могут просматривать эту страницу.");
+          setIsAdmin(false);
+          setLoading(false);
+          // navigate('/'); // Можно раскомментировать для автоматического редиректа
+          return;
+        }
+        
+        setIsAdmin(true);
+        fetchBookings();
+      } catch (err) {
+        console.error("Ошибка проверки прав администратора:", err.message);
+        setError("Ошибка авторизации. Пожалуйста, попробуйте позже.");
+        setIsAdmin(false);
+        setLoading(false);
+      }
+    };
+
+    checkAdminAccess();
+  }, [session, fetchBookings, navigate]);
+
   const handleStatusChange = async (id, newStatus) => {
-    setLoading(true); // Можно использовать отдельный стейт для загрузки отдельного элемента
     try {
       const { error: updateError } = await supabase
         .from('bookings')
         .update({ status: newStatus })
-        .eq('id', id);
+        .eq('id', id)
+        .select();
 
       if (updateError) {
         throw updateError;
       }
-      // Обновляем список бронирований после изменения статуса
       fetchBookings();
     } catch (err) {
       console.error('Ошибка при изменении статуса:', err.message);
       alert('Ошибка при изменении статуса: ' + err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Обработчик удаления бронирования
   const handleDeleteBooking = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
-      setLoading(true);
       try {
         const { error: deleteError } = await supabase
           .from('bookings')
@@ -103,29 +128,45 @@ const AdminDashboard = ({ session }) => {
         if (deleteError) {
           throw deleteError;
         }
-        fetchBookings(); // Обновляем список
+        fetchBookings();
       } catch (err) {
         console.error('Ошибка при удалении бронирования:', err.message);
         alert('Ошибка при удалении бронирования: ' + err.message);
-      } finally {
-        setLoading(false);
       }
     }
   };
 
-  if (!session) {
+  // Новая функция для открытия модалки редактирования
+  const openEditModal = (booking) => {
+    setBookingToEdit(booking);
+    setIsEditModalOpen(true);
+  };
+
+  // Новая функция для закрытия модалки редактирования
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setBookingToEdit(null); // Очищаем данные редактируемого бронирования
+  };
+
+  // Функция, вызываемая после успешного обновления бронирования в модалке
+  const handleBookingUpdated = () => {
+    fetchBookings(); // Перезагружаем список бронирований
+  };
+
+
+  if (!isAdmin) {
     return (
       <main className={styles.adminDashboard}>
         <div className={styles.authRequired}>
           <h2 className={styles.title}>Доступ запрещен</h2>
-          <p>Пожалуйста, войдите в систему с учетной записью администратора.</p>
-          {/* Здесь можно добавить кнопку или ссылку на страницу входа */}
+          <p>{error || "У вас нет прав для доступа к этой панели. Пожалуйста, войдите с учетной записью администратора."}</p>
+          {!session && <button className={styles.loginButton} onClick={() => navigate('/login')}>Войти</button>}
         </div>
       </main>
     );
   }
 
-  if (loading && bookings.length === 0) { // Показывать "Загрузка" только если нет данных
+  if (loading && bookings.length === 0) {
     return (
       <main className={styles.adminDashboard}>
         <p className={styles.loadingMessage}>Загрузка бронирований...</p>
@@ -133,7 +174,7 @@ const AdminDashboard = ({ session }) => {
     );
   }
 
-  if (error) {
+  if (error && isAdmin) {
     return (
       <main className={styles.adminDashboard}>
         <p className={styles.errorMessage}>{error}</p>
@@ -178,7 +219,7 @@ const AdminDashboard = ({ session }) => {
             <option value="start_time">Время начала</option>
             <option value="status">Статус</option>
             <option value="num_people">Кол-во человек</option>
-          </select>
+          </select> 
           <button
             onClick={() => setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' })}
             className={styles.sortOrderButton}
@@ -188,7 +229,7 @@ const AdminDashboard = ({ session }) => {
         </div>
       </div>
 
-      {bookings.length === 0 ? (
+      {bookings.length === 0 && !loading ? (
         <p className={styles.noBookingsMessage}>Бронирования не найдены.</p>
       ) : (
         <div className={styles.bookingsTableContainer}>
@@ -220,7 +261,6 @@ const AdminDashboard = ({ session }) => {
                     <select
                       value={booking.status}
                       onChange={(e) => handleStatusChange(booking.id, e.target.value)}
-                      disabled={loading}
                       className={styles.statusSelect}
                     >
                       <option value="pending">В ожидании</option>
@@ -229,9 +269,10 @@ const AdminDashboard = ({ session }) => {
                     </select>
                   </td>
                   <td>
-                    {/* Кнопка редактирования будет реализована позже с модальным окном */}
-                    {/* <button className={styles.editButton}>Редактировать</button> */}
-                    <button onClick={() => handleDeleteBooking(booking.id)} className={styles.deleteButton} disabled={loading}>
+                    <button onClick={() => openEditModal(booking)} className={styles.editButton}>
+                      Редактировать
+                    </button>
+                    <button onClick={() => handleDeleteBooking(booking.id)} className={styles.deleteButton}>
                       Удалить
                     </button>
                   </td>
@@ -241,6 +282,14 @@ const AdminDashboard = ({ session }) => {
           </table>
         </div>
       )}
+
+      {/* Модальное окно редактирования бронирования */}
+      <BookingEditModal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        bookingToEdit={bookingToEdit}
+        onBookingUpdated={handleBookingUpdated}
+      />
     </main>
   );
 };

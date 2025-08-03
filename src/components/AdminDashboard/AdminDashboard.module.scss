@@ -251,3 +251,46 @@
     }
   }
 }
+/* ... (существующие стили) ... */
+
+.editButton {
+    @include button-base;
+    background-color: $yellow; // Цвет кнопки редактирования
+    color: $black;
+    padding: $spacing-xs $spacing-sm;
+    font-size: 14px;
+    margin-right: $spacing-xs; // Небольшой отступ от кнопки "Удалить"
+  
+    &:hover {
+      background-color: color.adjust($yellow, $lightness: -10%);
+    }
+    &:disabled {
+      background-color: $gray-medium;
+      cursor: not-allowed;
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
+  
+  .deleteButton {
+    // Этот стиль уже есть, просто для контекста
+    @include button-base;
+    background-color: $maroon;
+    color: $white;
+    padding: $spacing-xs $spacing-sm;
+    font-size: 14px;
+  
+    &:hover {
+      background-color: color.adjust($maroon, $lightness: 10%);
+    }
+    &:disabled {
+      background-color: $gray-medium;
+      cursor: not-allowed;
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+  }
