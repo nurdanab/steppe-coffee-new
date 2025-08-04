@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-// Замените этот URL на URL вашей задеплоенной Supabase Edge Function!
 const SUPABASE_FUNCTION_URL = "https://nlhugcvfwklgzpxgzvth.supabase.co/functions/v1/get-iiko-menu"; 
-
-// Получаем анонимный ключ Supabase из переменных окружения Vite
-// Этот ключ уже доступен в вашем проекте через supabaseClient.js
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY; 
 
 function MenuDisplay() {
@@ -15,24 +11,21 @@ function MenuDisplay() {
     useEffect(() => {
         const fetchMenu = async () => {
             try {
-                // Проверяем, что ключ доступен перед отправкой запроса
                 if (!SUPABASE_ANON_KEY) {
                     throw new Error("Supabase Anon Key is not defined. Please check your .env file or Netlify environment variables.");
                 }
 
                 const response = await fetch(SUPABASE_FUNCTION_URL, {
-                    method: 'POST', // Ваша функция на Supabase ожидает POST-запрос
+                    method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY, // Добавляем заголовок 'apikey' с вашим анонимным ключом Supabase
-                        // 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, // Альтернативный способ, если функция ожидает Bearer Token
+                        'apikey': SUPABASE_ANON_KEY, 
                     },
-                    body: JSON.stringify({}), // Отправляем пустое тело, если функция не ожидает конкретных данных в теле запроса
+                    body: JSON.stringify({}), 
                 });
                 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    // Улучшенное сообщение об ошибке, чтобы видеть подробности ответа функции
                     throw new Error(errorData.error || `HTTP error! status: ${response.status} - Response: ${JSON.stringify(errorData)}`);
                 }
                 
@@ -47,7 +40,7 @@ function MenuDisplay() {
         };
 
         fetchMenu();
-    }, []); // Пустой массив зависимостей означает, что эффект выполнится один раз после первого рендера
+    }, []); 
 
     if (loading) {
         return <div className="menu-loading">Загрузка меню...</div>;

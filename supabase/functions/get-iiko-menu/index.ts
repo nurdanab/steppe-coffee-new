@@ -119,7 +119,7 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
 
 serve(async (req) => {
     const corsHeaders = {
-        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app/',
+        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
     };
