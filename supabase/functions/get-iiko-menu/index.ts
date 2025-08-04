@@ -13,17 +13,164 @@ const COMMON_HEADERS = {
 
 // CORS заголовки, определенные здесь, для этого конкретного файла функции
 const LOCAL_CORS_HEADERS = {
-    'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app', // Убедитесь, что здесь НЕТ слэша
+    'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
 };
 
-// ... (функции getAccessToken, getExternalMenusList, getMenuItems остаются без изменений) ...
+// Функция для получения токена доступа от iiko
+async function getAccessToken(apiKey: string | undefined): Promise<{ token: string | null; error: string | null }> {
+    console.log("DEBUG: Внутри getAccessToken.");
+    if (!apiKey) {
+        console.error("DEBUG: API Key не установлен.");
+        return { token: null, error: "API Key не установлен." };
+    }
+
+    const url = `${IIKO_API_BASE_URL}/api/1/access_token`;
+    const payload = { apiLogin: apiKey };
+
+    try {
+        console.log(`DEBUG: Отправка запроса на получение токена: ${url}`);
+        const response = await fetch(url, {
+            method: "POST",
+            headers: COMMON_HEADERS,
+            body: JSON.stringify(payload)
+        });
+        console.log(`DEBUG: Получен ответ по токену. Статус: ${response.status}`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`DEBUG: Ошибка HTTP при получении токена: ${response.status} - ${errorText}`);
+            return { token: null, error: `Ошибка HTTP: ${response.status} - ${errorText}` };
+        }
+
+        const tokenData = await response.json();
+        console.log("DEBUG: Данные токена получены:", JSON.stringify(tokenData));
+        const accessToken = tokenData.token;
+        if (accessToken) {
+            console.log("DEBUG: Токен доступа успешно извлечен.");
+            return { token: accessToken, error: null };
+        } else {
+            console.error(`DEBUG: Токен отсутствует в ответе: ${JSON.stringify(tokenData)}`);
+            return { token: null, error: `Ошибка: В ответе нет токена. Ответ: ${JSON.stringify(tokenData)}` };
+        }
+    } catch (e: any) {
+        console.error(`DEBUG: Исключение при получении токена: ${e.message}`);
+        return { token: null, error: `Ошибка при получении токена доступа: ${e.message}` };
+    }
+}
+
+// Функция для получения списка внешних меню
+async function getExternalMenusList(accessToken: string, organizationId: string | undefined): Promise<{ menus: any[] | null; error: string | null }> {
+    console.log("DEBUG: Внутри getExternalMenusList.");
+    if (!organizationId) {
+        console.error("DEBUG: Organization ID не указан для getExternalMenusList.");
+        return { menus: null, error: "Organization ID не указан." };
+    }
+
+    const url = `${IIKO_API_BASE_URL}/api/2/menu`;
+    const headers = {
+        ...COMMON_HEADERS,
+        "Authorization": `Bearer ${accessToken}`
+    };
+    const payload = { organizationId: organizationId };
+
+    try {
+        console.log(`DEBUG: Отправка запроса на список меню: ${url} для Org ID: ${organizationId}`);
+        const response = await fetch(url, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(payload)
+        });
+        console.log(`DEBUG: Получен ответ по списку меню. Статус: ${response.status}`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`DEBUG: Ошибка HTTP при получении списка меню: ${response.status} - ${errorText}`);
+            return { menus: null, error: `Ошибка HTTP: ${response.status} - ${errorText}` };
+        }
+
+        const menuListData = await response.json();
+        console.log("DEBUG: Данные списка меню получены:", JSON.stringify(menuListData));
+        const externalMenus = menuListData.externalMenus;
+        if (Array.isArray(externalMenus)) {
+            console.log(`DEBUG: Найдено ${externalMenus.length} внешних меню.`);
+            return { menus: externalMenus, error: null };
+        } else {
+            console.error(`DEBUG: Список внешних меню неверного формата: ${JSON.stringify(menuListData)}`);
+            return { menus: null, error: `Ошибка: В ответе нет списка внешних меню или он пуст. Ответ: ${JSON.stringify(menuListData)}` };
+        }
+    } catch (e: any) {
+        console.error(`DEBUG: Исключение при получении списка внешних меню: ${e.message}`);
+        return { menus: null, error: `Ошибка при получении списка внешних меню: ${e.message}` };
+    }
+}
+
+// Функция для получения содержимого меню по ID
+async function getMenuItems(accessToken: string, externalMenuId: string | undefined, organizationId: string | undefined): Promise<{ items: any[] | null; error: string | null }> {
+    console.log("DEBUG: Внутри getMenuItems.");
+    if (!externalMenuId) {
+        console.error("DEBUG: External Menu ID не указан для getMenuItems.");
+        return { items: null, error: "External Menu ID не указан." };
+    }
+    if (!organizationId) {
+        console.error("DEBUG: Organization ID не указан для getMenuItems.");
+        return { items: null, error: "Organization ID не указан." };
+    }
+
+    const url = `${IIKO_API_BASE_URL}/api/2/menu/by_id`;
+    const headers = {
+        ...COMMON_HEADERS,
+        "Authorization": `Bearer ${accessToken}`
+    };
+    const payload = {
+        externalMenuId: externalMenuId,
+        organizationIds: [organizationId]
+    };
+
+    try {
+        console.log(`DEBUG: Отправка запроса на получение содержимого меню: ${url} для Menu ID: ${externalMenuId}, Org ID: ${organizationId}`);
+        const response = await fetch(url, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(payload)
+        });
+        console.log(`DEBUG: Получен ответ по содержимому меню. Статус: ${response.status}`);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`DEBUG: Ошибка HTTP при получении содержимого меню: ${response.status} - Полный ответ: ${errorText}`);
+            return { items: null, error: `Ошибка HTTP: ${response.status} - ${errorText}` };
+        }
+
+        const menuData = await response.json();
+        console.log("DEBUG: Данные содержимого меню получены:", JSON.stringify(menuData));
+
+        let allProducts: any[] = [];
+        if (Array.isArray(menuData.itemCategories)) {
+            for (const category of menuData.itemCategories) {
+                if (Array.isArray(category.products)) {
+                    allProducts = allProducts.concat(category.products);
+                }
+            }
+        }
+
+        if (allProducts.length > 0) {
+            console.log(`DEBUG: Найдено ${allProducts.length} блюд в меню.`);
+            return { items: allProducts, error: null };
+        } else {
+            console.error(`DEBUG: Список блюд пуст или не найден в категориях: ${JSON.stringify(menuData)}`);
+            return { items: [], error: `Ошибка: В ответе нет списка блюд в категориях или он пуст. ${JSON.stringify(menuData)}` };
+        }
+    } catch (e: any) {
+        console.error(`DEBUG: Исключение при получении содержимого меню: ${e.message}`);
+        return { items: null, error: `Ошибка при получении содержимого меню: ${e.message}` };
+    }
+}
 
 serve(async (req) => {
     console.log(`DEBUG: Запрос получен в serve: ${req.method} ${req.url}`);
 
-    // Используем локально определенные CORS заголовки
     if (req.method === 'OPTIONS') {
         console.log("DEBUG: Обработка OPTIONS запроса.");
         return new Response(null, {
@@ -86,7 +233,17 @@ serve(async (req) => {
             status: 500
         });
     }
-    console.log(`DEBUG: Получено ${menuItems ? menuItems.length : 0} элементов меню.`);
+    
+    // Безопасная проверка, чтобы избежать ошибки, если menuItems - null или undefined
+    if (!menuItems) {
+        console.error(`DEBUG: menuItems равно null или undefined, несмотря на отсутствие itemsError.`);
+        return new Response(JSON.stringify({ error: "Внутренняя ошибка сервера: меню не было получено." }), {
+            headers: { ...LOCAL_CORS_HEADERS, "Content-Type": "application/json" },
+            status: 500
+        });
+    }
+    
+    console.log(`DEBUG: Получено ${menuItems.length} элементов меню.`);
 
 
     const formattedMenu = menuItems.map((item: any) => {
