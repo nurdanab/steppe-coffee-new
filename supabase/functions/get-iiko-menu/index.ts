@@ -98,7 +98,7 @@ async function getExternalMenusList(accessToken: string, organizationId: string 
             return { menus: externalMenus, error: null };
         } else {
             console.error(`DEBUG: Список внешних меню неверного формата: ${JSON.stringify(menuListData)}`);
-            return { menus: null, error: `Ошибка: В ответе нет списка внешних меню или он пуст. Ответ: ${JSON.stringify(menuListData)}` };
+            return { menus: null, error: `Ошибка: В ответе нет списка внешних меню или он неверного формата. Ответ: ${JSON.stringify(menuListData)}` };
         }
     } catch (e: any) {
         console.error(`DEBUG: Исключение при получении списка внешних меню: ${e.message}`);
@@ -144,15 +144,21 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
         }
 
         const menuData = await response.json();
-        console.log("DEBUG: Данные содержимого меню получены:", JSON.stringify(menuData));
+        console.log("DEBUG: [getMenuItems] Получены данные:", JSON.stringify(menuData));
+        console.log("DEBUG: [getMenuItems] Проверяем menuData.itemCategories. Тип:", typeof menuData.itemCategories, "Является ли массивом:", Array.isArray(menuData.itemCategories));
 
         let allProducts: any[] = [];
         if (Array.isArray(menuData.itemCategories)) {
+            console.log("DEBUG: [getMenuItems] menuData.itemCategories - это массив. Итерируем.");
             for (const category of menuData.itemCategories) {
+                console.log("DEBUG: [getMenuItems] Проверяем категорию:", category.id);
                 if (Array.isArray(category.products)) {
+                    console.log(`DEBUG: [getMenuItems] Найдено ${category.products.length} блюд в категории.`);
                     allProducts = allProducts.concat(category.products);
                 }
             }
+        } else {
+            console.log("DEBUG: [getMenuItems] menuData.itemCategories - не массив или отсутствует.");
         }
 
         if (allProducts.length > 0) {
@@ -164,6 +170,7 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
         }
     } catch (e: any) {
         console.error(`DEBUG: Исключение при получении содержимого меню: ${e.message}`);
+        // Возвращаем null и сообщение об ошибке, но не выбрасываем исключение
         return { items: null, error: `Ошибка при получении содержимого меню: ${e.message}` };
     }
 }
@@ -225,7 +232,9 @@ serve(async (req) => {
         });
     }
 
+    console.log("DEBUG: Вызов getMenuItems.");
     const { items: menuItems, error: itemsError } = await getMenuItems(token, selectedExternalMenuId, TARGET_ORGANIZATION_ID);
+    
     if (itemsError) {
         console.error(`DEBUG: Не удалось получить содержимое меню в serve: ${itemsError}`);
         return new Response(JSON.stringify({ error: `Не удалось получить содержимое меню: ${itemsError}` }), {
@@ -234,7 +243,7 @@ serve(async (req) => {
         });
     }
     
-    // Безопасная проверка, чтобы избежать ошибки, если menuItems - null или undefined
+    // Этот блок проверяет, что menuItems не null/undefined, даже если itemsError === null
     if (!menuItems) {
         console.error(`DEBUG: menuItems равно null или undefined, несмотря на отсутствие itemsError.`);
         return new Response(JSON.stringify({ error: "Внутренняя ошибка сервера: меню не было получено." }), {
