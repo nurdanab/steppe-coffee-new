@@ -17,26 +17,26 @@ $header-bg-color: rgba($black, 0.8);
 
   @include xs-only {
     padding: $spacing-sm 0;
-    
+
   }
 
   @include sm-up {
     padding: $spacing-sm 0;
-  
+
   }
 
   @include md-up {
     padding: $spacing-md 0;
-  
+
   }
 
   @include lg-up {
     padding: $spacing-lg 0;
-    
+
   }
   @include full-hd-up {
     padding: $spacing-xl 0;
-    
+
   }
   @include uhd-up {
     padding: $spacing-xxl 0;
@@ -205,12 +205,16 @@ $header-bg-color: rgba($black, 0.8);
   }
 }
 
-.profileLink {
+.profileButton { // Переименовал из .profileLink, так как он может быть и кнопкой
   @include flex-center;
   width: 24px;
   height: 24px;
   border-radius: 50%;
   transition: all $transition-fast;
+  background: none; // Убираем фон, если это кнопка
+  border: none; // Убираем границу
+  cursor: pointer; // Курсор-указатель для кнопки
+  position: relative; // Для позиционирования текста email
 
   .profileIcon {
     width: 100%;
@@ -249,15 +253,87 @@ $header-bg-color: rgba($black, 0.8);
   }
 }
 
+.userEmailDesktop {
+  @extend .gilroy-16;
+  color: $white;
+  margin-left: $spacing-xs; // Отступ от иконки
+  display: none; // По умолчанию скрываем
+  white-space: nowrap; // Предотвращаем перенос строки
+
+  @include md-up { // Показываем на экранах md и выше
+    display: block;
+    font-size: 14px;
+  }
+  @include lg-up {
+    font-size: 16px;
+  }
+  @include xl-up {
+    font-size: 18px;
+  }
+  @include xxl-up {
+    font-size: 20px;
+  }
+  @include full-hd-up {
+    font-size: 24px;
+  }
+  @include uhd-up {
+    font-size: 32px;
+  }
+}
+
+
+.loginButton {
+  @extend .gilroy-16;
+  font-weight: 400;
+  color: $white;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-xxxxl;
+  transition: all $transition-medium;
+  background-color: transparent; // Изначально прозрачный фон
+  border: 1px solid $white; // Белая рамка
+  cursor: pointer;
+  white-space: nowrap; // Предотвращаем перенос строки
+
+  &:hover {
+    color: $black;
+    background-color: $white;
+    transform: translateY(-2px);
+  }
+
+  @include lg-up {
+    font-size: 17px;
+    padding: $spacing-xs $spacing-md;
+  }
+  @include xl-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-md;
+  }
+  @include xxl-up {
+    font-size: 22px;
+    padding: $spacing-sm $spacing-lg;
+  }
+  @include full-hd-up {
+    font-size: 28px;
+    padding: $spacing-md $spacing-lg;
+  }
+  @include uhd-up {
+    font-size: 36px;
+    padding: $spacing-md $spacing-lg;
+  }
+}
+
 .headerActions {
   @include flex-center;
   gap: $spacing-sm;
 
+  @include md-up {
+    gap: $spacing-md; // Увеличиваем зазор для десктопов, чтобы уместить текст
+  }
   @include lg-up {
-    gap: $spacing-md;
+    gap: $spacing-lg;
   }
   @include xl-up {
-    gap: $spacing-lg;
+    gap: $spacing-xl;
   }
 }
 
@@ -370,6 +446,85 @@ $header-bg-color: rgba($black, 0.8);
           font-size: 40px;
         }
       }
+    }
+  }
+
+  .mobileProfileStatus {
+    @include flex-column;
+    gap: $spacing-md;
+    align-items: center;
+    margin-top: $spacing-lg;
+  }
+
+  .mobileLoggedInUserLink {
+    @extend .gilroy-24;
+    color: $white;
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $yellow;
+    }
+
+    @include md-up {
+      font-size: 28px;
+    }
+    @include lg-up {
+      font-size: 32px;
+    }
+  }
+
+  .mobileLogoutButton {
+    @extend .gilroy-20;
+    font-weight: 400;
+    color: $white;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-xxxxl;
+    transition: all $transition-medium;
+    background-color: transparent;
+    border: 1px solid $white;
+    cursor: pointer;
+
+    &:hover {
+      color: $black;
+      background-color: $white;
+      transform: translateY(-2px);
+    }
+
+    @include md-up {
+      font-size: 24px;
+      padding: $spacing-sm $spacing-md;
+    }
+    @include lg-up {
+      font-size: 28px;
+      padding: $spacing-md $spacing-lg;
+    }
+  }
+
+  .mobileLoginButton {
+    @extend .gilroy-24;
+    font-weight: 400;
+    color: $white;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+    transition: all $transition-medium;
+    background-color: transparent;
+    border: 1px solid $white;
+    cursor: pointer;
+
+    &:hover {
+      color: $black;
+      background-color: $white;
+      transform: translateY(-2px);
+    }
+
+    @include md-up {
+      font-size: 28px;
+      padding: $spacing-md $spacing-lg;
+    }
+    @include lg-up {
+      font-size: 32px;
+      padding: $spacing-md $spacing-xl;
     }
   }
 }

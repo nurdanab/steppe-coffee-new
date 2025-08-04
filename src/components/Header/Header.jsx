@@ -18,11 +18,11 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-   };
+  };
 
   const navigationItems = [
     { name: 'Главная', href: '/' },
-    { name: 'Меню', href: '#' },  
+    { name: 'Меню', href: '#' },
     { name: 'События', href: '/events' },
   ];
 
@@ -51,7 +51,8 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                       </Link>
                     </li>
                   ))}
-                   <li className={styles.navigationItem}>
+                  {/* Этот блок был удален, так как он дублировал функциональность кнопки профиля в headerActions */}
+                  {/* <li className={styles.navigationItem}>
                     {session ? (
                        <Link to="/profile" className={styles.profileLink}>
                         <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
@@ -62,20 +63,22 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                         Войти
                       </button>
                     )}
-                  </li>
+                  </li> */}
                 </ul>
               </nav>
 
               <div className={styles.headerActions}>
-                 {session ? (
-                   <Link to="/profile" className={styles.profileButton}> 
-                     <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
-                   </Link>
-                 ) : (
-                   <button onClick={onOpenAuthModal} className={styles.profileButton}> 
-                     <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
-                   </button>
-                 )}
+                {session ? (
+                  <Link to="/profile" className={styles.profileButton}>
+                    <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                    {/* Если пользователь авторизован, показываем его email рядом с иконкой на больших экранах */}
+                    <span className={styles.userEmailDesktop}>Привет, {session.user.email}!</span>
+                  </Link>
+                ) : (
+                  <button onClick={onOpenAuthModal} className={styles.loginButton}>
+                    Войти
+                  </button>
+                )}
 
                 <button
                   className={`${styles.mobileMenuButton} ${isMobileMenuOpen ? styles.open : ''}`}
@@ -101,7 +104,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                   <Link
                     to={item.href}
                     className={styles.mobileNavigationLink}
-                    onClick={toggleMobileMenu}  
+                    onClick={toggleMobileMenu}
                   >
                     {item.name}
                   </Link>
@@ -112,7 +115,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                 {session ? (
                   <div className={styles.mobileProfileStatus}>
                     <Link to="/profile" className={styles.mobileLoggedInUserLink} onClick={toggleMobileMenu}>
-                       Привет, {session.user.email}!
+                      Привет, {session.user.email}!
                     </Link>
                     <button onClick={() => { onLogout(); toggleMobileMenu(); }} className={styles.mobileLogoutButton}>
                       Выйти
