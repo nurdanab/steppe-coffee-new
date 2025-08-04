@@ -3,7 +3,7 @@
     {
       "id": "news-sticker-1",
       "type": "sticker",
-      "text": "hbhbhbh",
+      "text": "TEEST",
       "position": {
         "top": 50,
         "left": 17,
@@ -15,7 +15,7 @@
     {
       "id": "decoration-food-sticker",
       "type": "decoration_with_pin",
-      "text": "nana",
+      "text": "TEST-2",
       "imageSrc": "/images/desk/detail/еда-стикер.png",
       "position": {
         "top": 21,
@@ -44,7 +44,7 @@
         "transform": "rotate(-8deg)",
         "zIndex": 1
       },
-      "text": "Нанно",
+      "text": "Test-3",
       "pinType": "yellow",
       "backgroundShape": "oval",
       "backgroundColor": "white",
@@ -65,7 +65,7 @@
         "transform": "rotate(5deg)",
         "zIndex": 19
       },
-      "text": "нано",
+      "text": "Test-4",
       "pinType": "white",
       "backgroundShape": "circle",
       "backgroundColor": "lightBlue",
@@ -87,7 +87,7 @@
         "transform": "rotate(-12deg)",
         "zIndex": 21
       },
-      "text": "Нааааано",
+      "text": "Test-5",
       "pinType": "white",
       "backgroundShape": "rectangle",
       "backgroundColor": "yellow",
@@ -108,7 +108,7 @@
         "transform": "rotate(8deg)",
         "zIndex": 22
       },
-      "text": "Нурдана",
+      "text": "Test-6",
       "pinType": "white",
       "backgroundShape": "oval",
       "backgroundColor": "white",
