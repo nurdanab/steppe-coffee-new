@@ -119,9 +119,9 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
 
 serve(async (req) => {
     const corsHeaders = {
-        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app/', 
+        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app/',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey', // Добавлен 'apikey'
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
     };
 
     if (req.method === 'OPTIONS') {
@@ -131,9 +131,9 @@ serve(async (req) => {
         });
     }
 
-    const token, error = await getAccessToken(YOUR_API_KEY);
+    const { token, error: tokenError } = await getAccessToken(YOUR_API_KEY); 
     if (!token) {
-        return new Response(JSON.stringify({ error: `Не удалось получить токен доступа: ${error}` }), {
+        return new Response(JSON.stringify({ error: `Не удалось получить токен доступа: ${tokenError}` }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
             status: 401
         });
