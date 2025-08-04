@@ -19,7 +19,10 @@ function MenuDisplay() {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY, 
+                        // Попробуем отправить ANON_KEY как Bearer токен.
+                        // Supabase функции, когда JWT отключен, иногда это воспринимают.
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 
+                        'apikey': SUPABASE_ANON_KEY, // Оставьте apikey на всякий случай, если он используется внутренне
                     },
                     body: JSON.stringify({}), 
                 });
@@ -38,6 +41,7 @@ function MenuDisplay() {
                 setLoading(false);
             }
         };
+
 
         fetchMenu();
     }, []); 
