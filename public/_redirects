@@ -1,4 +1,5 @@
 /images/uploads/* /images/uploads/:splat 200!
 /images/promos/* /images/promos/:splat 200!
+/images/bookShelf/* /images/bookShelf/:splat 200!
 /admin/* /admin/index.html 200
 /* /index.html 200
