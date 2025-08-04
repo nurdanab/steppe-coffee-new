@@ -19,7 +19,8 @@ function MenuDisplay() {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json',
-                        'apikey': SUPABASE_ANON_KEY, 
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, // ИЗМЕНЕНО: теперь отправляем заголовок Authorization
+                        // 'apikey': SUPABASE_ANON_KEY, // Этот заголовок больше не нужен, но можно оставить, если функция его использует
                     },
                     body: JSON.stringify({}), 
                 });
