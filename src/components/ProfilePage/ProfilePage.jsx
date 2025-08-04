@@ -2,16 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient'; 
 import styles from './ProfilePage.module.scss'; 
+import { useNavigate } from 'react-router-dom';
 
 const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthModal, onAuthSuccess, onLogout }) => {
   const [userBookings, setUserBookings] = useState([]);
   const [loadingBookings, setLoadingBookings] = useState(true);
   const [errorBookings, setErrorBookings] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!session) {
-      // Это условие будет срабатывать, если пользователь не авторизован.
-      // onOpenAuthModal() вызывается для отображения модального окна аутентификации.
       if (!isAuthModalOpen) { // Проверяем, что модальное окно еще не открыто
         onOpenAuthModal();
       }
@@ -56,6 +57,9 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
     }
   };
 
+  const handleChangePassword = () => {
+    navigate('/update-password'); // Перенаправляем на страницу смены пароля
+  };
 
   if (!session) {
     return (
@@ -75,9 +79,15 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
     <main className={styles.profilePage}>
       <div className={styles.profileHeader}>
         <h1>Привет, {session.user.email}!</h1>
-        <button onClick={onLogout} className={styles.logoutButton}>
-          Выйти
-        </button>
+        <div className={styles.profileActions}> {/* Контейнер для кнопок */}
+          <button onClick={handleChangePassword} className={styles.changePasswordButton}>
+            Сменить пароль
+          </button>
+          {/* Удаляем кнопку "Удалить аккаунт" */}
+          <button onClick={onLogout} className={styles.logoutButton}>
+            Выйти
+          </button>
+        </div>
       </div>
 
       <section className={styles.bookingHistory}>

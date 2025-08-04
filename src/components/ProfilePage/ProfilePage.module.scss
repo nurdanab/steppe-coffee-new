@@ -1,106 +1,147 @@
 /* src/components/ProfilePage/ProfilePage.module.scss */
 @use "sass:color"; 
-@use '../../styles/variables' as *; // Убедись, что путь к variables.scss правильный
-@use '../../styles/mixins' as *; // Убедись, что путь к mixins.scss правильный
-@use '../../styles/typography' as *; // Для использования типографических классов
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
 
 .profilePage {
-  @include section-padding; // Используем миксин для адаптивных отступов секции
-  @include container-padding; // Используем миксин для адаптивных отступов контейнера
-  max-width: 1200px; // Увеличим max-width, чтобы соответствовал .container
+  @include section-padding;
+  @include container-padding;
+  max-width: 1200px;
   margin: 0 auto;
   margin-top: 150px;
-  min-height: calc(100vh - 150px); // Чтобы страница не была слишком короткой, учти высоту футера
+  min-height: calc(100vh - 150px);
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl; // Отступ между основными блоками
+  gap: $spacing-xl;
 
   @include md-up {
-    min-height: calc(100vh - 200px); // Если футер выше на десктопе
+    min-height: calc(100vh - 200px);
   }
-
-  // padding-top: 80px; // Изначальный отступ. Лучше использовать миксины section-padding, они уже учтут адаптивность.
 }
 
 .profileHeader {
-  @include flex-between; // Используем миксин для размещения элементов
-  margin-bottom: $spacing-md; // Используем переменную для отступа
+  @include flex-between;
+  margin-bottom: $spacing-md;
   border-bottom: 1px solid $gray-light;
-  padding-bottom: $spacing-sm; // Используем переменную для отступа
+  padding-bottom: $spacing-sm;
 
   @include sm-down {
-    flex-direction: column; // На маленьких экранах элементы будут располагаться по вертикали
+    flex-direction: column;
     align-items: flex-start;
     gap: $spacing-sm;
   }
 
   h1 {
-    @extend .riffic-32; // Используем свой стиль для заголовка
-    color: $yellow; // Цвет из переменных
+    @extend .riffic-32;
+    color: $yellow;
     margin: 0;
-    text-align: left; // Выравнивание для заголовка
+    text-align: left;
+  }
+}
+
+.profileActions { // Контейнер для кнопок действий
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+
+  @include sm-down {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+.logoutButton, .changePasswordButton { // Удаляем .deleteAccountButton
+  @include button-base;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $border-radius-sm;
+  font-size: 0.9em;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  @include sm-down {
+    flex-grow: 1;
   }
 }
 
 .logoutButton {
-  @include button-base; // Используем базовый миксин кнопки
-  background-color: $black; // Красный цвет для кнопки выхода
+  background-color: $black;
   color: $white;
-  padding: $spacing-xs $spacing-md; // Используем переменные для отступов
-  border-radius: $border-radius-sm; // Используем переменную для скругления
   
   &:hover {
-    background-color: color.adjust($yellow, $lightness: 10%); // Затемняем при наведении
+    background-color: color.adjust($black, $lightness: 10%);
   }
 }
 
+.changePasswordButton {
+  background-color: $light-yellow; // Например, желтый цвет
+  color: $black;
+  border: 1px solid $light-yellow;
+
+  &:hover {
+    background-color: color.adjust($light-yellow, $lightness: -5%);
+  }
+}
+
+// Удаляем стили для .deleteAccountButton и все, что связано с модальным окном подтверждения:
+// .deleteAccountButton { ... }
+// .confirmModalOverlay { ... }
+// .confirmModalContent { ... }
+// .modalActions { ... }
+// .confirmDeleteButton { ... }
+// .cancelDeleteButton { ... }
+// @keyframes fadeIn { ... }
+
+
 .notLoggedInMessage {
-  @include flex-column; // Размещаем элементы по вертикали
-  @include flex-center; // Центрируем по горизонтали
+  @include flex-column;
+  @include flex-center;
   text-align: center;
-  padding: $spacing-xxl $spacing-md; // Используем переменные для отступов
+  padding: $spacing-xxl $spacing-md;
   background-color: $white;
   border-radius: $border-radius-md;
-  box-shadow: $shadow-medium; // Используем переменную для тени
-  gap: $spacing-md; // Отступ между элементами
+  box-shadow: $shadow-medium;
+  gap: $spacing-md;
 
   h2 {
-    @extend .riffic-24; // Используем свой стиль для заголовка
-    color: $black; // Цвет из переменных
-    margin-bottom: $spacing-sm; // Используем переменную
+    @extend .riffic-24;
+    color: $black;
+    margin-bottom: $spacing-sm;
   }
 
   p {
-    @extend .gilroy-16; // Используем свой стиль для параграфа
-    color: $gray-dark; // Цвет из переменных
-    margin-bottom: $spacing-md; // Используем переменную
+    @extend .gilroy-16;
+    color: $gray-dark;
+    margin-bottom: $spacing-md;
   }
 }
 
 .loginButton {
-  @include button-primary; // Используем миксин для первичной кнопки
-  padding: $spacing-sm $spacing-lg; // Используем переменные для отступов
-  border-radius: $border-radius-md; // Используем переменную для скругления
+  @include button-primary;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $border-radius-md;
 }
 
 .bookingHistory {
-  margin-top: $spacing-lg; // Отступ сверху
+  margin-top: $spacing-lg;
 
   h2 {
-    @extend .riffic-24; // Используем свой стиль для заголовка
-    color: $black; // Цвет из переменных
-    margin-bottom: $spacing-xl; // Используем переменную для отступа
+    @extend .riffic-24;
+    color: $black;
+    margin-bottom: $spacing-xl;
     text-align: center;
   }
 }
 
 .bookingsList {
   display: grid;
-  gap: $spacing-md; // Отступ между элементами сетки
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // Адаптивная сетка
+  gap: $spacing-md;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 
   @include md-up {
-    gap: $spacing-lg; // Увеличиваем отступ на больших экранах
+    gap: $spacing-lg;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 
@@ -108,17 +149,17 @@
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 
-  @include mobile-only { // Для мобильных устройств только одна колонка
+  @include mobile-only {
     grid-template-columns: 1fr;
   }
 }
 
 .bookingItem {
   background-color: $white;
-  padding: $spacing-md; // Используем переменную для отступов
-  border-radius: $border-radius-md; // Используем переменную для скругления
-  box-shadow: $shadow-light; // Используем переменную для тени
-  border-left: 5px solid $orange; // Акцентный цвет из переменных
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-light;
+  border-left: 5px solid $orange;
   transition: transform $transition-fast, box-shadow $transition-fast;
 
   &:hover {
@@ -127,9 +168,9 @@
   }
 
   p {
-    @extend .gilroy-16; // Используем свой стиль для параграфа
-    color: $black; // Цвет из переменных
-    margin-bottom: $spacing-xs; // Используем переменную для отступа
+    @extend .gilroy-16;
+    color: $black;
+    margin-bottom: $spacing-xs;
 
     &:last-child {
       margin-bottom: 0;
@@ -138,10 +179,10 @@
 
   .bookingDate, .bookingTime {
     font-weight: 600;
-    color: $light-yellow; // Выделим цветом
+    color: $light-yellow;
   }
   
-  .bookingRoom { // Добавим класс для отображения зала
+  .bookingRoom {
     font-weight: 500;
     color: $gray-dark;
     font-size: 0.95em;
@@ -152,18 +193,17 @@
     margin-top: $spacing-xs;
 
     span {
-      padding: 3px $spacing-xs; // Используем переменную
-      border-radius: $border-radius-sm; // Используем переменную
+      padding: 3px $spacing-xs;
+      border-radius: $border-radius-sm;
       font-size: 0.9em;
       font-weight: 700;
-      display: inline-block; // Чтобы padding и margin работали корректно
-      margin-top: 4px; // Небольшой отступ от предыдущего параграфа
+      display: inline-block;
+      margin-top: 4px;
     }
 
-    // Используем adjust-hue для получения оттенков цвета
     .confirmed {
-      background-color: color.adjust($yellow, $lightness: 40%); // Светлый желтый для фона
-      color: color.adjust($yellow, $lightness: -20%); // Темный желтый для текста
+      background-color: color.adjust($yellow, $lightness: 40%);
+      color: color.adjust($yellow, $lightness: -20%);
     }
     .pending {
       background-color: color.adjust($orange, $lightness: 40%);
@@ -177,25 +217,24 @@
 
   .bookingComments {
     font-style: italic;
-    color: $gray-dark; // Цвет из переменных
-    margin-top: $spacing-sm; // Используем переменную
+    color: $gray-dark;
+    margin-top: $spacing-sm;
     border-top: 1px dashed $gray-light;
-    padding-top: $spacing-sm; // Используем переменную
+    padding-top: $spacing-sm;
     font-size: 0.95em;
   }
 }
 
 .errorMessage {
-  color: $maroon; // Красный цвет для ошибки
+  color: $maroon;
   text-align: center;
   font-weight: 600;
   padding: $spacing-md;
-  background-color: color.adjust($maroon, $lightness: 60%); // Очень светлый красный фон
+  background-color: color.adjust($maroon, $lightness: 60%);
   border-radius: $border-radius-sm;
   margin-top: $spacing-md;
 }
 
-// Стили для сообщений "нет бронирований"
 .noBookingsMessage {
   text-align: center;
   @extend .gilroy-18;
