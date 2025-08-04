@@ -6,25 +6,30 @@ const YOUR_API_KEY = Deno.env.get("IIKO_API_KEY");
 const TARGET_ORGANIZATION_ID = Deno.env.get("IIKO_ORGANIZATION_ID");
 const TARGET_MENU_NAME = Deno.env.get("IIKO_MENU_NAME") || "Steppe App Menu";
 
+// Добавляем общий заголовок User-Agent
+const COMMON_HEADERS = {
+    "Content-Type": "application/json",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" // Пример User-Agent из Chrome
+};
+
 async function getAccessToken(apiKey: string | undefined): Promise<{ token: string | null; error: string | null }> {
-    console.log("DEBUG: Внутри getAccessToken."); // Лог начала функции
+    console.log("DEBUG: Внутри getAccessToken.");
     if (!apiKey) {
         console.error("DEBUG: API Key не установлен.");
         return { token: null, error: "API Key не установлен." };
     }
 
     const url = `${IIKO_API_BASE_URL}/api/1/access_token`;
-    const headers = { "Content-Type": "application/json" };
     const payload = { apiLogin: apiKey };
 
     try {
-        console.log(`DEBUG: Отправка запроса на получение токена: ${url}`); // Лог перед запросом
+        console.log(`DEBUG: Отправка запроса на получение токена: ${url}`);
         const response = await fetch(url, {
             method: "POST",
-            headers: headers,
+            headers: COMMON_HEADERS, // Используем общие заголовки
             body: JSON.stringify(payload)
         });
-        console.log(`DEBUG: Получен ответ по токену. Статус: ${response.status}`); // Лог после запроса
+        console.log(`DEBUG: Получен ответ по токену. Статус: ${response.status}`);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -33,7 +38,7 @@ async function getAccessToken(apiKey: string | undefined): Promise<{ token: stri
         }
 
         const tokenData = await response.json();
-        console.log("DEBUG: Данные токена получены:", JSON.stringify(tokenData)); // Лог данных токена
+        console.log("DEBUG: Данные токена получены:", JSON.stringify(tokenData));
         const accessToken = tokenData.token;
         if (accessToken) {
             console.log("DEBUG: Токен доступа успешно извлечен.");
@@ -49,7 +54,7 @@ async function getAccessToken(apiKey: string | undefined): Promise<{ token: stri
 }
 
 async function getExternalMenusList(accessToken: string, organizationId: string | undefined): Promise<{ menus: any[] | null; error: string | null }> {
-    console.log("DEBUG: Внутри getExternalMenusList."); // Лог начала функции
+    console.log("DEBUG: Внутри getExternalMenusList.");
     if (!organizationId) {
         console.error("DEBUG: Organization ID не указан для getExternalMenusList.");
         return { menus: null, error: "Organization ID не указан." };
@@ -57,19 +62,19 @@ async function getExternalMenusList(accessToken: string, organizationId: string 
 
     const url = `${IIKO_API_BASE_URL}/api/2/menu`;
     const headers = {
-        "Content-Type": "application/json",
+        ...COMMON_HEADERS, // Добавляем общие заголовки
         "Authorization": `Bearer ${accessToken}`
     };
     const payload = { organizationId: organizationId };
 
     try {
-        console.log(`DEBUG: Отправка запроса на список меню: ${url} для Org ID: ${organizationId}`); // Лог перед запросом
+        console.log(`DEBUG: Отправка запроса на список меню: ${url} для Org ID: ${organizationId}`);
         const response = await fetch(url, {
             method: "POST",
             headers: headers,
             body: JSON.stringify(payload)
         });
-        console.log(`DEBUG: Получен ответ по списку меню. Статус: ${response.status}`); // Лог после запроса
+        console.log(`DEBUG: Получен ответ по списку меню. Статус: ${response.status}`);
 
         if (!response.ok) {
             const errorText = await response.text();
@@ -78,7 +83,7 @@ async function getExternalMenusList(accessToken: string, organizationId: string 
         }
 
         const menuListData = await response.json();
-        console.log("DEBUG: Данные списка меню получены:", JSON.stringify(menuListData)); // Лог данных списка меню
+        console.log("DEBUG: Данные списка меню получены:", JSON.stringify(menuListData));
         const externalMenus = menuListData.externalMenus;
         if (Array.isArray(externalMenus)) {
             console.log(`DEBUG: Найдено ${externalMenus.length} внешних меню.`);
@@ -94,7 +99,7 @@ async function getExternalMenusList(accessToken: string, organizationId: string 
 }
 
 async function getMenuItems(accessToken: string, externalMenuId: string | undefined, organizationId: string | undefined): Promise<{ items: any[] | null; error: string | null }> {
-    console.log("DEBUG: Внутри getMenuItems."); // Лог начала функции
+    console.log("DEBUG: Внутри getMenuItems.");
     if (!externalMenuId) {
         console.error("DEBUG: External Menu ID не указан для getMenuItems.");
         return { items: null, error: "External Menu ID не указан." };
@@ -106,7 +111,7 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
 
     const url = `${IIKO_API_BASE_URL}/api/2/menu/by_id`;
     const headers = {
-        "Content-Type": "application/json",
+        ...COMMON_HEADERS, // Добавляем общие заголовки
         "Authorization": `Bearer ${accessToken}`
     };
     const payload = {
@@ -115,22 +120,22 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
     };
 
     try {
-        console.log(`DEBUG: Отправка запроса на получение содержимого меню: ${url} для Menu ID: ${externalMenuId}, Org ID: ${organizationId}`); // Лог перед запросом
+        console.log(`DEBUG: Отправка запроса на получение содержимого меню: ${url} для Menu ID: ${externalMenuId}, Org ID: ${organizationId}`);
         const response = await fetch(url, {
             method: "POST",
             headers: headers,
             body: JSON.stringify(payload)
         });
-        console.log(`DEBUG: Получен ответ по содержимому меню. Статус: ${response.status}`); // Лог после запроса
+        console.log(`DEBUG: Получен ответ по содержимому меню. Статус: ${response.status}`);
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`DEBUG: Ошибка HTTP при получении содержимого меню: ${response.status} - ${errorText}`);
+            console.error(`DEBUG: Ошибка HTTP при получении содержимого меню: ${response.status} - Полный ответ: ${errorText}`);
             return { items: null, error: `Ошибка HTTP: ${response.status} - ${errorText}` };
         }
 
         const menuData = await response.json();
-        console.log("DEBUG: Данные содержимого меню получены:", JSON.stringify(menuData)); // Лог данных содержимого меню
+        console.log("DEBUG: Данные содержимого меню получены:", JSON.stringify(menuData));
         const products = menuData.itemProducts;
         if (Array.isArray(products)) {
             console.log(`DEBUG: Найдено ${products.length} блюд в меню.`);
@@ -146,10 +151,10 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
 }
 
 serve(async (req) => {
-    console.log(`DEBUG: Запрос получен в serve: ${req.method} ${req.url}`); // Лог начала обработки запроса
+    console.log(`DEBUG: Запрос получен в serve: ${req.method} ${req.url}`);
 
     const corsHeaders = {
-        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app', // Убедитесь, что здесь нет слэша
+        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
     };
@@ -162,7 +167,7 @@ serve(async (req) => {
         });
     }
 
-    const { token, error: tokenError } = await getAccessToken(YOUR_API_KEY); 
+    const { token, error: tokenError } = await getAccessToken(YOUR_API_KEY);
     if (!token) {
         console.error(`DEBUG: Не удалось получить токен доступа в serve: ${tokenError}`);
         return new Response(JSON.stringify({ error: `Не удалось получить токен доступа: ${tokenError}` }), {
@@ -219,9 +224,9 @@ serve(async (req) => {
     console.log(`DEBUG: Получено ${menuItems.length} элементов меню.`);
 
     const formattedMenu = menuItems.map((item: any) => {
-        let priceInfo = item.defaultPrice || {}; 
+        let priceInfo = item.defaultPrice || {};
         if (Object.keys(priceInfo).length === 0 && item.prices && item.prices.length > 0) {
-            priceInfo = item.prices[0]; 
+            priceInfo = item.prices[0];
         }
 
         const categories = [];
@@ -231,8 +236,8 @@ serve(async (req) => {
             categories.push(item.parentGroup.name);
         }
 
-        const imageUrl = item.imageIds && item.imageIds.length > 0 
-                            ? `${IIKO_API_BASE_URL}/api/2/entities/products/image?id=${item.imageIds[0]}` 
+        const imageUrl = item.imageIds && item.imageIds.length > 0
+                            ? `${IIKO_API_BASE_URL}/api/2/entities/products/image?id=${item.imageIds[0]}`
                             : null;
 
         return {
