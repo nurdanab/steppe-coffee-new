@@ -204,7 +204,7 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
   padding: 0 $spacing-md;
   
   @include uhd-4k-up {
-    padding: 0 160px; 
+    padding: 100px 180px; 
   }
   @include uhd-up {
     padding: 0 120px; 

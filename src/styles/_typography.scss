@@ -133,7 +133,7 @@
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.3;
-  font-size: 36px; // Базовый размер для мобильных
+  font-size: 36px; 
 
   @include sm-up {
     font-size: 40px;
@@ -168,7 +168,7 @@
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.4;
-  font-size: 22px; // Базовый размер для мобильных
+  font-size: 22px; 
 
   @include sm-up {
     font-size: 24px;
@@ -203,7 +203,7 @@
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.2;
-  font-size: 22px; // Базовый размер для мобильных
+  font-size: 22px; // 
 
   @include sm-up {
     font-size: 23px;
@@ -238,7 +238,7 @@
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.2;
-  font-size: 16px; // Базовый размер для мобильных
+  font-size: 16px; 
 
   @include sm-up {
     font-size: 18px;
@@ -272,7 +272,7 @@
 .gilroy-32 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.4;
-  font-size: 24px; // Базовый размер для мобильных
+  font-size: 24px; 
 
   @include sm-up {
     font-size: 28px;
@@ -306,7 +306,7 @@
 .gilroy-24 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.5;
-  font-size: 20px; // Базовый размер для мобильных
+  font-size: 20px; 
 
   @include sm-up {
     font-size: 22px;

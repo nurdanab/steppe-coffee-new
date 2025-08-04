@@ -1,139 +1,244 @@
-/* src/components/PublicCalendar/PublicCalendar.module.scss */
-@use "sass:color"; 
+@use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as *;
+@use '../../styles/base' as *;
 
 .publicCalendarWrapper {
-  // Базовые стили для обертки компонента календаря
-  // Убираем инлайн-стили и переносим их сюда
-  @include section-padding; // Используем миксин для адаптивных отступов секции
-  background-color: $light-yellow; // Пример цвета фона для секции календаря
+  @extend .section;
+  background-color: $yellow;
+  position: relative;
+  overflow: hidden;
+  padding-top: $spacing-xl; 
+  padding-bottom: $spacing-xl; 
+
+  @include xs-only { 
+
+  }
+  @include sm-up {
+   
+  }
+  @include md-up {
+
+  }
+  @include lg-up {
+
+  }
+  @include xl-up {
+  
+  }
+  @include xxl-up {
+
+  }
+  @include xxxl-up {
+
+  }
+  @include full-hd-up {
+ 
+  }
+  @include uhd-up {
+
+  }
+  @include uhd-4k-up {
+    padding-top: $spacing-xxxxl; 
+    padding-bottom: $spacing-xl;
+  }
 }
 
 .calendarContainer {
-  @include container-padding; // Применяем адаптивные отступы контейнера
-  max-width: 1400px; // Увеличим максимальную ширину для календаря, если нужно
-  margin: 0 auto; // Центрируем контейнер
-  background-color: $white; // Фон для самого календаря
-  border-radius: $border-radius-xl; // Скругление углов
-  box-shadow: $shadow-medium; // Тень для придания объема
-  padding: $spacing-lg; // Внутренний отступ для содержимого календаря
+  @include container-padding; /* Применяем адаптивные отступы контейнера из миксинов */
+  max-width: 1600px; /* Увеличиваем максимальную ширину для больших экранов */
+  margin: 0 auto; /* Центрируем контейнер */
+  background-color: $white; /* Фон для самого календаря */
+  border-radius: $border-radius-xl; /* Скругление углов */
+  box-shadow: $shadow-medium; /* Тень для придания объема */
+  padding: $spacing-lg; /* Внутренний отступ для содержимого календаря */
+  animation: fadeIn 0.8s ease-out forwards; /* Добавим анимацию появления */
 
   @include sm-up {
     padding: $spacing-xl;
   }
+
+  @include xl-up {
+    padding: $spacing-xxl;
+  }
+
+  @include uhd-up {
+    padding: $spacing-xxxl;
+  }
 }
 
 .calendarTitle {
-  @extend .riffic-32; // Используем существующий типографический класс
+  @extend .riffic-32; /* Используем класс для заголовка, который адаптивно меняет размер */
   color: $black;
   text-align: center;
   margin-bottom: $spacing-lg;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Легкая тень для заголовка */
 
   @include sm-up {
     margin-bottom: $spacing-xl;
   }
+
+  @include lg-up {
+    margin-bottom: $spacing-xxl;
+  }
 }
 
-// Стилизация FullCalendar
-// FullCalendar использует свои классы, которые мы можем переопределить
+/* Стилизация FullCalendar */
 .fc {
-  // Общие стили для всего календаря
-  font-family: 'Gilroy', sans-serif; // Убедимся, что календарь использует твой шрифт Gilroy
-  font-size: 14px; // Базовый размер шрифта для элементов календаря
+  font-family: 'Gilroy', sans-serif; /* Убедимся, что календарь использует твой шрифт Gilroy */
+  font-size: 14px; /* Базовый размер шрифта для элементов календаря */
+  color: $gray-dark; /* Основной цвет текста календаря */
 
   @include md-up {
     font-size: 16px;
   }
-}
 
-// Заголовок календаря (месяц/неделя/день)
-.fc-toolbar-title {
-  @extend .gilroy-24; // Например, используем класс для заголовка
-  font-weight: 700; // Жирный шрифт
-  color: $black;
-}
-
-// Кнопки навигации (Prev, Next, Today, Month, Week, Day)
-.fc-button {
-  background-color: $yellow;
-  color: $black;
-  border: none;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-sm;
-  font-weight: 600;
-  transition: all $transition-fast;
-  margin: 0 4px; // Небольшой отступ между кнопками
-
-  &:hover {
-    background-color: color.adjust($yellow, $lightness: -10%);
-    box-shadow: $shadow-light;
+  @include xxl-up {
+    font-size: 18px; /* Увеличиваем шрифт для больших экранов */
   }
 
-  &:active {
-    background-color: color.adjust($yellow, $lightness: -15%);
-    transform: translateY(1px);
+  /* Заголовок календаря (месяц/неделя/день) */
+  .fc-toolbar-title {
+    @extend .gilroy-24; /* Используем адаптивный класс для заголовка */
+    font-weight: 700; /* Жирный шрифт */
+    color: $black;
+    text-align: center;
+    flex-grow: 1; /* Позволяет заголовку занимать доступное пространство */
   }
 
-  &:focus { // Добавляем фокус для доступности
-    outline: 2px solid $maroon;
-    outline-offset: 2px;
+  /* Кнопки навигации (Prev, Next, Today, Month, Week, Day) */
+  .fc-button {
+    @include button-primary; /* Используем миксин для кнопок */
+    padding: $spacing-xs $spacing-md; /* Увеличиваем отступы для кнопок */
+    border-radius: $border-radius-md; /* Слегка скругляем углы */
+    font-size: 14px;
+    margin: 0 6px; /* Небольшой отступ между кнопками */
+
+    @include sm-up {
+      padding: $spacing-sm $spacing-lg;
+      font-size: 16px;
+    }
   }
-}
 
-// Шапка таблицы (дни недели)
-.fc-col-header-cell {
-  background-color: $gray-light;
-  padding: $spacing-xs 0;
-  border-bottom: 1px solid $gray-medium;
+  /* Группа кнопок в тулбаре */
+  .fc-button-group {
+    display: flex;
+    flex-wrap: wrap; /* Позволяет кнопкам переноситься на новую строку на маленьких экранах */
+    justify-content: center;
+    margin-top: $spacing-sm; /* Отступ сверху для кнопок навигации */
 
-  .fc-col-header-cell-cushion {
-    color: $gray-dark;
+    @include md-up {
+      margin-top: 0; /* Убираем отступ на больших экранах */
+    }
+  }
+
+  /* Шапка таблицы (дни недели) */
+  .fc-col-header-cell {
+    background-color: $light-yellow; /* Светло-желтый фон для шапки */
+    padding: $spacing-xs 0;
+    border-bottom: 1px solid $yellow; /* Граница под шапкой */
+    text-transform: uppercase; /* Все заглавные буквы */
+
+    .fc-col-header-cell-cushion {
+      color: $maroon; /* Цвет текста дней недели */
+      font-weight: 700; /* Жирный шрифт */
+      font-size: 0.9em;
+
+      @include md-up {
+        font-size: 1em;
+      }
+    }
+  }
+
+  /* Ячейки дней/времени */
+  .fc-daygrid-day,
+  .fc-timegrid-slot {
+    border: 1px solid $gray-light; /* Легкая граница для ячеек */
+  }
+
+  /* Номера дней в месячном представлении */
+  .fc-daygrid-day-number {
+    padding: 4px;
     font-weight: 600;
+    color: $gray-dark;
+  }
+
+  /* Текущий день */
+  .fc-day-today {
+    background-color: lighten($light-yellow, 5%); /* Более светлый желтый для текущего дня */
+    border: 1px solid $yellow; /* Добавляем границу текущему дню */
+  }
+
+  /* События в календаре */
+  .fc-event {
+    background-color: $maroon; /* Основной цвет событий - бордовый */
+    border-radius: $border-radius-sm;
+    padding: 2px 6px; /* Увеличиваем padding для событий */
+    margin-bottom: 2px; /* Небольшой отступ между событиями */
+    font-size: 0.85em;
+    cursor: pointer;
+    border: none !important;
+    transition: all $transition-fast; /* Плавный переход при наведении */
+    box-shadow: $shadow-light; /* Легкая тень для событий */
+
+    &:hover {
+      background-color: color.adjust($maroon, $lightness: 10%); /* Осветляем при наведении */
+      box-shadow: $shadow-medium; /* Увеличиваем тень при наведении */
+      transform: translateY(-1px); /* Легкий подъем */
+    }
+
+    .fc-event-main {
+      color: $white; /* Цвет текста событий */
+      font-weight: 500;
+    }
+  }
+
+  /* Время в тайм-гриде */
+  .fc-timegrid-slot-label {
+    color: $gray-dark;
+    font-size: 0.9em;
+    font-weight: 500;
+  }
+
+  /* Индикатор текущего времени */
+  .fc-timegrid-now-indicator-line {
+    border-color: $orange !important; /* Цвет линии индикатора текущего времени */
+  }
+
+  .fc-timegrid-now-indicator-arrow {
+    border-color: transparent transparent transparent $orange !important; /* Цвет стрелки */
+  }
+
+  .fc-timegrid-now-indicator-timeline {
+    background-color: $orange !important; /* Цвет заливки линии */
+  }
+
+  /* День недели в представлении день/неделя */
+  .fc-day-header {
+    background-color: $light-yellow;
+    color: $maroon;
+    font-weight: 700;
+    padding: $spacing-xs 0;
+    border-bottom: 1px solid $yellow;
+  }
+
+  /* Скроллбар для временного представления, если необходимо */
+  .fc-scroller {
+    @extend .no-scrollbar; /* Применяем утилитарный класс для скрытия скроллбара */
   }
 }
 
-// Ячейки дней/времени
-.fc-daygrid-day,
-.fc-timegrid-slot {
-  border: 1px solid $gray-light;
-}
-
-// Текущий день
-.fc-day-today {
-  background-color: $lightBlue; // Светло-голубой фон для текущего дня
-}
-
-// События в календаре
-.fc-event {
-  border-radius: $border-radius-sm;
-  padding: 2px 4px;
-  margin-bottom: 1px;
-  font-size: 0.85em;
-  cursor: pointer;
-  border: none !important; // Переопределяем встроенные границы
-}
-
-.fc-event-main {
-  color: $white; // Цвет текста событий
-}
-
-// Время в тайм-гриде
-.fc-timegrid-slot-label {
-  color: $gray-dark;
-  font-size: 0.9em;
-}
-
-// Сообщения о загрузке/ошибке
+/* Сообщения о загрузке/ошибке */
 .loadingMessage,
 .errorMessage {
+  @extend .gilroy-24; /* Используем типографический класс */
   text-align: center;
   padding: $spacing-md;
-  font-size: 18px;
   font-weight: 600;
+  color: $gray-dark; /* Цвет по умолчанию */
 }
 
 .errorMessage {
-  color: $maroon;
+  color: $maroon; /* Красный цвет для ошибок */
 }

@@ -22,7 +22,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
 
   const navigationItems = [
     { name: 'Главная', href: '/' },
-    { name: 'Меню', href: '#' },
+    { name: 'Меню', href: '/menu' },
     { name: 'События', href: '/events' },
   ];
 
@@ -51,34 +51,14 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                       </Link>
                     </li>
                   ))}
-                  {/* Этот блок был удален, так как он дублировал функциональность кнопки профиля в headerActions */}
-                  {/* <li className={styles.navigationItem}>
-                    {session ? (
-                       <Link to="/profile" className={styles.profileLink}>
-                        <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
-                        <span className={styles.userEmail}>Привет, {session.user.email}!</span>
-                      </Link>
-                    ) : (
-                       <button onClick={onOpenAuthModal} className={styles.loginButton}>
-                        Войти
-                      </button>
-                    )}
-                  </li> */}
                 </ul>
               </nav>
 
               <div className={styles.headerActions}>
-                {session ? (
-                  <Link to="/profile" className={styles.profileButton}>
-                    <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
-                    {/* Если пользователь авторизован, показываем его email рядом с иконкой на больших экранах */}
-                    <span className={styles.userEmailDesktop}>Привет, {session.user.email}!</span>
-                  </Link>
-                ) : (
-                  <button onClick={onOpenAuthModal} className={styles.loginButton}>
-                    Войти
-                  </button>
-                )}
+                {/* Всегда отображаем иконку профиля, ведущую на страницу профиля */}
+                <Link to="/profile" className={styles.profileButton}>
+                  <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                </Link>
 
                 <button
                   className={`${styles.mobileMenuButton} ${isMobileMenuOpen ? styles.open : ''}`}

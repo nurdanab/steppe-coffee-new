@@ -17,6 +17,7 @@ import Auth from './components/Auth/Auth.jsx';
 import ProfilePage from './components/ProfilePage/ProfilePage.jsx';
 import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx';
 import AdminDashboard from './components/AdminDashboard/AdminDashboard';
+import MenuDisplay from './components/MenuDisplay/MenuDisplay';
 
 
 import { supabase } from './supabaseClient';
@@ -135,9 +136,14 @@ function App() {
           />
         } />
         <Route path="/update-password" element={<UpdatePassword />} />
-        {/* Добавляем маршрут для AdminDashboard */}
+
         <Route path="/dashboard" element={<AdminDashboard session={session} />} />
+
+        <Route path="/menu" element={<MenuDisplay />} />
+
       </Routes>
+
+      
 
       <BookingModal
         isOpen={isBookingModalOpen}

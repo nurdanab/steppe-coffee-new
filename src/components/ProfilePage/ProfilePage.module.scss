@@ -1,23 +1,28 @@
-/* src/components/ProfilePage/ProfilePage.module.scss */
-@use "sass:color"; 
+@use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as *;
+@use '../../styles/base' as *; 
+
 
 .profilePage {
-  @include section-padding;
-  @include container-padding;
-  max-width: 1200px;
-  margin: 0 auto;
-  margin-top: 150px;
-  min-height: calc(100vh - 150px);
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
+  @extend .section;  
+    background-color: $yellow; 
+    position: relative;
+    overflow: hidden; 
+  // @include section-padding;
+  // @include container-padding;
+  // max-width: 1200px;
+  // margin: 0 auto;
+  // margin-top: 150px;
+  // min-height: calc(100vh - 150px);
+  // display: flex;
+  // flex-direction: column;
+  // gap: $spacing-xl;
 
-  @include md-up {
-    min-height: calc(100vh - 200px);
-  }
+  // @include md-up {
+  //   min-height: calc(100vh - 200px);
+  // }
 }
 
 .profileHeader {

@@ -10,40 +10,36 @@ $header-bg-color: rgba($black, 0.8);
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: $spacing-md 0;
   transition: all $transition-medium;
   background-color: $header-bg-color;
   width: 100%;
 
   @include xs-only {
     padding: $spacing-sm 0;
-
   }
 
   @include sm-up {
     padding: $spacing-sm 0;
-
   }
 
   @include md-up {
     padding: $spacing-md 0;
-
   }
 
   @include lg-up {
-    padding: $spacing-lg 0;
-
+    padding: $spacing-md 0;
   }
   @include full-hd-up {
-    padding: $spacing-xl 0;
-
+    padding: $spacing-lg 0;
   }
   @include uhd-up {
+    padding: $spacing-xl 0;
+  }
+  @include uhd-4k-up {
     padding: $spacing-xxl 0;
   }
 }
 
-// All correct
 .headerFullWidthContainer {
   width: 100%;
   margin: 0 auto;
@@ -72,8 +68,7 @@ $header-bg-color: rgba($black, 0.8);
   @include full-hd-up {
     padding: 0 $spacing-xxxl * 2.6;
   }
-} // All correct
-
+}
 
 .headerContent {
   @include flex-between;
@@ -89,13 +84,13 @@ $header-bg-color: rgba($black, 0.8);
     }
   }
   .logoImage {
-    height: 24px;
+    height: 20px;
     width: auto;
     max-width: 100%;
     display: block;
 
     @include sm-up {
-      height: 36px;
+      height: 32px;
     }
     @include md-up {
       height: 40px;
@@ -107,7 +102,7 @@ $header-bg-color: rgba($black, 0.8);
       height: 48px;
     }
     @include xxl-up {
-      height: 52px;
+      height: 50px;
     }
     @include xxxl-up {
       height: 56px;
@@ -118,27 +113,16 @@ $header-bg-color: rgba($black, 0.8);
     @include uhd-up {
       height: 90px;
     }
+    @include uhd-4k-up {
+      height: 120px;
+    }
   }
 }
 
 .headerRightContent {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-
-  @include md-up {
-    gap: $spacing-xs;
-  }
-
-  @include lg-up {
-    gap: $spacing-xs;
-  }
-  @include xl-up {
-    gap: $spacing-sm;
-  }
-  @include xxl-up {
-    gap: $spacing-md;
-  }
+  gap: $spacing-md;
 }
 
 .navigation {
@@ -151,17 +135,6 @@ $header-bg-color: rgba($black, 0.8);
 
 .navigationList {
   @include flex-center;
-  gap: $spacing-md;
-
-  @include lg-up {
-    gap: $spacing-lg;
-  }
-  @include xl-up {
-    gap: $spacing-xl;
-  }
-  @include xxl-up {
-    gap: $spacing-xxl;
-  }
 }
 
 .navigationItem {
@@ -169,11 +142,11 @@ $header-bg-color: rgba($black, 0.8);
 }
 
 .navigationLink {
-  @extend .gilroy-16;
+  @extend .gilroy-18;
   font-weight: 400;
   color: $white;
   padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-xxxxl;
+  border-radius: $border-radius-xxxl;
   transition: all $transition-medium;
   position: relative;
 
@@ -182,14 +155,18 @@ $header-bg-color: rgba($black, 0.8);
     background-color: $white;
     transform: translateY(-2px);
   }
-
+  
+  @include md-up {
+    font-size: 16px;
+    padding: $spacing-xs $spacing-sm;
+  }
   @include lg-up {
     font-size: 17px;
     padding: $spacing-xs $spacing-md;
   }
   @include xl-up {
     font-size: 18px;
-    padding: $spacing-sm $spacing-md;
+    padding: $spacing-sm $spacing-lg;
   }
   @include xxl-up {
     font-size: 22px;
@@ -197,24 +174,26 @@ $header-bg-color: rgba($black, 0.8);
   }
   @include full-hd-up {
     font-size: 28px;
-    padding: $spacing-md $spacing-lg;
+    padding: $spacing-sm $spacing-xl;
   }
   @include uhd-up {
     font-size: 36px;
-    padding: $spacing-md $spacing-lg;
+    padding: $spacing-md $spacing-xxl;
+  }
+  @include uhd-4k-up {
+    font-size: 50px;
+    padding: $spacing-lg $spacing-xxxl;
   }
 }
 
-.profileButton { // Переименовал из .profileLink, так как он может быть и кнопкой
+.profileButton {
   @include flex-center;
-  width: 24px;
-  height: 24px;
+  
   border-radius: 50%;
   transition: all $transition-fast;
-  background: none; // Убираем фон, если это кнопка
-  border: none; // Убираем границу
-  cursor: pointer; // Курсор-указатель для кнопки
-  position: relative; // Для позиционирования текста email
+  background: none;
+  border: none;
+  cursor: pointer;
 
   .profileIcon {
     width: 100%;
@@ -227,13 +206,17 @@ $header-bg-color: rgba($black, 0.8);
       transform: scale(1.2);
     }
   }
+  @include xs-only { 
+    width: 18px;
+    height: 18px;
+  }
   @include sm-up {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
   @include md-up {
-    width: 22px;
-    height: 22px;
+    width: 25px;
+    height: 25px;
   }
   @include lg-up {
     width: 26px;
@@ -251,101 +234,45 @@ $header-bg-color: rgba($black, 0.8);
     width: 32px;
     height: 32px;
   }
-}
-
-.userEmailDesktop {
-  @extend .gilroy-16;
-  color: $white;
-  margin-left: $spacing-xs; // Отступ от иконки
-  display: none; // По умолчанию скрываем
-  white-space: nowrap; // Предотвращаем перенос строки
-
-  @include md-up { // Показываем на экранах md и выше
-    display: block;
-    font-size: 14px;
-  }
-  @include lg-up {
-    font-size: 16px;
-  }
-  @include xl-up {
-    font-size: 18px;
-  }
-  @include xxl-up {
-    font-size: 20px;
-  }
   @include full-hd-up {
-    font-size: 24px;
+    width: 40px;
+    height: 40px;
   }
   @include uhd-up {
-    font-size: 32px;
+    width: 48px;
+    height: 48px;
   }
-}
-
-
-.loginButton {
-  @extend .gilroy-16;
-  font-weight: 400;
-  color: $white;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-xxxxl;
-  transition: all $transition-medium;
-  background-color: transparent; // Изначально прозрачный фон
-  border: 1px solid $white; // Белая рамка
-  cursor: pointer;
-  white-space: nowrap; // Предотвращаем перенос строки
-
-  &:hover {
-    color: $black;
-    background-color: $white;
-    transform: translateY(-2px);
-  }
-
-  @include lg-up {
-    font-size: 17px;
-    padding: $spacing-xs $spacing-md;
-  }
-  @include xl-up {
-    font-size: 18px;
-    padding: $spacing-sm $spacing-md;
-  }
-  @include xxl-up {
-    font-size: 22px;
-    padding: $spacing-sm $spacing-lg;
-  }
-  @include full-hd-up {
-    font-size: 28px;
-    padding: $spacing-md $spacing-lg;
-  }
-  @include uhd-up {
-    font-size: 36px;
-    padding: $spacing-md $spacing-lg;
+  @include uhd-4k-up {
+    width: 64px;
+    height: 64px;
   }
 }
 
 .headerActions {
   @include flex-center;
-  gap: $spacing-sm;
+  gap: 0;
 
   @include md-up {
-    gap: $spacing-md; // Увеличиваем зазор для десктопов, чтобы уместить текст
+    gap: 0;
   }
   @include lg-up {
-    gap: $spacing-lg;
+    gap: 0;
   }
   @include xl-up {
-    gap: $spacing-xl;
+    gap: 0;
   }
 }
 
 .mobileMenuButton {
   @include flex-column;
   justify-content: center;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   background: none;
   border: none;
   cursor: pointer;
   gap: 4px;
+  margin-left: 16px;
   z-index: 1001;
 
   display: flex;
@@ -415,7 +342,7 @@ $header-bg-color: rgba($black, 0.8);
 
   .mobileNavigationList {
     @include flex-column;
-    gap: $spacing-lg;
+    gap: $spacing-md;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -430,21 +357,11 @@ $header-bg-color: rgba($black, 0.8);
 
     .mobileNavigationItem {
       .mobileNavigationLink {
-        @extend .gilroy-32;
+        @extend .gilroy-24;
         color: $white;
         text-decoration: none;
         transition: color $transition-fast;
 
-        &:hover {
-          color: $yellow;
-        }
-
-        @include md-up {
-          font-size: 36px;
-        }
-        @include lg-up {
-          font-size: 40px;
-        }
       }
     }
   }
@@ -475,7 +392,7 @@ $header-bg-color: rgba($black, 0.8);
   }
 
   .mobileLogoutButton {
-    @extend .gilroy-20;
+    @extend .gilroy-24;
     font-weight: 400;
     color: $white;
     padding: $spacing-xs $spacing-sm;
@@ -503,13 +420,12 @@ $header-bg-color: rgba($black, 0.8);
 
   .mobileLoginButton {
     @extend .gilroy-24;
-    font-weight: 400;
-    color: $white;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-xxxxl;
+    font-weight: 600;
+    color: $black;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $border-radius-xxl;
     transition: all $transition-medium;
-    background-color: transparent;
-    border: 1px solid $white;
+    background-color: $light-yellow;
     cursor: pointer;
 
     &:hover {
@@ -520,7 +436,7 @@ $header-bg-color: rgba($black, 0.8);
 
     @include md-up {
       font-size: 28px;
-      padding: $spacing-md $spacing-lg;
+      padding: $spacing-sm $spacing-lg;
     }
     @include lg-up {
       font-size: 32px;
