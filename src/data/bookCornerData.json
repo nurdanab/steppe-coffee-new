@@ -61,9 +61,9 @@
       },
       {
         "id": "book8",
-        "title": "Reshuffle: Who wins when AI restacks the knowledge economy",
-        "author": "AAAAA",
-        "coverImage": "/images/bookShelf/.jpg"
+        "title": "TEST",
+        "author": "Test",
+        "coverImage": "/images/bookShelf/test.jpeg"
       }
     ]
   },
