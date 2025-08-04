@@ -6,10 +6,11 @@ const YOUR_API_KEY = Deno.env.get("IIKO_API_KEY");
 const TARGET_ORGANIZATION_ID = Deno.env.get("IIKO_ORGANIZATION_ID");
 const TARGET_MENU_NAME = Deno.env.get("IIKO_MENU_NAME") || "Steppe App Menu";
 
-// Добавляем общий заголовок User-Agent
+// Добавляем общий заголовок User-Agent для всех запросов к iiko
 const COMMON_HEADERS = {
     "Content-Type": "application/json",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36" // Пример User-Agent из Chrome
+    // Используем распространенный User-Agent, чтобы быть более похожими на браузер или обычный клиент
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
 };
 
 async function getAccessToken(apiKey: string | undefined): Promise<{ token: string | null; error: string | null }> {
@@ -26,7 +27,7 @@ async function getAccessToken(apiKey: string | undefined): Promise<{ token: stri
         console.log(`DEBUG: Отправка запроса на получение токена: ${url}`);
         const response = await fetch(url, {
             method: "POST",
-            headers: COMMON_HEADERS, // Используем общие заголовки
+            headers: COMMON_HEADERS, // Используем общие заголовки, включая User-Agent
             body: JSON.stringify(payload)
         });
         console.log(`DEBUG: Получен ответ по токену. Статус: ${response.status}`);
@@ -62,7 +63,7 @@ async function getExternalMenusList(accessToken: string, organizationId: string 
 
     const url = `${IIKO_API_BASE_URL}/api/2/menu`;
     const headers = {
-        ...COMMON_HEADERS, // Добавляем общие заголовки
+        ...COMMON_HEADERS, // Добавляем общие заголовки, включая User-Agent
         "Authorization": `Bearer ${accessToken}`
     };
     const payload = { organizationId: organizationId };
@@ -111,7 +112,7 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
 
     const url = `${IIKO_API_BASE_URL}/api/2/menu/by_id`;
     const headers = {
-        ...COMMON_HEADERS, // Добавляем общие заголовки
+        ...COMMON_HEADERS, // Добавляем общие заголовки, включая User-Agent
         "Authorization": `Bearer ${accessToken}`
     };
     const payload = {
@@ -130,6 +131,7 @@ async function getMenuItems(accessToken: string, externalMenuId: string | undefi
 
         if (!response.ok) {
             const errorText = await response.text();
+            // Самый важный лог для отладки 500-й ошибки от iiko
             console.error(`DEBUG: Ошибка HTTP при получении содержимого меню: ${response.status} - Полный ответ: ${errorText}`);
             return { items: null, error: `Ошибка HTTP: ${response.status} - ${errorText}` };
         }
@@ -154,7 +156,7 @@ serve(async (req) => {
     console.log(`DEBUG: Запрос получен в serve: ${req.method} ${req.url}`);
 
     const corsHeaders = {
-        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app',
+        'Access-Control-Allow-Origin': 'https://steppecoffee.netlify.app', // Убедитесь, что здесь нет слэша
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization, apikey',
     };
@@ -167,12 +169,14 @@ serve(async (req) => {
         });
     }
 
+    // Если вы уверены, что JWT-проверка отключена в Supabase Dashboard,
+    // то этот блок будет проверять только наличие токена iiko API
     const { token, error: tokenError } = await getAccessToken(YOUR_API_KEY);
     if (!token) {
         console.error(`DEBUG: Не удалось получить токен доступа в serve: ${tokenError}`);
         return new Response(JSON.stringify({ error: `Не удалось получить токен доступа: ${tokenError}` }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" },
-            status: 401
+            status: 401 // Использование 401 здесь означает проблему с доступом к iiko API, а не Supabase JWT
         });
     }
     console.log("DEBUG: Токен доступа получен в serve.");
