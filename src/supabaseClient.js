@@ -23,3 +23,17 @@ export async function fetchAllBookings() {
   console.log('Получены все бронирования:', data);
   return data;
 }
+
+
+export async function fetchMenuItems() {
+  const { data, error } = await supabase
+      .from('menu_items')
+      .select('*');
+
+  if (error) {
+      console.error('Ошибка при получении меню:', error);
+      return null;
+  }
+
+  return data;
+}

@@ -1,207 +1,235 @@
 import requests
 import json
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
+
+# Загружаем переменные окружения из файла .env
+load_dotenv()
 
 # --- КОНФИГУРАЦИЯ ---
-IIKO_API_BASE_URL = "https://api-ru.iiko.services"
-YOUR_API_KEY = "18daf48217a048baadd62f23be3a5041"
+IIKO_API_BASE_URL = os.getenv("IIKO_API_BASE_URL")
+YOUR_API_KEY = os.getenv("IIKO_API_KEY")
 
-def get_access_token(api_key):
-    """
-    Получает токен доступа из iiko Cloud API.
-    """
-    url = f"{IIKO_API_BASE_URL}/api/1/access_token"
-    headers = {
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "apiLogin": api_key
-    }
-    print(f"Попытка получить токен доступа от {url}...")
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        response.raise_for_status() 
-        token_data = response.json()
-        access_token = token_data.get("token")
-        if access_token:
-            print("Токен доступа успешно получен.")
-            return access_token
-        else:
-            print(f"Ошибка: В ответе нет токена. Ответ: {token_data}")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
+
+class IikoApiClient:
+    def __init__(self, api_key, base_url):
+        if not api_key:
+            raise ValueError("API-ключ не может быть пустым. Установите IIKO_API_KEY в .env файле.")
+        self.api_key = api_key
+        self.base_url = base_url
+        self.access_token = None
+
+    def get_access_token(self):
+        url = f"{self.base_url}/api/1/access_token"
+        payload = {"apiLogin": self.api_key}
+        headers = {"Content-Type": "application/json"}
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
+            response.raise_for_status()
+            token_data = response.json()
+            token = token_data.get("token")
+            if token:
+                self.access_token = token
+                print("Токен доступа успешно получен.")
+                return True
+            else:
+                print(f"Ошибка: В ответе нет токена. Ответ: {token_data}")
+                return False
+        except requests.exceptions.RequestException as e:
+            print(f"Ошибка при получении токена доступа: {e}")
+            return False
+
+    def _make_post_request(self, endpoint, payload):
+        if not self.access_token:
+            print("Ошибка: Нет токена доступа. Сначала вызовите get_access_token().")
             return None
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при получении токена доступа: {e}")
-        return None
-# --- конец входа ---
+        url = f"{self.base_url}/{endpoint}"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.access_token}",
+            "Accept-Encoding": "identity"
+        }
+        try:
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"Ошибка при запросе к {url}: {e}")
+            return None
 
-# --- заведение ---
-
-def get_organizations(access_token):
-    """
-    Получает список организаций, доступных для данного токена.
-    """
-    url = f"{IIKO_API_BASE_URL}/api/1/organizations"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
-    }
-    payload = {}
-    print(f"Попытка получить список организаций от {url}...")
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        response.raise_for_status()
-        full_response_data = response.json()
-
-        organizations_list = full_response_data.get("organizations") 
-
-        if organizations_list and isinstance(organizations_list, list):
+    def get_organizations(self):
+        endpoint = "api/1/organizations"
+        payload = {}
+        data = self._make_post_request(endpoint, payload)
+        if data and isinstance(data.get("organizations"), list):
             print("Список организаций успешно получен.")
-            return organizations_list 
-        else:
-            print(f"Ошибка: В ответе нет списка организаций или он неверного формата. Ответ: {full_response_data}")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при получении списка организаций: {e}")
+            return data["organizations"]
+        print(f"Ошибка: Не удалось получить список организаций. Ответ: {data}")
         return None
 
-# --- заведение конец ---
-
-# --- список доступных внешних меню ---
-
-def get_external_menus_list(access_token, organization_id):
-    """
-    Получает список доступных внешних меню для указанной организации.
-    """
-    url = f"{IIKO_API_BASE_URL}/api/2/menu" # Эндпоинт, который мы вызывали ранее и который возвращает список меню
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
-    }
-    payload = {
-        "organizationId": organization_id # Здесь organizationId - singular, как в документации для этого эндпоинта
-    }
-    print(f"\nПопытка получить список внешних меню для организации {organization_id} от {url}...")
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        response.raise_for_status()
-        menu_list_data = response.json()
-
-        external_menus = menu_list_data.get("externalMenus")
-        if external_menus and isinstance(external_menus, list):
+    def get_external_menus_list(self, organization_id):
+        endpoint = "api/2/menu"
+        payload = {"organizationId": organization_id}
+        data = self._make_post_request(endpoint, payload)
+        if data and isinstance(data.get("externalMenus"), list):
             print("Список внешних меню успешно получен.")
-            return external_menus
-        else:
-            print(f"Ошибка: В ответе нет списка внешних меню или он пуст. Ответ: {menu_list_data}")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при получении списка внешних меню: {e}")
+            return data["externalMenus"]
+        print(f"Ошибка: Не удалось получить список внешних меню. Ответ: {data}")
         return None
 
-# --- список доступных внешних меню конец ---
+    def get_menu_items_from_external_menu(self, external_menu_id, organization_id):
+        endpoint = "api/2/menu/by_id"
+        payload = {
+            "externalMenuId": external_menu_id,
+            "organizationIds": [organization_id]
+        }
+        data = self._make_post_request(endpoint, payload)
+        
+        # Новый код для правильной обработки ответа
+        if data and isinstance(data.get('itemCategories'), list):
+            all_items = []
+            for category in data['itemCategories']:
+                if isinstance(category.get('items'), list):
+                    for item in category['items']:
+                        # Добавляем название категории
+                        item['categoryName'] = category.get('name')
+                        all_items.append(item)
+            if all_items:
+                print(f"Содержимое меню успешно получено. Найдено {len(all_items)} блюд.")
+                return all_items
+            else:
+                print("Ошибка: В меню нет блюд.")
+                return None
+        
+        print(f"Ошибка: Не удалось получить содержимое меню. Ответ: {data}")
+        return None
 
-
-# --- меню ---
-
-def get_menu_items(access_token, external_menu_id, organization_id): # Теперь принимаем external_menu_id
+def upload_menu_items_to_supabase(menu_items_data):
     """
-    Получает содержимое конкретного внешнего меню по его ID.
+    Загружает данные о меню в таблицу Supabase с дополнительной отладкой.
     """
-    url = f"{IIKO_API_BASE_URL}/api/2/menu/by_id" # Новый эндпоинт!
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
-    }
-    payload = {
-        "externalMenuId": external_menu_id, # Передаем ID внешнего меню
-        "organizationIds": [organization_id] # Передаем ID организации как МАССИВ
-    }
-    print(f"\nПопытка получить содержимое меню {external_menu_id} для организации {organization_id} от {url}...")
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        print("Ошибка: Ключи Supabase не найдены в .env файле.")
+        return
+        
+    print("\n--- Загрузка данных в Supabase ---")
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        response.raise_for_status()
-        menu_data = response.json()
-
-        products = menu_data.get("itemProducts") 
-
-        if products is not None and isinstance(products, list): # Проверяем, что itemProducts существует и является списком
-            print(f"Содержимое меню успешно получено. Найдено {len(products)} блюд.")
-            return products
+        supabase_client: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+        
+        print(f"Используемый Supabase URL: {SUPABASE_URL}")
+        
+        print("Попытка очистить таблицу 'menu_items'...")
+        
+        # Очищаем таблицу перед загрузкой новых данных
+        delete_response = supabase_client.table('menu_items').delete().neq('id', '00000000-0000-0000-0000-000000000000').execute()
+        
+        if delete_response.data:
+            print("Старые данные из таблицы 'menu_items' удалены.")
+        elif hasattr(delete_response, 'error') and delete_response.error:
+            print(f"Ошибка при удалении старых данных: {delete_response.error}")
+            return
         else:
-            print(f"Ошибка: В ответе нет списка блюд ('itemProducts') или он неверного формата. Ответ: {menu_data}")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"Ошибка при получении содержимого меню: {e}")
-        return None
+            print("Старые данные из таблицы 'menu_items' удалены, или таблица была пуста.")
 
-# --- меню конец ---
 
+        # Подготавливаем данные для вставки
+        data_to_insert = []
+        for item in menu_items_data:
+            item_id = item.get('itemId')
+            if not item_id:
+                print(f"Предупреждение: Блюдо '{item.get('name', 'без названия')}' не будет загружено из-за отсутствия ID.")
+                continue
+
+            price_value = None
+            if item.get('defaultPrice', {}).get('currentPrice') is not None:
+                price_value = item['defaultPrice']['currentPrice']
+            elif item.get('prices') and len(item['prices']) > 0 and item['prices'][0].get('price') is not None:
+                price_value = item['prices'][0]['price']
+            
+            if price_value is not None:
+                try:
+                    price_value = float(price_value)
+                except (ValueError, TypeError):
+                    price_value = None
+
+            categories = []
+            if item.get('categoryName'):
+                categories.append(item['categoryName'])
+            
+            image_id = None
+            if item.get('buttonImageUrl'):
+                # Обработка URL, чтобы получить только ID
+                image_url = item['buttonImageUrl']
+                image_id_part = image_url.split('imageId=')[-1]
+                if image_id_part:
+                    image_id = image_id_part.split('.')[0]
+            elif item.get('itemSizes') and item['itemSizes'][0].get('buttonImageUrl'):
+                 image_url = item['itemSizes'][0]['buttonImageUrl']
+                 image_id_part = image_url.split('imageId=')[-1]
+                 if image_id_part:
+                    image_id = image_id_part.split('.')[0]
+            elif item.get('imageIds', [None])[0]:
+                image_id = item['imageIds'][0]
+
+            data_to_insert.append({
+                'iiko_id': item_id,
+                'name': item.get('name'),
+                'description': item.get('description'),
+                'price': price_value,
+                'image_id': image_id,
+                'categories': categories
+            })
+        
+        print(f"Подготовлено для вставки {len(data_to_insert)} блюд.")
+        if data_to_insert:
+            print("Пример первого элемента для вставки:", data_to_insert[0])
+
+        response = supabase_client.table('menu_items').insert(data_to_insert).execute()
+        
+        if response.data:
+            print(f"Успешно загружено {len(response.data)} блюд в Supabase!")
+        elif hasattr(response, 'error') and response.error:
+            print(f"Ошибка при загрузке данных: {response.error}")
+            return
+        else:
+            print("Вставка прошла успешно, но ответ не содержит данных.")
+        
+    except Exception as e:
+        print(f"Неожиданная ошибка при работе с Supabase: {e}")
 
 # --- ЗАПУСК ---
 if __name__ == "__main__":
-    TARGET_ORGANIZATION_ID = "390df300-2520-4594-a7da-f4d87d2ea84a" 
-    TARGET_MENU_NAME = "Steppe App Menu"
-
-    token = get_access_token(YOUR_API_KEY)
-
-    if token:
-        print(f"\nВаш токен доступа: {token}\n")
-
-        organizations = get_organizations(token)
-        if organizations:
-            print("Доступные организации:")
-            for org in organizations:
-                print(f"  - Имя: {org.get('name')}, ID: {org.get('id')}")
-            print("\n")
-        else:
-            print("Не удалось получить список организаций.")
-
+    TARGET_ORGANIZATION_ID = os.getenv("TARGET_ORGANIZATION_ID")
+    TARGET_MENU_NAME = os.getenv("TARGET_MENU_NAME")
+    
+    iiko_client = IikoApiClient(YOUR_API_KEY, IIKO_API_BASE_URL)
+    
+    if iiko_client.get_access_token():
+        organizations = iiko_client.get_organizations()
+        
         if TARGET_ORGANIZATION_ID:
-
-            all_external_menus = get_external_menus_list(token, TARGET_ORGANIZATION_ID)
+            all_external_menus = iiko_client.get_external_menus_list(TARGET_ORGANIZATION_ID)
 
             selected_external_menu_id = None
             if all_external_menus:
-                print(f"Доступные внешние меню для {TARGET_ORGANIZATION_ID}:")
                 for menu_info in all_external_menus:
-                    print(f"  - Название: {menu_info.get('name')}, ID: {menu_info.get('id')}")
                     if menu_info.get('name') == TARGET_MENU_NAME:
                         selected_external_menu_id = menu_info.get('id')
-                        print(f"  (Найден ID для '{TARGET_MENU_NAME}': {selected_external_menu_id})")
-            else:
-                print("Не удалось получить список внешних меню.")
-
+                        print(f"(Найден ID для '{TARGET_MENU_NAME}': {selected_external_menu_id})")
+            
             if selected_external_menu_id:
-
-                menu_items = get_menu_items(token, selected_external_menu_id, TARGET_ORGANIZATION_ID)
+                menu_items = iiko_client.get_menu_items_from_external_menu(selected_external_menu_id, TARGET_ORGANIZATION_ID)
                 if menu_items:
-                    print("\n--- Полученные элементы меню (первые 5 для примера) ---")
-                    for item in menu_items[:5]: 
-                        print(f"  Название: {item.get('name')}")
-                        price_info = item.get('defaultPrice', {}) 
-                        if not price_info and item.get('prices') and len(item['prices']) > 0:
-                            price_info = item['prices'][0] 
-
-                        print(f"  Цена: {price_info.get('currentPrice')} {price_info.get('currencyISOCode', '')}")
-                        print(f"  Описание: {item.get('description', 'Нет описания')}")
-
-                        categories = []
-                        if item.get('productCategories'):
-                            categories = [cat['name'] for cat in item['productCategories']]
-                        elif item.get('parentGroup') and item['parentGroup'].get('name'):
-                            categories = [item['parentGroup']['name']]
-
-                        print(f"  Категории: {', '.join(categories) if categories else 'Нет категории'}")
-
-                        image_ids = item.get('imageIds')
-                        print(f"  ID изображения: {image_ids[0] if image_ids and len(image_ids) > 0 else 'Нет изображения'}")
-                        print("-" * 30)
-                    print(f"\nВсего получено блюд: {len(menu_items)}")
-                    print("\nТеперь у вас есть данные о меню!")
+                    upload_menu_items_to_supabase(menu_items)
                 else:
-                    print("Не удалось получить содержимое меню для указанного ID внешнего меню.")
+                    print("Не удалось получить содержимое меню.")
             else:
-                print(f"Не найден ID для '{TARGET_MENU_NAME}' в списке внешних меню.")
+                print(f"Не найден ID для '{TARGET_MENU_NAME}'.")
         else:
-            print("ID целевой организации не указан. Невозможно получить меню.")
+            print("ID целевой организации не указан.")
 
     else:
-        print("Не удалось получить токен доступа. Проверьте API-ключ и подключение.")
+        print("Не удалось получить токен доступа.")

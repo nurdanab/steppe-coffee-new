@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+// src/components/MenuDisplay/MenuDisplay.jsx
 
-const SUPABASE_FUNCTION_URL = "https://nlhugcvfwklgzpxgzvth.supabase.co/functions/v1/get-iiko-menu"; 
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY; 
+import React, { useEffect, useState } from 'react';
+import { fetchMenuItems } from '../../supabaseClient'; 
+
+const IIKO_IMAGE_API_BASE_URL = "https://api-ru.iiko.services";
 
 function MenuDisplay() {
     const [menuItems, setMenuItems] = useState([]);
@@ -9,75 +11,58 @@ function MenuDisplay() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchMenu = async () => {
+        const getMenu = async () => {
             try {
-                if (!SUPABASE_ANON_KEY) {
-                    throw new Error("Supabase Anon Key is not defined. Please check your .env file or Netlify environment variables.");
+                const data = await fetchMenuItems();
+                if (data) {
+                    setMenuItems(data);
                 }
-
-                const response = await fetch(SUPABASE_FUNCTION_URL, {
-                    method: 'POST', 
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // Попробуем отправить ANON_KEY как Bearer токен.
-                        // Supabase функции, когда JWT отключен, иногда это воспринимают.
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 
-                        'apikey': SUPABASE_ANON_KEY, // Оставьте apikey на всякий случай, если он используется внутренне
-                    },
-                    body: JSON.stringify({}), 
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status} - Response: ${JSON.stringify(errorData)}`);
-                }
-                
-                const data = await response.json();
-                setMenuItems(data);
             } catch (err) {
-                console.error("Failed to fetch menu:", err);
-                setError(err.message);
+                console.error("Не удалось получить меню:", err);
+                setError("Не удалось получить меню.");
             } finally {
                 setLoading(false);
             }
         };
 
+        getMenu();
+    }, []);
 
-        fetchMenu();
-    }, []); 
+     const getImageUrl = (imageId) => {
+        if (!imageId) return null;  
+         return `${IIKO_IMAGE_API_BASE_URL}/api/1/image?imageId=${imageId}`;
+    };
 
     if (loading) {
-        return <div className="menu-loading">Загрузка меню...</div>;
+        return <div className="menu-status">Загрузка меню...</div>;
     }
 
     if (error) {
-        return <div className="menu-error">Ошибка загрузки меню: {error}</div>;
+        return <div className="menu-status menu-error">Ошибка: {error}</div>;
     }
 
     if (menuItems.length === 0) {
-        return <div className="menu-empty">Меню пока пустое.</div>;
+        return <div className="menu-status">Меню пока пустое.</div>;
     }
 
     return (
         <div className="menu-container">
             <h2>Наше Меню</h2>
-            {menuItems.map(item => (
-                <div key={item.id} className="menu-item">
-                    <h3>{item.name}</h3>
-                    {item.imageUrl && (
-                        <img src={item.imageUrl} alt={item.name} className="menu-item-image" />
-                    )}
-                    <p className="menu-item-price">
-                        Цена: {item.price} {item.currency}
-                    </p>
-                    {item.description && (
-                        <p className="menu-item-description">{item.description}</p>
-                    )}
-                    {item.categories && item.categories.length > 0 && (
-                        <p className="menu-item-categories">Категории: {item.categories.join(', ')}</p>
-                    )}
-                </div>
-            ))}
+            <div className="menu-grid">
+                {menuItems.map(item => (
+                    <div key={item.id} className="menu-item-card">
+                        <img 
+                            src={getImageUrl(item.image_id) || "placeholder.png"} 
+                            alt={item.name} 
+                            className="menu-item-image" 
+                        />
+                        <div className="menu-item-info">
+                            <h3 className="menu-item-name">{item.name}</h3>
+                            <p className="menu-item-price">{item.price ? `${item.price} ₸` : 'Цена не указана'}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
