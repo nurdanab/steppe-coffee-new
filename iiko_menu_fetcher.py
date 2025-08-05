@@ -23,7 +23,7 @@ class IikoApiClient:
         self.access_token = None
 
     def get_access_token(self):
-        url = f"{self.base_url}/api/1/access_token"
+        url = f"{self.base_url}/api/1/auth/access_token"
         payload = {"apiLogin": self.api_key}
         headers = {"Content-Type": "application/json"}
         try:
@@ -88,7 +88,6 @@ class IikoApiClient:
         }
         data = self._make_post_request(endpoint, payload)
         
-        # Новый код для правильной обработки ответа
         if data and isinstance(data.get('itemCategories'), list):
             all_items = []
             for category in data['itemCategories']:
@@ -143,14 +142,12 @@ def upload_menu_items_to_supabase(menu_items_data):
 
             price_value = None
             
-            # Улучшенная логика поиска цены
             if item.get('itemSizes') and len(item['itemSizes']) > 0:
                 item_size = item['itemSizes'][0]
                 if item_size.get('prices') and len(item_size['prices']) > 0:
                     price_value = item_size['prices'][0].get('price')
             
             if price_value is None:
-                # Если цена не найдена в itemSizes, пробуем старый способ
                 if item.get('defaultPrice', {}).get('currentPrice') is not None:
                     price_value = item['defaultPrice']['currentPrice']
                 elif item.get('prices') and len(item['prices']) > 0 and item['prices'][0].get('price') is not None:
@@ -166,26 +163,35 @@ def upload_menu_items_to_supabase(menu_items_data):
             if item.get('categoryName'):
                 categories.append(item['categoryName'])
             
-            image_id = None
-            if item.get('buttonImageUrl'):
-                image_url = item['buttonImageUrl']
-                image_id_part = image_url.split('imageId=')[-1]
-                if image_id_part:
-                    image_id = image_id_part.split('.')[0]
+            # Обновлённая логика для получения image_id или полного URL
+            image_source = None
+            if item.get('imageIds') and item['imageIds'][0]:
+                image_source = item['imageIds'][0]
+            elif item.get('buttonImageUrl'):
+                image_source = item['buttonImageUrl']
             elif item.get('itemSizes') and item['itemSizes'][0].get('buttonImageUrl'):
-                 image_url = item['itemSizes'][0]['buttonImageUrl']
-                 image_id_part = image_url.split('imageId=')[-1]
-                 if image_id_part:
-                    image_id = image_id_part.split('.')[0]
-            elif item.get('imageIds', [None])[0]:
-                image_id = item['imageIds'][0]
+                image_source = item['itemSizes'][0]['buttonImageUrl']
+
+            image_id_to_save = None
+            if image_source:
+                # Если image_source - это URL, сохраняем его целиком
+                if image_source.startswith('http') or image_source.startswith('https'):
+                    image_id_to_save = image_source
+                # Иначе, пытаемся извлечь ID из строки запроса
+                elif 'imageId=' in image_source:
+                    image_id_part = image_source.split('imageId=')[-1]
+                    if image_id_part:
+                        image_id_to_save = image_id_part.split('.')[0]
+                # Если это уже просто ID
+                else:
+                    image_id_to_save = image_source
 
             data_to_insert.append({
                 'iiko_id': item_id,
                 'name': item.get('name'),
                 'description': item.get('description'),
                 'price': price_value,
-                'image_id': image_id,
+                'image_id': image_id_to_save,
                 'categories': categories
             })
         

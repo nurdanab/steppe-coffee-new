@@ -43,13 +43,16 @@ function MenuDisplay() {
         };
     }, []);
 
-    const getImageUrl = (imageId) => {
-        if (!imageId) return null;
+    const getImageUrl = (imageSource) => {
+        if (!imageSource) return "/placeholder.png"; // Возвращаем заглушку, если нет источника
         
-        if (imageId.startsWith('http://') || imageId.startsWith('https://')) {
-            return imageId;
+        // Если это уже полный URL
+        if (imageSource.startsWith('http://') || imageSource.startsWith('https://')) {
+            return imageSource;
         }
-        return `${IIKO_IMAGE_API_BASE_URL}/api/1/image?imageId=${imageId}`;
+
+        // Если это ID, то добавляем его к базовому URL iiko
+        return `${IIKO_IMAGE_API_BASE_URL}/api/1/image?imageId=${imageSource}`;
     };
 
     if (loading) {
@@ -65,6 +68,10 @@ function MenuDisplay() {
     }
 
     const categories = ['Спец. предложения', 'Напитки', 'Сэндвичи', 'Десерты', 'Добавки'];
+
+    const filteredItems = menuItems.filter(item => 
+        item.categories && item.categories.includes(activeCategory)
+    );
 
     return (
         <>
@@ -89,12 +96,12 @@ function MenuDisplay() {
                         </button>
                     ))}
                 </div>
-                <h2 className={styles.menuTitle}>Авторские напитки</h2>
+                <h2 className={styles.menuTitle}>{activeCategory}</h2>
                 <div className={styles.menuGrid}>
-                    {menuItems.map(item => (
-                        <div key={item.id} className={styles.menuItemCard}>
+                    {filteredItems.map(item => (
+                        <div key={item.iiko_id} className={styles.menuItemCard}>
                             <img 
-                                src={getImageUrl(item.image_id) || "placeholder.png"} 
+                                src={getImageUrl(item.image_id)} 
                                 alt={item.name} 
                                 className={styles.menuItemImage} 
                             />
@@ -105,6 +112,9 @@ function MenuDisplay() {
                         </div>
                     ))}
                 </div>
+                {filteredItems.length === 0 && (
+                    <div className={styles.menuStatus}>В этой категории пока нет блюд.</div>
+                )}
             </div>
         </>
     );
