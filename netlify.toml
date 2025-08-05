@@ -9,11 +9,3 @@
 
 [functions."*"]
   external_node_modules = ["axios", "@supabase/supabase-js"]
-
-[functions.iiko-webhook.environment]
-  SUPABASE_URL = "${SUPABASE_URL}"
-  SUPABASE_SERVICE_KEY = "${SUPABASE_SERVICE_KEY}"
-  IIKO_API_URL = "${IIKO_API_URL}"
-  IIKO_API_KEY = "${IIKO_API_KEY}"
-  TARGET_ORGANIZATION_ID = "${TARGET_ORGANIZATION_ID}"
-  TARGET_MENU_NAME = "${TARGET_MENU_NAME}"
