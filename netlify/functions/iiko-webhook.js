@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
 
-// Инициализируем клиента Supabase
+// Инициализируем клиента Supabase, используя переменные окружения Netlify
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_KEY;
 const serverSupabase = createClient(supabaseUrl, supabaseServiceRoleKey);
@@ -18,16 +18,20 @@ exports.handler = async (event, context) => {
             return { statusCode: 200, body: 'Меню iiko пустое, обновление не требуется.' };
         }
 
-        // Очищаем таблицу перед вставкой новых данных
-        const { error: deleteError } = await serverSupabase 
+        // Очищаем таблицу перед вставкой новых данных.
+        // Используем более надёжный метод очистки.
+        const { error: deleteError } = await serverSupabase
             .from('menu_items')
             .delete()
-            .neq('iiko_id', 'non_existing_id_from_iiko'); // Используем iiko_id для более точного удаления
+            .neq('id', '00000000-0000-0000-0000-000000000000'); // Удаляем все записи, где id не равен пустой строке
+                                                               // чтобы не удалять "случайно" какие-то важные записи.
 
         if (deleteError) {
             console.error('Ошибка при удалении старых данных:', deleteError);
             return { statusCode: 500, body: 'Ошибка сервера' };
         }
+        console.log('Старые данные успешно удалены.');
+
 
         // Вставляем новые данные
         const { data, error: insertError } = await serverSupabase
