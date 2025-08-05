@@ -1,0 +1,86 @@
+@use "sass:color";
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
+@use '../../styles/base' as *; 
+
+
+.menuContainer {
+    @extend .container; // Используем миксин для контейнера из _base.scss
+    padding-top: $spacing-xl;
+    padding-bottom: $spacing-xxl;
+}
+
+.menuTitle {
+    @extend .riffic-large; // Используем стиль шрифта из _typography.scss
+    text-align: center;
+    margin-bottom: $spacing-xl;
+    color: $black;
+}
+
+.menuGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $spacing-lg;
+
+    @include md-up {
+        gap: $spacing-xl;
+    }
+}
+
+.menuItemCard {
+    border: 1px solid $gray-light;
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-light;
+    transition: transform $transition-medium, box-shadow $transition-medium;
+    background-color: $white;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow-medium;
+    }
+}
+
+.menuItemImage {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    display: block;
+}
+
+.menuItemInfo {
+    padding: $spacing-lg;
+    @include flex-column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.menuItemName {
+    @extend .gilroy-24; // Используем стиль шрифта из _typography.scss
+    font-weight: 600;
+    margin: 0 0 $spacing-xs 0;
+    color: $black;
+}
+
+.menuItemPrice {
+    @extend .gilroy-18; // Используем стиль шрифта из _typography.scss
+    color: $maroon;
+    font-weight: 700;
+    margin: 0;
+}
+
+.menuStatus {
+    @extend .gilroy-24;
+    text-align: center;
+    padding: $spacing-xl;
+    color: $gray-dark;
+}
+
+.menuError {
+    color: $maroon;
+}

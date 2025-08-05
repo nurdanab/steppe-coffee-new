@@ -8,7 +8,7 @@ from supabase import create_client, Client
 load_dotenv()
 
 # --- КОНФИГУРАЦИЯ ---
-IIKO_API_BASE_URL = os.getenv("IIKO_API_BASE_URL")
+IIKO_API_URL = os.getenv("IIKO_API_URL")
 YOUR_API_KEY = os.getenv("IIKO_API_KEY")
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -109,7 +109,7 @@ class IikoApiClient:
 
 def upload_menu_items_to_supabase(menu_items_data):
     """
-    Загружает данные о меню в таблицу Supabase с дополнительной отладкой.
+    Загружает данные о меню в таблицу Supabase.
     """
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         print("Ошибка: Ключи Supabase не найдены в .env файле.")
@@ -123,7 +123,6 @@ def upload_menu_items_to_supabase(menu_items_data):
         
         print("Попытка очистить таблицу 'menu_items'...")
         
-        # Очищаем таблицу перед загрузкой новых данных
         delete_response = supabase_client.table('menu_items').delete().neq('id', '00000000-0000-0000-0000-000000000000').execute()
         
         if delete_response.data:
@@ -135,7 +134,6 @@ def upload_menu_items_to_supabase(menu_items_data):
             print("Старые данные из таблицы 'menu_items' удалены, или таблица была пуста.")
 
 
-        # Подготавливаем данные для вставки
         data_to_insert = []
         for item in menu_items_data:
             item_id = item.get('itemId')
@@ -144,10 +142,19 @@ def upload_menu_items_to_supabase(menu_items_data):
                 continue
 
             price_value = None
-            if item.get('defaultPrice', {}).get('currentPrice') is not None:
-                price_value = item['defaultPrice']['currentPrice']
-            elif item.get('prices') and len(item['prices']) > 0 and item['prices'][0].get('price') is not None:
-                price_value = item['prices'][0]['price']
+            
+            # Улучшенная логика поиска цены
+            if item.get('itemSizes') and len(item['itemSizes']) > 0:
+                item_size = item['itemSizes'][0]
+                if item_size.get('prices') and len(item_size['prices']) > 0:
+                    price_value = item_size['prices'][0].get('price')
+            
+            if price_value is None:
+                # Если цена не найдена в itemSizes, пробуем старый способ
+                if item.get('defaultPrice', {}).get('currentPrice') is not None:
+                    price_value = item['defaultPrice']['currentPrice']
+                elif item.get('prices') and len(item['prices']) > 0 and item['prices'][0].get('price') is not None:
+                    price_value = item['prices'][0]['price']
             
             if price_value is not None:
                 try:
@@ -161,7 +168,6 @@ def upload_menu_items_to_supabase(menu_items_data):
             
             image_id = None
             if item.get('buttonImageUrl'):
-                # Обработка URL, чтобы получить только ID
                 image_url = item['buttonImageUrl']
                 image_id_part = image_url.split('imageId=')[-1]
                 if image_id_part:
@@ -205,7 +211,7 @@ if __name__ == "__main__":
     TARGET_ORGANIZATION_ID = os.getenv("TARGET_ORGANIZATION_ID")
     TARGET_MENU_NAME = os.getenv("TARGET_MENU_NAME")
     
-    iiko_client = IikoApiClient(YOUR_API_KEY, IIKO_API_BASE_URL)
+    iiko_client = IikoApiClient(YOUR_API_KEY, IIKO_API_URL)
     
     if iiko_client.get_access_token():
         organizations = iiko_client.get_organizations()

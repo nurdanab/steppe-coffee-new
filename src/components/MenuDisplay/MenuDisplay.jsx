@@ -1,7 +1,6 @@
-// src/components/MenuDisplay/MenuDisplay.jsx
-
 import React, { useEffect, useState } from 'react';
-import { fetchMenuItems } from '../../supabaseClient'; 
+import { fetchMenuItems, supabase } from '../../supabaseClient';
+import styles from './MenuDisplay.module.scss'; // Импортируем стили
 
 const IIKO_IMAGE_API_BASE_URL = "https://api-ru.iiko.services";
 
@@ -26,39 +25,60 @@ function MenuDisplay() {
         };
 
         getMenu();
+        
+        const menuChannel = supabase.channel('menu_items_changes');
+
+        menuChannel
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, payload => {
+                console.log('Изменение в меню:', payload);
+                getMenu();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(menuChannel);
+        };
     }, []);
 
-     const getImageUrl = (imageId) => {
-        if (!imageId) return null;  
-         return `${IIKO_IMAGE_API_BASE_URL}/api/1/image?imageId=${imageId}`;
+    const getImageUrl = (imageId) => {
+        if (!imageId) return null;
+        
+        // Проверяем, является ли imageId уже полным URL
+        if (imageId.startsWith('http://') || imageId.startsWith('https://')) {
+            // Если да, используем его напрямую
+            return imageId;
+        }
+
+        // Если нет, формируем полный URL с помощью базового URL iiko
+        return `${IIKO_IMAGE_API_BASE_URL}/api/1/image?imageId=${imageId}`;
     };
 
     if (loading) {
-        return <div className="menu-status">Загрузка меню...</div>;
+        return <div className={styles.menuStatus}>Загрузка меню...</div>;
     }
 
     if (error) {
-        return <div className="menu-status menu-error">Ошибка: {error}</div>;
+        return <div className={`${styles.menuStatus} ${styles.menuError}`}>Ошибка: {error}</div>;
     }
 
     if (menuItems.length === 0) {
-        return <div className="menu-status">Меню пока пустое.</div>;
+        return <div className={styles.menuStatus}>Меню пока пустое.</div>;
     }
 
     return (
-        <div className="menu-container">
-            <h2>Наше Меню</h2>
-            <div className="menu-grid">
+        <div className={styles.menuContainer}>
+            <h2 className={styles.menuTitle}>Наше Меню</h2>
+            <div className={styles.menuGrid}>
                 {menuItems.map(item => (
-                    <div key={item.id} className="menu-item-card">
+                    <div key={item.id} className={styles.menuItemCard}>
                         <img 
                             src={getImageUrl(item.image_id) || "placeholder.png"} 
                             alt={item.name} 
-                            className="menu-item-image" 
+                            className={styles.menuItemImage} 
                         />
-                        <div className="menu-item-info">
-                            <h3 className="menu-item-name">{item.name}</h3>
-                            <p className="menu-item-price">{item.price ? `${item.price} ₸` : 'Цена не указана'}</p>
+                        <div className={styles.menuItemInfo}>
+                            <h3 className={styles.menuItemName}>{item.name}</h3>
+                            <p className={styles.menuItemPrice}>{item.price ? `${item.price} ₸` : 'Цена не указана'}</p>
                         </div>
                     </div>
                 ))}

@@ -37,3 +37,17 @@ export async function fetchMenuItems() {
 
   return data;
 }
+
+// Новая функция для подписки на изменения в таблице
+export function subscribeToMenuItems(callback) {
+  const channel = supabase.channel('menu_items_changes');
+
+  channel
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, payload => {
+      console.log('Изменение в меню:', payload);
+      callback(payload);
+    })
+    .subscribe();
+
+  return channel;
+}
