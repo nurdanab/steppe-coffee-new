@@ -109,7 +109,7 @@ exports.handler = async (event, context) => {
         const { error: deleteError } = await serverSupabase 
             .from('menu_items')
             .delete()
-            .neq('iiko_id', '0'); // Используем iiko_id для более точного удаления
+            .neq('iiko_id', 'non_existing_id_from_iiko'); // Используем iiko_id для более точного удаления
 
         if (deleteError) {
             console.error('Ошибка при удалении старых данных:', deleteError);
