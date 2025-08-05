@@ -56,6 +56,9 @@ exports.handler = async (event, context) => {
 async function getIikoToken() {
     const iikoApiUrl = process.env.IIKO_API_URL;
     const iikoApiKey = process.env.IIKO_API_KEY;
+    
+    // Добавляем логирование для отладки
+    console.log(`Попытка получить токен. URL: ${iikoApiUrl}, API Key: ${iikoApiKey ? 'присутствует' : 'отсутствует'}`);
 
     if (!iikoApiUrl || !iikoApiKey) {
         throw new Error('IIKO_API_URL or IIKO_API_KEY are not defined in environment variables.');
@@ -65,9 +68,13 @@ async function getIikoToken() {
         const { data } = await axios.post(`${iikoApiUrl}/api/1/auth/access_token`, {
             apiLogin: iikoApiKey
         });
+        console.log("Токен успешно получен.");
         return data.token;
     } catch (error) {
-        console.error("Ошибка при получении токена iiko:", error.response ? error.response.data : error.message);
+        // Добавляем более подробное логирование ошибки
+        console.error("Ошибка при получении токена iiko. Статус ответа:", error.response ? error.response.status : 'нет ответа');
+        console.error("Данные ответа:", error.response ? JSON.stringify(error.response.data) : 'нет данных');
+        console.error("Сообщение ошибки:", error.message);
         throw new Error("Не удалось получить токен iiko.");
     }
 }
@@ -78,6 +85,9 @@ async function fetchFreshMenuFromIiko() {
     const iikoApiUrl = process.env.IIKO_API_URL;
     const organizationId = process.env.TARGET_ORGANIZATION_ID;
     const targetMenuName = process.env.TARGET_MENU_NAME; // Получаем имя меню из переменных окружения
+    
+    // Добавляем логирование для отладки
+    console.log(`Получен токен, попытка получить меню. Organization ID: ${organizationId}, Menu Name: ${targetMenuName}`);
 
     if (!organizationId) {
         throw new Error('TARGET_ORGANIZATION_ID is not defined in environment variables.');
@@ -100,6 +110,7 @@ async function fetchFreshMenuFromIiko() {
             throw new Error(`Не найдено меню с именем "${targetMenuName}".`);
         }
         const externalMenuId = targetMenu.id;
+        console.log(`Найден ID меню: ${externalMenuId}`);
 
         // Получаем детали меню по его ID
         const { data: menuData } = await axios.post(`${iikoApiUrl}/api/2/menu/by_id`, {
@@ -108,6 +119,8 @@ async function fetchFreshMenuFromIiko() {
         }, {
             headers: { Authorization: `Bearer ${token}` }
         });
+        
+        console.log(`Детали меню успешно получены.`);
 
         const allMenuItems = [];
         if (menuData && menuData.itemCategories) {
@@ -129,6 +142,7 @@ async function fetchFreshMenuFromIiko() {
                 }
             }
         }
+        console.log(`Подготовлено ${allMenuItems.length} позиций для вставки.`);
         return allMenuItems;
 
     } catch (error) {
