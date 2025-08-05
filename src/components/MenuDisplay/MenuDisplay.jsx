@@ -1,3 +1,5 @@
+// src/components/MenuDisplay.jsx
+
 import React, { useEffect, useState } from 'react';
 import { fetchMenuItems, supabase } from '../../supabaseClient';
 import styles from './MenuDisplay.module.scss';
@@ -10,7 +12,8 @@ function MenuDisplay() {
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeCategory, setActiveCategory] = useState('Спец. предложения');
+    const [activeCategory, setActiveCategory] = useState('Все меню'); // <-- Изменено: категория по умолчанию
+    const [categoriesList, setCategoriesList] = useState([]); // <-- Добавлено: состояние для динамического списка категорий
 
     useEffect(() => {
         const getMenu = async () => {
@@ -18,6 +21,17 @@ function MenuDisplay() {
                 const data = await fetchMenuItems();
                 if (data) {
                     setMenuItems(data);
+                    
+                    // <-- Добавлена логика для динамического получения категорий
+                    const allCategories = new Set();
+                    allCategories.add('Все меню'); // <-- Добавим категорию "Все меню"
+                    data.forEach(item => {
+                        if (item.categories && item.categories.length > 0) {
+                            item.categories.forEach(category => allCategories.add(category));
+                        }
+                    });
+                    setCategoriesList(Array.from(allCategories)); // <-- Преобразуем Set в массив и сохраним в состояние
+
                 }
             } catch (err) {
                 console.error("Не удалось получить меню:", err);
@@ -44,14 +58,11 @@ function MenuDisplay() {
     }, []);
 
     const getImageUrl = (imageSource) => {
-        if (!imageSource) return "/placeholder.png"; // Возвращаем заглушку, если нет источника
+        if (!imageSource) return "/placeholder.png"; 
         
-        // Если это уже полный URL
         if (imageSource.startsWith('http://') || imageSource.startsWith('https://')) {
             return imageSource;
         }
-
-        // Если это ID, то добавляем его к базовому URL iiko
         return `${IIKO_IMAGE_API_BASE_URL}/api/1/image?imageId=${imageSource}`;
     };
 
@@ -67,11 +78,10 @@ function MenuDisplay() {
         return <div className={styles.menuStatus}>Меню пока пустое.</div>;
     }
 
-    const categories = ['Спец. предложения', 'Напитки', 'Сэндвичи', 'Десерты', 'Добавки'];
-
-    const filteredItems = menuItems.filter(item => 
-        item.categories && item.categories.includes(activeCategory)
-    );
+    // <-- Логика фильтрации по активной категории
+    const filteredItems = activeCategory === 'Все меню'
+        ? menuItems
+        : menuItems.filter(item => item.categories && item.categories.includes(activeCategory));
 
     return (
         <>
@@ -85,8 +95,9 @@ function MenuDisplay() {
                 </div>
             </div>
             <div className={styles.menuContentContainer}>
+                {/* <-- Разметка для кнопок категорий, используем categoriesList */}
                 <div className={styles.menuCategories}>
-                    {categories.map(category => (
+                    {categoriesList.map(category => (
                         <button 
                             key={category} 
                             className={`${styles.categoryButton} ${activeCategory === category ? styles.activeCategory : ''}`}
@@ -96,6 +107,7 @@ function MenuDisplay() {
                         </button>
                     ))}
                 </div>
+                {/* <-- Заголовок, который меняется в зависимости от выбранной категории */}
                 <h2 className={styles.menuTitle}>{activeCategory}</h2>
                 <div className={styles.menuGrid}>
                     {filteredItems.map(item => (
@@ -112,6 +124,7 @@ function MenuDisplay() {
                         </div>
                     ))}
                 </div>
+                {/* <-- Сообщение, если в категории нет блюд */}
                 {filteredItems.length === 0 && (
                     <div className={styles.menuStatus}>В этой категории пока нет блюд.</div>
                 )}
