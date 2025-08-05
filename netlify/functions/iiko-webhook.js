@@ -1,3 +1,5 @@
+// /Users/nurdanabakytzhan/Desktop/new-steppe-coffee-website/netlify/functions/iiko-webhook.js
+
 import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
 
@@ -119,9 +121,8 @@ async function fetchFreshMenuFromIiko() {
             for (const category of menuData.itemCategories) {
                 if (category.items) {
                     for (const item of category.items) {
-                        const price = item.itemSizes?.[0]?.prices?.[0]?.price || item.prices?.[0]?.price || null;
+                        const price = item.itemSizes?.[0]?.prices?.[0]?.price || item.prices?.[0]?.price || item.defaultPrice?.currentPrice || null;
                         
-                        // Обновлённая логика для получения image_id или полного URL
                         let imageSource = null;
                         if (item.imageIds?.[0]) {
                             imageSource = item.imageIds[0];
@@ -151,7 +152,8 @@ async function fetchFreshMenuFromIiko() {
                             description: item.description || null,
                             price: price,
                             image_id: imageIdToSave,
-                            categories: [category.name]
+                            // <-- ДОБАВЛЕНО: Сохранение категории в виде массива
+                            categories: [category.name] 
                         });
                     }
                 }
