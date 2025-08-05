@@ -10,51 +10,36 @@ const serverSupabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 // Основная функция-обработчик для Netlify
 exports.handler = async (event, context) => {
-    if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
-    }
+    console.log('Запущено обновление меню по расписанию.');
 
-    const body = JSON.parse(event.body);
-    console.log('Получен вебхук от iiko:', body);
+    try {
+        const newMenuFromIiko = await fetchFreshMenuFromIiko(); 
 
-    const eventType = body.eventType;
+        const { error: deleteError } = await serverSupabase 
+            .from('menu_items')
+            .delete()
+            .neq('id', '0');
 
-    if (eventType === 'menu.changed') {
-        console.log('Произошло изменение в меню. Обновляем данные в Supabase.');
-        
-        try {
-            const newMenuFromIiko = await fetchFreshMenuFromIiko(); 
-
-            // Используем клиента для Supabase
-            const { error: deleteError } = await serverSupabase 
-                .from('menu_items')
-                .delete()
-                .neq('id', '0');
-
-            if (deleteError) {
-                console.error('Ошибка при удалении старых данных:', deleteError);
-                return { statusCode: 500, body: 'Ошибка сервера' };
-            }
-
-            const { data, error: insertError } = await serverSupabase
-                .from('menu_items')
-                .insert(newMenuFromIiko);
-
-            if (insertError) {
-                console.error('Ошибка при вставке новых данных:', insertError);
-                return { statusCode: 500, body: 'Ошибка сервера' };
-            }
-
-            console.log('Меню успешно обновлено в Supabase.');
-            return { statusCode: 200, body: 'Меню успешно обновлено.' };
-
-        } catch (err) {
-            console.error('Ошибка при обработке вебхука:', err);
+        if (deleteError) {
+            console.error('Ошибка при удалении старых данных:', deleteError);
             return { statusCode: 500, body: 'Ошибка сервера' };
         }
-    } else {
-        console.log('Неизвестный тип события:', eventType);
-        return { statusCode: 200, body: 'Событие обработано, но не требует действий.' };
+
+        const { data, error: insertError } = await serverSupabase
+            .from('menu_items')
+            .insert(newMenuFromIiko);
+
+        if (insertError) {
+            console.error('Ошибка при вставке новых данных:', insertError);
+            return { statusCode: 500, body: 'Ошибка сервера' };
+        }
+
+        console.log('Меню успешно обновлено в Supabase.');
+        return { statusCode: 200, body: 'Меню успешно обновлено.' };
+
+    } catch (err) {
+        console.error('Ошибка при обновлении меню по расписанию:', err);
+        return { statusCode: 500, body: 'Ошибка сервера' };
     }
 };
 
@@ -89,7 +74,7 @@ async function fetchFreshMenuFromIiko() {
     }, {
         headers: { Authorization: `Bearer ${token}` }
     });
-    
+
     return menuData.products.map(item => ({
         id: item.id,
         name: item.name,
