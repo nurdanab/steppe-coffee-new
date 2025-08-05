@@ -1,10 +1,10 @@
-// src/components/MenuDisplay.jsx
-
-import React, { useEffect, useState } from 'react';
+// src/components/MenuDisplay/MenuDisplay.jsx
+import React, { useEffect, useState, useRef } from 'react';
 import { fetchMenuItems, supabase } from '../../supabaseClient';
 import styles from './MenuDisplay.module.scss';
 import { Link } from 'react-router-dom';
 import ImageSlider from './ImageSlider'; 
+import DeliverySection from './DeliverySection'; // Импортируем новый компонент
 
 const IIKO_IMAGE_API_BASE_URL = "https://api-ru.iiko.services";
 
@@ -12,8 +12,11 @@ function MenuDisplay() {
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [activeCategory, setActiveCategory] = useState('Все меню'); // <-- Изменено: категория по умолчанию
-    const [categoriesList, setCategoriesList] = useState([]); // <-- Добавлено: состояние для динамического списка категорий
+    const [activeCategory, setActiveCategory] = useState('Все меню');
+    const [categoriesList, setCategoriesList] = useState([]); 
+
+    // Создаем ref для секции доставки
+    const deliverySectionRef = useRef(null);
 
     useEffect(() => {
         const getMenu = async () => {
@@ -22,16 +25,14 @@ function MenuDisplay() {
                 if (data) {
                     setMenuItems(data);
                     
-                    // <-- Добавлена логика для динамического получения категорий
                     const allCategories = new Set();
-                    allCategories.add('Все меню'); // <-- Добавим категорию "Все меню"
+                    allCategories.add('Все меню');
                     data.forEach(item => {
                         if (item.categories && item.categories.length > 0) {
                             item.categories.forEach(category => allCategories.add(category));
                         }
                     });
-                    setCategoriesList(Array.from(allCategories)); // <-- Преобразуем Set в массив и сохраним в состояние
-
+                    setCategoriesList(Array.from(allCategories)); 
                 }
             } catch (err) {
                 console.error("Не удалось получить меню:", err);
@@ -78,7 +79,6 @@ function MenuDisplay() {
         return <div className={styles.menuStatus}>Меню пока пустое.</div>;
     }
 
-    // <-- Логика фильтрации по активной категории
     const filteredItems = activeCategory === 'Все меню'
         ? menuItems
         : menuItems.filter(item => item.categories && item.categories.includes(activeCategory));
@@ -86,16 +86,17 @@ function MenuDisplay() {
     return (
         <>
             <div className={styles.heroWrapper}>
-                <ImageSlider />
+                {/* Передаем ref в ImageSlider как пропс */}
+                <ImageSlider deliverySectionRef={deliverySectionRef} />
                 <div className={styles.heroContent}>
                     <h1 className={styles.heroTitle}>Steppe Caffee Menu</h1>
-                    <Link to="/order">
+                    {/* Кнопка в слайдере теперь будет прокручивать, поэтому эту можно убрать или изменить */}
+                    {/* <Link to="/order">
                         <button className={styles.heroButton}>Заказать онлайн</button>
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
             <div className={styles.menuContentContainer}>
-                {/* <-- Разметка для кнопок категорий, используем categoriesList */}
                 <div className={styles.menuCategories}>
                     {categoriesList.map(category => (
                         <button 
@@ -107,7 +108,6 @@ function MenuDisplay() {
                         </button>
                     ))}
                 </div>
-                {/* <-- Заголовок, который меняется в зависимости от выбранной категории */}
                 <h2 className={styles.menuTitle}>{activeCategory}</h2>
                 <div className={styles.menuGrid}>
                     {filteredItems.map(item => (
@@ -124,11 +124,12 @@ function MenuDisplay() {
                         </div>
                     ))}
                 </div>
-                {/* <-- Сообщение, если в категории нет блюд */}
                 {filteredItems.length === 0 && (
                     <div className={styles.menuStatus}>В этой категории пока нет блюд.</div>
                 )}
             </div>
+            {/* Добавляем секцию доставки и передаем в нее ref */}
+            <DeliverySection ref={deliverySectionRef} />
         </>
     );
 }

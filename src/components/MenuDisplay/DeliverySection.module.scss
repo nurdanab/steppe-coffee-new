@@ -1,0 +1,93 @@
+// src/components/DeliverySection/DeliverySection.module.scss
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use 'sass:color';
+
+.deliverySection {
+  background-color: $light-yellow;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0; 
+  padding-bottom: 5rem; 
+  padding-top: 5rem;
+  
+  @include md-up {
+    padding-bottom: 7.5rem; 
+    padding-top: 7.5rem; 
+  }
+}
+
+.contentWrapper {
+  @include flex-between;
+  gap: $spacing-md;
+  flex-direction: column; 
+
+  @include md-up {
+    flex-direction: row;
+  }
+}
+
+.textContainer {
+  flex-basis: 50%;
+  padding-right: $spacing-md; 
+  
+  @include md-up {
+    padding-right: 0;
+  }
+}
+
+.heading {
+  color: $black;
+  margin-bottom: $spacing-sm;
+  font-weight: 900;
+  
+  br {
+    display: none;
+    @include lg-up {
+      display: initial;
+    }
+  }
+}
+
+.description {
+  color: $gray-dark;
+  margin-bottom: $spacing-md;
+  font-weight: 500;
+}
+
+.button {
+  border-radius: $border-radius-xxxxl;
+  text-transform: uppercase;
+}
+
+.imageContainer {
+  flex-basis: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.woltCharacter {
+  max-width: 100%;
+  height: auto;
+  
+  @include md-down {
+    transform: translateY(20px);
+  }
+}
+
+.woltIcon {
+  position: absolute;
+  bottom: -40px; 
+  right: -20px;
+  width: 100px;
+  height: auto;
+  opacity: 0.2;
+  z-index: 0;
+  
+  @include md-up {
+    bottom: -60px;
+    right: 0;
+    width: 200px;
+  }
+}

@@ -1,74 +1,67 @@
+// src/components/ImageSlider/ImageSlider.jsx
 import React, { useState, useEffect } from 'react';
 import styles from './ImageSlider.module.scss';
 
-const ImageSlider = () => {
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const slides = [
-        { src: "/images/menu-1.webp", alt: "Изображение 1 из меню" },
-        { src: "/images/menu-2.webp", alt: "Изображение 2 из меню" },
-        { src: "/images/menu-3.webp", alt: "Изображение 3 из меню" },
-        { src: "/images/menu-1.webp", alt: "Изображение 1 из меню (клон)" }, // Добавляем клон первого слайда
-    ];
+// Импортируем все изображения
+import image1 from '/images/menu-1.webp'; 
+import image2 from '/images/menu-2.webp';
+import image3 from '/images/menu-3.webp';
+import image4 from '/images/menu-1.webp';
+import image5 from '/images/menu-2.webp';
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentSlide(prevSlide => {
-                const nextSlide = prevSlide + 1;
-                // Когда дошли до клонированного слайда, сбрасываем на 0
-                if (nextSlide === slides.length) {
-                    return 0;
-                }
-                return nextSlide;
-            });
-        }, 3000);
+const images = [image1, image2, image3, image4, image5];
 
-        return () => clearInterval(interval);
-    }, [slides.length]);
-    
-    // Эффект для мгновенного сброса
-    useEffect(() => {
-        if (currentSlide === slides.length - 1) {
-            const timeout = setTimeout(() => {
-                setCurrentSlide(0);
-            }, 1200); // Время перехода + небольшая задержка
-            return () => clearTimeout(timeout);
-        }
-    }, [currentSlide, slides.length]);
-    
+const ImageSlider = ({ deliverySectionRef }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    return (
-        <div className={styles.sliderContainer}>
-            <div 
-                className={styles.slider}
-                style={{
-                    transform: `translateX(-${currentSlide * 100}%)`,
-                    transition: currentSlide === 0 && slides.length - 1 ? 'none' : 'transform 1.2s ease-in-out',
-                }}
-            >
-                {slides.map((slide, index) => (
-                    <img
-                        key={index}
-                        src={slide.src}
-                        alt={slide.alt}
-                        className={styles.slideImage}
-                    />
-                ))}
-            </div>
+  // Обработчик для прокрутки
+  const handleScrollToDelivery = () => {
+    if (deliverySectionRef && deliverySectionRef.current) {
+      deliverySectionRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+  };
 
-            <div className={styles.pagination}>
-                {slides.map((_, index) => (
-                    index < slides.length - 1 && (
-                        <button
-                            key={index}
-                            className={`${styles.dot} ${index === currentSlide ? styles.activeDot : ''}`}
-                            onClick={() => setCurrentSlide(index)}
-                            aria-label={`Перейти к слайду ${index + 1}`}
-                        />
-                    )
-                ))}
-            </div>
+  // Автоматическая смена слайдов каждые 5 секунд
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        (prevIndex + 1) % images.length
+      );
+    }, 5000); // 5000 миллисекунд = 5 секунд
+
+    return () => clearInterval(interval); // Очистка интервала при размонтировании компонента
+  }, []);
+
+  return (
+    <div className={styles.imageSlider}>
+      <div 
+        className={styles.imageContainer}
+        style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
+      >
+        <div className={`${styles.content} container`}>
+          <h1 className={styles.title}>МЕНЮ <br/> Steppe Cofee</h1>
+          <button 
+            onClick={handleScrollToDelivery}
+            className={`${styles.button} button-primary`}
+          >
+            Заказать онлайн
+          </button>
         </div>
-    );
+      </div>
+      <div className={styles.dotsContainer}>
+        {images.map((_, index) => (
+          <span
+            key={index}
+            className={`${styles.dot} ${currentImageIndex === index ? styles.active : ''}`}
+            onClick={() => setCurrentImageIndex(index)}
+          ></span>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default ImageSlider;

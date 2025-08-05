@@ -4,5 +4,5 @@
 
 [functions]
   directory = "netlify/functions"
-  schedule = "0 * * * *"
+  schedule = "0 10 * * *"
   node_bundler = "esbuild"
