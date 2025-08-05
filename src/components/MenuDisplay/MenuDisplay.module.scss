@@ -1,86 +1,151 @@
+// MenuDisplay.module.scss
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as *;
 @use '../../styles/base' as *; 
 
+.heroWrapper {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-.menuContainer {
-    @extend .container; // Используем миксин для контейнера из _base.scss
+  @include md-up {
+      height: 70vh;
+  }
+  @include full-hd-up {
+      height: 80vh;
+  }
+}
+
+.heroContent {
+    position: relative; // Чтобы контент был поверх слайдера
+    z-index: 2; // Гарантируем, что контент находится поверх слайдера с z-index: -1
+    color: $white;
+    text-align: left;
+    padding-left: $spacing-xl; // Отступ слева
+
+    @include md-up {
+        padding-left: $spacing-xxl;
+    }
+    @include full-hd-up {
+        padding-left: 120px;
+    }
+}
+
+.heroTitle {
+    @extend .riffic-large;
+    font-size: 50px; 
+    margin-bottom: $spacing-md;
+    color: $white;
+    text-shadow: $shadow-medium;
+    
+    @include md-up {
+        font-size: 64px;
+        margin-bottom: $spacing-lg;
+    }
+    @include full-hd-up {
+        font-size: 96px;
+        margin-bottom: $spacing-xl;
+    }
+}
+
+.heroButton {
+    @include button-primary; 
+    font-size: 16px;
+    padding: $spacing-sm $spacing-xl;
+    border-radius: $border-radius-xxxl;
+    
+    @include md-up {
+        font-size: 20px;
+        padding: $spacing-md $spacing-xxl;
+    }
+}
+
+.menuContentContainer {
     padding-top: $spacing-xl;
-    padding-bottom: $spacing-xxl;
+    background-color: $white; 
+    position: relative;
+    z-index: 1;
+}
+
+.menuCategories {
+    @include flex-center;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+}
+
+.categoryButton {
+    @include button-base-2;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-xxxl;
+    font-size: 14px;
+    
+    &.activeCategory {
+        background-color: $yellow;
+    }
 }
 
 .menuTitle {
-    @extend .riffic-large; // Используем стиль шрифта из _typography.scss
+    @extend .riffic-medium;
     text-align: center;
     margin-bottom: $spacing-xl;
-    color: $black;
 }
 
 .menuGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: $spacing-lg;
 
     @include md-up {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: $spacing-xl;
     }
 }
 
 .menuItemCard {
-    border: 1px solid $gray-light;
+    background-color: $gray-light;
     border-radius: $border-radius-lg;
     overflow: hidden;
-    box-shadow: $shadow-light;
-    transition: transform $transition-medium, box-shadow $transition-medium;
-    background-color: $white;
     display: flex;
     flex-direction: column;
-    text-align: center;
-    
+    box-shadow: $shadow-light;
+    transition: transform $transition-fast;
+
     &:hover {
-        transform: translateY(-4px);
+        transform: translateY(-5px);
         box-shadow: $shadow-medium;
     }
 }
 
 .menuItemImage {
     width: 100%;
-    height: 250px;
+    height: 200px;
     object-fit: cover;
-    display: block;
 }
 
 .menuItemInfo {
-    padding: $spacing-lg;
-    @include flex-column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
+    padding: $spacing-md;
 }
 
 .menuItemName {
-    @extend .gilroy-24; // Используем стиль шрифта из _typography.scss
+    @extend .gilroy-24;
     font-weight: 600;
-    margin: 0 0 $spacing-xs 0;
-    color: $black;
+    margin-bottom: $spacing-xs;
 }
 
 .menuItemPrice {
-    @extend .gilroy-18; // Используем стиль шрифта из _typography.scss
-    color: $maroon;
-    font-weight: 700;
-    margin: 0;
-}
-
-.menuStatus {
-    @extend .gilroy-24;
-    text-align: center;
-    padding: $spacing-xl;
+    @extend .gilroy-16;
+    font-weight: 500;
     color: $gray-dark;
 }
 
-.menuError {
-    color: $maroon;
+.menuStatus, .menuError {
+    @extend .gilroy-24;
+    text-align: center;
+    padding: $spacing-xl 0;
 }
