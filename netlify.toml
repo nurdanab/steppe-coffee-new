@@ -5,3 +5,4 @@
 [functions]
   directory = "netlify/functions"
   schedule = "* * * * *"
+  external_node_modules = ["axios", "@supabase/supabase-js"]
