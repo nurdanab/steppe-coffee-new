@@ -10,20 +10,47 @@
   position: relative;
   overflow: hidden;
   
-  // Здесь мы используем твой миксин для отступов секций.
-  // Заменим padding, чтобы он не конфликтовал с headerFullWidthContainer
+  // Добавляем отступы сверху и снизу с помощью миксинов
   @include xs-only {
-    padding-top: $spacing-md;
-    padding-bottom: $spacing-md;
+    padding-top: $spacing-xl;
+    padding-bottom: $spacing-xl;
   }
   @include sm-up {
-    padding-top: $spacing-lg;
-    padding-bottom: $spacing-lg;
+    padding-top: $spacing-xxl;
+    padding-bottom: $spacing-xxl;
   }
-}
-
-.headerFullWidthContainer {
-  @extend .container;
+  @include md-up {
+    padding-top: $spacing-xxl;
+    padding-bottom: $spacing-xxl;
+  }
+  @include lg-up {
+    padding-top: $spacing-xxxl;
+    padding-bottom: $spacing-xxxl;
+  }
+  @include xl-up {
+    padding-top: $spacing-xxxl;
+    padding-bottom: $spacing-xxxl;
+  }
+  @include xxl-up {
+    padding-top: $spacing-xxxxl;
+    padding-bottom: $spacing-xxxxl;
+  }
+  @include xxxl-up {
+    padding-top: $spacing-xxxxl;
+    padding-bottom: $spacing-xxxxl;
+  }
+  @include full-hd-up {
+    padding-top: 180px;
+    padding-bottom: 180px;
+  }
+  @include uhd-up {
+    padding-top: 220px;
+    padding-bottom: 220px;
+  }
+  @include uhd-4k-up {
+    padding-top: 250px;
+    padding-bottom: 250px;
+  }
 }
 
 .profileHeader {
@@ -35,6 +62,33 @@
     align-items: flex-start;
     gap: $spacing-sm;
     padding-bottom: $spacing-lg;
+  }
+  @include sm-up {
+    // Уже задано
+  }
+  @include md-up {
+    // Уже задано
+  }
+  @include lg-up {
+    // Уже задано
+  }
+  @include xl-up {
+    // Уже задано
+  }
+  @include xxl-up {
+    // Уже задано
+  }
+  @include xxxl-up {
+    // Уже задано
+  }
+  @include full-hd-up {
+    // Уже задано
+  }
+  @include uhd-up {
+    // Уже задано
+  }
+  @include uhd-4k-up {
+    // Уже задано
   }
 }
 
@@ -85,6 +139,33 @@
     width: 100%;
     justify-content: flex-start;
   }
+  @include sm-up {
+    // Уже задано
+  }
+  @include md-up {
+    // Уже задано
+  }
+  @include lg-up {
+    // Уже задано
+  }
+  @include xl-up {
+    // Уже задано
+  }
+  @include xxl-up {
+    // Уже задано
+  }
+  @include xxxl-up {
+    // Уже задано
+  }
+  @include full-hd-up {
+    // Уже задано
+  }
+  @include uhd-up {
+    // Уже задано
+  }
+  @include uhd-4k-up {
+    // Уже задано
+  }
 }
 
 .logoutButton,
@@ -98,6 +179,7 @@
   }
   @include sm-up {
     font-size: 16px;
+    padding: $spacing-sm $spacing-lg;
   }
   @include md-up {
     font-size: 16px;
@@ -143,7 +225,7 @@
   background-color: $light-yellow;
   border-radius: $border-radius-lg;
   
-  // Добавляем адаптивные отступы внутри сообщения
+  // Адаптивные отступы внутри сообщения
   @include xs-only {
     padding: $spacing-lg $spacing-sm;
   }
@@ -153,11 +235,26 @@
   @include md-up {
     padding: $spacing-xxl;
   }
-  @include full-hd-up {
+  @include lg-up {
     padding: $spacing-xxxl;
   }
-  @include uhd-up {
+  @include xl-up {
+    padding: $spacing-xxxl;
+  }
+  @include xxl-up {
     padding: $spacing-xxxxl;
+  }
+  @include xxxl-up {
+    padding: $spacing-xxxxl;
+  }
+  @include full-hd-up {
+    padding: $spacing-xxxxl;
+  }
+  @include uhd-up {
+    padding: 180px;
+  }
+  @include uhd-4k-up {
+    padding: 220px;
   }
 }
 
@@ -215,6 +312,18 @@
     font-size: 18px;
     padding: $spacing-sm $spacing-xl;
   }
+  @include xxxl-up {
+    font-size: 20px;
+  }
+  @include full-hd-up {
+    font-size: 22px;
+  }
+  @include uhd-up {
+    font-size: 24px;
+  }
+  @include uhd-4k-up {
+    font-size: 26px;
+  }
 }
 
 .bookingHistory {
@@ -222,6 +331,33 @@
   
   @include xs-only {
     margin-top: $spacing-xl;
+  }
+  @include sm-up {
+    margin-top: $spacing-xxl;
+  }
+  @include md-up {
+    margin-top: $spacing-xxl;
+  }
+  @include lg-up {
+    margin-top: $spacing-xxxl;
+  }
+  @include xl-up {
+    margin-top: $spacing-xxxl;
+  }
+  @include xxl-up {
+    margin-top: $spacing-xxxxl;
+  }
+  @include xxxl-up {
+    margin-top: $spacing-xxxxl;
+  }
+  @include full-hd-up {
+    margin-top: 180px;
+  }
+  @include uhd-up {
+    margin-top: 220px;
+  }
+  @include uhd-4k-up {
+    margin-top: 250px;
   }
 }
 
@@ -268,6 +404,12 @@
   gap: $spacing-md;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 
+  @include xs-only {
+    gap: $spacing-sm;
+  }
+  @include sm-up {
+    gap: $spacing-md;
+  }
   @include md-up {
     gap: $spacing-lg;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -326,6 +468,9 @@
     
     @include xs-only {
       font-size: 20px;
+    }
+    @include sm-up {
+      font-size: 22px;
     }
     @include md-up {
       font-size: 24px;
@@ -409,6 +554,37 @@
   border-radius: $border-radius-sm;
   margin-top: $spacing-md;
   @extend .gilroy-18;
+
+  @include xs-only {
+    padding: $spacing-sm;
+  }
+  @include sm-up {
+    padding: $spacing-md;
+  }
+  @include md-up {
+    padding: $spacing-lg;
+  }
+  @include lg-up {
+    padding: $spacing-xl;
+  }
+  @include xl-up {
+    padding: $spacing-xl;
+  }
+  @include xxl-up {
+    padding: $spacing-xxl;
+  }
+  @include xxxl-up {
+    padding: $spacing-xxl;
+  }
+  @include full-hd-up {
+    padding: $spacing-xxxl;
+  }
+  @include uhd-up {
+    padding: $spacing-xxxxl;
+  }
+  @include uhd-4k-up {
+    padding: 180px;
+  }
 }
 
 .errorMessage {
@@ -422,15 +598,81 @@
   padding: $spacing-lg;
   border-radius: $border-radius-md;
   margin-top: $spacing-lg;
+
+  @include xs-only {
+    padding: $spacing-md;
+  }
+  @include sm-up {
+    padding: $spacing-lg;
+  }
+  @include md-up {
+    padding: $spacing-lg;
+  }
+  @include lg-up {
+    padding: $spacing-xl;
+  }
+  @include xl-up {
+    padding: $spacing-xl;
+  }
+  @include xxl-up {
+    padding: $spacing-xxl;
+  }
+  @include xxxl-up {
+    padding: $spacing-xxl;
+  }
+  @include full-hd-up {
+    padding: $spacing-xxxl;
+  }
+  @include uhd-up {
+    padding: $spacing-xxxxl;
+  }
+  @include uhd-4k-up {
+    padding: 180px;
+  }
 }
 
 .whatsappFeedbackSection {
   @include section-padding;
-  padding-top: $spacing-xl;
-  padding-bottom: $spacing-xl;
   
+  // Отдельная настройка для отступов, чтобы не было конфликтов
+  @include xs-only {
+    padding-top: $spacing-xl;
+    padding-bottom: $spacing-xl;
+  }
+  @include sm-up {
+    padding-top: $spacing-xxl;
+    padding-bottom: $spacing-xxl;
+  }
   @include md-up {
     padding-top: $spacing-xxl;
     padding-bottom: $spacing-xxl;
+  }
+  @include lg-up {
+    padding-top: $spacing-xxxl;
+    padding-bottom: $spacing-xxxl;
+  }
+  @include xl-up {
+    padding-top: $spacing-xxxl;
+    padding-bottom: $spacing-xxxl;
+  }
+  @include xxl-up {
+    padding-top: $spacing-xxxxl;
+    padding-bottom: $spacing-xxxxl;
+  }
+  @include xxxl-up {
+    padding-top: $spacing-xxxxl;
+    padding-bottom: $spacing-xxxxl;
+  }
+  @include full-hd-up {
+    padding-top: 180px;
+    padding-bottom: 180px;
+  }
+  @include uhd-up {
+    padding-top: 220px;
+    padding-bottom: 220px;
+  }
+  @include uhd-4k-up {
+    padding-top: 250px;
+    padding-bottom: 250px;
   }
 }
