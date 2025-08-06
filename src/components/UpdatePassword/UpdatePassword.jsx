@@ -19,7 +19,7 @@ const UpdatePassword = () => {
       console.log('UpdatePassword Auth State Change Event:', _event, 'Session:', session); 
 
       if (session && session.user) {
-        setMessage('Вы можете обновить свой пароль.');
+        setMessage('');
         setError('');
       } else {
         setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
