@@ -1,5 +1,6 @@
+// src/components/ProfilePage/WhatsAppFeedback.jsx
 import React from 'react';
-import './WhatsAppFeedback.css';
+import './WhatsAppFeedback.scss'; 
 
 const WhatsAppFeedback = ({ phoneNumber, prefilledMessage }) => {
   const createWhatsAppLink = () => {

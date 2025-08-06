@@ -1,0 +1,43 @@
+// src/components/ProfilePage/WhatsAppFeedback.scss
+@use "sass:color";
+@use '../../styles/variables' as *; // Используем твои переменные
+@use '../../styles/mixins' as *; // Используем твои миксины
+@use '../../styles/typography' as *; // Используем твои стили текста
+
+.whatsapp-feedback-container {
+  max-width: 400px;
+  margin: $spacing-md auto; // Используем твою переменную для отступов
+  padding: $spacing-lg; // Используем твою переменную для отступов
+  border: 1px solid $gray-light; // Используем твою переменную для цвета
+  border-radius: $border-radius-md; // Используем твою переменную для радиуса
+  text-align: center;
+  box-shadow: $shadow-light; // Используем твою переменную для тени
+
+  h3 {
+    @extend .riffic-24; // Используем твой стиль текста
+    color: $black; // Используем твою переменную для цвета
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    @extend .gilroy-16; // Используем твой стиль текста
+    color: $gray-dark; // Используем твою переменную для цвета
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.whatsapp-button {
+  @include button-base-2; // Используем твой базовый миксин для кнопки
+  background-color: #25D366; // Цвет WhatsApp
+  color: white;
+  border-color: #25D366; // Цвет рамки
+  
+  // Здесь мы можем использовать твои стили для типографики
+  @extend .gilroy-16; 
+  font-weight: 700;
+
+  &:hover {
+    background-color: #128C7E; // Цвет при наведении
+    border-color: #128C7E;
+  }
+}
