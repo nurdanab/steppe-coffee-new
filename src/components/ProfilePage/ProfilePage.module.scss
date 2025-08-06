@@ -8,34 +8,71 @@
 
 .profilePage {
   position: relative;
-  overflow: hidden; 
-  padding: $spacing-lg 0; // Добавляем адаптивный отступ сверху и снизу
+  overflow: hidden;
   
-  @include lg-up {
-    padding: $spacing-xl 0;
+  // Здесь мы используем твой миксин для отступов секций.
+  // Заменим padding, чтобы он не конфликтовал с headerFullWidthContainer
+  @include xs-only {
+    padding-top: $spacing-md;
+    padding-bottom: $spacing-md;
   }
+  @include sm-up {
+    padding-top: $spacing-lg;
+    padding-bottom: $spacing-lg;
+  }
+}
+
+.headerFullWidthContainer {
+  @extend .container;
 }
 
 .profileHeader {
   @include flex-between;
   padding-bottom: $spacing-md;
 
-  @include sm-down {
+  @include xs-only {
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-sm;
     padding-bottom: $spacing-lg;
   }
+}
 
-  h1 {
-    @extend .riffic-32;
-    color: $black;
-    margin: 0;
-    text-align: left;
+.profileTitle {
+  @extend .riffic-32;
+  color: $black;
+  margin: 0;
+  text-align: left;
 
-    @include sm-down {
-        font-size: 28px;
-    }
+  @include xs-only {
+    font-size: 28px;
+  }
+  @include sm-up {
+    font-size: 32px;
+  }
+  @include md-up {
+    font-size: 36px;
+  }
+  @include lg-up {
+    font-size: 40px;
+  }
+  @include xl-up {
+    font-size: 44px;
+  }
+  @include xxl-up {
+    font-size: 48px;
+  }
+  @include xxxl-up {
+    font-size: 52px;
+  }
+  @include full-hd-up {
+    font-size: 56px;
+  }
+  @include uhd-up {
+    font-size: 64px;
+  }
+  @include uhd-4k-up {
+    font-size: 72px;
   }
 }
 
@@ -44,14 +81,14 @@
   gap: $spacing-sm;
   flex-wrap: wrap;
 
-  @include sm-down {
+  @include xs-only {
     width: 100%;
-    justify-content: flex-start; // Выравниваем кнопки слева на мобильных
+    justify-content: flex-start;
   }
 }
 
-.logoutButton {
-  @include button-base-3; 
+.logoutButton,
+.changePasswordButton {
   border-radius: $border-radius-xxxxl;
   @extend .gilroy-16;
 
@@ -59,51 +96,112 @@
     flex-grow: 1;
     font-size: 14px;
   }
+  @include sm-up {
+    font-size: 16px;
+  }
+  @include md-up {
+    font-size: 16px;
+  }
+  @include lg-up {
+    font-size: 18px;
+  }
+  @include xl-up {
+    font-size: 18px;
+  }
+  @include xxl-up {
+    font-size: 20px;
+    padding: $spacing-sm $spacing-xl;
+  }
+  @include xxxl-up {
+    font-size: 20px;
+  }
+  @include full-hd-up {
+    font-size: 22px;
+  }
+  @include uhd-up {
+    font-size: 24px;
+  }
+  @include uhd-4k-up {
+    font-size: 26px;
+  }
+}
+
+.logoutButton {
+  @include button-base-3;
 }
 
 .changePasswordButton {
   @include button-base-2;
   border: 1px solid $gray-medium;
-  border-radius: $border-radius-xxxxl;
-  @extend .gilroy-16;
-
-  @include xs-only {
-    flex-grow: 1;
-    font-size: 14px;
-  }
 }
 
 .notLoggedInMessage {
   @include flex-column;
   @include flex-center;
   text-align: center;
-  padding: $spacing-xl $spacing-md;
-  border-radius: $border-radius-md;
   gap: $spacing-md;
+  background-color: $light-yellow;
+  border-radius: $border-radius-lg;
   
+  // Добавляем адаптивные отступы внутри сообщения
+  @include xs-only {
+    padding: $spacing-lg $spacing-sm;
+  }
+  @include sm-up {
+    padding: $spacing-xl;
+  }
   @include md-up {
-    padding: $spacing-xxl $spacing-lg;
+    padding: $spacing-xxl;
   }
   @include full-hd-up {
+    padding: $spacing-xxxl;
+  }
+  @include uhd-up {
     padding: $spacing-xxxxl;
-    margin-top: $spacing-xxxl;
   }
+}
 
-  h2 {
-    @extend .riffic-medium; // Используем более крупный класс
-    color: $black;
-    margin-bottom: $spacing-sm;
-    
-    @include sm-down {
-        font-size: 32px;
-    }
+.notLoggedInTitle {
+  @extend .riffic-medium; 
+  color: $black;
+  margin-bottom: $spacing-sm;
+  
+  @include xs-only {
+    font-size: 32px;
   }
+  @include sm-up {
+    font-size: 40px;
+  }
+  @include md-up {
+    font-size: 48px;
+  }
+  @include lg-up {
+    font-size: 56px;
+  }
+  @include xl-up {
+    font-size: 64px;
+  }
+  @include xxl-up {
+    font-size: 72px;
+  }
+  @include xxxl-up {
+    font-size: 80px;
+  }
+  @include full-hd-up {
+    font-size: 88px;
+  }
+  @include uhd-up {
+    font-size: 100px;
+  }
+  @include uhd-4k-up {
+    font-size: 120px;
+  }
+}
 
-  p {
-    @extend .gilroy-18;
-    color: $gray-dark;
-    margin-bottom: $spacing-md;
-  }
+.notLoggedInText {
+  @extend .gilroy-18;
+  color: $gray-dark;
+  margin-bottom: $spacing-md;
 }
 
 .loginButton {
@@ -112,24 +210,56 @@
   border-radius: $border-radius-xxxxl;
   @extend .gilroy-16;
   font-weight: 700;
+  
+  @include xxl-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-xl;
+  }
 }
 
 .bookingHistory {
   margin-top: $spacing-xxl;
   
-  @include sm-down {
+  @include xs-only {
     margin-top: $spacing-xl;
   }
+}
 
-  h2 {
-    @extend .riffic-24;
-    color: $black;
-    margin-bottom: $spacing-lg;
-    text-align: center;
-
-    @include sm-down {
-        font-size: 22px;
-    }
+.bookingHistoryTitle {
+  @extend .riffic-24;
+  color: $black;
+  margin-bottom: $spacing-lg;
+  text-align: center;
+  
+  @include xs-only {
+    font-size: 22px;
+  }
+  @include sm-up {
+    font-size: 24px;
+  }
+  @include md-up {
+    font-size: 28px;
+  }
+  @include lg-up {
+    font-size: 32px;
+  }
+  @include xl-up {
+    font-size: 36px;
+  }
+  @include xxl-up {
+    font-size: 40px;
+  }
+  @include xxxl-up {
+    font-size: 44px;
+  }
+  @include full-hd-up {
+    font-size: 48px;
+  }
+  @include uhd-up {
+    font-size: 56px;
+  }
+  @include uhd-4k-up {
+    font-size: 64px;
   }
 }
 
@@ -142,9 +272,26 @@
     gap: $spacing-lg;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
-
   @include lg-up {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  }
+  @include xl-up {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  }
+  @include xxl-up {
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  }
+  @include xxxl-up {
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  }
+  @include full-hd-up {
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+  }
+  @include uhd-up {
+    grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  }
+  @include uhd-4k-up {
+    grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
   }
 }
 
@@ -177,8 +324,32 @@
     margin-bottom: $spacing-sm;
     color: $maroon;
     
-    @include sm-down {
+    @include xs-only {
       font-size: 20px;
+    }
+    @include md-up {
+      font-size: 24px;
+    }
+    @include lg-up {
+      font-size: 26px;
+    }
+    @include xl-up {
+      font-size: 28px;
+    }
+    @include xxl-up {
+      font-size: 30px;
+    }
+    @include xxxl-up {
+      font-size: 32px;
+    }
+    @include full-hd-up {
+      font-size: 36px;
+    }
+    @include uhd-up {
+      font-size: 40px;
+    }
+    @include uhd-4k-up {
+      font-size: 44px;
     }
   }
 
@@ -198,8 +369,11 @@
       font-weight: 700;
       display: inline-block;
       margin-top: 4px;
-      text-transform: capitalize; // Сделаем первую букву заглавной
+      text-transform: capitalize;
 
+      @include full-hd-up {
+        font-size: 1em;
+      }
     }
 
     .confirmed {
@@ -226,22 +400,37 @@
   }
 }
 
-.errorMessage {
-  color: $maroon;
+.errorMessage,
+.noBookingsMessage {
   text-align: center;
   font-weight: 600;
   padding: $spacing-md;
-  background-color: color.adjust($maroon, $lightness: 60%);
+  background-color: $gray-light;
   border-radius: $border-radius-sm;
   margin-top: $spacing-md;
+  @extend .gilroy-18;
+}
+
+.errorMessage {
+  color: $maroon;
+  background-color: color.adjust($maroon, $lightness: 60%);
 }
 
 .noBookingsMessage {
-  text-align: center;
-  @extend .gilroy-18;
   color: $gray-dark;
-  padding: $spacing-lg;
   background-color: $gray-light;
+  padding: $spacing-lg;
   border-radius: $border-radius-md;
   margin-top: $spacing-lg;
+}
+
+.whatsappFeedbackSection {
+  @include section-padding;
+  padding-top: $spacing-xl;
+  padding-bottom: $spacing-xl;
+  
+  @include md-up {
+    padding-top: $spacing-xxl;
+    padding-bottom: $spacing-xxl;
+  }
 }

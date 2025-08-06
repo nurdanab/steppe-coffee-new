@@ -10,6 +10,8 @@ const WhatsAppFeedback = ({ phoneNumber, prefilledMessage }) => {
   };
 
   return (
+    <div className="headerFullWidthContainer">
+
     <div className="whatsapp-feedback-container">
       <h3>Оставьте ваш отзыв</h3>
       <p>Ваше мнение очень важно для нас. Нажмите на кнопку ниже, чтобы написать нам в WhatsApp.</p>
@@ -21,7 +23,8 @@ const WhatsAppFeedback = ({ phoneNumber, prefilledMessage }) => {
       >
         Написать в WhatsApp
       </a>
-    </div>
+    </div>    </div>
+
   );
 };
 

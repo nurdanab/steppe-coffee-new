@@ -1,43 +1,83 @@
 // src/components/ProfilePage/WhatsAppFeedback.scss
 @use "sass:color";
-@use '../../styles/variables' as *; // Используем твои переменные
-@use '../../styles/mixins' as *; // Используем твои миксины
-@use '../../styles/typography' as *; // Используем твои стили текста
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+@use '../../styles/typography' as *;
 
 .whatsapp-feedback-container {
   max-width: 400px;
-  margin: $spacing-md auto; // Используем твою переменную для отступов
-  padding: $spacing-lg; // Используем твою переменную для отступов
-  border: 1px solid $gray-light; // Используем твою переменную для цвета
-  border-radius: $border-radius-md; // Используем твою переменную для радиуса
+  margin: $spacing-md auto;
+  padding: $spacing-lg;
+  border: 1px solid $gray-light;
+  border-radius: $border-radius-md;
   text-align: center;
-  box-shadow: $shadow-light; // Используем твою переменную для тени
+  box-shadow: $shadow-light;
+
+  // Адаптивные стили для отступов и максимальной ширины
+  @include xs-only {
+    padding: $spacing-md;
+  }
+  @include sm-up {
+    padding: $spacing-lg;
+  }
+  @include lg-up {
+    max-width: 500px;
+  }
+  @include full-hd-up {
+    max-width: 600px;
+  }
+  @include uhd-up {
+    max-width: 700px;
+  }
 
   h3 {
-    @extend .riffic-24; // Используем твой стиль текста
-    color: $black; // Используем твою переменную для цвета
+    @extend .riffic-24;
+    color: $black;
     margin-bottom: $spacing-sm;
+
+    // Адаптивный размер шрифта для заголовка
+    @include xs-only {
+      font-size: 20px;
+    }
+    @include sm-up {
+      font-size: 24px;
+    }
+    @include xl-up {
+      font-size: 28px;
+    }
+    @include full-hd-up {
+      font-size: 32px;
+    }
   }
 
   p {
-    @extend .gilroy-16; // Используем твой стиль текста
-    color: $gray-dark; // Используем твою переменную для цвета
+    @extend .gilroy-16;
+    color: $gray-dark;
     margin-bottom: $spacing-lg;
   }
 }
 
 .whatsapp-button {
-  @include button-base-2; // Используем твой базовый миксин для кнопки
-  background-color: #25D366; // Цвет WhatsApp
+  @include button-base-2;
+  background-color: #25D366;
   color: white;
-  border-color: #25D366; // Цвет рамки
+  border-color: #25D366;
+  border-radius: $border-radius-lg;
   
-  // Здесь мы можем использовать твои стили для типографики
-  @extend .gilroy-16; 
+  @extend .gilroy-16;
   font-weight: 700;
 
   &:hover {
-    background-color: #128C7E; // Цвет при наведении
-    border-color: #128C7E;
+    background-color: color.adjust(#25D366, $lightness: -10%);
+    border-color: color.adjust(#25D366, $lightness: -10%);
+  }
+
+  // Адаптивный размер шрифта для кнопки
+  @include xs-only {
+    font-size: 14px;
+  }
+  @include full-hd-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-xl;
   }
 }
