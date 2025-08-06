@@ -58,7 +58,7 @@
 
   @include xs-only {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: $spacing-sm;
     padding-bottom: $spacing-lg;
   }
@@ -463,7 +463,7 @@
     @extend .gilroy-24;
     font-weight: 600;
     margin-bottom: $spacing-sm;
-    color: $maroon;
+    color: $black;
     
     @include xs-only {
       font-size: 20px;
