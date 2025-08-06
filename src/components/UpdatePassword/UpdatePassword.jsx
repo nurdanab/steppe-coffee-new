@@ -30,7 +30,7 @@ const UpdatePassword = () => {
       const { data: { session } } = await supabase.auth.getSession();
       console.log('UpdatePassword Initial Session Check:', session); 
       if (session && session.user) {
-        setMessage('Вы можете обновить свой пароль.');
+        setMessage('');
         setError('');
       } else {
         setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
