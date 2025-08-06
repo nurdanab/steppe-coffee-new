@@ -93,6 +93,9 @@ function App() {
     const { error } = await supabase.auth.signOut();
     if (error) console.error('Ошибка выхода:', error.message);
     else {
+      // Здесь мы добавляем закрытие модального окна перед навигацией.
+      // Это гарантирует, что модальное окно не появится после выхода.
+      setIsAuthModalOpen(false);
       navigate('/');
     }
   };
