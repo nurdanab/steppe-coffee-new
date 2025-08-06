@@ -169,6 +169,11 @@
     bottom: -160px;
     right: 40px;
     }
+    @include lg-up {
+      width: 200px; 
+      bottom: -270px;
+      right: 60px;
+      }
   @include xl-up {
     width: 270px; 
     bottom: -190px;
@@ -219,8 +224,8 @@
   }
   @include lg-up {
     width: 150px;
-    bottom: -40px;
-    right: 40px;
+    bottom: -280px;
+    right: 240px;
   }
   @include xl-up {
     width: 180px;
@@ -295,28 +300,28 @@
     right: 330px;
   }
   @include xxl-up {
-    width: 530px;
+    width: 600px;
     top: 0px;
     right: 350px;
   }
   @include xxxl-up {
-    width: 700px;
-    top: -60px;
-    right: 250px;
+    width: 650px;
+    top: 0px;
+    right: 350px;
   }
   @include full-hd-up {
     width: 750px;
-    top: -100px;
+    top: 0px;
     right: 450px;
   }
   @include uhd-up {
     width: 1100px;
-    top: -220px;
+    top: 0px;
     right: 500px;
   }
   @include uhd-4k-up {
     width: 1400px;
-    top: -300px;
+    top: 0px;
     right: 900px;
   }
 }
@@ -353,7 +358,7 @@
     left: -50px;
   }
   @include xxl-up {
-    width: 450px;
+    width: 480px;
     bottom: 400px;
     left: -80px;
   }

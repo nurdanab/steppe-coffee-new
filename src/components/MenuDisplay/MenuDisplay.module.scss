@@ -57,39 +57,39 @@
     }
     @include xs-only { 
         padding: $spacing-xs $spacing-sm;
-        font-size: 12px;
+        font-size: 10px;
     }
     @include sm-up {
         padding: $spacing-sm $spacing-md;
-        font-size: 16px;
+        font-size: 12px;
     }
     @include lg-up {
         padding: $spacing-sm $spacing-lg;
-        font-size: 20px;
+        font-size: 15px;
     }
     @include xl-up {
         padding: $spacing-sm $spacing-lg;
-        font-size: 22px;
+        font-size: 18px;
     }
     @include xxl-up {
         padding: $spacing-sm $spacing-lg;
-        font-size: 24px;
+        font-size: 22px;
     }
     @include xxxl-up {
         padding: $spacing-md $spacing-lg;
-        font-size: 32px;
+        font-size: 24px;
     }
     @include full-hd-up {
         padding: $spacing-md $spacing-xl;
-        font-size: 38px;
+        font-size: 30px;
     }
     @include uhd-up {
         padding: $spacing-lg $spacing-xxl;
-        font-size: 48px;
+        font-size: 40px;
     }
     @include uhd-4k-up {
         padding: $spacing-xl $spacing-xxxl;
-        font-size: 60px;
+        font-size: 50px;
     }
   
 }
