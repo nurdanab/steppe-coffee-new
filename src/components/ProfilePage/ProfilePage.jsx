@@ -79,7 +79,7 @@ const ProfilePage = ({ session, onLogout }) => {
     <main className={styles.profilePage}>
       <div className="headerFullWidthContainer">
         <div className={styles.profileHeader}>
-          <h1>Привет, {session.user.email}!</h1>
+          <h1>Добро пожаловать!</h1>
           <div className={styles.profileActions}> 
             <button onClick={handleChangePassword} className={styles.changePasswordButton}>
               Сменить пароль

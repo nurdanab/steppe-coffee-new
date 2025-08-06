@@ -10,46 +10,45 @@
   position: relative;
   overflow: hidden;
   
-  // Добавляем отступы сверху и снизу с помощью миксинов
   @include xs-only {
-    padding-top: $spacing-xl;
-    padding-bottom: $spacing-xl;
+    padding-top: $spacing-xxl;
+    // padding-bottom: $spacing-xl;
   }
   @include sm-up {
     padding-top: $spacing-xxl;
-    padding-bottom: $spacing-xxl;
+    // padding-bottom: $spacing-xxl;
   }
   @include md-up {
-    padding-top: $spacing-xxl;
-    padding-bottom: $spacing-xxl;
+    padding-top: $spacing-xxxl;
+    // padding-bottom: $spacing-xxl;
   }
   @include lg-up {
-    padding-top: $spacing-xxxl;
-    padding-bottom: $spacing-xxxl;
+    padding-top: $spacing-xxxxl;
+    // padding-bottom: $spacing-xxxl;
   }
   @include xl-up {
-    padding-top: $spacing-xxxl;
-    padding-bottom: $spacing-xxxl;
+    padding-top: $spacing-xxxxl;
+    // padding-bottom: $spacing-xxxl;
   }
   @include xxl-up {
     padding-top: $spacing-xxxxl;
-    padding-bottom: $spacing-xxxxl;
+    // padding-bottom: $spacing-xxxxl;
   }
   @include xxxl-up {
     padding-top: $spacing-xxxxl;
-    padding-bottom: $spacing-xxxxl;
+    // padding-bottom: $spacing-xxxxl;
   }
   @include full-hd-up {
     padding-top: 180px;
-    padding-bottom: 180px;
+    // padding-bottom: 180px;
   }
   @include uhd-up {
     padding-top: 220px;
-    padding-bottom: 220px;
+    // padding-bottom: 220px;
   }
   @include uhd-4k-up {
-    padding-top: 250px;
-    padding-bottom: 250px;
+    padding-top: 300px;
+    // padding-bottom: 300px;
   }
 }
 
@@ -217,89 +216,89 @@
   border: 1px solid $gray-medium;
 }
 
-.notLoggedInMessage {
-  @include flex-column;
-  @include flex-center;
-  text-align: center;
-  gap: $spacing-md;
-  background-color: $light-yellow;
-  border-radius: $border-radius-lg;
+// .notLoggedInMessage {
+//   @include flex-column;
+//   @include flex-center;
+//   text-align: center;
+//   gap: $spacing-md;
+//   background-color: $light-yellow;
+//   border-radius: $border-radius-lg;
   
-  // Адаптивные отступы внутри сообщения
-  @include xs-only {
-    padding: $spacing-lg $spacing-sm;
-  }
-  @include sm-up {
-    padding: $spacing-xl;
-  }
-  @include md-up {
-    padding: $spacing-xxl;
-  }
-  @include lg-up {
-    padding: $spacing-xxxl;
-  }
-  @include xl-up {
-    padding: $spacing-xxxl;
-  }
-  @include xxl-up {
-    padding: $spacing-xxxxl;
-  }
-  @include xxxl-up {
-    padding: $spacing-xxxxl;
-  }
-  @include full-hd-up {
-    padding: $spacing-xxxxl;
-  }
-  @include uhd-up {
-    padding: 180px;
-  }
-  @include uhd-4k-up {
-    padding: 220px;
-  }
-}
+//   // Адаптивные отступы внутри сообщения
+//   @include xs-only {
+//     padding: $spacing-lg $spacing-sm;
+//   }
+//   @include sm-up {
+//     padding: $spacing-xl;
+//   }
+//   @include md-up {
+//     padding: $spacing-xxl;
+//   }
+//   @include lg-up {
+//     padding: $spacing-xxxl;
+//   }
+//   @include xl-up {
+//     padding: $spacing-xxxl;
+//   }
+//   @include xxl-up {
+//     padding: $spacing-xxxxl;
+//   }
+//   @include xxxl-up {
+//     padding: $spacing-xxxxl;
+//   }
+//   @include full-hd-up {
+//     padding: $spacing-xxxxl;
+//   }
+//   @include uhd-up {
+//     padding: 180px;
+//   }
+//   @include uhd-4k-up {
+//     padding: 220px;
+//   }
+// }
 
-.notLoggedInTitle {
-  @extend .riffic-medium; 
-  color: $black;
-  margin-bottom: $spacing-sm;
+// .notLoggedInTitle {
+//   @extend .riffic-medium; 
+//   color: $black;
+//   margin-bottom: $spacing-sm;
   
-  @include xs-only {
-    font-size: 32px;
-  }
-  @include sm-up {
-    font-size: 40px;
-  }
-  @include md-up {
-    font-size: 48px;
-  }
-  @include lg-up {
-    font-size: 56px;
-  }
-  @include xl-up {
-    font-size: 64px;
-  }
-  @include xxl-up {
-    font-size: 72px;
-  }
-  @include xxxl-up {
-    font-size: 80px;
-  }
-  @include full-hd-up {
-    font-size: 88px;
-  }
-  @include uhd-up {
-    font-size: 100px;
-  }
-  @include uhd-4k-up {
-    font-size: 120px;
-  }
-}
+//   @include xs-only {
+//     font-size: 32px;
+//   }
+//   @include sm-up {
+//     font-size: 40px;
+//   }
+//   @include md-up {
+//     font-size: 48px;
+//   }
+//   @include lg-up {
+//     font-size: 56px;
+//   }
+//   @include xl-up {
+//     font-size: 64px;
+//   }
+//   @include xxl-up {
+//     font-size: 72px;
+//   }
+//   @include xxxl-up {
+//     font-size: 80px;
+//   }
+//   @include full-hd-up {
+//     font-size: 88px;
+//   }
+//   @include uhd-up {
+//     font-size: 100px;
+//   }
+//   @include uhd-4k-up {
+//     font-size: 120px;
+//   }
+// }
 
-.notLoggedInText {
-  @extend .gilroy-18;
-  color: $gray-dark;
-  margin-bottom: $spacing-md;
-}
+// .notLoggedInText {
+//   @extend .gilroy-18;
+//   color: $gray-dark;
+//   margin-bottom: $spacing-md;
+// }
 
 .loginButton {
   @include button-primary;
