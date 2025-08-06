@@ -120,6 +120,12 @@ const ProfilePage = ({ session, onLogout }) => {
             </div>
           )}
         </section>
+        <section className={styles.whatsappFeedbackSection}>
+          <WhatsAppFeedback 
+            phoneNumber="+77004792109"
+            prefilledMessage={`Здравствуйте, у меня есть вопрос или отзыв.`} 
+          />
+        </section>
       </div>
     </main>
   );
