@@ -1,0 +1,11 @@
+{
+    "name": "iiko-webhook-function",
+    "version": "1.0.0",
+    "description": "Netlify function for handling iiko webhooks",
+    "main": "iiko-webhook.js",
+    "type": "module",
+    "dependencies": {
+      "@supabase/supabase-js": "^2.43.4",
+      "axios": "^1.7.2"
+    }
+  }

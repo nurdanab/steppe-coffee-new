@@ -1,129 +1,73 @@
 // src/components/ProfilePage/ProfilePage.jsx
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../../supabaseClient'; 
-import styles from './ProfilePage.module.scss'; 
+import React, { useState, useEffect } from 'react';
+import styles from './ProfilePage.module.scss';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../supabaseClient';
 
-const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthModal, onAuthSuccess, onLogout }) => {
-  const [userBookings, setUserBookings] = useState([]);
-  const [loadingBookings, setLoadingBookings] = useState(true);
-  const [errorBookings, setErrorBookings] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+const ProfilePage = ({ session, onLogout }) => {
+  const [loading, setLoading] = useState(true);
+  const [userMetadata, setUserMetadata] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!session) {
-      if (!isAuthModalOpen) {
-        onOpenAuthModal();
-      }
-      return; 
-    }
-
-    const fetchUserBookings = async () => {
-      setLoadingBookings(true);
-      setErrorBookings(null);
-      try {
+    async function fetchUserMetadata() {
+      if (session) {
+        setLoading(true);
         const { data, error } = await supabase
-          .from('bookings')
-          .select('id, booking_date, start_time, end_time, selected_room, status, comments') 
-          .eq('user_id', session.user.id) 
-          .order('booking_date', { ascending: false }) 
-          .order('start_time', { ascending: false });
+          .from('profiles')
+          .select('metadata')
+          .eq('id', session.user.id)
+          .single();
 
         if (error) {
-          throw error;
+          console.error('Ошибка получения метаданных:', error);
+        } else {
+          setUserMetadata(data.metadata);
         }
-        setUserBookings(data);
-      } catch (err) {
-        console.error('Ошибка при загрузке бронирований пользователя:', err.message);
-        setErrorBookings('Не удалось загрузить историю бронирований.');
-      } finally {
-        setLoadingBookings(false);
+        setLoading(false);
       }
-    };
-
-    fetchUserBookings();
-  }, [session, onOpenAuthModal, isAuthModalOpen]); 
-
-  const getRoomName = (roomKey) => {
-    switch (roomKey) {
-      case 'second_hall':
-        return 'Второй зал';
-      case 'summer_terrace':
-        return 'Летняя терраса';
-      default:
-        return 'Неизвестный зал';
     }
-  };
+    fetchUserMetadata();
+  }, [session]);
 
-  const handleChangePassword = () => {
+  const handleUpdatePasswordRedirect = () => {
     navigate('/update-password');
   };
 
-  if (!session) {
+  if (loading) {
     return (
       <main className={styles.profilePage}>
-       <div className="headerFullWidthContainer">
-
-        <div className={styles.notLoggedInMessage}>
-          {/* <h2>Для просмотра профиля необходимо войти</h2>
-          <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы получить доступ к истории бронирований.</p> */}
-          {!isAuthModalOpen && (
-            <button onClick={onOpenAuthModal} className={styles.loginButton}>Войти / Зарегистрироваться</button>
-          )}
+        <div className={styles.container}>
+          <p>Загрузка данных пользователя...</p>
         </div>
-        </div>
-
       </main>
     );
   }
 
   return (
     <main className={styles.profilePage}>
-                    <div className="headerFullWidthContainer">
-        <div className={styles.profileHeader}>
-          <h1>Привет, {session.user.email}!</h1>
-          <div className={styles.profileActions}> 
-            <button onClick={handleChangePassword} className={styles.changePasswordButton}>
-              Сменить пароль
-            </button>
-            <button onClick={onLogout} className={styles.logoutButton}>
-              Выйти
-            </button>
-          </div>
-        </div>
-
-        <section className={styles.bookingHistory}>
-          <h2>История моих бронирований</h2>
-          {loadingBookings ? (
-            <p className={styles.noBookingsMessage}>Загрузка истории бронирований...</p> 
-          ) : errorBookings ? (
-            <p className={styles.errorMessage}>{errorBookings}</p>
-          ) : userBookings.length === 0 ? (
-            <p className={styles.noBookingsMessage}>У вас пока нет бронирований.</p>
-          ) : (
-            <div className={styles.bookingsList}>
-              {userBookings.map(booking => (
-                <div key={booking.id} className={styles.bookingItem}>
-                  <p className={styles.bookingTitle}>Бронирование</p> {/* Добавили заголовок */}
-                  <p className={styles.bookingDate}>
-                    Дата: {new Date(booking.booking_date).toLocaleDateString('ru-RU')}
-                  </p>
-                  <p className={styles.bookingTime}>
-                    Время: {booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}
-                  </p>
-                  <p className={styles.bookingRoom}>
-                    Зал: {getRoomName(booking.selected_room)}
-                  </p>
-                  <p className={styles.bookingStatus}>
-                    Статус: <span className={styles[booking.status]}>{booking.status === 'confirmed' ? 'Подтверждено' : booking.status === 'pending' ? 'В ожидании' : 'Отменено'}</span>
-                  </p>
-                  {booking.comments && <p className={styles.bookingComments}>Комментарий: {booking.comments}</p>}
-                </div>
-              ))}
-            </div>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Личный кабинет</h1>
+        <div className={styles.profileInfo}>
+          <p><strong>Email:</strong> {session.user.email}</p>
+          {userMetadata && (
+            <>
+              {userMetadata.name && <p><strong>Имя:</strong> {userMetadata.name}</p>}
+              {userMetadata.phone && <p><strong>Телефон:</strong> {userMetadata.phone}</p>}
+            </>
           )}
-        </section>
+        </div>
+        <div className={styles.profileActions}>
+          <button
+            onClick={handleUpdatePasswordRedirect}
+            className={styles.updatePasswordButton}
+          >
+            Изменить пароль
+          </button>
+          <button onClick={onLogout} className={styles.logoutButton}>
+            Выйти
+          </button>
+        </div>
       </div>
     </main>
   );

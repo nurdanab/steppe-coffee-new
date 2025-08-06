@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
@@ -19,7 +19,6 @@ import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx';
 import AdminDashboard from './components/AdminDashboard/AdminDashboard';
 import MenuDisplay from './components/MenuDisplay/MenuDisplay';
 
-
 import { supabase } from './supabaseClient';
 
 const EventsPageContent = () => (
@@ -32,6 +31,7 @@ function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [session, setSession] = useState(null);
+  const previousPathRef = useRef('/'); // Используем useRef для хранения предыдущего пути
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,10 +50,17 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleOpenBookingModal = () => {
-    if (!session && location.pathname !== '/update-password') {
+  useEffect(() => {
+    if (location.pathname === '/profile' && !session) {
+      previousPathRef.current = location.pathname;
       setIsAuthModalOpen(true);
-      alert("Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.");
+    }
+  }, [location, session]);
+
+  const handleOpenBookingModal = () => {
+    if (!session) {
+      previousPathRef.current = location.pathname;
+      setIsAuthModalOpen(true);
       return;
     }
     setIsBookingModalOpen(true);
@@ -64,31 +71,31 @@ function App() {
   };
 
   const handleOpenAuthModal = () => {
-    if (location.pathname === '/update-password') {
-        return;
-    }
+    previousPathRef.current = location.pathname;
     setIsAuthModalOpen(true);
   };
 
   const handleCloseAuthModal = () => {
     setIsAuthModalOpen(false);
+    setTimeout(() => {
+      navigate(previousPathRef.current);
+    }, 100);
   };
 
   const handleAuthSuccess = (user) => {
     console.log('Пользователь успешно авторизован:', user);
     setIsAuthModalOpen(false);
+    // После успешной авторизации, всегда перенаправляем на страницу профиля
+    navigate('/profile');
   };
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.error('Ошибка выхода:', error.message);
     else {
-      alert('Вы вышли из системы.');
       navigate('/');
     }
   };
-
-  const shouldOpenAuthModal = isAuthModalOpen && location.pathname !== '/update-password';
 
   return (
     <div className="App">
@@ -126,24 +133,12 @@ function App() {
         } />
 
         <Route path="/profile" element={
-          <ProfilePage
-            session={session}
-            isAuthModalOpen={isAuthModalOpen}
-            onOpenAuthModal={handleOpenAuthModal}
-            onCloseAuthModal={handleCloseAuthModal}
-            onAuthSuccess={handleAuthSuccess}
-            onLogout={handleLogout}
-          />
+          <ProfilePage session={session} onLogout={handleLogout} />
         } />
         <Route path="/update-password" element={<UpdatePassword />} />
-
         <Route path="/dashboard" element={<AdminDashboard session={session} />} />
-
         <Route path="/menu" element={<MenuDisplay />} />
-
       </Routes>
-
-      
 
       <BookingModal
         isOpen={isBookingModalOpen}
@@ -153,7 +148,7 @@ function App() {
       />
 
       <Auth
-        isOpen={shouldOpenAuthModal}
+        isOpen={isAuthModalOpen}
         onClose={handleCloseAuthModal}
         onAuthSuccess={handleAuthSuccess}
       />

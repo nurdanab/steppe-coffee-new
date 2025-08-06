@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../../supabaseClient';
 import styles from './Auth.module.scss';
+// import { useNavigate } from 'react-router-dom'; // Эту строку можно удалить, так как useNavigate больше не нужен
 
 const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -9,7 +10,8 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState('');
-  const [showResetPassword, setShowResetPassword] = useState(false); 
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  // const navigate = useNavigate(); // Эту строку можно удалить
 
   if (!isOpen) {
     return null;
@@ -51,7 +53,6 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
           if (onAuthSuccess) {
             onAuthSuccess(data.user);
           }
-          onClose();
         }
       }
     } catch (err) {
@@ -92,17 +93,22 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
         setLoading(false);
     }
 };
- 
+
+  const handleOverlayClick = (e) => {
+    if (e.target.className.includes(styles.modalOverlay)) {
+      onClose(); // Просто вызываем onClose, навигация будет в App.jsx
+    }
+  };
+
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <h2>{showResetPassword ? 'Сброс пароля' : (isSignUp ? 'Регистрация' : 'Вход')}</h2>  
+        <h2>{showResetPassword ? 'Сброс пароля' : (isSignUp ? 'Регистрация' : 'Вход')}</h2>
         {message && <p className={styles.message}>{message}</p>}
 
-        {showResetPassword ? (  
+        {showResetPassword ? (
           <form onSubmit={handlePasswordReset}>
             <div className={styles.formGroup}>
-              {/* <label htmlFor="email">Ваш Email:</label> */}
               <input
                 type="email"
                 id="email"
@@ -111,7 +117,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 required
                 disabled={loading}
                 className={styles.input}
-                placeholder="Email" // Добавлен placeholder
+                placeholder="Email"
               />
             </div>
             <button type="submit" disabled={loading} className={styles.authButton}>
@@ -127,10 +133,9 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
               </button>
             </p>
           </form>
-        ) : (  
+        ) : (
           <form onSubmit={handleAuth}>
             <div className={styles.formGroup}>
-              {/* <label htmlFor="email">Email:</label> */}
               <input
                 type="email"
                 id="email"
@@ -139,11 +144,10 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 required
                 disabled={loading}
                 className={styles.input}
-                placeholder="Email" // Добавлен placeholder
+                placeholder="Email"
               />
             </div>
             <div className={styles.formGroup}>
-              {/* <label htmlFor="password">Пароль:</label> */}
               <input
                 type="password"
                 id="password"
@@ -152,7 +156,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 required
                 disabled={loading}
                 className={styles.input}
-                placeholder="Пароль" // Добавлен placeholder
+                placeholder="Пароль"
               />
             </div>
             <button type="submit" disabled={loading} className={styles.authButton}>
@@ -168,18 +172,18 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 {isSignUp ? 'Войти' : 'Зарегистрироваться'}
               </button>
             </p>
-             {!isSignUp && (  
+            {!isSignUp && (
               <p className={styles.forgotPassword}>
                 <button
                   onClick={() => setShowResetPassword(true)}
-                  className={styles.toggleButton} 
+                  className={styles.toggleButton}
                   disabled={loading}
                 >
                   Забыли пароль?
                 </button>
               </p>
             )}
-           </form>
+          </form>
         )}
       </div>
     </div>

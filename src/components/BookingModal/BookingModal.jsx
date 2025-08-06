@@ -164,8 +164,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setMessage('');
     setError(null);
 
+    // Удаляем alert и используем setError для отображения сообщения в модальном окне
     if (!currentUserId) {
-        setMessage('Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.');
+        setError('Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.');
         setLoading(false);
         return;
     }
@@ -189,7 +190,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
 
     try {
-      const { data: newBookingData, error: insertError } = await supabase // Изменил имя переменной на newBookingData
+      const { data: newBookingData, error: insertError } = await supabase
         .from('bookings')
         .insert([
           {
@@ -208,15 +209,14 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             organizer_contact: organizerContact || null,
           },
         ])
-        .select(); // Добавляем .select() чтобы получить данные новой записи
+        .select();
 
       if (insertError) {
         throw insertError;
       }
 
-      // --- ДОБАВЛЯЕМ ОТПРАВКУ УВЕДОМЛЕНИЯ В TELEGRAM ---
       if (newBookingData && newBookingData.length > 0) {
-        const newBooking = newBookingData[0]; // Получаем первую (и единственную) созданную запись
+        const newBooking = newBookingData[0];
         const telegramMessage = `
           <b>🥳 НОВОЕ БРОНИРОВАНИЕ!</b>
           #ID: <code>${newBooking.id.substring(0, 8)}</code>
@@ -247,9 +247,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           console.error('Ошибка вызова Telegram Edge Function для нового бронирования:', err);
         }
       }
-      // --- КОНЕЦ ОТПРАВКИ УВЕДОМЛЕНИЯ ---
-
-
+      
       if (bookingStatusToSet === 'pending') {
         setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
       } else {
@@ -268,7 +266,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setEventName('');
       setEventDescription('');
       setOrganizerContact('');
-
 
       setTimeout(() => {
         onClose();

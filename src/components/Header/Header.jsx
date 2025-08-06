@@ -1,3 +1,4 @@
+// src/components/Header/Header.jsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
@@ -25,6 +26,13 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
     { name: 'Меню', href: '/menu' },
     { name: 'События', href: '/events' },
   ];
+
+  const handleProfileClick = (e) => {
+    if (!session) {
+      e.preventDefault(); // Prevent default link behavior
+      onOpenAuthModal();
+    }
+  };
 
   return (
     <>
@@ -55,10 +63,16 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
               </nav>
 
               <div className={styles.headerActions}>
-                {/* Всегда отображаем иконку профиля, ведущую на страницу профиля */}
-                <Link to="/profile" className={styles.profileButton}>
-                  <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
-                </Link>
+                {/* Условный рендеринг для иконки профиля */}
+                {session ? (
+                  <Link to="/profile" className={styles.profileButton}>
+                    <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                  </Link>
+                ) : (
+                  <button onClick={onOpenAuthModal} className={styles.profileButton}>
+                    <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                  </button>
+                )}
 
                 <button
                   className={`${styles.mobileMenuButton} ${isMobileMenuOpen ? styles.open : ''}`}
