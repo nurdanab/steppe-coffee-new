@@ -13,7 +13,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
 
   useEffect(() => {
     if (!session) {
-      if (!isAuthModalOpen) { // Проверяем, что модальное окно еще не открыто
+      if (!isAuthModalOpen) {
         onOpenAuthModal();
       }
       return; 
@@ -25,7 +25,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
       try {
         const { data, error } = await supabase
           .from('bookings')
-          .select('id, booking_date, start_time, end_time, selected_room, status, comments') // Добавил selected_room
+          .select('id, booking_date, start_time, end_time, selected_room, status, comments') 
           .eq('user_id', session.user.id) 
           .order('booking_date', { ascending: false }) 
           .order('start_time', { ascending: false });
@@ -43,9 +43,8 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
     };
 
     fetchUserBookings();
-  }, [session, onOpenAuthModal, isAuthModalOpen]); // Добавил isAuthModalOpen в зависимости, чтобы избежать повторных вызовов
+  }, [session, onOpenAuthModal, isAuthModalOpen]); 
 
-  // Определение функции для получения имени зала
   const getRoomName = (roomKey) => {
     switch (roomKey) {
       case 'second_hall':
@@ -58,7 +57,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
   };
 
   const handleChangePassword = () => {
-    navigate('/update-password'); // Перенаправляем на страницу смены пароля
+    navigate('/update-password');
   };
 
   if (!session) {
@@ -67,7 +66,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
         <div className={styles.notLoggedInMessage}>
           <h2>Для просмотра профиля необходимо войти</h2>
           <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы получить доступ к истории бронирований.</p>
-          {!isAuthModalOpen && ( // Отображаем кнопку только если модальное окно не открыто
+          {!isAuthModalOpen && (
             <button onClick={onOpenAuthModal} className={styles.loginButton}>Войти / Зарегистрироваться</button>
           )}
         </div>
@@ -77,49 +76,51 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
 
   return (
     <main className={styles.profilePage}>
-      <div className={styles.profileHeader}>
-        <h1>Привет, {session.user.email}!</h1>
-        <div className={styles.profileActions}> {/* Контейнер для кнопок */}
-          <button onClick={handleChangePassword} className={styles.changePasswordButton}>
-            Сменить пароль
-          </button>
-          {/* Удаляем кнопку "Удалить аккаунт" */}
-          <button onClick={onLogout} className={styles.logoutButton}>
-            Выйти
-          </button>
-        </div>
-      </div>
-
-      <section className={styles.bookingHistory}>
-        <h2>История моих бронирований</h2>
-        {loadingBookings ? (
-          <p className={styles.noBookingsMessage}>Загрузка истории бронирований...</p> // Применяем стиль
-        ) : errorBookings ? (
-          <p className={styles.errorMessage}>{errorBookings}</p>
-        ) : userBookings.length === 0 ? (
-          <p className={styles.noBookingsMessage}>У вас пока нет бронирований.</p> // Применяем новый класс
-        ) : (
-          <div className={styles.bookingsList}>
-            {userBookings.map(booking => (
-              <div key={booking.id} className={styles.bookingItem}>
-                <p className={styles.bookingDate}>
-                  Дата: {new Date(booking.booking_date).toLocaleDateString('ru-RU')}
-                </p>
-                <p className={styles.bookingTime}>
-                  Время: {booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}
-                </p>
-                <p className={styles.bookingRoom}>
-                  Зал: {getRoomName(booking.selected_room)} {/* Используем функцию для получения имени зала */}
-                </p>
-                <p className={styles.bookingStatus}>
-                  Статус: <span className={styles[booking.status]}>{booking.status === 'confirmed' ? 'Подтверждено' : booking.status === 'pending' ? 'В ожидании' : 'Отменено'}</span>
-                </p>
-                {booking.comments && <p className={styles.bookingComments}>Комментарий: {booking.comments}</p>}
-              </div>
-            ))}
+      <div className={styles.profileContent}> {/* Добавили новый контейнер */}
+        <div className={styles.profileHeader}>
+          <h1>Привет, {session.user.email}!</h1>
+          <div className={styles.profileActions}> 
+            <button onClick={handleChangePassword} className={styles.changePasswordButton}>
+              Сменить пароль
+            </button>
+            <button onClick={onLogout} className={styles.logoutButton}>
+              Выйти
+            </button>
           </div>
-        )}
-      </section>
+        </div>
+
+        <section className={styles.bookingHistory}>
+          <h2>История моих бронирований</h2>
+          {loadingBookings ? (
+            <p className={styles.noBookingsMessage}>Загрузка истории бронирований...</p> 
+          ) : errorBookings ? (
+            <p className={styles.errorMessage}>{errorBookings}</p>
+          ) : userBookings.length === 0 ? (
+            <p className={styles.noBookingsMessage}>У вас пока нет бронирований.</p>
+          ) : (
+            <div className={styles.bookingsList}>
+              {userBookings.map(booking => (
+                <div key={booking.id} className={styles.bookingItem}>
+                  <p className={styles.bookingTitle}>Бронирование</p> {/* Добавили заголовок */}
+                  <p className={styles.bookingDate}>
+                    Дата: {new Date(booking.booking_date).toLocaleDateString('ru-RU')}
+                  </p>
+                  <p className={styles.bookingTime}>
+                    Время: {booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}
+                  </p>
+                  <p className={styles.bookingRoom}>
+                    Зал: {getRoomName(booking.selected_room)}
+                  </p>
+                  <p className={styles.bookingStatus}>
+                    Статус: <span className={styles[booking.status]}>{booking.status === 'confirmed' ? 'Подтверждено' : booking.status === 'pending' ? 'В ожидании' : 'Отменено'}</span>
+                  </p>
+                  {booking.comments && <p className={styles.bookingComments}>Комментарий: {booking.comments}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      </div>
     </main>
   );
 };

@@ -1,3 +1,4 @@
+// src/components/ProfilePage/ProfilePage.module.scss
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
@@ -7,29 +8,32 @@
 
 .profilePage {
   @extend .section;  
-    background-color: $yellow; 
-    position: relative;
-    overflow: hidden; 
-  // @include section-padding;
-  // @include container-padding;
-  // max-width: 1200px;
-  // margin: 0 auto;
-  // margin-top: 150px;
-  // min-height: calc(100vh - 150px);
-  // display: flex;
-  // flex-direction: column;
-  // gap: $spacing-xl;
+  background-color: $light-yellow; 
+  position: relative;
+  overflow: hidden; 
+}
 
-  // @include md-up {
-  //   min-height: calc(100vh - 200px);
-  // }
+.profileContent {
+  @extend .container;
+  background-color: $white;
+  padding: $spacing-xl;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-medium;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+
+  @include xs-only {
+    padding: $spacing-md;
+    gap: $spacing-lg;
+    border-radius: 0;
+  }
 }
 
 .profileHeader {
   @include flex-between;
-  margin-bottom: $spacing-md;
   border-bottom: 1px solid $gray-light;
-  padding-bottom: $spacing-sm;
+  padding-bottom: $spacing-md;
 
   @include sm-down {
     flex-direction: column;
@@ -39,7 +43,7 @@
 
   h1 {
     @extend .riffic-32;
-    color: $yellow;
+    color: $black;
     margin: 0;
     text-align: left;
   }
@@ -56,49 +60,24 @@
   }
 }
 
-.logoutButton, .changePasswordButton { // Удаляем .deleteAccountButton
-  @include button-base;
-  padding: $spacing-xs $spacing-md;
-  border-radius: $border-radius-sm;
-  font-size: 0.9em;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  @include sm-down {
-    flex-grow: 1;
-  }
-}
-
 .logoutButton {
-  background-color: $black;
-  color: $white;
+  @include button-base-3; // Используем миксин для темной кнопки
   
-  &:hover {
-    background-color: color.adjust($black, $lightness: 10%);
+  @include xs-only {
+    flex-grow: 1;
+    font-size: 14px;
   }
 }
 
 .changePasswordButton {
-  background-color: $light-yellow; // Например, желтый цвет
-  color: $black;
-  border: 1px solid $light-yellow;
+  @include button-base-2; // Используем миксин для светлой кнопки
+  border: 1px solid $gray-light;
 
-  &:hover {
-    background-color: color.adjust($light-yellow, $lightness: -5%);
+  @include xs-only {
+    flex-grow: 1;
+    font-size: 14px;
   }
 }
-
-// Удаляем стили для .deleteAccountButton и все, что связано с модальным окном подтверждения:
-// .deleteAccountButton { ... }
-// .confirmModalOverlay { ... }
-// .confirmModalContent { ... }
-// .modalActions { ... }
-// .confirmDeleteButton { ... }
-// .cancelDeleteButton { ... }
-// @keyframes fadeIn { ... }
-
 
 .notLoggedInMessage {
   @include flex-column;
@@ -109,6 +88,10 @@
   border-radius: $border-radius-md;
   box-shadow: $shadow-medium;
   gap: $spacing-md;
+  
+  @include sm-down {
+    padding: $spacing-xl $spacing-sm;
+  }
 
   h2 {
     @extend .riffic-24;
@@ -130,7 +113,11 @@
 }
 
 .bookingHistory {
-  margin-top: $spacing-lg;
+  margin-top: $spacing-md;
+  
+  @include sm-down {
+    margin-top: $spacing-sm;
+  }
 
   h2 {
     @extend .riffic-24;
@@ -143,7 +130,7 @@
 .bookingsList {
   display: grid;
   gap: $spacing-md;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
 
   @include md-up {
     gap: $spacing-lg;
@@ -153,18 +140,14 @@
   @include lg-up {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
-
-  @include mobile-only {
-    grid-template-columns: 1fr;
-  }
 }
 
 .bookingItem {
-  background-color: $white;
+  background-color: $gray-light;
   padding: $spacing-md;
   border-radius: $border-radius-md;
   box-shadow: $shadow-light;
-  border-left: 5px solid $orange;
+  border-left: 5px solid $yellow;
   transition: transform $transition-fast, box-shadow $transition-fast;
 
   &:hover {
@@ -181,16 +164,18 @@
       margin-bottom: 0;
     }
   }
-
-  .bookingDate, .bookingTime {
-    font-weight: 600;
-    color: $light-yellow;
-  }
   
-  .bookingRoom {
+  // Отдельные стили для каждого элемента в карточке
+  .bookingTitle {
+    @extend .gilroy-24;
+    font-weight: 600;
+    margin-bottom: $spacing-sm;
+    color: $maroon;
+  }
+
+  .bookingDate, .bookingTime, .bookingRoom {
     font-weight: 500;
-    color: $gray-dark;
-    font-size: 0.95em;
+    color: $black;
   }
 
   .bookingStatus {
@@ -224,7 +209,7 @@
     font-style: italic;
     color: $gray-dark;
     margin-top: $spacing-sm;
-    border-top: 1px dashed $gray-light;
+    border-top: 1px dashed $gray-medium;
     padding-top: $spacing-sm;
     font-size: 0.95em;
   }
