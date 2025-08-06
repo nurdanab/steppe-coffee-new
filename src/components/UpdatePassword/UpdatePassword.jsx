@@ -92,7 +92,7 @@ const UpdatePassword = () => {
          {!error && ( 
           <form onSubmit={handlePasswordUpdate}>
             <div className={styles.formGroup}>
-              <label htmlFor="new-password" className={styles.label}>Новый пароль:</label>
+              {/* <label htmlFor="new-password" className={styles.label}>Новый пароль:</label> */}
               <input
                 type="password"
                 id="new-password"
@@ -101,10 +101,11 @@ const UpdatePassword = () => {
                 required
                 disabled={loading}
                 className={styles.input}
+                placeholder="Новый пароль" // Добавлен placeholder
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="confirm-password" className={styles.label}>Подтвердите пароль:</label>
+              {/* <label htmlFor="confirm-password" className={styles.label}>Подтвердите пароль:</label> */}
               <input
                 type="password"
                 id="confirm-password"
@@ -113,6 +114,7 @@ const UpdatePassword = () => {
                 required
                 disabled={loading}
                 className={styles.input}
+                placeholder="Подтвердите пароль" // Добавлен placeholder
               />
             </div>
             <button type="submit" disabled={loading} className={styles.button}>
