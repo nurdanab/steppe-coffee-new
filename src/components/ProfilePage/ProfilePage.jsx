@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../supabaseClient'; 
 import styles from './ProfilePage.module.scss'; 
 import { useNavigate } from 'react-router-dom';
+import WhatsAppFeedback from './WhatsAppFeedback';
 
 const ProfilePage = ({ session, onLogout }) => {
   const [userBookings, setUserBookings] = useState([]);
