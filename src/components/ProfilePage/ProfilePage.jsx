@@ -76,7 +76,7 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
 
   return (
     <main className={styles.profilePage}>
-      <div className={styles.profileContent}> {/* Добавили новый контейнер */}
+                    <div className="headerFullWidthContainer">
         <div className={styles.profileHeader}>
           <h1>Привет, {session.user.email}!</h1>
           <div className={styles.profileActions}> 

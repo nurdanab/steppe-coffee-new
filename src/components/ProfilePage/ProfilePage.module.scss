@@ -13,26 +13,26 @@
   overflow: hidden; 
 }
 
-.profileContent {
-  @extend .container;
-  background-color: $white;
-  padding: $spacing-xl;
-  border-radius: $border-radius-lg;
-  box-shadow: $shadow-medium;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-xl;
+// .profileContent {
+//   @extend .container;
+//   background-color: $white;
+//   padding: $spacing-xl;
+//   border-radius: $border-radius-lg;
+//   box-shadow: $shadow-medium;
+//   display: flex;
+//   flex-direction: column;
+//   gap: $spacing-xl;
 
-  @include xs-only {
-    padding: $spacing-md;
-    gap: $spacing-lg;
-    border-radius: 0;
-  }
-}
+//   @include xs-only {
+//     padding: $spacing-md;
+//     gap: $spacing-lg;
+//     border-radius: 0;
+//   }
+// }
 
 .profileHeader {
   @include flex-between;
-  border-bottom: 1px solid $gray-light;
+  // border-bottom: 1px solid $gray-light;
   padding-bottom: $spacing-md;
 
   @include sm-down {
@@ -49,20 +49,21 @@
   }
 }
 
-.profileActions { // Контейнер для кнопок действий
+.profileActions { 
   display: flex;
   gap: $spacing-sm;
   flex-wrap: wrap;
 
   @include sm-down {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 }
 
 .logoutButton {
-  @include button-base-3; // Используем миксин для темной кнопки
-  
+  @include button-base-3; 
+  border-radius: $border-radius-xxxxl;
+
   @include xs-only {
     flex-grow: 1;
     font-size: 14px;
@@ -70,8 +71,9 @@
 }
 
 .changePasswordButton {
-  @include button-base-2; // Используем миксин для светлой кнопки
+  @include button-base-2;
   border: 1px solid $gray-light;
+  border-radius: $border-radius-xxxxl;
 
   @include xs-only {
     flex-grow: 1;
@@ -109,7 +111,7 @@
 .loginButton {
   @include button-primary;
   padding: $spacing-sm $spacing-lg;
-  border-radius: $border-radius-md;
+  border-radius: $border-radius-xxxxl;
 }
 
 .bookingHistory {
