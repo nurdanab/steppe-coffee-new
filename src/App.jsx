@@ -31,7 +31,7 @@ function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [session, setSession] = useState(null);
-  const previousPathRef = useRef('/'); // Используем useRef для хранения предыдущего пути
+  const previousPathRef = useRef('/');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,12 +51,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (location.pathname === '/profile' && !session) {
-      previousPathRef.current = location.pathname;
+    // Эта логика будет запускаться, когда пользователь не авторизован и пытается
+    // перейти на страницу профиля. Она перенаправит на главную и откроет модальное окно.
+    // Ключевое изменение: `!isAuthModalOpen` предотвращает повторное открытие после logout
+    if (location.pathname === '/profile' && !session && !isAuthModalOpen) {
+      navigate('/');
       setIsAuthModalOpen(true);
     }
-  }, [location, session]);
-
+  }, [location, session, isAuthModalOpen, navigate]);
+  
   const handleOpenBookingModal = () => {
     if (!session) {
       previousPathRef.current = location.pathname;
@@ -85,7 +88,6 @@ function App() {
   const handleAuthSuccess = (user) => {
     console.log('Пользователь успешно авторизован:', user);
     setIsAuthModalOpen(false);
-    // После успешной авторизации, всегда перенаправляем на страницу профиля
     navigate('/profile');
   };
 
@@ -93,8 +95,6 @@ function App() {
     const { error } = await supabase.auth.signOut();
     if (error) console.error('Ошибка выхода:', error.message);
     else {
-      // Здесь мы добавляем закрытие модального окна перед навигацией.
-      // Это гарантирует, что модальное окно не появится после выхода.
       setIsAuthModalOpen(false);
       navigate('/');
     }
