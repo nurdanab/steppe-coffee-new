@@ -2,24 +2,25 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import styles from './UpdatePassword.module.scss'; // Импортируем новый файл стилей
 
 const UpdatePassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(''); // Эта переменная уже есть
-  const [error, setError] = useState('');     // Эта переменная уже есть
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    console.log('UpdatePassword component mounted.'); // Добавлено для отладки
+    console.log('UpdatePassword component mounted.'); 
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      console.log('UpdatePassword Auth State Change Event:', _event, 'Session:', session); // Добавлено для отладки
+      console.log('UpdatePassword Auth State Change Event:', _event, 'Session:', session); 
 
       if (session && session.user) {
         setMessage('Вы можете обновить свой пароль.');
-        setError(''); 
+        setError('');
       } else {
         setError('Недействительная ссылка или сессия истекла. Пожалуйста, запросите сброс пароля заново.');
       }
@@ -27,7 +28,7 @@ const UpdatePassword = () => {
 
     const checkInitialSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      console.log('UpdatePassword Initial Session Check:', session); // Добавлено для отладки
+      console.log('UpdatePassword Initial Session Check:', session); 
       if (session && session.user) {
         setMessage('Вы можете обновить свой пароль.');
         setError('');
@@ -39,7 +40,7 @@ const UpdatePassword = () => {
 
     return () => {
       subscription.unsubscribe();
-      console.log('UpdatePassword component unmounted.'); // Добавлено для отладки
+      console.log('UpdatePassword component unmounted.');
     };
   }, []);
 
@@ -61,7 +62,7 @@ const UpdatePassword = () => {
     }
 
     try {
-       const { error: updateError } = await supabase.auth.updateUser({ 
+       const { error: updateError } = await supabase.auth.updateUser({
         password: password,
       });
 
@@ -71,7 +72,7 @@ const UpdatePassword = () => {
       } else {
         setMessage('Пароль успешно обновлен! Вы можете войти с новым паролем.');
         alert('Пароль успешно обновлен! Пожалуйста, войдите.');
-        navigate('/');  
+        navigate('/');
       }
     } catch (err) {
       setError('Произошла непредвиденная ошибка.');
@@ -81,92 +82,17 @@ const UpdatePassword = () => {
     }
   };
 
-  const pageStyle = {
-    padding: '80px 20px',
-    maxWidth: '500px',
-    margin: '0 auto',
-    minHeight: 'calc(100vh - 150px)',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  };
-
-  const formContainerStyle = {
-    backgroundColor: '#ffffff',
-    padding: '30px',
-    borderRadius: '8px',
-    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
-    width: '100%',
-  };
-
-  const formGroupStyle = {
-    marginBottom: '15px',
-  };
-
-  const labelStyle = {
-    display: 'block',
-    textAlign: 'left',
-    marginBottom: '8px',
-    fontWeight: 'bold',
-    color: '#333',
-  };
-
-  const inputStyle = {
-    width: 'calc(100% - 20px)',
-    padding: '10px',
-    border: '1px solid #ddd', 
-    borderRadius: '4px',
-    fontSize: '16px',
-  };
-
-  const buttonStyle = {
-    backgroundColor: '#007bff',
-    color: 'white',
-    padding: '12px',
-    fontSize: '18px',
-    marginTop: '20px',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    width: '100%',
-  };
-
-  const successMessageStyle = {
-    color: '#155724',
-    backgroundColor: '#d4edda',
-    padding: '10px',
-    borderRadius: '4px',
-    marginBottom: '15px',
-  };
-
-  const errorMessageStyle = {
-    color: '#721c24',
-    backgroundColor: '#f8d7da',
-    padding: '10px',
-    borderRadius: '4px',
-    marginBottom: '15px',
-  };
-
-  const instructionsStyle = {
-    fontSize: '14px',
-    color: '#666',
-    marginTop: '20px',
-  };
-
-
   return (
-    <main style={pageStyle}>
-      <div style={formContainerStyle}>
-        <h2>Сброс пароля</h2>
-        {message && <p style={successMessageStyle}>{message}</p>}
-        {error && <p style={errorMessageStyle}>{error}</p>}
+    <main className={styles.pageContainer}>
+      <div className={styles.formContainer}>
+        <h2 className={styles.heading}>Сброс пароля</h2>
+        {message && <p className={styles.successMessage}>{message}</p>}
+        {error && <p className={styles.errorMessage}>{error}</p>}
 
-         {!error && ( // Форма показывается только если нет ошибки, которая мешает обновлению
+         {!error && ( 
           <form onSubmit={handlePasswordUpdate}>
-            <div style={formGroupStyle}>
-              <label htmlFor="new-password" style={labelStyle}>Новый пароль:</label>
+            <div className={styles.formGroup}>
+              <label htmlFor="new-password" className={styles.label}>Новый пароль:</label>
               <input
                 type="password"
                 id="new-password"
@@ -174,11 +100,11 @@ const UpdatePassword = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                style={inputStyle}
+                className={styles.input}
               />
             </div>
-            <div style={formGroupStyle}>
-              <label htmlFor="confirm-password" style={labelStyle}>Подтвердите пароль:</label>
+            <div className={styles.formGroup}>
+              <label htmlFor="confirm-password" className={styles.label}>Подтвердите пароль:</label>
               <input
                 type="password"
                 id="confirm-password"
@@ -186,16 +112,16 @@ const UpdatePassword = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
-                style={inputStyle}
+                className={styles.input}
               />
             </div>
-            <button type="submit" disabled={loading} style={buttonStyle}>
+            <button type="submit" disabled={loading} className={styles.button}>
               {loading ? 'Обновление...' : 'Обновить пароль'}
             </button>
           </form>
         )}
         {error && ( 
-          <p style={instructionsStyle}>
+          <p className={styles.instructions}>
             Если вы видите это сообщение об ошибке, пожалуйста, <a href="#" onClick={() => navigate('/')}>вернитесь на главную страницу</a> и снова запросите сброс пароля через форму входа.
           </p>
         )}

@@ -75,7 +75,6 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
         }
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            // Убедись, что здесь нет никаких дополнительных параметров запроса, таких как ?type=recovery
             redirectTo: window.location.origin + '/update-password',
         });
 
@@ -97,14 +96,13 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose} disabled={loading}>&times;</button>
         <h2>{showResetPassword ? 'Сброс пароля' : (isSignUp ? 'Регистрация' : 'Вход')}</h2>  
         {message && <p className={styles.message}>{message}</p>}
 
         {showResetPassword ? (  
           <form onSubmit={handlePasswordReset}>
             <div className={styles.formGroup}>
-              <label htmlFor="email">Ваш Email:</label>
+              {/* <label htmlFor="email">Ваш Email:</label> */}
               <input
                 type="email"
                 id="email"
@@ -112,10 +110,12 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                className={styles.input}
+                placeholder="Email" // Добавлен placeholder
               />
             </div>
             <button type="submit" disabled={loading} className={styles.authButton}>
-              {loading ? 'Отправка...' : 'Отправить ссылку для сброса'}
+              {loading ? 'Отправка...' : 'Получить ссылку'}
             </button>
             <p className={styles.toggleAuth}>
               <button
@@ -130,7 +130,7 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
         ) : (  
           <form onSubmit={handleAuth}>
             <div className={styles.formGroup}>
-              <label htmlFor="email">Email:</label>
+              {/* <label htmlFor="email">Email:</label> */}
               <input
                 type="email"
                 id="email"
@@ -138,10 +138,12 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                className={styles.input}
+                placeholder="Email" // Добавлен placeholder
               />
             </div>
             <div className={styles.formGroup}>
-              <label htmlFor="password">Пароль:</label>
+              {/* <label htmlFor="password">Пароль:</label> */}
               <input
                 type="password"
                 id="password"
@@ -149,13 +151,15 @@ const Auth = ({ isOpen, onClose, onAuthSuccess }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                className={styles.input}
+                placeholder="Пароль" // Добавлен placeholder
               />
             </div>
             <button type="submit" disabled={loading} className={styles.authButton}>
               {loading ? 'Загрузка...' : (isSignUp ? 'Зарегистрироваться' : 'Войти')}
             </button>
             <p className={styles.toggleAuth}>
-              {isSignUp ? 'Уже есть аккаунт?' : 'Нет аккаунта?'}
+              {isSignUp ? 'Уже есть аккаунт?' : 'Нет аккаунта?  '}
               <button
                 onClick={() => setIsSignUp(!isSignUp)}
                 className={styles.toggleButton}

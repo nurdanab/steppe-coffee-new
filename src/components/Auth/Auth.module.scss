@@ -1,7 +1,8 @@
-/* src/components/Auth/Auth.module.scss */
+@use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as *;
+@use '../../styles/base' as *;
 
 .modalOverlay {
   position: fixed;
@@ -9,67 +10,198 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   z-index: 1000;
+  
+  @include xs-only {
+    padding: $spacing-xl;
+  }
 }
 
 .modalContent {
   background-color: $white;
-  padding: 30px;
-//   border-radius: $border-radius-large;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 400px;
+  box-shadow: $shadow-heavy;
+  width: 100%;
+  max-width: 450px;
   animation: fadeIn 0.3s ease-out;
   text-align: center;
-
-  @include md-down {
-    padding: 20px;
+  
+  @include xs-only {
+    padding: $spacing-md;
+    border-radius: $border-radius-md;
   }
-}
-
-.closeButton {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: $black;
-  &:hover {
-    color: $yellow;
+  @include sm-up {
+    padding: $spacing-lg;
+    border-radius: $border-radius-md;
+  }
+  @include md-up {
+    padding: $spacing-xl;
+    border-radius: $border-radius-md;
+  }
+  @include lg-up {
+    padding: $spacing-lg; 
+    border-radius: $border-radius-md;
+  }
+  @include xl-up {
+    max-width: 500px;
+    padding: $spacing-lg;  
+    border-radius: $border-radius-lg;
+  }
+  @include xxl-up {
+    max-width: 600px;
+    padding: $spacing-xl;  
+    border-radius: $border-radius-lg;
+  }
+  @include xxxl-up {
+    max-width: 700px;
+    padding: $spacing-xxl; 
+    border-radius: $border-radius-xl;
+  }
+  @include full-hd-up {
+    max-width: 800px;
+    padding: 70px;
+    border-radius: $border-radius-xxl;
+  }
+  @include uhd-up {
+    max-width: 1000px;
+    padding: 90px;
+    border-radius: $border-radius-xxxl;
+  }
+  @include uhd-4k-up {
+    max-width: 1500px;
+    padding: 150px;
+    border-radius: $border-radius-xxxl;
   }
 }
 
 h2 {
-  @extend .riffic-medium;
+  @extend .riffic-32;
   color: $black;
-  margin-bottom: 25px;
+  
+  @include xs-only {
+    margin-bottom: $spacing-sm;
+  }
+  @include sm-up {
+    margin-bottom: $spacing-sm;
+  }
+  @include md-up {
+    margin-bottom: $spacing-md;
+  }
+  @include lg-up {
+    margin-bottom: $spacing-md;  
+  }
+  @include xl-up {
+    margin-bottom: $spacing-md;  
+  }
+  @include xxl-up {
+    margin-bottom: $spacing-md;  
+  }
+  @include xxxl-up {
+    margin-bottom: $spacing-lg; 
+  }
+  @include full-hd-up {
+    margin-bottom: $spacing-xl;
+  }
+  @include uhd-up {
+    margin-bottom: $spacing-xl;
+  }
+  @include uhd-4k-up {
+    margin-bottom: $spacing-xxxxl;
+  }
 }
 
 .formGroup {
-  margin-bottom: 15px;
-  label {
-    display: block;
-    text-align: left;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: $black;
+  @include xs-only {
+    margin-bottom: $spacing-sm; 
   }
+  @include sm-up {
+    margin-bottom: $spacing-md; 
+  }
+  @include md-up {
+    margin-bottom: $spacing-md;
+  }
+  @include lg-up {
+    margin-bottom: $spacing-md;
+  }
+  @include xl-up {
+    margin-bottom: $spacing-md; 
+  }
+  @include xxl-up {
+    margin-bottom: $spacing-md;  
+  }
+  @include xxxl-up {
+    margin-bottom: $spacing-md;  
+  }
+  @include full-hd-up {
+    margin-bottom: $spacing-lg;
+  }
+  @include uhd-up {
+    margin-bottom: $spacing-lg;
+  }
+  @include uhd-4k-up {
+    margin-bottom: $spacing-xxl;
+  }
+
   input[type="email"],
   input[type="password"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    // border: 1px solid $light-gray;
-    // border-radius: $border-radius-small;
-    font-size: 16px;
+    @extend .gilroy-18;
+    width: 100%;
+    border: 1px solid $gray-medium;
+    color: $black;
+    
+    &::placeholder {
+      color: $gray-dark;
+      opacity: 1;
+    }
+
     &:focus {
-      outline: none;
+      outline: 2px solid $yellow;
+      outline-offset: 2px;
       border-color: $yellow;
+    }
+
+    @include xs-only {
+      padding: $spacing-xs;
+      border-radius: $border-radius-sm;
+    }
+    @include sm-up {
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+    }
+    @include md-up {
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+    }
+    @include lg-up {
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+    }
+    @include xl-up {
+      padding: $spacing-sm;
+      border-radius: $border-radius-sm;
+    }
+    @include xxl-up {
+      padding: $spacing-lg;
+      border-radius: $border-radius-sm;
+    }
+    @include xxxl-up {
+      padding: $spacing-md;
+      border-radius: $border-radius-lg;
+    }
+    @include full-hd-up {
+      padding: $spacing-md;
+      border-radius: $border-radius-xl;
+    }
+    @include uhd-up {
+      border-radius: $border-radius-xxl;
+      padding: $spacing-lg;
+    }
+    @include uhd-4k-up {
+      border-radius: $border-radius-xxxl;
+      padding: $spacing-xxl;
     }
   }
 }
@@ -77,37 +209,140 @@ h2 {
 .authButton {
   @include button-primary;
   width: 100%;
-  padding: 12px;
-  font-size: 18px;
-  margin-top: 20px;
+  border-radius: $border-radius-xxxxl;
+  font-weight: 700;
+
+  @include xs-only {
+    font-size: 16px;
+    padding: $spacing-xs;
+  }
+  @include sm-up {
+    font-size: 16px;
+    padding: $spacing-sm $spacing-lg;
+  }
+  @include md-up {
+    font-size: 18px;
+    padding: $spacing-sm $spacing-xl;
+  }
+  @include lg-up {
+    font-size: 20px;
+    padding: $spacing-sm $spacing-xl;
+  }
+  @include xl-up {
+    font-size: 22px;
+    padding: $spacing-sm $spacing-sm;
+  }
+  @include xxl-up {
+    font-size: 24px;
+    padding: $spacing-md $spacing-xxl;
+  }
+  @include xxxl-up {
+    font-size: 28px;
+    padding: $spacing-lg $spacing-xxxl;
+  }
+  @include full-hd-up {
+    font-size: 32px;
+    padding: $spacing-lg $spacing-xxxl;
+  }
+  @include uhd-up {
+    font-size: 38px;
+    padding: $spacing-lg $spacing-xxl;
+  }
+  @include uhd-4k-up {
+    font-size: 50px;
+    padding: $spacing-xl $spacing-xxxl;
+  }
 }
 
 .toggleAuth {
-  margin-top: 20px;
-  font-size: 14px;
+  @extend .gilroy-18;
   color: $black;
+  
+  @include xs-only {
+    margin-top: $spacing-md;
+  }
+  @include sm-up {
+    margin-top: $spacing-md;
+  }
+  @include md-up {
+    margin-top: $spacing-lg;
+  }
+  @include lg-up {
+    margin-top: $spacing-xl;
+  }
+  @include xl-up {
+    margin-top: $spacing-lg;
+  }
+  @include xxl-up {
+    margin-top: $spacing-xxl;
+  }
+  @include xxxl-up {
+    margin-top: $spacing-xxxl;
+  }
+  @include full-hd-up {
+    margin-top: $spacing-xl;
+  }
+  @include uhd-up {
+    margin-top: $spacing-xxl;
+  }
+  @include uhd-4k-up {
+    margin-top: $spacing-xxxl;
+  }
 
   .toggleButton {
+    @extend .gilroy-18;
     background: none;
     border: none;
     color: $yellow;
     text-decoration: underline;
     cursor: pointer;
-    margin-left: 5px;
-    font-size: 14px;
-    &:hover {
-      opacity: 0.8;
-    }
+  }
+}
+
+.forgotPassword {
+  @include xs-only {
+    margin-top: $spacing-sm;
+  }
+  @include sm-up {
+    margin-top: $spacing-sm;
+  }
+  @include md-up {
+    margin-top: $spacing-sm;
+  }
+  @include lg-up {
+    margin-top: $spacing-md;
+  }
+  @include xl-up {
+    margin-top: $spacing-md;
+  }
+  @include xxl-up {
+    margin-top: $spacing-md;
+  }
+  @include xxxl-up {
+    margin-top: $spacing-lg;
+  }
+  @include full-hd-up {
+    margin-top: $spacing-xl;
+  }
+  @include uhd-up {
+    margin-top: $spacing-xl;
+  }
+  @include uhd-4k-up {
+    margin-top: $spacing-xxl;
+  }
+  
+  .toggleButton {
+    @extend .gilroy-18;
+    color: $yellow;
+    text-decoration: underline;
   }
 }
 
 .message {
-  margin-bottom: 15px;
-  padding: 10px;
-//   border-radius: $border-radius-small;
-  background-color: gray;
-  color: $black;
-  font-size: 14px;
+  @extend .gilroy-12;
+  padding: $spacing-sm;
+  color: $maroon;
+  
 }
 
 @keyframes fadeIn {

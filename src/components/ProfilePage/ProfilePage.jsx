@@ -63,13 +63,17 @@ const ProfilePage = ({ session, isAuthModalOpen, onOpenAuthModal, onCloseAuthMod
   if (!session) {
     return (
       <main className={styles.profilePage}>
+       <div className="headerFullWidthContainer">
+
         <div className={styles.notLoggedInMessage}>
-          <h2>Для просмотра профиля необходимо войти</h2>
-          <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы получить доступ к истории бронирований.</p>
+          {/* <h2>Для просмотра профиля необходимо войти</h2>
+          <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы получить доступ к истории бронирований.</p> */}
           {!isAuthModalOpen && (
             <button onClick={onOpenAuthModal} className={styles.loginButton}>Войти / Зарегистрироваться</button>
           )}
         </div>
+        </div>
+
       </main>
     );
   }

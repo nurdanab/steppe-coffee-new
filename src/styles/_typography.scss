@@ -344,28 +344,28 @@
   font-size: 12px;
 
   @include sm-up {
-    font-size: 22px;
+    font-size: 12px;
   }
   @include md-up {
-    font-size: 24px;
+    font-size: 16px;
   }
   @include lg-up {
-    font-size: 26px;
+    font-size: 18px;
   }
   @include xl-up {
-    font-size: 28px;
+    font-size: 20px;
   }
   @include xxl-up {
-    font-size: 30px;
+    font-size: 22px;
   }
   @include xxxl-up {
-    font-size: 32px;
+    font-size: 24px;
   }
   @include full-hd-up {
-    font-size: 36px;
+    font-size: 28px;
   }
   @include uhd-up {
-    font-size: 38px;
+    font-size: 30px;
   }
   @include uhd-4k-up {
     font-size: 40px;

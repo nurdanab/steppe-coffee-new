@@ -7,38 +7,24 @@
 
 
 .profilePage {
-  @extend .section;  
-  background-color: $light-yellow; 
   position: relative;
   overflow: hidden; 
+  padding: $spacing-lg 0; // Добавляем адаптивный отступ сверху и снизу
+  
+  @include lg-up {
+    padding: $spacing-xl 0;
+  }
 }
-
-// .profileContent {
-//   @extend .container;
-//   background-color: $white;
-//   padding: $spacing-xl;
-//   border-radius: $border-radius-lg;
-//   box-shadow: $shadow-medium;
-//   display: flex;
-//   flex-direction: column;
-//   gap: $spacing-xl;
-
-//   @include xs-only {
-//     padding: $spacing-md;
-//     gap: $spacing-lg;
-//     border-radius: 0;
-//   }
-// }
 
 .profileHeader {
   @include flex-between;
-  // border-bottom: 1px solid $gray-light;
   padding-bottom: $spacing-md;
 
   @include sm-down {
     flex-direction: column;
     align-items: flex-start;
     gap: $spacing-sm;
+    padding-bottom: $spacing-lg;
   }
 
   h1 {
@@ -46,6 +32,10 @@
     color: $black;
     margin: 0;
     text-align: left;
+
+    @include sm-down {
+        font-size: 28px;
+    }
   }
 }
 
@@ -56,13 +46,14 @@
 
   @include sm-down {
     width: 100%;
-    justify-content: flex-end;
+    justify-content: flex-start; // Выравниваем кнопки слева на мобильных
   }
 }
 
 .logoutButton {
   @include button-base-3; 
   border-radius: $border-radius-xxxxl;
+  @extend .gilroy-16;
 
   @include xs-only {
     flex-grow: 1;
@@ -72,8 +63,9 @@
 
 .changePasswordButton {
   @include button-base-2;
-  border: 1px solid $gray-light;
+  border: 1px solid $gray-medium;
   border-radius: $border-radius-xxxxl;
+  @extend .gilroy-16;
 
   @include xs-only {
     flex-grow: 1;
@@ -85,24 +77,30 @@
   @include flex-column;
   @include flex-center;
   text-align: center;
-  padding: $spacing-xxl $spacing-md;
-  background-color: $white;
+  padding: $spacing-xl $spacing-md;
   border-radius: $border-radius-md;
-  box-shadow: $shadow-medium;
   gap: $spacing-md;
   
-  @include sm-down {
-    padding: $spacing-xl $spacing-sm;
+  @include md-up {
+    padding: $spacing-xxl $spacing-lg;
+  }
+  @include full-hd-up {
+    padding: $spacing-xxxxl;
+    margin-top: $spacing-xxxl;
   }
 
   h2 {
-    @extend .riffic-24;
+    @extend .riffic-medium; // Используем более крупный класс
     color: $black;
     margin-bottom: $spacing-sm;
+    
+    @include sm-down {
+        font-size: 32px;
+    }
   }
 
   p {
-    @extend .gilroy-16;
+    @extend .gilroy-18;
     color: $gray-dark;
     margin-bottom: $spacing-md;
   }
@@ -112,20 +110,26 @@
   @include button-primary;
   padding: $spacing-sm $spacing-lg;
   border-radius: $border-radius-xxxxl;
+  @extend .gilroy-16;
+  font-weight: 700;
 }
 
 .bookingHistory {
-  margin-top: $spacing-md;
+  margin-top: $spacing-xxl;
   
   @include sm-down {
-    margin-top: $spacing-sm;
+    margin-top: $spacing-xl;
   }
 
   h2 {
     @extend .riffic-24;
     color: $black;
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-lg;
     text-align: center;
+
+    @include sm-down {
+        font-size: 22px;
+    }
   }
 }
 
@@ -167,12 +171,15 @@
     }
   }
   
-  // Отдельные стили для каждого элемента в карточке
   .bookingTitle {
     @extend .gilroy-24;
     font-weight: 600;
     margin-bottom: $spacing-sm;
     color: $maroon;
+    
+    @include sm-down {
+      font-size: 20px;
+    }
   }
 
   .bookingDate, .bookingTime, .bookingRoom {
@@ -191,6 +198,8 @@
       font-weight: 700;
       display: inline-block;
       margin-top: 4px;
+      text-transform: capitalize; // Сделаем первую букву заглавной
+
     }
 
     .confirmed {
