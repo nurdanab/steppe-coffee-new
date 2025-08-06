@@ -59,7 +59,7 @@ function MenuDisplay() {
     }, []);
 
     const getImageUrl = (imageSource) => {
-        if (!imageSource) return "/placeholder.png"; 
+        if (!imageSource) return "/images/noimg.webp"; 
         
         if (imageSource.startsWith('http://') || imageSource.startsWith('https://')) {
             return imageSource;
@@ -85,17 +85,14 @@ function MenuDisplay() {
 
     return (
         <>
+
             <div className={styles.heroWrapper}>
-                {/* Передаем ref в ImageSlider как пропс */}
                 <ImageSlider deliverySectionRef={deliverySectionRef} />
                 <div className={styles.heroContent}>
-                    <h1 className={styles.heroTitle}>Steppe Caffee Menu</h1>
-                    {/* Кнопка в слайдере теперь будет прокручивать, поэтому эту можно убрать или изменить */}
-                    {/* <Link to="/order">
-                        <button className={styles.heroButton}>Заказать онлайн</button>
-                    </Link> */}
                 </div>
-            </div>
+            </div>               
+
+            <div className="headerFullWidthContainer">
             <div className={styles.menuContentContainer}>
                 <div className={styles.menuCategories}>
                     {categoriesList.map(category => (
@@ -127,8 +124,8 @@ function MenuDisplay() {
                 {filteredItems.length === 0 && (
                     <div className={styles.menuStatus}>В этой категории пока нет блюд.</div>
                 )}
+            </div>            
             </div>
-            {/* Добавляем секцию доставки и передаем в нее ref */}
             <DeliverySection ref={deliverySectionRef} />
         </>
     );

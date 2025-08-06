@@ -5,89 +5,93 @@
 @use '../../styles/typography' as *;
 @use '../../styles/base' as *; 
 
-.heroWrapper {
-  position: relative;
-  width: 100%;
-  height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-
-  @include md-up {
-      height: 70vh;
-  }
-  @include full-hd-up {
-      height: 80vh;
-  }
-}
-
-.heroContent {
-    position: relative; // Чтобы контент был поверх слайдера
-    z-index: 2; // Гарантируем, что контент находится поверх слайдера с z-index: -1
-    color: $white;
-    text-align: left;
-    padding-left: $spacing-xl; // Отступ слева
-
-    @include md-up {
-        padding-left: $spacing-xxl;
-    }
-    @include full-hd-up {
-        padding-left: 120px;
-    }
-}
-
-.heroTitle {
-    @extend .riffic-large;
-    font-size: 50px; 
-    margin-bottom: $spacing-md;
-    color: $white;
-    text-shadow: $shadow-medium;
-    
-    @include md-up {
-        font-size: 64px;
-        margin-bottom: $spacing-lg;
-    }
-    @include full-hd-up {
-        font-size: 96px;
-        margin-bottom: $spacing-xl;
-    }
-}
-
-.heroButton {
-    @include button-primary; 
-    font-size: 16px;
-    padding: $spacing-sm $spacing-xl;
-    border-radius: $border-radius-xxxl;
-    
-    @include md-up {
-        font-size: 20px;
-        padding: $spacing-md $spacing-xxl;
-    }
-}
 
 .menuContentContainer {
-    padding-top: $spacing-xl;
     background-color: $white; 
     position: relative;
     z-index: 1;
 }
-
 .menuCategories {
     @include flex-center;
     flex-wrap: wrap;
-    gap: $spacing-sm;
-    margin-bottom: $spacing-lg;
+    
+    @include xs-only { 
+        padding-top: $spacing-lg;
+        padding-bottom: $spacing-lg;
+        gap: $spacing-xs;
+    }
+    @include sm-up {
+        padding-top: $spacing-xxl;
+        padding-bottom: $spacing-xxl;
+        gap: $spacing-xs;
+    }
+    @include md-up {
+        padding-top: $spacing-xxl;
+        padding-bottom: $spacing-xxl;
+        gap: $spacing-sm;
+    }
+    @include xl-up {
+        padding-top: $spacing-xxl;
+        padding-bottom: $spacing-xxl;
+        gap: $spacing-md;
+    }
+    @include uhd-up {
+        padding-top: $spacing-xxxl;
+        padding-bottom: $spacing-xxxl;
+        gap: $spacing-xxl;
+    }
+    @include uhd-4k-up {
+        padding-top: $spacing-xxxxl;
+        padding-bottom: $spacing-xxxxl;
+        gap: $spacing-xxxl;
+    }
+  
 }
 
 .categoryButton {
     @include button-base-2;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $border-radius-xxxl;
-    font-size: 14px;
-    
+    border-radius: $border-radius-xxxxl;
+    background-color: $gray-light;
     &.activeCategory {
         background-color: $yellow;
     }
+    @include xs-only { 
+        padding: $spacing-xs $spacing-sm;
+        font-size: 12px;
+    }
+    @include sm-up {
+        padding: $spacing-sm $spacing-md;
+        font-size: 16px;
+    }
+    @include lg-up {
+        padding: $spacing-sm $spacing-lg;
+        font-size: 20px;
+    }
+    @include xl-up {
+        padding: $spacing-sm $spacing-lg;
+        font-size: 22px;
+    }
+    @include xxl-up {
+        padding: $spacing-sm $spacing-lg;
+        font-size: 24px;
+    }
+    @include xxxl-up {
+        padding: $spacing-md $spacing-lg;
+        font-size: 32px;
+    }
+    @include full-hd-up {
+        padding: $spacing-md $spacing-xl;
+        font-size: 38px;
+    }
+    @include uhd-up {
+        padding: $spacing-lg $spacing-xxl;
+        font-size: 48px;
+    }
+    @include uhd-4k-up {
+        padding: $spacing-xl $spacing-xxxl;
+        font-size: 60px;
+    }
+  
 }
 
 .menuTitle {
