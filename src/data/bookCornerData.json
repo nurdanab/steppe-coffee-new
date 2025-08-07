@@ -13,7 +13,6 @@
       "right": -15,
       "rotate": "0deg"
     },
-    "pdfFile": "",
     "description": ""
   },
   "bookShelf": {
@@ -24,50 +23,56 @@
         "title": "Грозовой перевал",
         "author": "Эмили Бронте",
         "coverImage": "/images/bookShelf/new-book-1.webp",
-        "pdfFile": "",
         "description": ""
       },
       {
         "id": "book2",
         "title": "David Copperfield",
         "author": "Charles Dickens",
-        "coverImage": "/images/bookShelf/book2.jpg"
+        "coverImage": "/images/bookShelf/book2.jpg",
+        "description": ""
       },
       {
         "id": "book3",
         "title": "The Count of Monte Cristo",
         "author": "Alexandre Dumas père",
-        "coverImage": "/images/bookShelf/book3.jpg"
+        "coverImage": "/images/bookShelf/book3.jpg",
+        "description": ""
       },
       {
         "id": "book4",
         "title": "The Frozen River: A GMA Book Club Pick: A Novel",
         "author": "Ariel Lawhon",
-        "coverImage": "/images/bookShelf/book4.jpg"
+        "coverImage": "/images/bookShelf/book4.jpg",
+        "description": ""
       },
       {
         "id": "book5",
         "title": "Red Rising",
         "author": "Pierce Brown",
-        "coverImage": "/images/bookShelf/book5.jpg"
+        "coverImage": "/images/bookShelf/book5.jpg",
+        "description": ""
       },
       {
         "id": "book6",
         "title": "Fahrenheit 451",
         "author": "Ray Bradbury",
-        "coverImage": "/images/bookShelf/book6.jpg"
+        "coverImage": "/images/bookShelf/book6.jpg",
+        "description": ""
       },
       {
         "id": "book7",
         "title": "The Midnight Library",
         "author": "Matt Haig",
-        "coverImage": "/images/bookShelf/book7.jpg"
+        "coverImage": "/images/bookShelf/book7.jpg",
+        "description": ""
       },
       {
         "id": "book8",
         "title": "TEST",
         "author": "Test",
-        "coverImage": "/images/bookShelf/test.jpeg"
+        "coverImage": "/images/bookShelf/test.jpeg",
+        "description": ""
       }
     ]
   },
