@@ -15,7 +15,7 @@
     {
       "id": "decoration-food-sticker",
       "type": "decoration_with_pin",
-      "text": "TEST-2",
+      "text": "Board games",
       "imageSrc": "/images/desk/detail/еда-стикер.png",
       "position": {
         "top": 21,
@@ -44,7 +44,7 @@
         "transform": "rotate(-8deg)",
         "zIndex": 1
       },
-      "text": "Test-3",
+      "text": "Events",
       "pinType": null,
       "backgroundShape": "oval",
       "backgroundColor": "white",
