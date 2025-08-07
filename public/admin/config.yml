@@ -67,6 +67,10 @@ collections:
                 allow_multiple: false
                 media_folder: "../../public/images/bookShelf"
                 public_folder: "/images/bookShelf"
+              - label: "PDF-файл Основной Книги"
+                name: "pdfFile"
+                widget: "string"
+                required: false
 
           - name: "bookShelf"
             label: "Книжная Полка"

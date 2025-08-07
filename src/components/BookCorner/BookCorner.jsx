@@ -183,11 +183,25 @@ const BookCorner = () => {
 
         {/* Главная открытая книга */}
         <div className={styles.mainBookContainer}>
-          <img
-            src={bookCornerData.mainBook.imageSrc}
-            alt="Открытая книга"
-            className={styles.mainBookImage}
-          />
+        {bookCornerData.mainBook.pdfFile ? (
+      <a 
+          href={bookCornerData.mainBook.pdfFile} 
+          target="_blank" 
+          rel="noopener noreferrer"
+      >
+        <img
+          src={bookCornerData.mainBook.imageSrc}
+          alt="Открытая книга"
+          className={styles.mainBookImage}
+        />
+      </a>
+    ) : (
+      <img
+          src={bookCornerData.mainBook.imageSrc}
+          alt="Открытая книга"
+          className={styles.mainBookImage}
+      />
+    )}
           <div className={styles.bookStampContainer} style={{
             top: `${bookCornerData.mainBook.stampOffset.top}%`,
             right: `${bookCornerData.mainBook.stampOffset.right}%`,
