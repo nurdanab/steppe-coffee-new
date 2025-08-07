@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import SeoHelmet from './components/SeoHelmet.jsx';
+import NotFoundPage from './components/NotFoundPage.jsx';
 
 import Header from './components/Header/Header';
 import HeroSection from './components/Hero/HeroSection';
@@ -153,6 +154,8 @@ function App() {
             <MenuDisplay />
           </main>
         } />
+        {/* Маршрут для 404 ошибки всегда должен быть последним */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <BookingModal
