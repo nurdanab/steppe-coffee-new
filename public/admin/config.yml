@@ -67,9 +67,9 @@ collections:
                 allow_multiple: false
                 media_folder: "../../public/images/bookShelf"
                 public_folder: "/images/bookShelf"
-              - label: "PDF-файл Основной Книги"
-                name: "pdfFile"
-                widget: "string"
+              - label: "Описание книги"
+                name: "description"
+                widget: "text"
                 required: false
 
           - name: "bookShelf"
@@ -101,12 +101,9 @@ collections:
                     allow_multiple: false
                     media_folder: "../../public/images/bookShelf"
                     public_folder: "/images/bookShelf"
-                  - label: "PDF-файл книги"
-                    name: "pdfFile"
-                    widget: "string"
-                    allow_multiple: false
-                    media_folder: "../../public/documentsPdf/booksPdf"
-                    public_folder: "/documentsPdf/booksPdf"
+                  - label: "Описание книги"
+                    name: "description"
+                    widget: "text"
                     required: false
 
   - name: "deskItems"

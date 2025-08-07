@@ -588,3 +588,52 @@
     margin: 0 auto; // Центрирование
   }
 }
+// тултипы
+
+.bookCard,
+.mainBookImageWrapper {
+  position: relative; 
+  cursor: pointer; 
+
+  // Стили для самого тултипа
+  .bookTooltip {
+    position: absolute;
+    bottom: 110%; 
+    left: 50%;
+    transform: translateX(-50%); // Центрируем по горизонтали
+    
+    background-color: $black; // Чёрный цвет для фона тултипа
+    color: $white;           // Белый цвет для текста
+    padding: $spacing-sm $spacing-md; // Отступы внутри тултипа
+    border-radius: $border-radius-md;
+    min-width: 200px;
+    max-width: 300px;
+    text-align: center;
+    z-index: 10; // Чтобы тултип был поверх других элементов
+    box-shadow: $shadow-medium; // Добавляем тень для лучшей видимости
+    
+    // Стрелочка внизу тултипа
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -8px; // Центрируем стрелку
+      border-width: 8px;
+      border-style: solid;
+      border-color: $black transparent transparent transparent;
+    }
+
+    p {
+      @extend .gilroy-14; // Используем стиль для текста
+      margin: 0; // Убираем отступы у параграфа
+      line-height: 1.4;
+    }
+  }
+}
+
+// Новый класс-обёртка для главной книги
+.mainBookImageWrapper {
+  position: relative;
+  // Остальные стили, если нужны, можно добавить здесь
+}

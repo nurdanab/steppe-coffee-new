@@ -123,7 +123,7 @@ const BookCorner = () => {
 
     fetchTodayEvents();
   }, []); // Запускаем один раз при монтировании
-
+  const [activeTooltip, setActiveTooltip] = useState(null);
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
       <div className={styles.bookCornerContent}>
@@ -154,20 +154,24 @@ const BookCorner = () => {
               </button>
               <div className={styles.booksContainer} ref={shelfRef}>
                 {bookCornerData.bookShelf.books.map(book => (
-
-                  <a 
-            key={book.id} 
-            href={book.pdfFile} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className={styles.bookCardLink}
-        >
-            <div className={styles.bookCard}>
-                <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
-                <p className={styles.bookTitle}>{book.title}</p>
-                <p className={styles.bookAuthor}>{book.author}</p>
-            </div>
-        </a>
+                  <div 
+                    key={book.id} 
+                    className={styles.bookCard}
+                    // НОВОЕ: Обработчики событий для наведения мыши
+                    onMouseEnter={() => setActiveTooltip(book.id)}
+                    onMouseLeave={() => setActiveTooltip(null)}
+                >
+                    <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                    <p className={styles.bookTitle}>{book.title}</p>
+                    <p className={styles.bookAuthor}>{book.author}</p>
+                    
+                    {/* НОВОЕ: Условный рендеринг тултипа */}
+                    {activeTooltip === book.id && (
+                        <div className={styles.bookTooltip}>
+                            <p>{book.description}</p>
+                        </div>
+                    )}
+                </div>
                 ))}
               </div>
               <button
@@ -178,30 +182,46 @@ const BookCorner = () => {
                 <img src="/images/right-vis.png" alt="Прокрутить вправо" />
               </button>
             </div>
+
+            
           </div>
         </div>
 
         {/* Главная открытая книга */}
         <div className={styles.mainBookContainer}>
-        {bookCornerData.mainBook.pdfFile ? (
-      <a 
-          href={bookCornerData.mainBook.pdfFile} 
-          target="_blank" 
-          rel="noopener noreferrer"
-      >
-        <img
-          src={bookCornerData.mainBook.imageSrc}
-          alt="Открытая книга"
-          className={styles.mainBookImage}
-        />
-      </a>
-    ) : (
-      <img
-          src={bookCornerData.mainBook.imageSrc}
-          alt="Открытая книга"
-          className={styles.mainBookImage}
-      />
-    )}
+          <div 
+            className={styles.mainBookImageWrapper}
+            // НОВОЕ: Обработчики для наведения на главную книгу
+            onMouseEnter={() => bookCornerData.mainBook.description && setActiveTooltip('mainBook')}
+            onMouseLeave={() => setActiveTooltip(null)}
+          >
+            {bookCornerData.mainBook.pdfFile ? (
+              <a 
+                href={bookCornerData.mainBook.pdfFile} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <img
+                  src={bookCornerData.mainBook.imageSrc}
+                  alt="Открытая книга"
+                  className={styles.mainBookImage}
+                />
+              </a>
+            ) : (
+              <img
+                src={bookCornerData.mainBook.imageSrc}
+                alt="Открытая книга"
+                className={styles.mainBookImage}
+              />
+            )}
+
+            {/* НОВОЕ: Условный рендеринг тултипа для главной книги */}
+            {activeTooltip === 'mainBook' && (
+              <div className={styles.bookTooltip}>
+                <p>{bookCornerData.mainBook.description}</p>
+              </div>
+            )}
+          </div>
           <div className={styles.bookStampContainer} style={{
             top: `${bookCornerData.mainBook.stampOffset.top}%`,
             right: `${bookCornerData.mainBook.stampOffset.right}%`,
