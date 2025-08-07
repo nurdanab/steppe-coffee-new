@@ -92,7 +92,7 @@ function MenuDisplay() {
                 </div>
             </div>               
 
-            <div className="headerFullWidthContainer">
+            <div className="container">
             <div className={styles.menuContentContainer}>
                 <div className={styles.menuCategories}>
                     {categoriesList.map(category => (

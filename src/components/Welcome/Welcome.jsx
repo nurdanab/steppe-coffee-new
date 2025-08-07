@@ -10,7 +10,7 @@ const Welcome = () => {
 
   return (
     <section ref={ref} className={`${styles.welcome} ${inView ? styles.visible : ''}`}>
-           <div className="headerFullWidthContainer"> 
+           <div className="container"> 
       <div className={styles.welcomeContent}>
         {/* Заголовок */}
         <div className={`${styles.welcomeTitleBox} ${inView ? styles.titleBoxVisible : ''}`}>

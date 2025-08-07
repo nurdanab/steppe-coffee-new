@@ -9,6 +9,7 @@
   font-weight: 300;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0400-04FF; // Добавлена кириллица
 }
 
 @font-face {
@@ -17,6 +18,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0400-04FF;
 }
 
 @font-face {
@@ -25,6 +27,7 @@
   font-weight: 500;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0400-04FF;
 }
 
 @font-face {
@@ -33,6 +36,7 @@
   font-weight: 700;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0400-04FF;
 }
 
 @font-face {
@@ -41,6 +45,7 @@
   font-weight: 800;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0400-04FF;
 }
 
 @font-face {
@@ -49,10 +54,18 @@
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0400-04FF;
 }
 
 // Типографические классы
-.riffic-large {
+@mixin riffic-large {
+  font-family: 'Riffic', serif;
+  font-weight: normal;
+  line-height: 1.2;
+  font-size: 22px; 
+}
+// Типографические классы
+@mixin riffic-large {
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.2;
@@ -87,7 +100,7 @@
   }
 }
 
-.riffic-medium {
+@mixin riffic-medium {
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.3;
@@ -122,7 +135,7 @@
   }
 }
 
-.riffic-32 {
+@mixin riffic-32 {
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.4;
@@ -157,11 +170,12 @@
   }
 }
 
-.riffic-24 {
+@mixin riffic-24 {
   font-family: 'Riffic', serif;
-  font-weight: normal;
-  line-height: 1.2;
+  font-weight: 400;
+    line-height: 1.2;
   font-size: 22px; 
+
 
   @include sm-up {
     font-size: 23px;
@@ -192,7 +206,7 @@
   }
 }
 
-.riffic-20 {
+@mixin riffic-20 {
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.2;
@@ -227,10 +241,11 @@
   }
 }
 
-.gilroy-32 {
+@mixin gilroy-32 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.4;
   font-size: 26px; 
+  font-weight: 500;
 
   @include sm-up {
     font-size: 28px;
@@ -261,7 +276,7 @@
   }
 }
 
-.gilroy-24 {
+@mixin gilroy-24 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.5;
   font-size: 20px; 
@@ -296,10 +311,11 @@
   
 }
 
-.gilroy-18 {
+@mixin gilroy-18 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
   font-size: 15px;
+  font-weight: 300;
 
   @include sm-up {
     font-size: 16px;
@@ -330,10 +346,11 @@
   }
 }
 
-.gilroy-16 {
+@mixin gilroy-16 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 16px; // Базовый размер
+  font-size: 16px; 
+  font-weight: 400;
 
   @include xs-only { 
     font-size: 13px;
@@ -367,10 +384,11 @@
   }
 }
 
-.gilroy-14 {
+@mixin gilroy-14 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
   font-size: 6px; 
+  font-weight: 300;
 
   @include xs-only { 
     font-size: 6px;
@@ -404,10 +422,11 @@
   }
 }
 
-.gilroy-12 {
+@mixin gilroy-12 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
   font-size: 9px;  
+  font-weight: 300;
 
   @include xs-only { 
     font-size: 9px;

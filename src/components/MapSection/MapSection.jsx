@@ -31,7 +31,7 @@ const MapSection = () => {
             <img src="/images/map-decor2.png" alt="Декоративный элемент" className={styles.mapDecor2} />
             <img src="/images/map-decor3.png" alt="Декоративный элемент" className={styles.mapDecor3} />
             
-            <div className="headerFullWidthContainer"> 
+            <div className="container"> 
 
             <h2 className={styles.title}>Steppe Coffee на карте</h2>
 

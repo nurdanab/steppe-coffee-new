@@ -1,9 +1,8 @@
 /* src/components/AdminDashboard/AdminDashboard.module.scss */
-
+@use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
-@use "sass:color";
+@use '../../styles/typography' as t;
 
 .adminDashboard {
   @include section-padding; // Используем миксин для адаптивных отступов
@@ -19,7 +18,7 @@
 }
 
 .title {
-  @extend .riffic-medium;
+  @include t.riffic-medium;
   color: $maroon;
   text-align: center;
   margin-bottom: $spacing-xl;
@@ -37,12 +36,12 @@
   box-shadow: $shadow-medium;
 
   h2 {
-    @extend .riffic-24;
+    @include t.riffic-24;
     color: $maroon;
     margin-bottom: $spacing-md;
   }
   p {
-    @extend .gilroy-16;
+    @include t.gilroy-16;
     color: $gray-dark;
   }
 }
@@ -50,7 +49,7 @@
 .loadingMessage,
 .errorMessage,
 .noBookingsMessage {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   text-align: center;
   padding: $spacing-md;
   border-radius: $border-radius-sm;
@@ -104,7 +103,7 @@
   }
 
   label {
-    @extend .gilroy-16;
+    @include t.gilroy-16;
     font-weight: 600;
     color: $black;
     white-space: nowrap; // Предотвращает перенос текста
@@ -158,7 +157,7 @@
   thead {
     background-color: $maroon;
     th {
-      @extend .gilroy-14;
+      @include t.gilroy-14;
       color: $white;
       padding: $spacing-sm $spacing-md;
       font-weight: 700;
@@ -184,7 +183,7 @@
       }
     }
     td {
-      @extend .gilroy-14;
+      @include t.gilroy-14;
       padding: $spacing-sm $spacing-md;
       color: $black;
       vertical-align: top; // Выравнивание по верхнему краю
@@ -201,7 +200,7 @@
 }
 
 .statusSelect {
-  @extend .gilroy-14;
+  @include t.gilroy-14;
   padding: 4px $spacing-xs;
   border: 1px solid $gray-medium;
   border-radius: $border-radius-sm;

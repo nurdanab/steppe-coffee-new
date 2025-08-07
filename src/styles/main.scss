@@ -2,20 +2,20 @@
 @use "sass:color";
 
 @use 'variables' as *;
-@use 'mixins' as *;    // Moved before typography
-@use 'typography' as *;
+@use 'mixins' as *;
+@use 'typography' as t;
 @use 'base' as *;
 
-@use '../components/Header/Header.module.scss';
-@use '../components/Hero/HeroSection.module.scss';
-@use '../components/Promo/Promo.module.scss';
-@use '../components/Welcome/Welcome.module.scss';
-@use '../components/WelcomeDesk/WelcomeDesk.module.scss';
-@use '../components/BookCorner/BookCorner.module.scss';
-@use '../components/PublicCalendar/PublicCalendar.module.scss';
-@use '../components/ProfilePage/ProfilePage.module.scss'; 
-@use '../components/AdminDashboard/AdminDashboard.module.scss'; 
-@use '../components/AdminDashboard/BookingEditModal.module.scss'; 
+// @use '../components/Header/Header.module.scss';
+// @use '../components/Hero/HeroSection.module.scss';
+// @use '../components/Promo/Promo.module.scss';
+// @use '../components/Welcome/Welcome.module.scss';
+// @use '../components/WelcomeDesk/WelcomeDesk.module.scss';
+// @use '../components/BookCorner/BookCorner.module.scss';
+// @use '../components/PublicCalendar/PublicCalendar.module.scss';
+// @use '../components/ProfilePage/ProfilePage.module.scss'; 
+// @use '../components/AdminDashboard/AdminDashboard.module.scss'; 
+// @use '../components/AdminDashboard/BookingEditModal.module.scss'; 
 
 .fade-in {
   animation: fadeIn 0.6s ease-in-out;

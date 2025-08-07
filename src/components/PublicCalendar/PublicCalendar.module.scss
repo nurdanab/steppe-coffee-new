@@ -1,11 +1,12 @@
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
 @use '../../styles/base' as *;
+@use '../../styles/typography' as t;
+
 
 .publicCalendarWrapper {
-  @extend .section;
+  @include section;
   background-color: $yellow;
   position: relative;
   overflow: hidden;
@@ -69,7 +70,7 @@
 }
 
 .calendarTitle {
-  @extend .riffic-32; /* Используем класс для заголовка, который адаптивно меняет размер */
+  @include t.riffic-32; /* Используем класс для заголовка, который адаптивно меняет размер */
   color: $black;
   text-align: center;
   margin-bottom: $spacing-lg;
@@ -100,7 +101,7 @@
 
   /* Заголовок календаря (месяц/неделя/день) */
   .fc-toolbar-title {
-    @extend .gilroy-24; /* Используем адаптивный класс для заголовка */
+    @include t.gilroy-24; /* Используем адаптивный класс для заголовка */
     font-weight: 700; /* Жирный шрифт */
     color: $black;
     text-align: center;
@@ -225,14 +226,14 @@
 
   /* Скроллбар для временного представления, если необходимо */
   .fc-scroller {
-    @extend .no-scrollbar; /* Применяем утилитарный класс для скрытия скроллбара */
+    @include no-scrollbar; /* Теперь этот миксин будет найден */
   }
 }
 
 /* Сообщения о загрузке/ошибке */
 .loadingMessage,
 .errorMessage {
-  @extend .gilroy-24; /* Используем типографический класс */
+  @include t.gilroy-24; /* Используем типографический класс */
   text-align: center;
   padding: $spacing-md;
   font-weight: 600;

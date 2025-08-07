@@ -2,7 +2,7 @@
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 @use '../../styles/base' as *; 
 
 
@@ -57,7 +57,7 @@
 }
 
 .heading {
-  @extend .riffic-32;
+  @include t.riffic-32;
   color: $black;
   margin-bottom: $spacing-md;
   
@@ -79,7 +79,7 @@
 }
 
 .description {
-  @extend .gilroy-16;
+  @include t.gilroy-16;
   color: $gray-dark;
   margin-bottom: $spacing-md;
   @include xs-only { 

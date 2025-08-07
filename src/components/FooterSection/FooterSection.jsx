@@ -35,7 +35,7 @@ const FooterSection = () => {
             <div className={styles.footerDecorBackground} />
 
             {/* Слой 1: Основной контент верхней части - "Присоединяйтесь к сообществу" и телефон */}
-            <div className="headerFullWidthContainer"> 
+            <div className="container"> 
                 <div className={styles.communityBlock}>
                     <div className={styles.communityContent}>
                         <h2 className={styles.communityTitle}>Присоединяйтесь к 1000+ членам сообщества</h2>
@@ -54,7 +54,7 @@ const FooterSection = () => {
             </div>
 
             {/* Слой 1: Реклама приложения в нижней левой части */}
-            <div className="headerFullWidthContainer"> 
+            <div className="container"> 
                 <div className={styles.appPromoBlock}>
                     <h3 className={styles.appPromoTitle}>Steppe Coffee: Membership app</h3>
                     <p className={styles.appPromoDescription}>
@@ -74,7 +74,7 @@ const FooterSection = () => {
             <div className={styles.footerDecorMid}></div>
 
             {/* Слой 3: Основной контент футера - "Контакты" и "О нас" */}
-            <div className="headerFullWidthContainer"> 
+            <div className="container"> 
                 <div className={styles.mainFooterContent}>
                     <div className={styles.footerColumn}>
                         <h3 className={styles.columnTitle}>Контакты</h3>

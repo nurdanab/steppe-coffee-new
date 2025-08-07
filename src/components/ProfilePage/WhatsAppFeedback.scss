@@ -2,7 +2,7 @@
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .whatsapp-feedback-container {
   max-width: 400px;
@@ -31,7 +31,7 @@
   }
 
   h3 {
-    @extend .riffic-24;
+    @include t.riffic-24;
     color: $black;
     margin-bottom: $spacing-sm;
 
@@ -51,7 +51,7 @@
   }
 
   p {
-    @extend .gilroy-16;
+    @include t.gilroy-16;
     color: $gray-dark;
     margin-bottom: $spacing-lg;
   }
@@ -64,7 +64,7 @@
   border-color: #25D366;
   border-radius: $border-radius-lg;
   
-  @extend .gilroy-16;
+  @include t.gilroy-16;
   font-weight: 700;
 
   &:hover {

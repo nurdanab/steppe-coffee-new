@@ -1,6 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .mapSection {
     background-color: $light-yellow;
@@ -15,7 +15,7 @@
 }
 
 .title {
-    @extend .riffic-medium;
+    @include t.riffic-medium;
     color: $black;
     text-align: center;
     z-index: 4;
@@ -256,14 +256,14 @@
     text-align: center;
 
     p {
-        @extend .gilroy-18;
+        @include t.gilroy-18;
         margin: 5px 0;
     }
 }
 
 .scheduleTitle,
 .addressTitle {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     margin-top: 15px;
     color: $white;
     

@@ -1,6 +1,6 @@
 @use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .footerSection {
     background-color: $white;  
@@ -165,12 +165,12 @@
 }
 
 .communityTitle {
-    @extend .riffic-large;
+    @include t.riffic-large;
     margin-bottom: $spacing-md;
 }
 
 .communityText {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     margin-bottom: $spacing-xl;
 }
 
@@ -263,12 +263,12 @@
 }
 
 .appPromoTitle {
-    @extend .riffic-32;
+    @include t.riffic-32;
     margin-bottom: $spacing-md;
 }
 
 .appPromoDescription {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     margin-bottom: $spacing-md;
 }
 
@@ -421,13 +421,13 @@
 }
 
 .columnTitle {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     margin-bottom: $spacing-md;
 }
 
 .contactInfo,
 .documentLinks li {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     line-height: 1.6;
     margin-bottom: $spacing-xs;
 }

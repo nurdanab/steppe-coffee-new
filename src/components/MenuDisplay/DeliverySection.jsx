@@ -10,7 +10,7 @@ import decor2 from '/images/map-decor2.png';
 const DeliverySection = forwardRef((props, ref) => {
   return (
     <section ref={ref} className={`${styles.deliverySection} section`}>
-                    <div className="headerFullWidthContainer">
+                    <div className="container">
 
       {/* <div className={`${styles.contentWrapper} container`}> */}
         <div className={styles.textContainer}>

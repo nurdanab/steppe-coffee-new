@@ -1,5 +1,6 @@
 // _mixins.scss
 @use "sass:color";
+// @use 'mixins' as *;
 @use 'variables' as *;
 
 $breakpoint-xs: map-get($breakpoints, xs);
@@ -202,36 +203,33 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
 
 @mixin container-padding {
   padding: 0 $spacing-md;
-  
-  @include uhd-4k-up {
-    padding: 100px 180px; 
-  }
-  @include uhd-up {
-    padding: 0 120px; 
-  }
-  @include full-hd-up {
-    padding: 0 100px;
-  }
-  @include xxxl-up {
-    padding: 0 $spacing-xxl;
-  }
-  @include xxl-up {
+
+  @include sm-up {
     padding: 0 $spacing-xl;
   }
+  @include md-up {
+    padding: 0 $spacing-xxl;
+  }
+  @include lg-up {
+    padding: 0 $spacing-xxxl;
+  }
   @include xl-up {
-    padding: 0 $spacing-lg;
+    padding: 0 $spacing-xxxl * 1.2;
   }
-  @include lg-down { // Применяем сверху вниз
-    padding: 0 $spacing-md;
+  @include xxl-up {
+    padding: 0 $spacing-xxxl * 1.6;
   }
-  @include md-down {
-    padding: 0 $spacing-sm;
+  @include xxxl-up {
+    padding: 0 $spacing-xxxl * 2.2;
   }
-  @include sm-down { // Для экранов меньше SM, но больше XS
-    padding: 0 $spacing-sm;
+  @include full-hd-up {
+    padding: 0 $spacing-xxxl * 2.6;
   }
-  @include xs-only { // Только для самых маленьких экранов
-    padding: 0 $spacing-xs;
+  @include uhd-up {
+    padding: 0 $spacing-xxxl * 3.4;
+  }
+  @include uhd-4k-up {
+    padding: 0 $spacing-xxxl * 4.2;
   }
 }
 
@@ -352,4 +350,12 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
         clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 85%);
         z-index: 3;
     }
+}
+@mixin no-scrollbar {
+  -ms-overflow-style: none; // Для IE и Edge
+  scrollbar-width: none; // Для Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Для Chrome, Safari и Opera
+  }
 }

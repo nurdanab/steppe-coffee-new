@@ -2,7 +2,7 @@
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 @use '../../styles/base' as *; 
 
 
@@ -92,7 +92,7 @@
 }
 
 .profileTitle {
-  @extend .riffic-32;
+  @include t.riffic-32;
   color: $black;
   margin: 0;
   text-align: left;
@@ -170,7 +170,7 @@
 .logoutButton,
 .changePasswordButton {
   border-radius: $border-radius-xxxxl;
-  @extend .gilroy-16;
+  @include t.gilroy-16;
 
   @include xs-only {
     flex-grow: 1;
@@ -258,7 +258,7 @@
 // }
 
 // .notLoggedInTitle {
-//   @extend .riffic-medium; 
+//   @include t.riffic-medium; 
 //   color: $black;
 //   margin-bottom: $spacing-sm;
   
@@ -295,7 +295,7 @@
 // }
 
 // .notLoggedInText {
-//   @extend .gilroy-18;
+//   @include t.gilroy-18;
 //   color: $gray-dark;
 //   margin-bottom: $spacing-md;
 // }
@@ -304,7 +304,7 @@
   @include button-primary;
   padding: $spacing-sm $spacing-lg;
   border-radius: $border-radius-xxxxl;
-  @extend .gilroy-16;
+  @include t.gilroy-16;
   font-weight: 700;
   
   @include xxl-up {
@@ -361,7 +361,7 @@
 }
 
 .bookingHistoryTitle {
-  @extend .riffic-24;
+  @include t.riffic-24;
   color: $black;
   margin-bottom: $spacing-lg;
   text-align: center;
@@ -450,7 +450,7 @@
   }
 
   p {
-    @extend .gilroy-16;
+    @include t.gilroy-16;
     color: $black;
     margin-bottom: $spacing-xs;
 
@@ -460,7 +460,7 @@
   }
   
   .bookingTitle {
-    @extend .gilroy-24;
+    @include t.gilroy-24;
     font-weight: 600;
     margin-bottom: $spacing-sm;
     color: $black;
@@ -552,7 +552,7 @@
   background-color: $gray-light;
   border-radius: $border-radius-sm;
   margin-top: $spacing-md;
-  @extend .gilroy-18;
+  @include t.gilroy-18;
 
   @include xs-only {
     padding: $spacing-sm;

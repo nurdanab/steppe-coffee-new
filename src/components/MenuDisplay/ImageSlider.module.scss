@@ -1,7 +1,7 @@
 // src/components/ImageSlider/ImageSlider.module.scss
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .imageSlider {
   position: relative;
@@ -64,7 +64,7 @@
 }
 
 .title {
-    @extend .riffic-medium;
+    @include t.riffic-medium;
     color: $white;
     text-shadow: $shadow-medium;
 

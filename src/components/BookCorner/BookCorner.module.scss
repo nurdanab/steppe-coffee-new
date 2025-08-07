@@ -1,6 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .bookCornerSection {
   width: 100%;
@@ -88,7 +88,7 @@
 }
 
 .yellowPartTitle {
-  @extend .riffic-32;
+  @include t.riffic-32;
   color: $black;
   margin-bottom: $spacing-md;
 
@@ -113,7 +113,7 @@
 }
 
 .yellowPartDescription {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   color: $black;
   margin-bottom: $spacing-lg;
   max-width: 800px;
@@ -470,7 +470,7 @@
 }
 
 .whitePartPlaceholder {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   color: $gray-dark;
   text-align: center;
   flex-grow: 1;
@@ -526,7 +526,7 @@
 }
 
 .bookShelfSubtitle {
-  @extend .gilroy-24;
+  @include t.gilroy-24;
   color: $black;
   margin-bottom: $spacing-md;
   text-align: left;
@@ -662,7 +662,7 @@
   }
 }
 .booksContainer {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   display: flex;
   gap: 40px;
   overflow-x: scroll;
@@ -833,7 +833,7 @@
 }
 
 .eventsSubtitle {
-  @extend .gilroy-24;
+  @include t.gilroy-24;
   color: $black;
   margin-bottom: $spacing-md;
   text-align: left;
@@ -890,7 +890,7 @@
   width: 100%;
   margin-bottom: 5px;
   span {
-    @extend .gilroy-16;
+    @include t.gilroy-16;
     font-weight: 600;
     color: $black;
     width: calc(100% / 7);
@@ -961,7 +961,7 @@
 }
 
 .eventDate {
-  @extend .gilroy-14;
+  @include t.gilroy-14;
   color: $gray-dark;
   margin-bottom: $spacing-sm;
   text-align: left;
@@ -976,7 +976,7 @@
 }
 
 .emptyEventsMessage {
-  @extend .gilroy-14;
+  @include t.gilroy-14;
   color: $gray-dark;
   text-align: left;
   padding: $spacing-sm;
@@ -1023,7 +1023,7 @@
 }
 
 .todayEventTime {
-  @extend .gilroy-16;
+  @include t.gilroy-16;
   font-weight: 600;
   color: $black;
   margin-bottom: 5px;
@@ -1034,7 +1034,7 @@
 }
 
 .todayEventTitle {
-  @extend .gilroy-14;
+  @include t.gilroy-14;
   color: $gray-dark;
   
   @include xs-only {
@@ -1043,7 +1043,7 @@
 }
 
 .viewMoreLink {
-  @extend .gilroy-14;
+  @include t.gilroy-14;
   color: $light-yellow;
   text-decoration: none;
   font-weight: 500;
@@ -1122,7 +1122,7 @@
     }
     
     p {
-      @extend .gilroy-14;
+      @include t.gilroy-14;
       margin: 0;
       line-height: 1.4;
       font-weight: 500;

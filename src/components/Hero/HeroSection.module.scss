@@ -1,6 +1,8 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
+@use '../../styles/base' as *;
+
 
 .hero {
   min-height: 100vh;
@@ -8,7 +10,7 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;  
-  @include flex-center;
+  @include flex-between;
   position: relative;
   overflow: hidden;
 
@@ -86,7 +88,7 @@
   width: 100%;
   max-width: 1200px; 
   margin: 0 auto;
-
+  // @include container-padding;
   @include xs-only { 
     gap: $spacing-sm;
   }
@@ -140,7 +142,7 @@
   }
 }
 .headline {
-  @extend .riffic-large;
+  @include t.riffic-large;
   color: $white;
   margin-bottom: $spacing-xxl; // По умолчанию для больших экранов
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -157,7 +159,7 @@
 }
 
 .subheadline {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   color: $white;
   margin-bottom: $spacing-md;
   font-weight: 300;

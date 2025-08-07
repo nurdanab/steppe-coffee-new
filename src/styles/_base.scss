@@ -1,5 +1,6 @@
 @use 'variables' as *;
 @use 'mixins' as *;
+@use 'typography' as t; 
 
 * {
   margin: 0;
@@ -15,22 +16,25 @@ html {
 }
 
 body {
-  font-family: 'Gilroy', sans-serif;
-  font-weight: 400;
-  line-height: 1.6;
+  @include t.gilroy-16; // Применяем миксин для базового текста. Теперь Gilroy точно будет загружен.
   color: $black;
   background-color: $white;
   width: 100%;
 }
 
 .container {
-  max-width: 1200px; // Базовая максимальная ширина для контейнера
-  margin: 0 auto;
+  // max-width: 1200px; // Базовая максимальная ширина для контейнера
+  // margin: 0 auto;
   @include container-padding; // Используем миксин для адаптивных отступов
 }
 
-.section {
+@mixin section {
   @include section-padding; // Используем миксин для адаптивных отступов секций
+}
+
+h1 {
+  @include t.riffic-large; // Применяем миксин для заголовков h1. Теперь Riffic тоже будет загружен.
+  color: $black;
 }
 
 a {

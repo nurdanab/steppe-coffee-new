@@ -1,16 +1,17 @@
 // src/components/WelcomeDesk/WelcomeDesk.module.scss
+@use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .welcomeSection {
   width: 100%;
   background-color: $light-yellow;
-  display: flex;
+  display: block;
   justify-content: center;
   align-items: center;
 
-  @include section-padding;
+  // @include section-padding;
 }
 
 .corkBoard {

@@ -1,6 +1,8 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/base' as *;
+
+@use '../../styles/typography' as t;
 
 $header-bg-color: rgba($black, 0.8);
 
@@ -40,7 +42,7 @@ $header-bg-color: rgba($black, 0.8);
   }
 }
 
-.headerFullWidthContainer {
+.container {
   width: 100%;
   margin: 0 auto;
   padding: 0 $spacing-md;
@@ -142,7 +144,7 @@ $header-bg-color: rgba($black, 0.8);
 }
 
 .navigationLink {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   font-weight: 400;
   color: $white;
   padding: $spacing-xs $spacing-sm;
@@ -357,7 +359,7 @@ $header-bg-color: rgba($black, 0.8);
 
     .mobileNavigationItem {
       .mobileNavigationLink {
-        @extend .gilroy-24;
+        @include t.gilroy-24;
         color: $white;
         text-decoration: none;
         transition: color $transition-fast;
@@ -374,7 +376,7 @@ $header-bg-color: rgba($black, 0.8);
   }
 
   .mobileLoggedInUserLink {
-    @extend .gilroy-24;
+    @include t.gilroy-24;
     color: $white;
     text-decoration: none;
     transition: color $transition-fast;
@@ -392,7 +394,7 @@ $header-bg-color: rgba($black, 0.8);
   }
 
   .mobileLogoutButton {
-    @extend .gilroy-24;
+    @include t.gilroy-24;
     font-weight: 400;
     color: $white;
     padding: $spacing-xs $spacing-sm;
@@ -419,7 +421,7 @@ $header-bg-color: rgba($black, 0.8);
   }
 
   .mobileLoginButton {
-    @extend .gilroy-24;
+    @include t.gilroy-24;
     font-weight: 600;
     color: $black;
     padding: $spacing-xs $spacing-md;

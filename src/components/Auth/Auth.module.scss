@@ -1,7 +1,7 @@
 @use "sass:color";
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 @use '../../styles/base' as *;
 
 .modalOverlay {
@@ -78,7 +78,7 @@
 }
 
 h2 {
-  @extend .riffic-32;
+  @include t.riffic-32;
   color: $black;
   
   @include xs-only {
@@ -147,7 +147,7 @@ h2 {
 
   input[type="email"],
   input[type="password"] {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     width: 100%;
     border: 1px solid $gray-medium;
     color: $black;
@@ -255,7 +255,7 @@ h2 {
 }
 
 .toggleAuth {
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   color: $black;
   
   @include xs-only {
@@ -290,7 +290,7 @@ h2 {
   }
 
   .toggleButton {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     background: none;
     border: none;
     color: $yellow;
@@ -332,14 +332,14 @@ h2 {
   }
   
   .toggleButton {
-    @extend .gilroy-18;
+    @include t.gilroy-18;
     color: $yellow;
     text-decoration: underline;
   }
 }
 
 .message {
-  @extend .gilroy-12;
+  @include t.gilroy-12;
   padding: $spacing-sm;
   color: $maroon;
   

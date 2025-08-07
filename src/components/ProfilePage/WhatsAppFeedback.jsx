@@ -10,7 +10,7 @@ const WhatsAppFeedback = ({ phoneNumber, prefilledMessage }) => {
   };
 
   return (
-    <div className="headerFullWidthContainer">
+    <div className="container">
 
     <div className="whatsapp-feedback-container">
       <h3>Оставьте ваш отзыв</h3>

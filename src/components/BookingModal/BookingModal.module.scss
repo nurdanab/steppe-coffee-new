@@ -1,7 +1,7 @@
 // src/components/BookingModal/BookingModal.module.scss
 @use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .modalOverlay {
   position: fixed;
@@ -101,7 +101,7 @@
     font-weight: 600;
     color: $black; // Используем переменную цвета
     font-size: 16px; 
-    // @include gilroy-18; // Можно использовать миксин, если хотите, чтобы это был конкретный размер из типографики
+    // @include t.gilroy-18; // Можно использовать миксин, если хотите, чтобы это был конкретный размер из типографики
   }
 
   input[type="date"],

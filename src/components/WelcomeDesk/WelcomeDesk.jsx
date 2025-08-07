@@ -128,7 +128,7 @@ const WelcomeDesk = () => {
 
   return (
     <section ref={ref} className={`${styles.welcomeSection} ${inView ? styles.visible : ''}`}>
-                <div className="headerFullWidthContainer"> 
+                <div className="container"> 
       <div className={styles.corkBoard}>
 
         {/* заголовок фото */}

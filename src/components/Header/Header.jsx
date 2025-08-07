@@ -37,7 +37,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
   return (
     <>
       <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`}>
-        <div className={styles.headerFullWidthContainer}>
+        <div className={styles.container}>
           <div className={styles.headerContent}>
             <div className={styles.logo}>
               <Link to="/" className={styles.logoLink}>

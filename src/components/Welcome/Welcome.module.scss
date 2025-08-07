@@ -1,6 +1,6 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
-@use '../../styles/typography' as *;
+@use '../../styles/typography' as t;
 
 .welcome {
   @include section-padding;
@@ -132,7 +132,7 @@
 
 }
 .welcomeTitle {
-  @extend .riffic-32;
+  @include t.riffic-32;
   color: $black;
   text-align: center;
   opacity: 1;
@@ -229,7 +229,7 @@
 .textContainer {
   flex: 1;
   text-align: left;
-  @extend .gilroy-18;
+  @include t.gilroy-18;
   // max-width: 600px;
 
   p {

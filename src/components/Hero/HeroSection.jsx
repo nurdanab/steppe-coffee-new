@@ -11,7 +11,7 @@ const HeroSection = ({ onOpenBookingModal }) => {
 
   return (
     <section ref={ref} className={`${styles.hero} ${inView ? styles.visible : ''}`}>
-      <div className="headerFullWidthContainer">
+      <div className="container">
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.headline}>

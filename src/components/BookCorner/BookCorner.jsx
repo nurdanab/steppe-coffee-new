@@ -130,7 +130,7 @@ const BookCorner = () => {
         {/* Желтая часть */}
         <div className={styles.yellowPart}>
           <div className={styles.yellowPartInner}>
-          <div className="headerFullWidthContainer"> 
+          <div className="container"> 
 
             <div className={styles.yellowPartTextContent}>
               <h2 className={styles.yellowPartTitle}>{bookCornerData.yellowPart.title}</h2>
@@ -144,7 +144,7 @@ const BookCorner = () => {
               className={styles.yellowPartDecor}
             />
           </div>
-          <div className="headerFullWidthContainer"> 
+          <div className="container"> 
 
           <div className={styles.bookShelfSection}>
             <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>

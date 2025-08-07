@@ -1,7 +1,7 @@
 // src/components/WelcomeDesk/NewsSticker/NewsSticker.module.scss
 @use '../../../styles/variables' as *;
 @use '../../../styles/mixins' as *;
-@use '../../../styles/typography' as *;
+@use '../../../styles/typography' as t;
 
 .sticker {
   position: relative;
@@ -61,7 +61,7 @@
 }
 
 .stickerText {
-  @extend .gilroy-14; 
+  @include t.gilroy-14; 
   font-weight: 500;
   color: $black;
   margin: 0;

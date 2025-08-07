@@ -20,7 +20,7 @@ const Promo = () => {
 
   return (
     <section ref={ref} className={`${styles.promoSection} ${inView ? styles.visible : ''}`}>
-      <div className="headerFullWidthContainer">
+      <div className="container">
         <h2 className={`${styles.promoTitle} ${inView ? styles.visible : ''}`}>
           Промо-предложения
         </h2>
