@@ -104,6 +104,87 @@ function App() {
     }
   };
 
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "CafeOrCoffeeShop",
+    "name": "Steppe Coffee",
+    "image": "https://steppecoffee.netlify.app/images/og/og-image.webp",
+    "url": "https://steppecoffee.netlify.app/",
+    "telephone": "+7 (777) 123-45-67",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ул. Курмангазы, 63",
+      "addressLocality": "Алматы",
+      "addressRegion": "Almaty",
+      "postalCode": "050008",
+      "addressCountry": "KZ"
+    },
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "07:45",
+        "closes": "23:00"
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:00",
+        "closes": "23:00"
+      }
+    ],
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "43.244473",
+      "longitude": "76.941566"
+    }
+  };
+
+  const menuSchema = {
+    "@context": "https://schema.org",
+    "@type": "Menu",
+    "name": "Меню Steppe Coffee",
+    "description": "Полное меню кофейни Steppe Coffee: от классических напитков до авторских десертов и закусок.",
+    "hasMenuSection": [
+      {
+        "@type": "MenuSection",
+        "name": "Кофе и напитки",
+        "hasMenuItem": [
+          {
+            "@type": "MenuItem",
+            "name": "Латте",
+            "description": "Классический латте с нежной молочной пеной."
+          },
+          {
+            "@type": "MenuItem",
+            "name": "Капучино",
+            "description": "Идеальный баланс эспрессо, молока и воздушной пены."
+          }
+        ]
+      },
+      {
+        "@type": "MenuSection",
+        "name": "Выпечка и десерты",
+        "hasMenuItem": [
+          {
+            "@type": "MenuItem",
+            "name": "Чизкейк",
+            "description": "Нежный сливочный чизкейк с ягодным соусом."
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="App">
       <Header
@@ -120,6 +201,7 @@ function App() {
               description="Посетите Steppe Coffee — идеальное место для вдохновения и новых впечатлений. Насладитесь лучшим кофе, свежей выпечкой и выгодной кофейной подпиской в самом сердце Алматы."
               ogImage="https://steppecoffee.netlify.app/images/og/og-image.webp"
               ogUrl="https://steppecoffee.netlify.app/"
+              structuredData={localBusinessSchema}
             />
             <HeroSection onOpenBookingModal={handleOpenBookingModal} />
             <Promo />
@@ -145,15 +227,17 @@ function App() {
           <AdminDashboard session={session} />
         } />
         <Route path="/menu" element={
-          <main>
-            <SeoHelmet
-              title="Меню | Steppe Coffee - Кофе, напитки и десерты"
-              description="Ознакомьтесь с полным меню Steppe Coffee. У нас есть широкий выбор кофе, чая, свежих десертов и закусок. Закажите любимое блюдо сегодня!"
-              ogUrl="https://steppecoffee.netlify.app/menu"
-            />
-            <MenuDisplay />
-          </main>
-        } />
+        <main>
+          <SeoHelmet
+            title="Меню | Steppe Coffee - Кофе, напитки и десерты"
+            description="Ознакомьтесь с полным меню Steppe Coffee. У нас есть широкий выбор кофе, чая, свежих десертов и закусок. Закажите любимое блюдо сегодня!"
+            ogUrl="https://steppecoffee.netlify.app/menu"
+            structuredData={menuSchema}
+          />
+          <MenuDisplay />
+        </main>
+      } />
+      
         {/* Маршрут для 404 ошибки всегда должен быть последним */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
