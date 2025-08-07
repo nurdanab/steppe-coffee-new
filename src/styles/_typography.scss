@@ -4,20 +4,8 @@
 
 // Шрифты
 @font-face {
-  font-family: 'Riffic';
-  src: url('/fonts/ofont.ru_Riffic.woff2') format('woff2'),
-       url('/fonts/ofont.ru_Riffic.woff') format('woff'),
-       url('/fonts/ofont.ru_Riffic.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
   font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-Light.woff2') format('woff2'),
-       url('/fonts/Gilroy-Light.woff') format('woff'),
-       url('/fonts/Gilroy-Light.ttf') format('truetype');
+  src: url('/fonts/gilroy-light-webfont.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -25,9 +13,7 @@
 
 @font-face {
   font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-Regular.woff2') format('woff2'),
-       url('/fonts/Gilroy-Regular.woff') format('woff'),
-       url('/fonts/Gilroy-Regular.ttf') format('truetype');
+  src: url('/fonts/gilroy-regular-webfont.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -35,9 +21,7 @@
 
 @font-face {
   font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-Medium.woff2') format('woff2'),
-       url('/fonts/Gilroy-Medium.woff') format('woff'),
-       url('/fonts/Gilroy-Medium.ttf') format('truetype');
+  src: url('/fonts/gilroy-medium-webfont.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -45,19 +29,7 @@
 
 @font-face {
   font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-SemiBold.woff2') format('woff2'),
-         url('/fonts/Gilroy-SemiBold.woff') format('woff'),
-         url('/fonts/Gilroy-SemiBold.ttf') format('truetype');
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-Bold.woff2') format('woff2'),
-       url('/fonts/Gilroy-Bold.woff') format('woff'),
-       url('/fonts/Gilroy-Bold.ttf') format('truetype');
+  src: url('/fonts/gilroy-bold-webfont.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -65,30 +37,16 @@
 
 @font-face {
   font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-ExtraBold.woff2') format('woff2'),
-       url('/fonts/Gilroy-ExtraBold.woff') format('woff'),
-       url('/fonts/Gilroy-ExtraBold.ttf') format('truetype');
+  src: url('/fonts/gilroy-extrabold-webfont.woff2') format('woff2');
   font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-Black.woff2') format('woff2'),
-       url('/fonts/Gilroy-Black.woff') format('woff'),
-       url('/fonts/Gilroy-Black.ttf') format('truetype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Gilroy';
-  src: url('/fonts/Gilroy-Heavy.woff2') format('woff2'),
-       url('/fonts/Gilroy-Heavy.woff') format('woff'),
-       url('/fonts/Gilroy-Heavy.ttf') format('truetype');
-  font-weight: 950;
+  font-family: 'Riffic';
+  src: url('/fonts/ofont.ru_riffic-webfont.woff2') format('woff2');
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
@@ -203,7 +161,7 @@
   font-family: 'Riffic', serif;
   font-weight: normal;
   line-height: 1.2;
-  font-size: 22px; // 
+  font-size: 22px; 
 
   @include sm-up {
     font-size: 23px;
@@ -412,22 +370,22 @@
 .gilroy-14 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 14px; // Базовый размер
+  font-size: 6px; 
 
   @include xs-only { 
-    font-size: 11px;
+    font-size: 6px;
   }
   @include sm-up {
-    font-size: 12px;
+    font-size: 8px;
   }
   @include md-up {
-    font-size: 13px;
+    font-size: 10px;
   }
   @include lg-up {
-    font-size: 14px;
+    font-size: 12px;
   }
   @include xl-up {
-    font-size: 15px;
+    font-size: 14px;
   }
   @include xxl-up {
     font-size: 16px;
@@ -449,7 +407,7 @@
 .gilroy-12 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 12px; // Базовый размер
+  font-size: 9px;  
 
   @include xs-only { 
     font-size: 9px;

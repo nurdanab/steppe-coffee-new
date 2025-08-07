@@ -268,9 +268,7 @@ const WelcomeDesk = () => {
                 left: `${item.position.left}%`,
                 transform: item.position.transform,
                 zIndex: item.position.zIndex,
-                // Возможно, здесь нужно задать ширину/высоту, если это большая картинка
-                width: '100px', // Пример, настроить по размеру фото
-                height: 'auto',
+              
               }}
             />
             {/* Прищепка для декоративного элемента с прищепкой */}
@@ -305,8 +303,8 @@ const WelcomeDesk = () => {
                 backgroundShape={saigakSticker.backgroundShape}
                 backgroundColor={saigakSticker.backgroundColor}
                 textColor={saigakSticker.textColor}
-                pinImageSrc={pinImageMap[saigakSticker.pinType] || pinImageMap.wood}  
-                pinOffset={saigakSticker.pinOffset}
+                pinImageSrc={saigakSticker.pinType ? pinImageMap[saigakSticker.pinType] : null}
+        pinOffset={saigakSticker.pinOffset}
               />
             </div>
           </React.Fragment>

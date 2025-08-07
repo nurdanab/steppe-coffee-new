@@ -51,9 +51,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    // Эта логика будет запускаться, когда пользователь не авторизован и пытается
-    // перейти на страницу профиля. Она перенаправит на главную и откроет модальное окно.
-    // Ключевое изменение: `!isAuthModalOpen` предотвращает повторное открытие после logout
     if (location.pathname === '/profile' && !session && !isAuthModalOpen) {
       navigate('/');
       setIsAuthModalOpen(true);

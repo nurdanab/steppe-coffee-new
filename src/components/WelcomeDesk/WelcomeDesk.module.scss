@@ -256,10 +256,31 @@
   pointer-events: none;
   transform-origin: center center;
   z-index: 100; 
-  
-  @include mobile-only { // ИСПРАВЛЕНО
-    width: 15px; // Уменьшаем размер прищепки на мобильных
+  @include xs-only { 
+    width: 7px;
   }
+  @include sm-up {
+   
+  }
+  @include md-up {
+
+  }
+  @include lg-up {
+    width: 16px;
+  }
+  @include xxxl-up {
+    width: 20px;
+  }
+  @include xl-up {
+    width: 20px;
+  }
+  @include uhd-up {
+    width: 40px;
+  }
+  @include uhd-4k-up {
+    width: 50px;
+  }
+
 }
 .tape { // НОВЫЙ СТИЛЬ ДЛЯ ИЗОБРАЖЕНИЯ СКОТЧА
   position: absolute; // Важно: позиционирование относительно родителя (.stickerWrapper)
@@ -285,4 +306,41 @@
   //   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   //   z-index: 20; 
   // }
+}
+.decorationItem {
+  position: absolute; 
+  // top, left, transform, z-index задаются инлайн-стилями
+}
+
+.decorationItem { // Новый класс для стикера с едой
+  @include xs-only { 
+    width: 60px;
+  }
+  @include sm-up {
+    width: 80px;
+  }
+  @include md-up {
+    width: 100px;
+  }
+  @include lg-up {
+    width: 50px;
+  }
+  @include xl-up {
+    width: 60px;
+  }
+  @include xxl-up {
+    width: 80px;
+  }
+  @include xxxl-up {
+    width: 100px;
+  }
+  @include full-hd-up {
+    width: 100px;
+  }
+  @include uhd-up {
+    width: 150px;
+  }
+  @include uhd-4k-up {
+    width: 250px;
+  }
 }

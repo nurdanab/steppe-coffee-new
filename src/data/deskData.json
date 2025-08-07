@@ -5,7 +5,7 @@
       "type": "sticker",
       "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. ",
       "position": {
-        "top": 40,
+        "top": 45,
         "left": 20,
         "transform": "rotate(-10deg)",
         "zIndex": 30
@@ -26,7 +26,7 @@
       "pinType": "paperClip",
       "pinOffset": {
         "top": -15,
-        "left": 35,
+        "left": 28,
         "rotate": "0deg",
         "zIndex": 50
       }
@@ -45,7 +45,7 @@
         "zIndex": 1
       },
       "text": "Test-3",
-      "pinType": "yellow",
+      "pinType": null,
       "backgroundShape": "oval",
       "backgroundColor": "white",
       "textColor": "black",
@@ -66,7 +66,7 @@
         "zIndex": 19
       },
       "text": "Test-4",
-      "pinType": "white",
+      "pinType": null,
       "backgroundShape": "circle",
       "backgroundColor": "lightBlue",
       "textColor": "black",
@@ -88,7 +88,7 @@
         "zIndex": 21
       },
       "text": "Test-5",
-      "pinType": "white",
+      "pinType": null,
       "backgroundShape": "rectangle",
       "backgroundColor": "yellow",
       "textColor": "black",
@@ -109,7 +109,7 @@
         "zIndex": 22
       },
       "text": "Test-6",
-      "pinType": "white",
+      "pinType": null,
       "backgroundShape": "oval",
       "backgroundColor": "white",
       "textColor": "black",
