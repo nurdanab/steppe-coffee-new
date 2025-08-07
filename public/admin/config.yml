@@ -99,7 +99,7 @@ collections:
                     public_folder: "/images/bookShelf"
                   - label: "PDF-файл книги"
                     name: "pdfFile"
-                    widget: "file"
+                    widget: "string"
                     allow_multiple: false
                     media_folder: "../../public/documentsPdf/booksPdf"
                     public_folder: "/documentsPdf/booksPdf"
