@@ -13,7 +13,7 @@
       "right": -15,
       "rotate": "0deg"
     },
-    "pdfFile": "https://www.100bestbooks.ru/files/London_Martin_Iden.pdf"
+    "pdfFile": ""
   },
   "bookShelf": {
     "subtitle": "Полка в Steppe Coffee - Книги для чтения и обмена",
@@ -23,7 +23,7 @@
         "title": "The Iron Heel: 100th Anniversary Collection",
         "author": "Jack London",
         "coverImage": "/images/bookShelf/book2.jpg",
-        "pdfFile": "https://www.100bestbooks.ru/files/London_Martin_Iden.pdf"
+        "pdfFile": ""
       },
       {
         "id": "book2",
