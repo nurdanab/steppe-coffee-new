@@ -1,7 +1,7 @@
 // src/components/WelcomeDesk/DeskItem/DeskItem.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './DeskItem.module.scss';
-import LazyImage from '../LazyImage/LazyImage.jsx';
+import LazyImage from '../../LazyImage/LazyImage.jsx';
 
 const DeskItem = ({ item, pinImageSrc }) => {
   const [isHovered, setIsHovered] = useState(false);

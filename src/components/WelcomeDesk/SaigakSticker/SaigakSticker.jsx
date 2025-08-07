@@ -1,7 +1,7 @@
 // src/components/WelcomeDesk/SaigakSticker/SaigakSticker.jsx
 import React from 'react';
 import styles from './SaigakSticker.module.scss';
-import LazyImage from '../LazyImage/LazyImage.jsx';
+import LazyImage from '../../LazyImage/LazyImage.jsx';
 
 const SaigakSticker = ({ saigakImageSrc, text, backgroundShape, backgroundColor, textColor, pinImageSrc, pinOffset }) => {
   return (
