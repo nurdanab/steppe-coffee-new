@@ -20,9 +20,9 @@
     "books": [
       {
         "id": "book1",
-        "title": "The Iron Heel: 100th Anniversary Collection",
-        "author": "Jack London",
-        "coverImage": "/images/bookShelf/book2.jpg",
+        "title": "Грозовой перевал",
+        "author": "Эмили Бронте",
+        "coverImage": "/images/bookShelf/new-book-1.webp",
         "pdfFile": ""
       },
       {
