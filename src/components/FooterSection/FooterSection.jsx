@@ -87,12 +87,12 @@ const FooterSection = () => {
                 <div className={styles.footerColumn}>
                     <h3 className={styles.columnTitle}>О нас</h3>
                     <ul className={styles.documentLinks}>
-                        <li><a href="#" onClick={() => handleDocumentClick('Политика конфиденциальности')} className={styles.documentLink}>Политика конфиденциальности</a></li>
-                        <li><a href="#" onClick={() => handleDocumentClick('Правовая информация')} className={styles.documentLink}>Правовая информация</a></li>
-                        <li><a href="#" onClick={() => handleDocumentClick('Сервисная информация')} className={styles.documentLink}>Сервисная информация</a></li>
-                        <li><a href="#" onClick={() => handleDocumentClick('О безопасности платежей')} className={styles.documentLink}>О безопасности платежей</a></li>
-                        <li><a href="#" onClick={() => handleDocumentClick('Договор публичной оферты')} className={styles.documentLink}>Договор публичной оферты</a></li>
-                    </ul>
+                    <li><a href="/documentsPdf/privacy-policy.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Политика конфиденциальности</a></li>
+                    <li><a href="/documentsPdf/legal-information.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Правовая информация</a></li>
+                    <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Сервисная информация</a></li>
+                    <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>О безопасности платежей</a></li>
+                    <li><a href="/documentsPdf/public-offer.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Договор публичной оферты</a></li>
+            </ul>
                 </div>
             </div>
 

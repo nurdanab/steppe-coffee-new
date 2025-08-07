@@ -154,11 +154,20 @@ const BookCorner = () => {
               </button>
               <div className={styles.booksContainer} ref={shelfRef}>
                 {bookCornerData.bookShelf.books.map(book => (
-                  <div key={book.id} className={styles.bookCard}>
-                    <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
-                    <p className={styles.bookTitle}>{book.title}</p>
-                    <p className={styles.bookAuthor}>{book.author}</p>
-                  </div>
+
+                  <a 
+            key={book.id} 
+            href={book.pdfFile} 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className={styles.bookCardLink}
+        >
+            <div className={styles.bookCard}>
+                <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                <p className={styles.bookTitle}>{book.title}</p>
+                <p className={styles.bookAuthor}>{book.author}</p>
+            </div>
+        </a>
                 ))}
               </div>
               <button
