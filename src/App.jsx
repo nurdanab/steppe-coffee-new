@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import SeoHelmet from './components/SeoHelmet.jsx';
 
 import Header from './components/Header/Header';
 import HeroSection from './components/Hero/HeroSection';
@@ -23,6 +24,11 @@ import { supabase } from './supabaseClient';
 
 const EventsPageContent = () => (
   <main>
+    <SeoHelmet
+      title="События и бронирование | Steppe Coffee"
+      description="Узнайте о предстоящих событиях и забронируйте столик в Steppe Coffee."
+      ogUrl="https://steppecoffee.netlify.app/events"
+    />
     <PublicCalendar />
   </main>
 );
@@ -99,16 +105,6 @@ function App() {
 
   return (
     <div className="App">
-      <Helmet>
-        <title>Steppe Coffee - Уютная кофейня в Алматы: насладитесь лучшим кофе!</title>
-        <meta name="description" content="Пространство для общения, вдохновения и новых впечатлений." />
-        <meta property="og:title" content="Steppe Coffee - Кофейня которую вы запомните" />
-        <meta property="og:description" content="Посетите Steppe Coffee в Алматы с кофейной подпиской." />
-        <meta property="og:image" content="https://steppecoffee.netlify.app/images/og/og-image.webp" />
-        <meta property="og:url" content="https://steppecoffee.netlify.app/" />
-        <meta property="og:type" content="website" />
-      </Helmet>
-
       <Header
         session={session}
         onOpenAuthModal={handleOpenAuthModal}
@@ -118,6 +114,12 @@ function App() {
       <Routes>
         <Route path="/" element={
           <main>
+            <SeoHelmet
+              title="Steppe Coffee - Уютная кофейня в Алматы: насладитесь лучшим кофе!"
+              description="Пространство для общения, вдохновения и новых впечатлений. Посетите Steppe Coffee в Алматы с кофейной подпиской."
+              ogImage="https://steppecoffee.netlify.app/images/og/og-image.webp"
+              ogUrl="https://steppecoffee.netlify.app/"
+            />
             <HeroSection onOpenBookingModal={handleOpenBookingModal} />
             <Promo />
             <Welcome />
@@ -135,9 +137,22 @@ function App() {
         <Route path="/profile" element={
           <ProfilePage session={session} onLogout={handleLogout} />
         } />
-        <Route path="/update-password" element={<UpdatePassword />} />
-        <Route path="/dashboard" element={<AdminDashboard session={session} />} />
-        <Route path="/menu" element={<MenuDisplay />} />
+        <Route path="/update-password" element={
+          <UpdatePassword />
+        } />
+        <Route path="/dashboard" element={
+          <AdminDashboard session={session} />
+        } />
+        <Route path="/menu" element={
+          <main>
+            <SeoHelmet
+              title="Меню | Steppe Coffee - Кофе, напитки и десерты"
+              description="Ознакомьтесь с полным меню Steppe Coffee. У нас есть широкий выбор кофе, чая, свежих десертов и закусок. Закажите любимое блюдо сегодня!"
+              ogUrl="https://steppecoffee.netlify.app/menu"
+            />
+            <MenuDisplay />
+          </main>
+        } />
       </Routes>
 
       <BookingModal
