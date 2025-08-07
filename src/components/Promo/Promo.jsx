@@ -1,6 +1,7 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
+import { useNavigate } from 'react-router-dom'; 
+import LazyImage from '../LazyImage/LazyImage.jsx';
 import styles from './Promo.module.scss';
 import promotionsData from '../../data/promotionsData.json';
 
@@ -31,7 +32,7 @@ const Promo = () => {
           {promoSlot1 && (
             <div className={`${styles.promoCard} ${inView ? styles.cardVisible : ''}`}>
               {promoSlot1.imageUrl && (
-                <img
+                <LazyImage
                   src={promoSlot1.imageUrl}
                   alt={`Промо ${promoSlot1.id}`}
                   className={styles.promoImage}
@@ -44,7 +45,7 @@ const Promo = () => {
           {promoSlot2 && (
             <div className={`${styles.promoCard} ${inView ? styles.cardVisible : ''}`}>
               {promoSlot2.imageUrl && (
-                <img
+                <LazyImage
                   src={promoSlot2.imageUrl}
                   alt={`Промо ${promoSlot2.id}`}
                   className={styles.promoImage}

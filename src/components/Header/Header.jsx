@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.scss';
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 const Header = ({ session, onOpenAuthModal, onLogout }) => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -41,7 +42,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
           <div className={styles.headerContent}>
             <div className={styles.logo}>
               <Link to="/" className={styles.logoLink}>
-                <img
+              <LazyImage
                   src="/images/logo-header.webp"
                   alt="Steppe Coffee Logo"
                   className={styles.logoImage}
@@ -66,11 +67,11 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
                 {/* Условный рендеринг для иконки профиля */}
                 {session ? (
                   <Link to="/profile" className={styles.profileButton}>
-                    <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                    <LazyImage src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
                   </Link>
                 ) : (
                   <button onClick={onOpenAuthModal} className={styles.profileButton}>
-                    <img src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
+                    <LazyImage src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
                   </button>
                 )}
 

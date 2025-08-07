@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom'; // <-- Добавляем Link для кнопки "Увидеть больше"
+import { Link } from 'react-router-dom'; 
 import styles from './BookCorner.module.scss';
 import bookCornerData from '../../data/bookCornerData.json';
-import { supabase } from '../../supabaseClient'; // <-- Импортируем supabase клиент
+import { supabase } from '../../supabaseClient'; 
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 const BookCorner = () => {
   const { ref, inView } = useInView({
@@ -138,7 +139,7 @@ const BookCorner = () => {
               <button className={styles.yellowPartButton}>{bookCornerData.yellowPart.buttonText}</button>
             </div>            </div>
 
-            <img
+            <LazyImage 
               src={bookCornerData.yellowPart.decorImage}
               alt="Декоративный элемент книжного уголка"
               className={styles.yellowPartDecor}
@@ -154,7 +155,7 @@ const BookCorner = () => {
         onClick={() => scrollShelf(-booksToScroll)}
         disabled={!canScrollLeft}
     >
-        <img src="/images/left-vis.png" alt="Прокрутить влево" />
+        <LazyImage  src="/images/left-vis.png" alt="Прокрутить влево" />
     </button>
     <div className={styles.booksContainer} ref={shelfRef}>
         {bookCornerData.bookShelf.books.map(book => (
@@ -162,7 +163,7 @@ const BookCorner = () => {
                 key={book.id} 
                 className={styles.bookCard}
             >
-                <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                <LazyImage  src={book.coverImage} alt={book.title} className={styles.bookCover} />
                 <p className={styles.bookTitle}>{book.title}</p>
                 <p className={styles.bookAuthor}>{book.author}</p>
                 
@@ -178,7 +179,7 @@ const BookCorner = () => {
         onClick={() => scrollShelf(booksToScroll)}
         disabled={!canScrollRight}
     >
-        <img src="/images/right-vis.png" alt="Прокрутить вправо" />
+        <LazyImage  src="/images/right-vis.png" alt="Прокрутить вправо" />
     </button>
 </div>
 
@@ -200,14 +201,14 @@ const BookCorner = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
               >
-                <img
+                <LazyImage 
                   src={bookCornerData.mainBook.imageSrc}
                   alt="Открытая книга"
                   className={styles.mainBookImage}
                 />
               </a>
             ) : (
-              <img
+              <LazyImage 
                 src={bookCornerData.mainBook.imageSrc}
                 alt="Открытая книга"
                 className={styles.mainBookImage}
@@ -227,7 +228,7 @@ const BookCorner = () => {
             transform: `rotate(${bookCornerData.mainBook.stampOffset.rotate || '0deg'})`
           }}>
             <p className={styles.textAboveStamp}>{bookCornerData.mainBook.textAboveStamp}</p>
-            <img
+            <LazyImage 
               src={bookCornerData.mainBook.stampImage}
               alt="Печать"
               className={styles.bookStampImage}

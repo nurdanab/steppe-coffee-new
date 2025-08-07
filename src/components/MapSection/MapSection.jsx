@@ -4,6 +4,8 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import styles from './MapSection.module.scss';
+import LazyImage from '../LazyImage/LazyImage.jsx';
+
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -27,9 +29,9 @@ const MapSection = () => {
     return (
         <section className={styles.mapSection}>
             {/* Декоративные элементы */}
-            <img src="/images/map-decor1.png" alt="Декоративный элемент" className={styles.mapDecor1} />
-            <img src="/images/map-decor2.png" alt="Декоративный элемент" className={styles.mapDecor2} />
-            <img src="/images/map-decor3.png" alt="Декоративный элемент" className={styles.mapDecor3} />
+            <LazyImage src="/images/map-decor1.png" alt="Декоративный элемент" className={styles.mapDecor1} />
+            <LazyImage src="/images/map-decor2.png" alt="Декоративный элемент" className={styles.mapDecor2} />
+            <LazyImage src="/images/map-decor3.png" alt="Декоративный элемент" className={styles.mapDecor3} />
             
             <div className="container"> 
 
@@ -39,7 +41,7 @@ const MapSection = () => {
                 {/* Левая часть: информация о кофейне */}
                 <div className={styles.infoBlock}>
                     {/* Изображение будет на заднем плане */}
-                    <img src="/images/address.webp" alt="Фото кофейни" className={styles.addressBackgroundImage} />
+                    <LazyImage src="/images/address.webp" alt="Фото кофейни" className={styles.addressBackgroundImage} />
 
                     <div className={styles.overlayContent}>
                         <div className={styles.textInfo}>

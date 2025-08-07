@@ -5,6 +5,8 @@ import styles from './WelcomeDesk.module.scss';
 import DeskItem from './DeskItem/DeskItem';
 import NewsSticker from './NewsSticker/NewsSticker';
 import SaigakSticker from './SaigakSticker/SaigakSticker';
+import LazyImage from '../LazyImage/LazyImage.jsx';
+
 
 // import deskItemsData from '../../data/deskData.json';
 import deskItemsDataWrapper from '../../data/deskData.json';
@@ -133,7 +135,7 @@ const WelcomeDesk = () => {
 
         {/* заголовок фото */}
         <div className={styles.boardTitle}>
-          <img
+          <LazyImage
             src="/images/desk/заголовок.png" 
             alt="Steppe Coffee – место, где оживает атмосфера"
             className={styles.titleImage}
@@ -142,7 +144,7 @@ const WelcomeDesk = () => {
 
         {/* нить */}
         <div className={styles.imageString}>
-          <img
+          <LazyImage
             src="/images/desk/нить.png" 
             alt="нить"
             className={styles.stringImage} 
@@ -163,7 +165,7 @@ const WelcomeDesk = () => {
             </div>
             
             {/* Прищепка */}
-            <img
+            <LazyImage
               src={pinImageMap[item.pinType] || pinImageMap.wood} 
               alt="Прищепка"
               className={styles.pin}
@@ -191,7 +193,7 @@ const WelcomeDesk = () => {
       <DeskItem item={{ ...item, position: undefined }} />
     </div>
     
-    <img
+    <LazyImage
       src={pinImageMap[item.pinType]} 
       alt="Прищепка"
       className={styles.pin}
@@ -219,7 +221,7 @@ const WelcomeDesk = () => {
                 text={sticker.text}
                 stickerColor={sticker.stickerColor}
               />
-              <img
+              <LazyImage
                 src="/images/desk/detail/stickerPin.png"  
                 alt="Скотч"
                 className={styles.tape}  
@@ -239,7 +241,7 @@ const WelcomeDesk = () => {
         {/* Рендерим декоративные элементы БЕЗ прищепок */}
 
         {decorationItems.map(decoration => (
-          <img
+          <LazyImage
             key={decoration.id}
             src={decoration.imageSrc}
             alt={`Декорация ${decoration.id}`}
@@ -258,7 +260,7 @@ const WelcomeDesk = () => {
         
         {decorationWithPinItems.map(item => ( // Используем decorationWithPinItems
           <React.Fragment key={item.id}>
-            <img
+            <LazyImage
               src={item.imageSrc}
               alt={`Декорация ${item.id}`}
               className={styles.decorationItem} // Можно создать новый класс или использовать этот
@@ -272,7 +274,7 @@ const WelcomeDesk = () => {
               }}
             />
             {/* Прищепка для декоративного элемента с прищепкой */}
-            <img
+            <LazyImage
               src={pinImageMap[item.pinType] || pinImageMap.wood} 
               alt="Прищепка"
               className={styles.pin}

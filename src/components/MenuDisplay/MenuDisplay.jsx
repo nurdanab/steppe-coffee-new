@@ -4,7 +4,8 @@ import { fetchMenuItems, supabase } from '../../supabaseClient';
 import styles from './MenuDisplay.module.scss';
 import { Link } from 'react-router-dom';
 import ImageSlider from './ImageSlider'; 
-import DeliverySection from './DeliverySection'; // Импортируем новый компонент
+import DeliverySection from './DeliverySection'; 
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 const IIKO_IMAGE_API_BASE_URL = "https://api-ru.iiko.services";
 
@@ -109,7 +110,7 @@ function MenuDisplay() {
                 <div className={styles.menuGrid}>
                     {filteredItems.map(item => (
                         <div key={item.iiko_id} className={styles.menuItemCard}>
-                            <img 
+                            <LazyImage 
                                 src={getImageUrl(item.image_id)} 
                                 alt={item.name} 
                                 className={styles.menuItemImage} 

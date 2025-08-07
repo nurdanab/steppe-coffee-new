@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './ImageSlider.module.scss';
 
+
 import image1 from '/images/menuBack-1.webp'; 
 import image2 from '/images/menuback-2.webp';
 import image3 from '/images/menuback-3.webp';

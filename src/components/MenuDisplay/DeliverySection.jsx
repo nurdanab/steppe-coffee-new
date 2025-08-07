@@ -5,6 +5,7 @@ import woltIcon from '/images/wolt-icon.png';
 import woltCharacter from '/images/menuSaygak.png'; 
 import decor1 from '/images/decor-vector.webp';
 import decor2 from '/images/map-decor2.png';
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 
 const DeliverySection = forwardRef((props, ref) => {
@@ -32,12 +33,12 @@ const DeliverySection = forwardRef((props, ref) => {
           </a>
         </div>
         <div className={styles.decorContainer}>
-        <img
+        <LazyImage
         src={decor1}
         // alt="Wolt"
         className={styles.decor1}
       />   
-          <img
+          <LazyImage
             src={decor2}
             // alt="Wolt character"
             className={styles.decor2}
@@ -46,12 +47,12 @@ const DeliverySection = forwardRef((props, ref) => {
 
 
         <div className={styles.imageContainer}>
-        <img
+        <LazyImage
         src={woltIcon}
         alt="Wolt"
         className={`${styles.woltIcon} animate-float`}
       />   
-          <img
+          <LazyImage
             src={woltCharacter}
             alt="Wolt character"
             className={styles.woltCharacter}

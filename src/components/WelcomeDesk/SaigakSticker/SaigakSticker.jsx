@@ -1,16 +1,17 @@
 // src/components/WelcomeDesk/SaigakSticker/SaigakSticker.jsx
 import React from 'react';
 import styles from './SaigakSticker.module.scss';
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 const SaigakSticker = ({ saigakImageSrc, text, backgroundShape, backgroundColor, textColor, pinImageSrc, pinOffset }) => {
   return (
     <div className={styles.saigakStickerContainer}>
       {/* Изображение сайгака (самый верхний слой) */}
-      <img src={saigakImageSrc} alt="Сайгак" className={styles.saigakImage} /> 
+      <LazyImage src={saigakImageSrc} alt="Сайгак" className={styles.saigakImage} /> 
       
       {/* Прищепка (средний слой) */}
       {pinImageSrc && (
-        <img
+        <LazyImage
           src={pinImageSrc}
           alt="Прищепка"
           className={styles.saigakStickerPin}

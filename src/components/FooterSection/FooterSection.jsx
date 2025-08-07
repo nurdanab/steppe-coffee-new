@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './FooterSection.module.scss';
-import ScissorsIcon from '../../assets/icons/logo-icon.svg'; // Убедитесь, что путь к вашей иконке правильный
+import ScissorsIcon from '../../assets/icons/logo-icon.svg'; 
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 const FooterSection = () => {
     // Номер телефона в международном формате (без знака +)
@@ -48,7 +49,7 @@ const FooterSection = () => {
                         </button>
                     </div>
                     <div className={styles.communityImage}>
-                        <img src="/images/phone-app.png" alt="Мобильное приложение Steppe Coffee" />
+                        <LazyImage src="/images/phone-app.png" alt="Мобильное приложение Steppe Coffee" />
                     </div>
                 </div> 
             </div>
@@ -62,10 +63,10 @@ const FooterSection = () => {
                     </p>
                     <button className={styles.downloadAppButton} onClick={handleDownloadAppClick}>
                         <span>Скачать приложение</span>
-                        {/* <img src={ScissorsIcon} alt="Иконка ножниц" className={styles.scissorsIcon} /> */}
+                        {/* <LazyImage src={ScissorsIcon} alt="Иконка ножниц" className={styles.scissorsIcon} /> */}
                     </button>
                     {/* Логотип-ножницы отдельно, если он должен быть как декоративный элемент */}
-                    <img src={ScissorsIcon} alt="Декоративные ножницы" className={styles.appPromoLogo} />
+                    <LazyImage src={ScissorsIcon} alt="Декоративные ножницы" className={styles.appPromoLogo} />
                 </div>            
             </div>
 
@@ -87,16 +88,16 @@ const FooterSection = () => {
                         </p>
                         <div className={styles.socialIcons}>
                             <a href="https://www.instagram.com/steppecoffeekz/" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
-                                <img src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
+                                <LazyImage src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
                             </a>
                             <a href="tel:+77004792109" className={styles.socialLink} aria-label="Call">                             
-                                <img src="/images/phone-icon.webp" alt="Телефон" className={styles.icon} />
+                                <LazyImage src="/images/phone-icon.webp" alt="Телефон" className={styles.icon} />
                             </a>
                             <a href="https://www.threads.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Threads">
-                                <img src="/images/threads-icon.webp" alt="Threads" className={styles.icon} />
+                                <LazyImage src="/images/threads-icon.webp" alt="Threads" className={styles.icon} />
                             </a>
                             <a href="https://www.tiktok.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="TikTok">
-                                <img src="/images/tiktok-icon.webp" alt="TikTok" className={styles.icon} />
+                                <LazyImage src="/images/tiktok-icon.webp" alt="TikTok" className={styles.icon} />
                             </a>
                         </div>
                     </div>

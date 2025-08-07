@@ -2,6 +2,7 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import styles from './HeroSection.module.scss';
+import LazyImage from '../LazyImage/LazyImage'; 
 
 const HeroSection = ({ onOpenBookingModal }) => { 
   const { ref, inView } = useInView({
@@ -27,7 +28,7 @@ const HeroSection = ({ onOpenBookingModal }) => {
           <div className={styles.heroSpacer}></div>
         </div>
       </div>
-      <img
+      <LazyImage 
         src="/images/hero-sgk.png"
         alt="Steppe Coffee Character"
         className={styles.character}

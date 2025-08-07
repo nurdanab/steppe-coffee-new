@@ -1,6 +1,7 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import styles from './Welcome.module.scss';
+import LazyImage from '../LazyImage/LazyImage.jsx';
 
 const Welcome = () => {
   const { ref, inView } = useInView({
@@ -19,7 +20,7 @@ const Welcome = () => {
 
         <div className={styles.welcomeMainInfo}>
           {/* Изображение главного персонажа */}
-          <img
+          <LazyImage
             src="/images/welcome-sgk.png" 
             alt="Главный персонаж Steppe Coffee"
             className={`${styles.characterImage} ${inView ? styles.imageVisible : ''}`}
