@@ -21,7 +21,8 @@
         "id": "book1",
         "title": "The Iron Heel: 100th Anniversary Collection",
         "author": "Jack London",
-        "coverImage": "/images/bookShelf/book2.jpg"
+        "coverImage": "/images/bookShelf/book2.jpg",
+        "pdfFile": "https://www.100bestbooks.ru/files/London_Martin_Iden.pdf"
       },
       {
         "id": "book2",
