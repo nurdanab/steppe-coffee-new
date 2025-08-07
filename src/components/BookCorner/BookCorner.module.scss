@@ -4,19 +4,12 @@
 
 .bookCornerSection {
   width: 100%;
-  // background-color: $maroon;
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow: hidden;
   position: relative;
-  // min-height: 700px;
   justify-content: center;
-
-  // @include mobile-only {
-  //   padding-top: 50px;
-  //   min-height: auto;
-  // }
 }
 
 .bookCornerContent {
@@ -26,21 +19,18 @@
   background-color: $yellow;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  grid-template-areas:
-    "yellowContent whiteContent";
+  grid-template-areas: "yellowContent whiteContent";
   column-gap: 0px;
 
-  @include mobile-only {
+  @include lg-down {
     grid-template-columns: 1fr;
     grid-template-areas:
       "yellowContent"
       "mainBook"
       "whiteContent";
     gap: 30px;
-    padding: 0 20px;
-    margin-bottom: 50px;
-    background-color: $yellow;
-    border-radius: $border-radius-md;
+    padding: 0;
+    background-color: transparent;
   }
 }
 
@@ -54,68 +44,46 @@
   align-items: center;
   overflow: hidden;
   z-index: 2;
-  // padding-bottom: 100px;
 
-  @include sm-up {
-    padding: 0 $spacing-xl;
-  }
-
-  @include md-up {
-    padding-left: $spacing-xxl;
-  }
-
-  @include lg-up {
-    padding-left: $spacing-xxxl;
-  }
-  @include xl-up {
-    padding-left: $spacing-xxxl * 1.2;
-  }
-  @include xxl-up {
-    padding-left: $spacing-xxxl * 1.6;
-  }
-  @include xxxl-up {
-    padding-left: $spacing-xxxl * 2.2;
-  }
-  @include full-hd-up {
-    padding-left: $spacing-xxxl * 2.6;
-  }
-
-  .yellowPartInner {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    position: relative;
-
-    @include mobile-only {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 30px;
-      padding: 0;
-    }
-  }
-
-  @include mobile-only {
+  @include lg-down {
     padding: 40px 0;
     align-items: center;
     text-align: center;
   }
 }
 
+.yellowPartInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  position: relative;
+
+  @include lg-down {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0;
+  }
+}
+
 .yellowPartTextContent {
-  // max-width: 500px;
   z-index: 2;
   flex-grow: 1;
   margin-top: 100px;
-  // margin-left: 120px;
-  margin-bottom: 150px;
+  margin-bottom: 120px;
 
-  @include mobile-only {
-    max-width: 100%;
-    margin-left: auto;
-    margin-top: 30px;
-    margin-bottom: 30px;
+  @include lg-down {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  @include xl-up {
+    margin-top: 100px;
+    margin-bottom: 120px;
+  }
+  @include uhd-4k-up {
+    margin-bottom: 150px;
   }
 }
 
@@ -123,14 +91,73 @@
   @extend .riffic-32;
   color: $black;
   margin-bottom: $spacing-md;
+
+  @include xl-up {
+    margin-bottom: $spacing-lg;
+  }
+  @include xxl-up {
+    margin-bottom: $spacing-xl;
+  }
+  @include xxxl-up {
+    margin-bottom: $spacing-xxl;
+  }
+  @include full-hd-up {
+    margin-bottom: $spacing-xxl;
+  }
+  @include uhd-up {
+    margin-bottom: $spacing-xxxl;
+  }
+  @include uhd-4k-up {
+    margin-bottom: $spacing-xxxxl;
+  }
 }
 
 .yellowPartDescription {
   @extend .gilroy-18;
   color: $black;
   margin-bottom: $spacing-lg;
-    max-width: 800px;
+  max-width: 800px;
 
+  @include xs-only {
+    margin-bottom: $spacing-md;
+    max-width: 90%;
+  }
+  @include sm-up {
+    margin-bottom: $spacing-md;
+    max-width: 90%;
+  }
+  @include md-up {
+    margin-bottom: $spacing-md;
+    max-width: 90%;
+  }
+  @include lg-up {
+    margin-bottom: $spacing-md;
+    max-width: 800px;
+  }
+  @include xl-up {
+    margin-bottom: $spacing-lg;
+    max-width: 900px;
+  }
+  @include xxl-up {
+    margin-bottom: $spacing-lg;
+    max-width: 1000px;
+  }
+  @include xxxl-up {
+    margin-bottom: $spacing-xl;
+    max-width: 1100px;
+  }
+  @include full-hd-up {
+    margin-bottom: $spacing-xl;
+    max-width: 1200px;
+  }
+  @include uhd-up {
+    margin-bottom: $spacing-xxxl;
+    max-width: 1400px;
+  }
+  @include uhd-4k-up {
+    margin-bottom: $spacing-xxxxl;
+    max-width: 1600px;
+  }
 }
 
 .yellowPartButton {
@@ -142,8 +169,7 @@
   color: $black;
   box-shadow: $shadow-medium;
   z-index: 0;
-  display: inline-flex; 
-
+  display: inline-flex;
 
   &::before {
     content: '';
@@ -152,7 +178,7 @@
     left: 50%;
     width: 0;
     height: 0;
-    background: $light-yellow; 
+    background: $light-yellow;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all $transition-slow;
@@ -168,7 +194,7 @@
     transform: translateY(-2px) scale(0.98);
   }
 
-  @include xs-only { 
+  @include xs-only {
     font-size: 10px;
     padding: $spacing-xs $spacing-md;
     border-radius: $border-radius-xxxxl;
@@ -217,45 +243,116 @@
     font-size: 50px;
     padding: $spacing-xxl $spacing-xxxxl;
     border-radius: $border-radius-xxxxl;
-    
   }
 }
 
 .yellowPartDecor {
   position: absolute;
-  right: -100px;
   top: 0px;
-  width: 500px;
   height: auto;
-  z-index: 1;
+  z-index: -1;
+  
+  @include xs-only {
+    display: none;
+  }
 
-  @include mobile-only {
-    position: relative;
-    right: auto;
-    top: auto;
-    width: 150px;
-    margin-top: 20px;
+  @include sm-up {
+    right: -50px;
+    width: 400px;
+  }
+  @include md-up {
+    right: -70px;
+    width: 450px;
+  }
+  @include lg-up {
+    right: -100px;
+    width: 500px;
+  }
+  @include xl-up {
+    right: -150px;
+    width: 600px;
+  }
+  @include xxl-up {
+    right: -200px;
+    width: 700px;
+  }
+  @include xxxl-up {
+    right: -250px;
+    width: 800px;
+  }
+  @include full-hd-up {
+    right: -300px;
+    width: 900px;
+  }
+  @include uhd-up {
+    right: -400px;
+    width: 1200px;
+  }
+  @include uhd-4k-up {
+    right: -500px;
+    width: 1500px;
   }
 }
 
 .mainBookContainer {
+  grid-area: mainBook;
   position: absolute;
-  left: calc(66.66% + 30px - 240px);
-  top: 20%;
-  transform: translateY(-50%);
+  left: 66.66%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   width: 450px;
-  height: auto;
   z-index: 5;
 
-  @include mobile-only {
+  @include lg-down {
     position: relative;
     top: auto;
     left: auto;
     transform: none;
     width: 80%;
     margin: 30px auto;
-    grid-area: mainBook;
   }
+
+  @include lg-up {
+    left: 66.66%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+  }
+  @include xl-up {
+    width: 550px;
+    top: 50%;
+    left: 66.66%;
+  }
+  @include xxl-up {
+    width: 600px;
+    top: 50%;
+    left: 66.66%;
+  }
+  @include xxxl-up {
+    width: 700px;
+    top: 50%;
+    left: 66.66%;
+  }
+  @include full-hd-up {
+    width: 800px;
+    top: 50%;
+    left: 66.66%;
+  }
+  @include uhd-up {
+    width: 1000px;
+    top: 50%;
+    left: 66.66%;
+  }
+  @include uhd-4k-up {
+    width: 1200px;
+    top: 40%;
+    left: 66.66%;
+  }
+}
+
+.mainBookImageWrapper {
+  position: relative;
+  z-index: 15;
 }
 
 .mainBookImage {
@@ -270,11 +367,76 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  z-index: 6;
+  z-index: 16;
   
-  @include mobile-only {
+  @include xs-only {
+    top: 10%;
+    right: 5%;
+    .bookStampImage {
+      width: 60px;
+    }
+  }
+  @include sm-up {
+    top: 15%;
+    right: 5%;
     .bookStampImage {
       width: 80px;
+    }
+  }
+  @include md-up {
+    top: 20%;
+    right: 10%;
+    .bookStampImage {
+      width: 100px;
+    }
+  }
+  @include lg-up {
+    top: 25%;
+    right: 10%;
+    .bookStampImage {
+      width: 120px;
+    }
+  }
+  @include xl-up {
+    top: 25%;
+    right: 12%;
+    .bookStampImage {
+      width: 140px;
+    }
+  }
+  @include xxl-up {
+    top: 25%;
+    right: 12%;
+    .bookStampImage {
+      width: 160px;
+    }
+  }
+  @include xxxl-up {
+    top: 25%;
+    right: 15%;
+    .bookStampImage {
+      width: 200px;
+    }
+  }
+  @include full-hd-up {
+    top: 25%;
+    right: 15%;
+    .bookStampImage {
+      width: 250px;
+    }
+  }
+  @include uhd-up {
+    top: 25%;
+    right: 18%;
+    .bookStampImage {
+      width: 300px;
+    }
+  }
+  @include uhd-4k-up {
+    top: 25%;
+    right: 20%;
+    .bookStampImage {
+      width: 350px;
     }
   }
 }
@@ -293,10 +455,13 @@
   position: relative;
   z-index: 1;
   min-height: 500px;
-  padding-right: 120px;
-  padding-left: 40px;
+  
+  @include lg-up {
+    padding-right: 120px;
+    padding-left: 40px;
+  }
 
-  @include mobile-only {
+  @include lg-down {
     padding: 30px;
     align-items: center;
     text-align: center;
@@ -315,101 +480,82 @@
   width: 100%;
   max-width: 100%;
   position: relative;
+  margin-top: 150px;
+  padding-bottom: 50px;
 
-  @include mobile-only {
+  @include xs-only {
+    margin-top: 0;
     padding: 30px 0 0;
+  }
+  @include sm-up {
+    margin-top: 50px;
+    padding-bottom: 40px;
+  }
+  @include md-up {
+    margin-top: 80px;
+    padding-bottom: 50px;
+  }
+  @include lg-up {
+    margin-top: 100px;
+    padding-bottom: 60px;
+  }
+  @include xl-up {
+    margin-top: 120px;
+    padding-bottom: 70px;
+  }
+  @include xxl-up {
+    margin-top: 140px;
+    padding-bottom: 80px;
+  }
+  @include xxxl-up {
+    margin-top: 160px;
+    padding-bottom: 90px;
+  }
+  @include full-hd-up {
+    margin-top: 180px;
+    padding-bottom: 100px;
+  }
+  @include uhd-up {
+    margin-top: 200px;
+    padding-bottom: 120px;
+  }
+  @include uhd-4k-up {
+    margin-top: 220px;
+    padding-bottom: 150px;
   }
 }
 
 .bookShelfSubtitle {
-  padding-left: 120px;
   @extend .gilroy-24;
   color: $black;
   margin-bottom: $spacing-md;
   text-align: left;
-
-  @include mobile-only {
-    font-size: 24px;
-    margin-bottom: $spacing-sm;
-    padding-left: 0;
+  
+  @include lg-down {
     text-align: center;
   }
 }
 
 .bookShelfCarousel {
-  padding-left: 45px;
+  padding-left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  
-  @include mobile-only {
-    padding-left: 0;
-  }
-}
-
-.booksContainer {
-  display: flex;
-  gap: 40px;
-  overflow-x: scroll;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-.bookCard {
-  flex: 0 0 auto;
-  width: 150px;
-  text-align: center;
-  scroll-snap-align: start;
-
-  @include mobile-only {
-    width: 90px;
-  }
-}
-
-.bookCover {
-  width: 100%;
-  height: 210px;
-  object-fit: cover;
-  border-radius: 7px;
-  box-shadow: $shadow-light;
-  margin-bottom: $spacing-xs;
- 
-  @include mobile-only {
-    height: 140px;
-  }
-}
-
-.bookTitle {
-  @extend .gilroy-14;
-  font-weight: 600;
-  color: $black;
-  margin-bottom: 5px;
-}
-
-.bookAuthor {
-  @extend .gilroy-12;
-  color: $gray-dark;
 }
 
 .carouselButton {
   border: none;
-  margin-bottom: 70px;
+  margin-bottom: 50px;
   img {
-    width: 80px;
+    width: 60px;
     height: auto;
   }
 
   &.leftButton {
-    margin-right: 30px;
+    margin-right: 50px;
   }
   &.rightButton {
-    margin-left: 30px;
+    margin-left: 50px;
   }
 
   &:hover {
@@ -423,21 +569,266 @@
     cursor: not-allowed;
   }
 
-  @include mobile-only {
+  @include xs-only {
     padding: 5px;
     margin-bottom: 30px;
     img {
       width: 25px;
     }
+    &.leftButton {
+      margin-right: 15px;
+    }
+    &.rightButton {
+      margin-left: 15px;
+    }
+  }
+  @include sm-up {
+    margin-bottom: 50px;
+    img {
+      width: 40px;
+    }
+    &.leftButton {
+      margin-right: 25px;
+    }
+    &.rightButton {
+      margin-left: 25px;
+    }
+  }
+  @include md-up {
+    margin-bottom: 60px;
+    img {
+      width: 50px;
+    }
+    &.leftButton {
+      margin-right: 30px;
+    }
+    &.rightButton {
+      margin-left: 30px;
+    }
+  }
+  @include lg-up {
+    margin-bottom: 70px;
+    img {
+      width: 60px;
+    }
+    &.leftButton {
+      margin-right: 40px;
+    }
+    &.rightButton {
+      margin-left: 40px;
+    }
+  }
+  @include xl-up {
+    margin-bottom: 80px;
+    img {
+      width: 70px;
+    }
+    &.leftButton {
+      margin-right: 50px;
+    }
+    &.rightButton {
+      margin-left: 50px;
+    }
+  }
+  @include xxl-up {
+    margin-bottom: 90px;
+    img {
+      width: 80px;
+    }
+  }
+  @include xxxl-up {
+    margin-bottom: 100px;
+    img {
+      width: 90px;
+    }
+  }
+  @include full-hd-up {
+    margin-bottom: 120px;
+    img {
+      width: 100px;
+    }
+  }
+  @include uhd-up {
+    margin-bottom: 140px;
+    img {
+      width: 120px;
+    }
+  }
+  @include uhd-4k-up {
+    margin-bottom: 160px;
+    img {
+      width: 140px;
+    }
   }
 }
+.booksContainer {
+  @extend .gilroy-18;
+  display: flex;
+  gap: 40px;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-top: 80px;
+  // Добавляем overflow: visible для тултипов, которые должны выходить за границы
+  overflow: visible;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @include xs-only {
+    gap: 15px;
+    padding-top: 40px;
+  }
+  @include sm-up {
+    gap: 25px;
+    padding-top: 50px;
+  }
+  @include md-up {
+    gap: 30px;
+    padding-top: 60px;
+  }
+  @include lg-up {
+    gap: 35px;
+    padding-top: 70px;
+  }
+  @include xl-up {
+    gap: 40px;
+    padding-top: 80px;
+  }
+  @include xxl-up {
+    gap: 45px;
+    padding-top: 90px;
+  }
+  @include xxxl-up {
+    gap: 50px;
+    padding-top: 100px;
+  }
+  @include full-hd-up {
+    gap: 55px;
+    padding-top: 110px;
+  }
+  @include uhd-up {
+    gap: 60px;
+    padding-top: 120px;
+  }
+  @include uhd-4k-up {
+    gap: 70px;
+    padding-top: 150px;
+  }
+}
+
+.bookCard {
+  flex: 0 0 auto;
+  width: 150px;
+  text-align: center;
+  scroll-snap-align: start;
+  // Позволяем тултипам выходить за границы карточки
+  overflow: visible;
+
+  @include xs-only {
+    width: 90px;
+  }
+  @include sm-up {
+    width: 120px;
+  }
+  @include md-up {
+    width: 150px;
+  }
+  @include lg-up {
+    width: 160px;
+  }
+  @include xl-up {
+    width: 180px;
+  }
+  @include xxl-up {
+    width: 200px;
+  }
+  @include xxxl-up {
+    width: 220px;
+  }
+  @include full-hd-up {
+    width: 250px;
+  }
+  @include uhd-up {
+    width: 300px;
+  }
+  @include uhd-4k-up {
+    width: 350px;
+  }
+}
+
+.bookCover {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 7px;
+  box-shadow: $shadow-light;
+  margin-bottom: $spacing-xs;
+
+  @include xs-only {
+    height: 140px;
+  }
+  @include sm-up {
+    height: 180px;
+  }
+  @include md-up {
+    height: 220px;
+  }
+  @include lg-up {
+    height: 260px;
+  }
+  @include xl-up {
+    height: 300px;
+  }
+  @include xxl-up {
+    height: 350px;
+  }
+  @include xxxl-up {
+    height: 400px;
+  }
+  @include full-hd-up {
+    height: 450px;
+  }
+  @include uhd-up {
+    height: 550px;
+  }
+  @include uhd-4k-up {
+    height: 650px;
+  }
+}
+
 
 .eventsBlock {
   width: 100%;
   padding-bottom: 100px;
 
-  @include mobile-only {
+  @include xs-only {
     padding-top: 10px;
+    padding-bottom: 50px;
+  }
+  @include sm-up {
+    padding-bottom: 60px;
+  }
+  @include md-up {
+    padding-bottom: 70px;
+  }
+  @include lg-up {
+    padding-bottom: 80px;
+  }
+  @include xl-up {
+    padding-bottom: 90px;
+  }
+  @include full-hd-up {
+    padding-bottom: 100px;
+  }
+  @include uhd-up {
+    padding-bottom: 120px;
+  }
+  @include uhd-4k-up {
+    padding-bottom: 150px;
   }
 }
 
@@ -447,8 +838,7 @@
   margin-bottom: $spacing-md;
   text-align: left;
 
-  @include mobile-only {
-    font-size: 20px;
+  @include lg-down {
     text-align: center;
   }
 }
@@ -461,6 +851,37 @@
   max-width: 300px;
   margin-left: auto;
   margin-right: auto;
+
+  @include xs-only {
+    max-width: 250px;
+  }
+  @include sm-up {
+    max-width: 300px;
+  }
+  @include md-up {
+    max-width: 350px;
+  }
+  @include lg-up {
+    max-width: 400px;
+  }
+  @include xl-up {
+    max-width: 450px;
+  }
+  @include xxl-up {
+    max-width: 500px;
+  }
+  @include xxxl-up {
+    max-width: 550px;
+  }
+  @include full-hd-up {
+    max-width: 600px;
+  }
+  @include uhd-up {
+    max-width: 700px;
+  }
+  @include uhd-4k-up {
+    max-width: 800px;
+  }
 }
 
 .calendarDays, .calendarDates {
@@ -474,6 +895,21 @@
     color: $black;
     width: calc(100% / 7);
     text-align: center;
+  }
+  @include xs-only {
+    span {
+      font-size: 12px;
+    }
+  }
+  @include sm-up {
+    span {
+      font-size: 14px;
+    }
+  }
+  @include md-up {
+    span {
+      font-size: 16px;
+    }
   }
 }
 
@@ -491,6 +927,21 @@
 
     &:hover {
       background-color: $gray-light;
+    }
+    @include xs-only {
+      height: 30px;
+      padding: 5px 0;
+      font-size: 12px;
+    }
+    @include sm-up {
+      height: 35px;
+      padding: 6px 0;
+      font-size: 14px;
+    }
+    @include md-up {
+      height: 40px;
+      padding: 8px 0;
+      font-size: 16px;
     }
   }
 }
@@ -515,8 +966,12 @@
   margin-bottom: $spacing-sm;
   text-align: left;
 
-  @include mobile-only {
+  @include xs-only {
+    font-size: 12px;
     text-align: center;
+  }
+  @include sm-up {
+    font-size: 14px;
   }
 }
 
@@ -527,13 +982,21 @@
   padding: $spacing-sm;
   border: 1px dashed $gray-medium;
   border-radius: $border-radius-sm;
+
+  @include xs-only {
+    font-size: 12px;
+    text-align: center;
+  }
+  @include sm-up {
+    font-size: 14px;
+  }
 }
 
 .viewMoreButton {
   text-align: right;
   margin-top: $spacing-sm;
 
-  @include mobile-only {
+  @include xs-only {
     text-align: center;
     width: 100%;
     margin-left: auto;
@@ -541,8 +1004,9 @@
     display: block;
   }
 }
+
 .todayEventItem {
-  background-color: gray; 
+  background-color: gray;
   padding: 10px;
   border-radius: $border-radius-sm;
   margin-bottom: 10px;
@@ -550,9 +1014,9 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  border-left: 3px solid $yellow;  
+  border-left: 3px solid $yellow;
 
-  @include mobile-only {
+  @include xs-only {
     align-items: center;
     text-align: center;
   }
@@ -563,15 +1027,23 @@
   font-weight: 600;
   color: $black;
   margin-bottom: 5px;
+  
+  @include xs-only {
+    font-size: 14px;
+  }
 }
 
 .todayEventTitle {
   @extend .gilroy-14;
   color: $gray-dark;
+  
+  @include xs-only {
+    font-size: 12px;
+  }
 }
 
 .viewMoreLink {
-  @extend .gilroy-14; 
+  @extend .gilroy-14;
   color: $light-yellow;
   text-decoration: none;
   font-weight: 500;
@@ -582,58 +1054,104 @@
     text-decoration: underline;
   }
 
-  @include mobile-only {
+  @include xs-only {
     display: block;
-    width: fit-content; // Или 100%
-    margin: 0 auto; // Центрирование
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 12px;
   }
 }
-// тултипы
 
 .bookCard,
 .mainBookImageWrapper {
-  position: relative; 
-  cursor: pointer; 
-
-  // Стили для самого тултипа
+  position: relative;
+  cursor: pointer;
+  z-index: 10;
+  
   .bookTooltip {
     position: absolute;
-    bottom: 110%; 
+    bottom: calc(100% + 15px);
     left: 50%;
-    transform: translateX(-50%); // Центрируем по горизонтали
+    transform: translateX(-50%);
+    background-color: rgba($black, 0.9);
+    color: $white;
+    padding: $spacing-xs;
+    border-radius: $border-radius-sm;
+    min-width: 150px;
+    max-width: 200px;
+    text-align: left;
+    z-index: 20;
+    box-shadow: $shadow-medium;
+    pointer-events: none;
+    display: none;
     
-    background-color: $black; // Чёрный цвет для фона тултипа
-    color: $white;           // Белый цвет для текста
-    padding: $spacing-sm $spacing-md; // Отступы внутри тултипа
-    border-radius: $border-radius-md;
-    min-width: 200px;
-    max-width: 300px;
-    text-align: center;
-    z-index: 10; // Чтобы тултип был поверх других элементов
-    box-shadow: $shadow-medium; // Добавляем тень для лучшей видимости
-    
-    // Стрелочка внизу тултипа
+    // Стили для тултипа главной книги
+    .mainBookImageWrapper & {
+      // Новое позиционирование: привязка к левому краю
+      right: 100%; // Привязываем к левой границе родителя
+      left: unset; // Убираем старое свойство left
+      top: 50%;
+      bottom: unset;
+      transform: translate(-15px, -50%); // Смещаем тултип на 15px влево и центрируем по вертикали
+      text-align: left;
+
+      // Позиционирование стрелки для тултипа главной книги
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 100%; // Перемещаем стрелку вправо, к книге
+        margin-top: -8px;
+        margin-left: 0;
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent transparent transparent rgba($black, 0.9);
+      }
+    }
+
+    // Стили для тултипа книг в карусели
     &::after {
       content: "";
       position: absolute;
       top: 100%;
       left: 50%;
-      margin-left: -8px; // Центрируем стрелку
+      margin-left: -8px;
       border-width: 8px;
       border-style: solid;
-      border-color: $black transparent transparent transparent;
+      border-color: rgba($black, 0.9) transparent transparent transparent;
     }
-
+    
     p {
-      @extend .gilroy-14; // Используем стиль для текста
-      margin: 0; // Убираем отступы у параграфа
+      @extend .gilroy-14;
+      margin: 0;
       line-height: 1.4;
+      font-weight: 500;
     }
   }
-}
 
-// Новый класс-обёртка для главной книги
-.mainBookImageWrapper {
-  position: relative;
-  // Остальные стили, если нужны, можно добавить здесь
+  // Показываем тултип при наведении
+  &:hover > .bookTooltip {
+    display: block;
+  }
+
+  @include xs-only {
+    .bookTooltip {
+      bottom: calc(100% + 10px);
+      min-width: 120px;
+      max-width: 150px;
+      p {
+        font-size: 12px;
+      }
+    }
+  }
+  @include sm-up {
+    .bookTooltip {
+      bottom: calc(100% + 15px);
+      min-width: 150px;
+      max-width: 200px;
+      p {
+        font-size: 14px;
+      }
+    }
+  }
 }

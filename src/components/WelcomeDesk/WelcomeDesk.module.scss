@@ -200,11 +200,42 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease; // Плавность для обертки
   z-index: 1;  
   background-color: antiquewhite;
-  padding: 5px;
+  // padding: 5px;
    &:hover {
      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); 
     z-index: 20; 
   }
+  @include xs-only { 
+
+  }
+  @include sm-up {
+   
+  }
+  @include md-up {
+
+  }
+  @include lg-up {
+    padding: 3px;
+  }
+  @include xl-up {
+    padding: 3px;
+  }
+  @include xxl-up {
+    padding: 4px;
+  }
+  @include xxxl-up {
+    padding: 6px;
+  }
+  @include full-hd-up {
+    padding: 8px;
+  }
+  @include uhd-up {
+    padding: 10px;
+  }
+  @include uhd-4k-up {
+    padding: 15px;
+  }
+
 }
 
 .stickerWrapper {

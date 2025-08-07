@@ -5,8 +5,8 @@
       "type": "sticker",
       "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. ",
       "position": {
-        "top": 50,
-        "left": 17,
+        "top": 40,
+        "left": 20,
         "transform": "rotate(-10deg)",
         "zIndex": 30
       },

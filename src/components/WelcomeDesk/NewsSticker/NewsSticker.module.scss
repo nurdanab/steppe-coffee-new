@@ -5,8 +5,6 @@
 
 .sticker {
   position: relative;
-  width: 250px; // Ширина стикера
-  padding: 20px;
   border-radius: 1px;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -14,14 +12,52 @@
   justify-content: center;
   align-items: center;
   text-align: center;
-//   min-height: 150px;  
-  transition: transform 0.3s ease, box-shadow 0.3s ease; // Плавность при наведении (если hover на wrapper)
+  transition: transform 0.3s ease, box-shadow 0.3s ease; 
 
-  // Цвета стикеров - используем ваши переменные
   &.yellow {
     background-color: $light-yellow; 
   }
-  
+
+  @include xs-only { 
+    width: 100px;
+    padding: 8px;
+  }
+  @include sm-up {
+    width: 120px;
+    padding: 10px;
+  }
+  @include md-up {
+    width: 150px;
+    padding: 12px;
+  }
+  @include lg-up {
+    width: 180px;
+    padding: 15px;
+  }
+  @include xl-up {
+    width: 200px;
+    padding: 18px;
+  }
+  @include xxl-up {
+    width: 220px;
+    padding: 20px;
+  }
+  @include xxxl-up {
+    width: 250px;
+    padding: 22px;
+  }
+  @include full-hd-up {
+    width: 300px;
+    padding: 25px;
+  }
+  @include uhd-up {
+    width: 350px;
+    padding: 30px;
+  }
+  @include uhd-4k-up {
+    width: 450px;
+    padding: 40px;
+  }
 }
 
 .stickerText {
@@ -43,16 +79,15 @@
     z-index: 20; 
   }
 }
+.tape { 
+  position: absolute; 
+  width: 60px; 
+  height: auto;
+  pointer-events: none; 
 
- 
-// Медиазапросы для адаптивности стикера
-@include mobile-only { // ИСПРАВЛЕНО
-  .sticker {
-    width: 180px;
-    min-height: 100px;
-    padding: 15px;
-  }
-  .stickerText {
-    font-size: 18px; // Используем прямое указание font-size
+  @include mobile-only {
+    width: 40px; 
+    top: -10px !important; 
+    left: -5px !important; 
   }
 }

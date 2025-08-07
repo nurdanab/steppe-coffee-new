@@ -272,31 +272,31 @@
 .gilroy-32 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.4;
-  font-size: 24px; 
+  font-size: 26px; 
 
   @include sm-up {
     font-size: 28px;
   }
   @include md-up {
-    font-size: 32px;
+    font-size: 30px;
   }
   @include lg-up {
-    font-size: 36px;
+    font-size: 32px;
   }
   @include xl-up {
-    font-size: 40px;
+    font-size: 34px;
   }
   @include xxl-up {
-    font-size: 44px;
+    font-size: 36px;
   }
   @include xxxl-up {
-    font-size: 48px;
+    font-size: 38px;
   }
   @include full-hd-up {
-    font-size: 52px;
+    font-size: 40px;
   }
   @include uhd-up {
-    font-size: 56px;
+    font-size: 44px;
   }
   @include uhd-4k-up {
     font-size: 60px;
@@ -309,31 +309,31 @@
   font-size: 20px; 
 
   @include sm-up {
-    font-size: 17px;
-  }
-  @include md-up {
-    font-size: 18px;
-  }
-  @include lg-up {
-    font-size: 20px;
-  }
-  @include xl-up {
     font-size: 22px;
   }
-  @include xxl-up {
+  @include md-up {
+    font-size: 23px;
+  }
+  @include lg-up {
     font-size: 24px;
+  }
+  @include xl-up {
+    font-size: 25px;
+  }
+  @include xxl-up {
+    font-size: 26px;
   }
   @include xxxl-up {
     font-size: 28px;
   }
   @include full-hd-up {
-    font-size: 32px;
+    font-size: 30px;
   }
   @include uhd-up {
-    font-size: 48px;
+    font-size: 38px;
   }
   @include uhd-4k-up {
-    font-size: 54px;
+    font-size: 46px;
   }
   
 }
@@ -341,34 +341,34 @@
 .gilroy-18 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 12px;
+  font-size: 15px;
 
   @include sm-up {
-    font-size: 12px;
+    font-size: 16px;
   }
   @include md-up {
-    font-size: 16px;
+    font-size: 17px;
   }
   @include lg-up {
     font-size: 18px;
   }
   @include xl-up {
-    font-size: 20px;
+    font-size: 19px;
   }
   @include xxl-up {
-    font-size: 22px;
+    font-size: 20px;
   }
   @include xxxl-up {
-    font-size: 24px;
+    font-size: 22px;
   }
   @include full-hd-up {
-    font-size: 28px;
+    font-size: 24px;
   }
   @include uhd-up {
-    font-size: 30px;
+    font-size: 26px;
   }
   @include uhd-4k-up {
-    font-size: 40px;
+    font-size: 42px;
   }
 }
 
@@ -377,11 +377,35 @@
   line-height: 1.6;
   font-size: 16px; // Базовый размер
 
+  @include xs-only { 
+    font-size: 13px;
+  }
+  @include sm-up {
+    font-size: 14px;
+  }
+  @include md-up {
+    font-size: 15px;
+  }
+  @include lg-up {
+    font-size: 16px;
+  }
   @include xl-up {
     font-size: 17px;
   }
-  @include full-hd-up {
+  @include xxl-up {
     font-size: 18px;
+  }
+  @include xxxl-up {
+    font-size: 20px;
+  }
+  @include full-hd-up {
+    font-size: 22px;
+  }
+  @include uhd-up {
+    font-size: 24px;
+  }
+  @include uhd-4k-up {
+    font-size: 40px;
   }
 }
 
@@ -390,23 +414,35 @@
   line-height: 1.6;
   font-size: 14px; // Базовый размер
 
+  @include xs-only { 
+    font-size: 11px;
+  }
+  @include sm-up {
+    font-size: 12px;
+  }
+  @include md-up {
+    font-size: 13px;
+  }
+  @include lg-up {
+    font-size: 14px;
+  }
   @include xl-up {
     font-size: 15px;
   }
-  @include full-hd-up {
+  @include xxl-up {
     font-size: 16px;
   }
-  @include uhd-up {
-    font-size: 19px;
+  @include xxxl-up {
+    font-size: 18px;
   }
-  @include uhd-4k-up {
+  @include full-hd-up {
     font-size: 20px;
   }
   @include uhd-up {
-    font-size: 17px;
+    font-size: 22px;
   }
   @include uhd-4k-up {
-    font-size: 18px;
+    font-size: 34px;
   }
 }
 
@@ -415,16 +451,35 @@
   line-height: 1.6;
   font-size: 12px; // Базовый размер
 
+  @include xs-only { 
+    font-size: 9px;
+  }
+  @include sm-up {
+    font-size: 10px;
+  }
+  @include md-up {
+    font-size: 11px;
+  }
+  @include lg-up {
+    font-size: 12px;
+  }
   @include xl-up {
     font-size: 13px;
   }
-  @include full-hd-up {
+  @include xxl-up {
     font-size: 14px;
   }
-  @include uhd-up {
-    font-size: 15px;
-  }
-  @include uhd-4k-up {
+  @include xxxl-up {
     font-size: 16px;
   }
+  @include full-hd-up {
+    font-size: 18px;
+  }
+  @include uhd-up {
+    font-size: 20px;
+  }
+  @include uhd-4k-up {
+    font-size: 30px;
+  }
+
 }

@@ -35,7 +35,7 @@
 }
 
 .welcomeTitleBox {
-  margin-left: auto;
+  // margin-left: auto;
   background-color: $white;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   text-align: right;
@@ -126,6 +126,7 @@
     max-width: 1500px;
   }
   @include uhd-4k-up {
+    margin-bottom: 200px;
     max-width: 2500px;
   }
 
@@ -154,6 +155,26 @@
     gap: 50px;
 
     }
+    @include xl-up {
+      flex-direction: row;
+      justify-content: flex-start;
+      // align-items: flex-center;
+      gap: 100px;
+  
+      }
+    @include xxl-up {
+      flex-direction: row;
+      justify-content: flex-start;
+      // align-items: flex-center;
+      gap: 120px;
+      }
+      @include uhd-up {
+        flex-direction: row;
+        justify-content: flex-start;
+        // align-items: flex-center;
+        gap: 200px;
+    
+        }
   
 }
 
@@ -197,10 +218,10 @@
     width: 400px;
   }
   @include uhd-up {
-    width: 600px;
+    width: 500px;
   }
   @include uhd-4k-up {
-    width: 900px;
+    width: 600px;
   }
 
 }

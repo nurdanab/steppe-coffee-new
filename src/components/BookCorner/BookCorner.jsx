@@ -130,61 +130,60 @@ const BookCorner = () => {
         {/* Желтая часть */}
         <div className={styles.yellowPart}>
           <div className={styles.yellowPartInner}>
+          <div className="headerFullWidthContainer"> 
+
             <div className={styles.yellowPartTextContent}>
               <h2 className={styles.yellowPartTitle}>{bookCornerData.yellowPart.title}</h2>
               <p className={styles.yellowPartDescription}>{bookCornerData.yellowPart.description}</p>
               <button className={styles.yellowPartButton}>{bookCornerData.yellowPart.buttonText}</button>
-            </div>
+            </div>            </div>
+
             <img
               src={bookCornerData.yellowPart.decorImage}
               alt="Декоративный элемент книжного уголка"
               className={styles.yellowPartDecor}
             />
           </div>
+          <div className="headerFullWidthContainer"> 
 
           <div className={styles.bookShelfSection}>
             <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>
             <div className={styles.bookShelfCarousel}>
-              <button
-                className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
-                onClick={() => scrollShelf(-booksToScroll)}
-                disabled={!canScrollLeft}
-              >
-                <img src="/images/left-vis.png" alt="Прокрутить влево" />
-              </button>
-              <div className={styles.booksContainer} ref={shelfRef}>
-                {bookCornerData.bookShelf.books.map(book => (
-                  <div 
-                    key={book.id} 
-                    className={styles.bookCard}
-                    // НОВОЕ: Обработчики событий для наведения мыши
-                    onMouseEnter={() => setActiveTooltip(book.id)}
-                    onMouseLeave={() => setActiveTooltip(null)}
-                >
-                    <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
-                    <p className={styles.bookTitle}>{book.title}</p>
-                    <p className={styles.bookAuthor}>{book.author}</p>
-                    
-                    {/* НОВОЕ: Условный рендеринг тултипа */}
-                    {activeTooltip === book.id && (
-                        <div className={styles.bookTooltip}>
-                            <p>{book.description}</p>
-                        </div>
-                    )}
+    <button
+        className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
+        onClick={() => scrollShelf(-booksToScroll)}
+        disabled={!canScrollLeft}
+    >
+        <img src="/images/left-vis.png" alt="Прокрутить влево" />
+    </button>
+    <div className={styles.booksContainer} ref={shelfRef}>
+        {bookCornerData.bookShelf.books.map(book => (
+            <div 
+                key={book.id} 
+                className={styles.bookCard}
+            >
+                <img src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                <p className={styles.bookTitle}>{book.title}</p>
+                <p className={styles.bookAuthor}>{book.author}</p>
+                
+                {/* Тултип теперь всегда в DOM, но скрыт по умолчанию */}
+                <div className={styles.bookTooltip}>
+                    <p>{book.description}</p>
                 </div>
-                ))}
-              </div>
-              <button
-                className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
-                onClick={() => scrollShelf(booksToScroll)}
-                disabled={!canScrollRight}
-              >
-                <img src="/images/right-vis.png" alt="Прокрутить вправо" />
-              </button>
             </div>
+        ))}
+    </div>
+    <button
+        className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
+        onClick={() => scrollShelf(booksToScroll)}
+        disabled={!canScrollRight}
+    >
+        <img src="/images/right-vis.png" alt="Прокрутить вправо" />
+    </button>
+</div>
 
             
-          </div>
+          </div></div>
         </div>
 
         {/* Главная открытая книга */}

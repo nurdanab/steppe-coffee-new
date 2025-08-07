@@ -9,312 +9,459 @@
     display: block; 
     overflow: hidden; 
     position: relative;  
-    min-height: 900px; 
+    z-index: 0;
 
-    @media (max-width: 1024px) {
-        min-height: auto; // Для адаптива, чтобы высота подстраивалась под контент
-        display: flex; // Возвращаем flex для мобильных, чтобы элементы шли друг за другом
+    @include xs-only { 
+        min-height: auto; 
+        display: flex;
         flex-direction: column;
         align-items: center;
-        padding-bottom: 50px; // Добавляем отступ снизу для мобильных, если элементы будут в потоке
+        padding-bottom: $spacing-lg; 
+        text-align: center;
+    }
+    @include sm-up {
+        min-height: auto; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: $spacing-xl; 
+        text-align: center;
+    }
+    @include md-up {
+        min-height: auto; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: $spacing-xl; 
+        text-align: center;
+    }
+    @include lg-up {
+        min-height: 900px;
+        display: block;
+        padding: 0;
+        text-align: left;
+    }
+    @include xl-up {
+        min-height: 900px;
+    }
+    @include xxl-up {
+        min-height: 1000px;
+    }
+    @include xxxl-up {
+        min-height: 1100px;
+    }
+    @include full-hd-up {
+        min-height: 1200px;
+    }
+    @include uhd-up {
+        min-height: 1400px;
+    }
+    @include uhd-4k-up {
+        min-height: 1800px;
     }
 }
 
 // --- Слой 0: Нижний фон с волной (footer-decor-2.png) ---
 .footerDecorBackground {
-    position: absolute;
-    bottom: 0; // Прикреплен к нижней части footerSection
-    left: 0;
-    width: 100%;
-    height: 600px; // Высота, покрывающая нижнюю желтую и серую часть
-    background-image: url('/images/footer-decor-2.png');  
-    background-size: cover; 
-    background-repeat: no-repeat;
-    background-position: center top; 
-    z-index: 0;  
-
-    @media (max-width: 1024px) {
-        position: static; // Для адаптива становится обычным блоком
-        height: 400px; // Уменьшаем высоту
-        // Возможно, на мобильных его лучше вообще убрать или сделать фоном для всей секции, если это упростит.
+    z-index: -2;
+    @include lg-up {
+        position: absolute;
+        bottom: 0; 
+        left: 0;
+        width: 100%;
+        height: 600px; 
+        background-image: url('/images/footer-decor-2.png');  
+        background-size: cover; 
+        background-repeat: no-repeat;
+        background-position: center top; 
     }
-    @media (max-width: 768px) {
-        height: 300px;
+    @include xs-only { 
+        position: static; 
+        height: 250px; 
+    }
+    @include sm-up {
+        position: static; 
+        height: 300px; 
+    }
+    @include md-up {
+        position: static; 
+        height: 400px; 
+    }
+    @include full-hd-up {
+        height: 700px;
+    }
+    @include uhd-up {
+        height: 800px;
+    }
+    @include uhd-4k-up {
+        height: 900px;
     }
 }
 
 // --- Слой 1: "Присоединяйтесь к сообществу" блок и телефон ---
 .communityBlock {
-    position: absolute;  
-    top: 0; 
-    left: 0;
-    width: 100%;
-    height: auto; 
-    display: flex;
-    justify-content: center;  
-    align-items: flex-start; 
-    padding: 120px 100px;  
-    box-sizing: border-box; 
-    z-index: 1; // Слой 1
-
-    @media (max-width: 1024px) {
-        position: static; // В потоке для адаптива
-        padding: 60px 20px;
-        flex-direction: column; // Телефон под текстом
-        text-align: center;
+    z-index: 3;
+    @include lg-up {
+        position: absolute;  
+        top: 0; 
+        left: 0;
+        width: 100%;
+        height: auto; 
+        @include flex-between;
+        padding: $spacing-xxl $spacing-xxxl; 
+        box-sizing: border-box; 
     }
-    @media (max-width: 768px) {
-        padding: 40px 15px;
+    @include xs-only {
+        position: static; 
+        flex-direction: column; 
+        padding: $spacing-md 0;
+        order: 1;
+    }
+    @include sm-up {
+        position: static; 
+        flex-direction: column; 
+        padding: $spacing-lg 0;
+        order: 1;
+    }
+    @include md-up {
+        position: static; 
+        flex-direction: column; 
+        padding: $spacing-xl 0;
+        order: 1;
+    }
+    @include full-hd-up {
+        padding: $spacing-xxxxl 100px;
+    }
+    @include uhd-up {
+        padding: $spacing-xxxxl 120px;
+    }
+    @include uhd-4k-up {
+        padding: $spacing-xxxxl 180px;
     }
 }
 
 .communityContent {
-     flex-grow: 1;  
-    max-width: 800px;  
+    flex-grow: 1;  
     text-align: left;
-    padding-left: 50px; 
-    
-    @media (max-width: 1200px) {
-        padding-left: 50px; 
-    }
-    @media (max-width: 1024px) {
-        padding-left: 0; // Убираем для мобильных
+    @include xs-only {
         max-width: 100%;
-        text-align: center;
+        padding: 0 $spacing-xs;
+    }
+    @include sm-up {
+        max-width: 100%;
+        padding: 0 $spacing-sm;
+    }
+    @include md-up {
+        max-width: 100%;
+        padding: 0 $spacing-md;
+    }
+    @include lg-up {
+        max-width: 800px;
+        padding-left: $spacing-xxl;
+    }
+    @include xl-up {
+        padding-left: $spacing-xxl;
     }
 }
 
 .communityTitle {
-    @extend .gilroy-32;
-    color: $black; 
-    margin-bottom: 20px;
+    @extend .riffic-large;
+    margin-bottom: $spacing-md;
 }
 
 .communityText {
     @extend .gilroy-18;
-    color: $black; 
-    margin-bottom: 50px;
+    margin-bottom: $spacing-xl;
 }
 
 .subscribeButton {
     @include button-primary;
+    border-radius: $border-radius-xxxl; 
+    padding: $spacing-sm $spacing-xxl;
 }
 
 .communityImage {
-     flex-shrink: 0; // Не сжимается
-    // Убираем position: relative, right, top, transform, так как communityBlock теперь flex
-    
+    flex-shrink: 0; 
     img {
-        max-width:500px;  
-        height: auto;
         display: block;
-        // margin-right: 150px; // Отступ от правого края communityBlock
-        
-        @media (max-width: 1200px) {
-            max-width: 400px; 
-            margin-right: 50px;
+        @include xs-only {
+            max-width: 200px;
+            margin-top: $spacing-md;
         }
-        @media (max-width: 1024px) {
-            margin-right: 0; // Убираем отступ для мобильных
-            margin-top: 30px; // Отступ от текста
+        @include sm-up {
+            max-width: 250px; 
+            margin-top: $spacing-md;
+        }
+        @include md-up {
             max-width: 300px; 
+            margin-top: $spacing-md;
         }
-        @media (max-width: 768px) {
-            max-width: 200px; 
+        @include lg-up {
+            max-width: 400px;
+        }
+        @include xl-up {
+            max-width: 450px;
+        }
+        @include xxl-up {
+            max-width: 500px;
+        }
+        @include full-hd-up {
+            max-width: 550px;
+        }
+        @include uhd-up {
+            max-width: 600px;
+        }
+        @include uhd-4k-up {
+            max-width: 700px;
         }
     }
 }
 
 // --- Слой 1: Реклама приложения в нижней левой части ---
 .appPromoBlock {
-    position: absolute;  
-    bottom: 100px;  
-    left: 150px; // Отступ слева
-    width: 400px; 
-    padding: 0;  
-    text-align: left; 
-    z-index: 3;  
-
-    @media (max-width: 1200px) {
-        left: 50px;
-        width: 350px;
+    z-index: 3;
+    @include lg-up {
+        position: absolute;  
+        bottom: $spacing-xxxl;  
+        left: $spacing-xxxl; 
+        width: 400px; 
+        padding: 0;  
+        text-align: left; 
     }
-    @media (max-width: 1024px) {
-        position: static; // В потоке для адаптива
+    @include xs-only {
+        position: static; 
         width: 100%;
-        text-align: center;
-        margin-top: 50px; // Отступ от предыдущего блока
-        padding: 0 20px;
-        display: flex;
-        flex-direction: column;
+        margin-top: $spacing-lg;
+        order: 2;
+        @include flex-column;
         align-items: center;
     }
-    @media (max-width: 768px) {
-        bottom: auto; // Убираем абсолютное позиционирование
-        left: auto;
-        width: calc(100% - 40px);
+    @include sm-up {
+        position: static; 
+        width: 100%;
+        margin-top: $spacing-xl;
+        order: 2;
+        @include flex-column;
+        align-items: center;
+    }
+    @include md-up {
+        position: static; 
+        width: 100%;
+        margin-top: $spacing-xxl;
+        order: 2;
+        @include flex-column;
+        align-items: center;
+    }
+    @include xxl-up {
+        left: $spacing-xxl;
+        width: 450px;
+    }
+    @include xl-up {
+        left: $spacing-xl;
+        width: 400px;
     }
 }
 
 .appPromoTitle {
-    @extend .gilroy-24; 
-    color: $black;
-    margin-bottom: 20px;
+    @extend .riffic-32;
+    margin-bottom: $spacing-md;
 }
 
 .appPromoDescription {
-    @extend .gilroy-16;
-    margin-bottom: 20px;
+    @extend .gilroy-18;
+    margin-bottom: $spacing-md;
 }
 
 .downloadAppButton {
     @include button-base-3;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    @include flex-center;
+    gap: $spacing-xs;
+    border-radius: $border-radius-xxxl;
+    padding: $spacing-sm $spacing-xl;
 }
 
-// .scissorsIcon {
-//     width: 24px;
-//     height: 24px;
-//     object-fit: contain;
-// }
-
 .appPromoLogo {
-     position: absolute; // Абсолютно позиционируем внутри appPromoBlock (если он position: relative)
-     bottom: -50px; // Позиционируем ниже блока
-    left: 250px; // Левее блока (под ножницами кнопки)
-    width: 120px; 
-    transform: rotate(20deg); 
-    z-index: 3; // Выше appPromoBlock, чтобы быть на переднем плане
-    
-    @media (max-width: 1024px) {
-        position: static; // Возвращаем в поток
+    z-index: 3;
+    @include lg-up {
+        position: absolute; 
+        bottom: -50px; 
+        left: 250px; 
+        width: 120px; 
+        transform: rotate(20deg); 
+    }
+    @include xs-only {
+        position: static; 
         transform: none;
-        margin-top: 20px;
+        margin-top: $spacing-sm;
+        width: 80px;
+        order: 3;
+    }
+    @include sm-up {
+        position: static; 
+        transform: none;
+        margin-top: $spacing-md;
         width: 100px;
+        order: 3;
+    }
+    @include md-up {
+        position: static; 
+        transform: none;
+        margin-top: $spacing-lg;
+        width: 120px;
+        order: 3;
+    }
+    @include full-hd-up {
+        width: 150px;
+    }
+    @include xxl-up {
+        bottom: -30px;
+        left: 280px;
+    }
+    @include xl-up {
+        left: 250px;
     }
 }
 
 // --- Слой 2: footer-decor-1.png в правой нижней части ---
 .footerDecorMid {
-    position: absolute;
-    bottom: 0; 
-    right: 0; 
-    width: 70%;  
-    height: 440px;  
-    background-image: url('/images/footer-decor-1.png');
-    background-size: cover; 
-    background-repeat: no-repeat;
-    background-position: right bottom; // Позиционируем снизу
-    z-index: 2; // Слой 2
-
-    @media (max-width: 1024px) {
-        display: none; // Скрываем на мобильных, так как это сложный декор
+    z-index: -1;
+    @include lg-up {
+        position: absolute;
+        bottom: 0; 
+        right: 0; 
+        width: 70%;  
+        height: 440px;  
+        background-image: url('/images/footer-decor-1.png');
+        background-size: cover; 
+        background-repeat: no-repeat;
+        background-position: right bottom; 
+    }
+    @include lg-down {
+        display: none;
     }
 }
 
 // --- Слой 3: Основной контент футера - "Контакты" и "О нас" ---
 .mainFooterContent {
-    position: absolute;
-    bottom: 0; // В нижней части секции
-    right: 0; // В правой части секции
-    width: 50%; // Ширина, которая перекрывает footer-decor-1.png и background
-    display: flex;
-    justify-content: space-around; 
-    align-items: flex-end;
-    gap: 50px;
-    padding: 100px 100px; // Внутренние отступы
-    box-sizing: border-box;
-    z-index: 3; // Слой 3 (самый верхний)
-    // background-color: transparent; // Фон уже задан footerDecorBackground
-
-    @media (max-width: 1200px) {
-        width: 70%;
-        padding: 80px 50px;
+    z-index: 3;
+    @include lg-up {
+        position: absolute;
+        bottom: 0; 
+        right: 0; 
+        width: 50%; 
+        display: flex;
+        justify-content: space-around; 
+        align-items: flex-end;
+        gap: $spacing-xxl;
+        padding: $spacing-xxl $spacing-xxxl; 
+        box-sizing: border-box;
     }
-    @media (max-width: 1024px) {
-        position: static; // Возвращаем в поток
+    @include xs-only {
+        position: static; 
         width: 100%;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 30px;
-        padding: 50px 20px;
+        align-items: center;
+        gap: $spacing-lg;
+        padding: $spacing-xxl $spacing-xs;
+        order: 4;
     }
-    @media (max-width: 768px) {
-        padding: 30px 15px;
+    @include sm-up {
+        position: static; 
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-lg;
+        padding: $spacing-xxl $spacing-sm;
+        order: 4;
+    }
+    @include md-up {
+        position: static; 
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: $spacing-lg;
+        padding: $spacing-xxl $spacing-md;
+        order: 4;
+    }
+    @include full-hd-up {
+        padding: $spacing-xxxl 100px;
+    }
+    @include xxxl-up {
+        padding: $spacing-xxl 100px;
+    }
+    @include xxl-up {
+        padding: $spacing-xl 50px;
+        gap: $spacing-xl;
+    }
+    @include xl-up {
+        width: 60%;
+        padding: $spacing-lg 50px;
+        gap: $spacing-lg;
     }
 }
 
 .footerColumn {
-    flex: 1;
-    min-width: 250px;
-    max-width: 350px;
-    // align-items: end; 
-    @media (max-width: 1024px) {
+    @include lg-up {
+        flex: 1;
+        min-width: 250px;
+        max-width: 350px;
+    }
+    @include lg-down {
         min-width: 100%;
-        max-width: 500px;
+        max-width: 100%;
+        text-align: center;
+        &:first-of-type {
+            order: 2; 
+        }
+        &:last-of-type {
+            order: 3; 
+            margin-top: $spacing-md;
+        }
     }
 }
 
 .columnTitle {
     @extend .gilroy-18;
-    color: $black;
-    margin-bottom: 20px;
+    margin-bottom: $spacing-md;
 }
 
 .contactInfo,
 .documentLinks li {
-    font-size: 16px;
+    @extend .gilroy-18;
     line-height: 1.6;
-    margin-bottom: 10px;
-    color: $black; 
+    margin-bottom: $spacing-xs;
 }
 
 .contactLink,
 .documentLink {
     color: $black; 
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color $transition-fast;
     &:hover {
         color: $white; 
     }
 }
 
 .socialIcons {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
-    justify-content: flex-start; 
-    
-    @media (max-width: 1024px) {
-        justify-content: flex-start; 
-    }
-    @media (max-width: 768px) {
-        justify-content: center; 
-    }
+    @include flex-center; 
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
 }
 
 .socialLink {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     width: 33px;
     height: 33px;
     border-radius: 50%;
-    transition: background-color 0.3s ease;
-
+    transition: background-color $transition-fast;
     img {
         width: 30px;
         height: 30px;
-        display: flex;
     }
-
     &:hover {
         img {
             width: 33px;
             height: 33px;
-            display: flex;
         }
     }
 }
@@ -322,9 +469,8 @@
 .documentLinks {
     list-style: none;
     padding: 0;
-    
     li {
-        margin-bottom: 10px;
+        margin-bottom: $spacing-xs;
         &:last-child {
             margin-bottom: 0;
         }
@@ -333,20 +479,38 @@
 
 // --- Секция копирайта ---
 .copyright {
-    width: 100%;
-    text-align: center;
-    padding: 10px 20px; 
-    font-size: 14px;
-    color: $black; 
-    position: absolute; // Сделаем его абсолютно позиционированным, чтобы он был в самом низу
-    bottom: 0;
-    left: 0;
-    z-index: 4; // Самый верхний, если нужно, чтобы перекрывал все
-    // Если footerDecorBackground уже имеет серую часть, можно убрать background-color отсюда.
-    // Но по макету это похоже на отдельную секцию.
-    
-    @media (max-width: 1024px) {
-        position: static; // Возвращаем в поток для адаптива
-        margin-top: 30px; // Отступ от предыдущего блока
+    z-index: 4;
+    @include lg-up {
+        position: absolute; 
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: $spacing-sm $spacing-md; 
+        font-size: 14px;
+    }
+    @include xs-only {
+        position: static; 
+        width: 100%;
+        text-align: center;
+        padding: $spacing-sm $spacing-xs;
+        margin-top: $spacing-md; 
+        order: 5; 
+    }
+    @include sm-up {
+        position: static; 
+        width: 100%;
+        text-align: center;
+        padding: $spacing-sm $spacing-sm;
+        margin-top: $spacing-md; 
+        order: 5;
+    }
+    @include md-up {
+        position: static; 
+        width: 100%;
+        text-align: center;
+        padding: $spacing-sm $spacing-md;
+        margin-top: $spacing-lg; 
+        order: 5;
     }
 }

@@ -5,18 +5,27 @@
 @use '../../styles/base' as *; 
 
 .promoSection {
-   @extend .section;  
+   @include section-padding;
     background-color: $yellow; 
     position: relative;
     overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .headerFullWidthContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: map-get($breakpoints, uhd-4k); // Используем максимальную ширину для контейнера
+    }
 
     &::before {
         content: '';
         position: absolute;
         top: 30px; 
         left: 30px;
-        width: 300px;  
-        height: 300px; 
         background-image: url('/public/images/promo-decor-1.png');
         background-size: contain;
         background-repeat: no-repeat;
@@ -152,78 +161,73 @@
   transform: translateY(20px);
   transition: opacity 0.6s ease-out 0.2s, transform 0.6s ease-out 0.2s;
   opacity: 0;
+  z-index: 2;
 
   &.visible {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  @include xs-only {
+    margin-bottom: $spacing-sm;
   }
 }
 
 .promoCardsContainer {
   width: 100%;
   z-index: 2;
+  // Используем flexbox для центрирования на маленьких экранах
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
 
-  @include xs-only { 
-    flex-direction: row;
-    justify-content: center;
-    gap: $spacing-xs;
-  }
-  @include sm-up {
-    flex-direction: row;
-    justify-content: center;
-    gap: $spacing-sm;
-  }
   @include md-up {
-    flex-direction: row;
-    justify-content: center;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center; // Центрируем по вертикали
+      justify-content: center; // Центрируем по горизонтали
+      max-width: 1000px;
   }
-  @include lg-up {
-    max-width: 1000px;
-    gap: $spacing-lg;
-    @include flex-center;
 
+  @include lg-up {
+    gap: $spacing-lg;
+    max-width: 1200px;
   }
   @include xl-up {
-    max-width: 1300px;
     gap: $spacing-xl;
-    @include flex-center;
+    max-width: 1300px;
   }
   @include xxl-up {
-    max-width: 1400px;
     gap: $spacing-xl;
-    @include flex-center;
+    max-width: 1400px;
   }
   @include xxxl-up {
-    max-width: 1700px;
     gap: $spacing-xxl;  
-    @include flex-center;
+    max-width: 1700px;
   }
   @include full-hd-up {
-    max-width: 2000px;
     gap: $spacing-xxxl;
-    @include flex-center;
+    max-width: 2000px;
   }
   @include uhd-up {
-    max-width: 2500px;
     gap: $spacing-xxxxl;
-    @include flex-center;
-
+    max-width: 2500px;
   }
   @include uhd-4k-up {
-    max-width: 3800px;
     gap: $spacing-xxxxl;
-    @include flex-center;
+    max-width: 3800px;
   }
 }
 
 .promoCard {
   z-index: 2;
   background-color: $white;
-  border: 2px solid $black; 
+  border: 1px solid $black; 
   border-radius: $border-radius-xl;
   box-shadow: $shadow-medium;
   overflow: hidden; 
-  flex: 1; 
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -243,21 +247,15 @@
     opacity: 1;
     transform: translateY(0);
   }
-
+  
   @include xs-only { 
-    min-width: unset;
-    max-width: 100%;
-    margin: 16px auto;
+    margin: $spacing-sm auto;
   }
   @include sm-up {
-    min-width: unset;
-    max-width: 100%;
-    margin: 20px auto;
+    margin: $spacing-md auto;
   }
   @include md-up {
-    min-width: unset;
-    max-width: 100%;
-    margin: 30px auto;
+    margin: 0;
   }
 }
 
@@ -266,15 +264,15 @@
   object-fit: cover; 
   border-radius: $border-radius-lg;
   display: block; 
-
+  
   @include xs-only { 
-    height: 250px;
+    height: 180px;
   }
   @include sm-up {
     height: 250px;
   }
   @include md-up {
-    height: 450px;
+    height: 300px;
   }
   @include lg-up {
     height: 350px;
@@ -307,10 +305,9 @@
   overflow: hidden;
   color: $black;
   box-shadow: $shadow-medium;
-  z-index: 0;
-  display: block;
-  margin: $spacing-lg auto 0 auto;
-
+  z-index: 2;
+  display: block; // <-- Изменено на block
+  margin: $spacing-xl auto 0; // <-- Центрирование
 
   &::before {
     content: '';
@@ -335,6 +332,11 @@
     transform: translateY(-2px) scale(0.98);
   }
 
+  &.buttonVisible {
+    animation: fadeIn 0.6s ease-in-out forwards;
+    animation-delay: 0.8s;
+  }
+  
   @include xs-only { 
     font-size: 10px;
     padding: $spacing-xs $spacing-md;
@@ -382,9 +384,10 @@
   }
   @include uhd-4k-up {
     font-size: 50px;
-    padding: $spacing-xxl $spacing-xxxxl;
+    margin-top: 100px;
+    padding: $spacing-xl $spacing-xxxl;
+
     border-radius: $border-radius-xxxxl;
     
   }
 }
-

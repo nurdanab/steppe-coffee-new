@@ -3,7 +3,6 @@
 @use '../../../styles/mixins' as *;
 @use '../../../styles/typography' as *;
 
-
 .deskItem {
   border-radius: 2px;
   position: relative; 
@@ -18,7 +17,7 @@
   transform: translateX(-50%); 
   z-index: 10; 
 
-  @include mobile-only { // ИСПРАВЛЕНО
+  @include mobile-only {
     width: 20px; 
     top: -10px;
   }
@@ -45,7 +44,7 @@
   }
 
   .hidden {
-    opacity: 0; // урааа!
+    opacity: 0;
     pointer-events: none;
   }
 
@@ -58,295 +57,188 @@
   }
 
   // --- Стили для разных полароидов ---
-  // --- 3 ---
+  // 3
   &.small {
     .mediaContainer {
-      width: 220px;
-      height: 140px;
       padding: 10px;
       align-items: center;
       margin-bottom: 9px;
     }
+    @include xs-only {
+      .mediaContainer { width: 50px; height: 65px; padding: 3px; }
+    }
+    @include sm-up {
+      .mediaContainer { width: 60px; height: 80px; padding: 4px; }
+    }
+    @include md-up {
+      .mediaContainer { width: 80px; height: 100px; padding: 5px; }
+    }
+    @include lg-up {
+      .mediaContainer { width: 100px; height: 120px; padding: 6px; }
+    }
+    @include xl-up {
+      .mediaContainer { width: 120px; height: 150px; padding: 7px; }
+    }
+    @include xxl-up {
+      .mediaContainer { width: 150px; height: 170px; }
+    }
+    @include xxxl-up {
+      .mediaContainer { width: 180px; height: 220px; }
+    }
+    @include full-hd-up {
+      .mediaContainer { width: 220px; height: 200px; }
+    }
+    @include uhd-up {
+      .mediaContainer { width: 300px; height: 350px; }
+    }
+    @include uhd-4k-up {
+      .mediaContainer { width: 400px; height: 500px; }
+    }
   }
-// --- 1 ---
+  // 1
   &.medium {
     .mediaContainer {
       margin: 1px;
-      width: 200px;
-      height: 150px;
+    }
+    @include xs-only {
+      .mediaContainer { width: 60px; height: 80px; padding: 4px; }
+    }
+    @include sm-up {
+      .mediaContainer { width: 80px; height: 100px; padding: 5px; }
+    }
+    @include md-up {
+      .mediaContainer { width: 100px; height: 120px; padding: 6px; }
+    }
+    @include lg-up {
+      .mediaContainer { width: 110px; height: 115px; }
+    }
+    @include xl-up {
+      .mediaContainer { width: 130px; height: 140px; }
+    }
+    @include xxl-up {
+      .mediaContainer { width: 180px; height: 170px; }
+    }
+    @include xxxl-up {
+      .mediaContainer { width: 220px; height: 190px; }
+    }
+    @include full-hd-up {
+      .mediaContainer { width: 220px; height: 210px; }
+    }
+    @include uhd-up {
+      .mediaContainer { width: 300px; height: 250px; }
+    }
+    @include uhd-4k-up {
+      .mediaContainer { width: 400px; height: 450px; }
     }
   }
-// --- 2 ---
+// 2 plrd 
   &.large {
     .mediaContainer {
-      width: 150px;
-      height: 200px;
       padding: 8px;
     }
+    @include xs-only {
+      .mediaContainer { width: 70px; height: 90px; padding: 4px; }
+    }
+    @include sm-up {
+      .mediaContainer { width: 90px; height: 110px; padding: 5px; }
+    }
+    @include md-up {
+      .mediaContainer { width: 110px; height: 130px; padding: 6px; }
+    }
+    @include lg-up {
+      .mediaContainer { width: 130px; height: 140px; }
+    }
+    @include xl-up {
+      .mediaContainer { width: 160px; height: 170px; }
+    }
+    @include xxl-up {
+      .mediaContainer { width: 180px; height: 210px; }
+    }
+    @include xxxl-up {
+      .mediaContainer { width: 190px; height: 230px; }
+    }
+    @include full-hd-up {
+      .mediaContainer { width: 220px; height: 250px; }
+    }
+    @include uhd-up {
+      .mediaContainer { width: 300px; height: 320px; }
+    }
+    @include uhd-4k-up {
+      .mediaContainer { width: 450px; height: 500px; }
+    }
     .itemTitle {
-        font-size: 12px;
+      @extend .gilroy-12;
     }
-  }
-
-  // мобильных устр
-  @include mobile-only { // ИСПРАВЛЕНО
-    &.small .mediaContainer {
-      width: 100px;
-      height: 120px;
-      padding: 5px;
-    }
-    &.medium .mediaContainer {
-      width: 120px;
-      height: 150px;
-      padding: 5px;
-    }
-    &.large .mediaContainer {
-      width: 150px;
-      height: 180px;
-      padding: 7px;
-    }
- 
   }
 
   // --- Стили для 5 LIVE-PHOTO ---
   &.livePhotoSize-1 { 
-    @include xs-only { 
-      .mediaContainer {
-        width: 50px; 
-        height: 80px; 
-        border: 1px solid #682901; 
-      }
-    }
-    @include sm-up {
-      .mediaContainer {
-        width: 60px; 
-        height: 90px; 
-        border: 1px solid #682901; 
-      }
-    }
-    @include md-up {
-      .mediaContainer {
-        width: 120px; 
-        height: 180px; 
-        border: 2px solid #682901; 
-      }
-    }
-    @include lg-up {
-      .mediaContainer {
-        width: 150px; 
-        height: 220px; 
-        border: 3px solid #682901; 
-      }
-    }
-    @include xl-up {
-      .mediaContainer {
-        width: 180px; 
-        height: 270px; 
-        border: 4px solid #682901; 
-      }
-    }
-    @include xxl-up {
-      .mediaContainer {
-        width: 200px; 
-        height: 320px; 
-        border: 4px solid #682901; 
-      }
-    }
-    @include xxxl-up {
-      .mediaContainer {
-        width: 230px; 
-        height: 370px; 
-        border: 5px solid #682901; 
-      }
-    }
-    @include full-hd-up {
-      .mediaContainer {
-        width: 250px; 
-        height: 400px; 
-        border: 6px solid #682901; 
-      }
-    }
-    @include uhd-up {
-      .mediaContainer {
-        width: 270px; 
-        height: 500px; 
-        border: 8px solid #682901; 
-      }
-    }
-    @include uhd-4k-up {
-      .mediaContainer {
-        width: 470px; 
-        height: 800px; 
-        border: 12px solid #682901; 
-      }
-    }
+    .mediaContainer { border: 1px solid #682901; }
+    @include xs-only { .mediaContainer { width: 50px; height: 80px; } }
+    @include sm-up { .mediaContainer { width: 60px; height: 90px; } }
+    @include md-up { .mediaContainer { width: 120px; height: 180px; border-width: 2px; } }
+    @include lg-up { .mediaContainer { width: 150px; height: 220px; border-width: 3px; } }
+    @include xl-up { .mediaContainer { width: 180px; height: 270px; border-width: 4px; } }
+    @include xxl-up { .mediaContainer { width: 200px; height: 320px; border-width: 4px; } }
+    @include xxxl-up { .mediaContainer { width: 230px; height: 370px; border-width: 5px; } }
+    @include full-hd-up { .mediaContainer { width: 250px; height: 400px; border-width: 6px; } }
+    @include uhd-up { .mediaContainer { width: 270px; height: 500px; border-width: 8px; } }
+    @include uhd-4k-up { .mediaContainer { width: 470px; height: 800px; border-width: 12px; } }
   }
-  &.livePhotoSize-2 { 
-    @include xs-only { 
-
-    }
-    @include sm-up {
-     
-    }
-    @include md-up {
   
-    }
-    @include lg-up {
-  
-    }
-    @include xl-up {
-    
-    }
-    @include xxl-up {
-  
-    }
-    @include xxxl-up {
-      .mediaContainer {
-        width: 250px; 
-        height: 160px; 
-        border: 5px solid #682901; 
-      }
-    }
-    @include full-hd-up {
-      .mediaContainer {
-        width: 260px; 
-        height: 180px; 
-        border: 6px solid #682901; 
-      }
-    }
-    @include uhd-up {
-      .mediaContainer {
-        width: 250px; 
-        height: 300px; 
-        border: 8px solid #682901; 
-      }
-    }
-    @include uhd-4k-up {
-      .mediaContainer {
-        width: 450px; 
-        height: 500px; 
-        border: 12px solid #682901; 
-      }
-    }
+  &.livePhotoSize-2 {
+    .mediaContainer { border: 1px solid #682901; }
+    @include xs-only { .mediaContainer { width: 50px; height: 80px; } }
+    @include sm-up { .mediaContainer { width: 60px; height: 90px; } }
+    @include md-up { .mediaContainer { width: 120px; height: 150px; border-width: 2px; } }
+    @include lg-up { .mediaContainer { width: 150px; height: 180px; border-width: 3px; left: 20px; bottom: 16px;} }
+    @include xl-up { .mediaContainer { width: 180px; height: 200px; border-width: 4px; } }
+    @include xxl-up { .mediaContainer { width: 200px; height: 220px; border-width: 4px; left: 20px; } }
+    @include xxxl-up { .mediaContainer { width: 200px; height: 170px; border-width: 5px; left: 30px; } }
+    @include full-hd-up { .mediaContainer { width: 240px; height: 180px; border-width: 6px; } }
+    @include uhd-up { .mediaContainer { width: 250px; height: 300px; border-width: 8px; } }
+    @include uhd-4k-up { .mediaContainer { width: 450px; height: 500px; border-width: 12px; } }
   }
-  &.livePhotoSize-3 { 
-    @include xs-only { 
 
-    }
-    @include sm-up {
-     
-    }
-    @include md-up {
-  
-    }
-    @include lg-up {
-  
-    }
-    @include xl-up {
-    
-    }
-    @include xxl-up {
-  
-    }
-    @include xxxl-up {
-  
-    }
-    @include full-hd-up {
-   
-    }
-    @include uhd-up {
-      .mediaContainer {
-        width: 400px; 
-        height: 300px; 
-        border: 8px solid #682901; 
-      }
-    }
-    @include uhd-4k-up {
-      .mediaContainer {
-        width: 600px; 
-        height: 400px; 
-        border: 12px solid #682901; 
-      }
-    }
+  &.livePhotoSize-3 {
+    .mediaContainer { border: 1px solid #682901; }
+    @include xs-only { .mediaContainer { width: 50px; height: 80px; } }
+    @include sm-up { .mediaContainer { width: 60px; height: 90px; } }
+    @include md-up { .mediaContainer { width: 120px; height: 150px; border-width: 2px; } }
+    @include lg-up { .mediaContainer { width: 150px; height: 180px; border-width: 3px; left: 35px; } }
+    @include xl-up { .mediaContainer { width: 180px; height: 200px; border-width: 4px; left: 30px; } }
+    @include xxl-up { .mediaContainer { width: 200px; height: 220px; border-width: 4px; left: 40px; } }
+    @include xxxl-up { .mediaContainer { width: 250px; height: 280px; border-width: 5px; } }
+    @include full-hd-up { .mediaContainer { width: 300px; height: 300px; border-width: 6px; } }
+    @include uhd-up { .mediaContainer { width: 400px; height: 300px; border-width: 8px; } }
+    @include uhd-4k-up { .mediaContainer { width: 600px; height: 400px; border-width: 12px; } }
   }
-  &.livePhotoSize-4 { 
-    @include xs-only { 
 
-    }
-    @include sm-up {
-     
-    }
-    @include md-up {
-  
-    }
-    @include lg-up {
-  
-    }
-    @include xl-up {
-    
-    }
-    @include xxl-up {
-  
-    }
-    @include xxxl-up {
-  
-    }
-    @include full-hd-up {
-   
-    }
-    @include uhd-up {
-      .mediaContainer {
-        width: 300px; 
-        height: 500px; 
-        border: 8px solid #682901; 
-      }
-    }
-    @include uhd-4k-up {
-      .mediaContainer {
-        width: 500px; 
-        height: 700px; 
-        border: 14px solid #682901; 
-      }
-    }
+  &.livePhotoSize-4 {
+    .mediaContainer { border: 1px solid #682901; }
+    @include xs-only { .mediaContainer { width: 50px; height: 80px; } }
+    @include sm-up { .mediaContainer { width: 60px; height: 90px; } }
+    @include md-up { .mediaContainer { width: 120px; height: 180px; border-width: 2px; } }
+    @include lg-up { .mediaContainer { width: 160px; height: 220px; border-width: 3px; } }
+    @include xl-up { .mediaContainer { width: 180px; height: 270px; border-width: 4px; } }
+    @include xxl-up { .mediaContainer { width: 200px; height: 320px; border-width: 4px; } }
+    @include xxxl-up { .mediaContainer { width: 240px; height: 380px; border-width: 5px; } }
+    @include full-hd-up { .mediaContainer { width: 280px; height: 400px; border-width: 6px; } }
+    @include uhd-up { .mediaContainer { width: 300px; height: 500px; border-width: 8px; } }
+    @include uhd-4k-up { .mediaContainer { width: 500px; height: 700px; border-width: 14px; } }
   }
-  &.livePhotoSize-5 { 
-    @include xs-only { 
 
-    }
-    @include sm-up {
-     
-    }
-    @include md-up {
-  
-    }
-    @include lg-up {
-  
-    }
-    @include xl-up {
-    
-    }
-    @include xxl-up {
-  
-    }
-    @include xxxl-up {
-  
-    }
-    @include full-hd-up {
-   
-    }
-    @include uhd-up {
-      .mediaContainer {
-        width: 400px; 
-        height: 300px; 
-        border: 8px solid #682901; 
-      }
-    }
-    @include uhd-4k-up {
-      .mediaContainer {
-        width: 600px; 
-        height: 500px; 
-        border: 12px solid #682901; 
-      }
-    }
+  &.livePhotoSize-5 {
+    .mediaContainer { border: 1px solid #682901; }
+    @include xs-only { .mediaContainer { width: 50px; height: 80px; } }
+    @include sm-up { .mediaContainer { width: 60px; height: 90px; } }
+    @include md-up { .mediaContainer { width: 120px; height: 150px; border-width: 2px; } }
+    @include lg-up { .mediaContainer { width: 150px; height: 180px; border-width: 3px; left: 10px; top: -10px;} }
+    @include xl-up { .mediaContainer { width: 180px; height: 200px; border-width: 4px; } }
+    @include xxl-up { .mediaContainer { width: 200px; height: 220px; border-width: 4px; } }
+    @include xxxl-up { .mediaContainer { width: 230px; height: 280px; border-width: 5px; } }
+    @include full-hd-up { .mediaContainer { width: 270px; height: 300px; border-width: 6px; } }
+    @include uhd-up { .mediaContainer { width: 400px; height: 300px; border-width: 8px; } }
+    @include uhd-4k-up { .mediaContainer { width: 600px; height: 500px; border-width: 12px; } }
   }
 }
