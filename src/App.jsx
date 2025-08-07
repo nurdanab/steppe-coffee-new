@@ -25,8 +25,8 @@ import { supabase } from './supabaseClient';
 const EventsPageContent = () => (
   <main>
     <SeoHelmet
-      title="События и бронирование | Steppe Coffee"
-      description="Узнайте о предстоящих событиях и забронируйте столик в Steppe Coffee."
+      title="Афиша событий Steppe Coffee в Алматы | Бронирование столиков"
+      description="Следите за афишей Steppe Coffee: музыкальные вечера, мастер-классы, встречи с авторами и многое другое. Бронируйте столики онлайн для участия в наших уникальных событиях в Алматы."
       ogUrl="https://steppecoffee.netlify.app/events"
     />
     <PublicCalendar />
@@ -115,8 +115,8 @@ function App() {
         <Route path="/" element={
           <main>
             <SeoHelmet
-              title="Steppe Coffee - Уютная кофейня в Алматы: насладитесь лучшим кофе!"
-              description="Пространство для общения, вдохновения и новых впечатлений. Посетите Steppe Coffee в Алматы с кофейной подпиской."
+              title="Steppe Coffee: Уютная кофейня в Алматы | Кофе, Выпечка и Подписка"
+              description="Посетите Steppe Coffee — идеальное место для вдохновения и новых впечатлений. Насладитесь лучшим кофе, свежей выпечкой и выгодной кофейной подпиской в самом сердце Алматы."
               ogImage="https://steppecoffee.netlify.app/images/og/og-image.webp"
               ogUrl="https://steppecoffee.netlify.app/"
             />
