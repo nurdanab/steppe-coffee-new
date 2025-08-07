@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import SeoComponent from './components/SeoComponent'; 
 import SeoHelmet from './components/SeoHelmet.jsx';
 import NotFoundPage from './components/NotFoundPage.jsx';
 
@@ -25,7 +26,7 @@ import { supabase } from './supabaseClient';
 
 const EventsPageContent = () => (
   <main>
-    <SeoHelmet
+    <SeoComponent
       title="Афиша событий Steppe Coffee в Алматы | Бронирование столиков"
       description="Следите за афишей Steppe Coffee: музыкальные вечера, мастер-классы, встречи с авторами и многое другое. Бронируйте столики онлайн для участия в наших уникальных событиях в Алматы."
       ogUrl="https://steppecoffee.netlify.app/events"
@@ -196,7 +197,7 @@ function App() {
       <Routes>
         <Route path="/" element={
           <main>
-            <SeoHelmet
+            <SeoComponent
               title="Steppe Coffee: Уютная кофейня в Алматы | Кофе, Выпечка и Подписка"
               description="Посетите Steppe Coffee — идеальное место для вдохновения и новых впечатлений. Насладитесь лучшим кофе, свежей выпечкой и выгодной кофейной подпиской в самом сердце Алматы."
               ogImage="https://steppecoffee.netlify.app/images/og/og-image.webp"
@@ -228,7 +229,7 @@ function App() {
         } />
         <Route path="/menu" element={
         <main>
-          <SeoHelmet
+          <SeoComponent
             title="Меню | Steppe Coffee - Кофе, напитки и десерты"
             description="Ознакомьтесь с полным меню Steppe Coffee. У нас есть широкий выбор кофе, чая, свежих десертов и закусок. Закажите любимое блюдо сегодня!"
             ogUrl="https://steppecoffee.netlify.app/menu"

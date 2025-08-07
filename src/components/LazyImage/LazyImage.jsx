@@ -1,18 +1,19 @@
-// src/components/LazyImage/LazyImage.jsx
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import styles from './LazyImage.module.scss'; // Создадим CSS-модуль для стилей
+import styles from './LazyImage.module.scss';
 
-const LazyImage = ({ src, alt, ...props }) => {
+const LazyImage = ({ src, alt, className, ...restProps }) => {
   const { ref, inView } = useInView({
-    // threshold: 0.1, // Можно настроить, когда именно должно начаться появление
-    triggerOnce: true, // Загрузить изображение только один раз
+    triggerOnce: true,
   });
+
+  // Комбинируем переданный класс с классом из модуля
+  const imageClassName = className ? `${styles.image} ${className}` : styles.image;
 
   return (
     <div ref={ref} className={styles.lazyContainer}>
       {inView ? (
-        <LazyImage src={src} alt={alt} {...props} />
+        <img src={src} alt={alt} className={imageClassName} {...restProps} />
       ) : (
         <div className={styles.placeholder}></div>
       )}

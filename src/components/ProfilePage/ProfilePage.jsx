@@ -5,6 +5,7 @@ import styles from './ProfilePage.module.scss';
 import { useNavigate } from 'react-router-dom';
 import WhatsAppFeedback from './WhatsAppFeedback';
 
+
 const ProfilePage = ({ session, onLogout }) => {
   const [userBookings, setUserBookings] = useState([]);
   const [loadingBookings, setLoadingBookings] = useState(true);
@@ -66,7 +67,7 @@ const ProfilePage = ({ session, onLogout }) => {
     // Вместо пустой страницы будет заглушка с сообщением.
     return (
       <main className={styles.profilePage}>
-        <div className="container">
+        <div className="headerFullWidthContainer">
           <div className={styles.notLoggedInMessage}>
             <p>Для просмотра профиля необходимо войти.</p>
           </div>
@@ -77,7 +78,7 @@ const ProfilePage = ({ session, onLogout }) => {
 
   return (
     <main className={styles.profilePage}>
-      <div className="container">
+      <div className="headerFullWidthContainer">
         <div className={styles.profileHeader}>
           <h1>Добро пожаловать!</h1>
           <div className={styles.profileActions}> 
