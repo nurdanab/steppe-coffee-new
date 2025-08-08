@@ -22,7 +22,7 @@ serve(async (req) => {
         end_time, 
         num_people, 
         comments,
-        user_id,
+        user_id, // 💡 Получаем user_id из запроса
         selected_room,
         event_name,
         event_description,
@@ -43,9 +43,23 @@ serve(async (req) => {
       });
     }
 
+    // 💡 Добавляем проверку user_id в Edge Function
+    if (!user_id) {
+        console.error('Validation error: user_id is missing');
+        return new Response(JSON.stringify({ error: 'User not authenticated' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 401,
+        });
+    }
+
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { 'Authorization': req.headers.get('Authorization')! },
+        },
+      }
     );
     
     const proposedBookingStart = DateTime.fromISO(`${booking_date}T${start_time}`);

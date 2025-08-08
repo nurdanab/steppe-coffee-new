@@ -151,21 +151,21 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setMessage('');
     setError(null);
     setConflict(null);
-
+  
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-
+  
     if (authError || !user) {
       setError('Пожалуйста, войдите, чтобы забронировать.');
       setLoading(false);
       return;
     }
-
+      
     if (!isAgreed) {
         setError('Пожалуйста, примите правила бронирования.');
         setLoading(false);
         return;
     }
-
+  
     if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
       setError('Пожалуйста, заполните все обязательные поля.');
       setLoading(false);
@@ -177,7 +177,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         setLoading(false);
         return;
     }
-
+  
     try {
       const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
           body: {
@@ -187,7 +187,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               end_time: endTime,
               num_people: numberOfPeople,
               comments: comment,
-              user_id: user.id,
+              user_id: user.id, // 💡 Убеждаемся, что user_id всегда передается, если пользователь авторизован
               selected_room: selectedRoom,
               event_name: eventName,
               event_description: eventDescription,
@@ -197,7 +197,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           },
           method: 'POST',
       });
-
+  
       if (invokeError) {
           console.error('Ошибка вызова Edge Function:', invokeError);
           setError('Произошла ошибка при отправке брони. Пожалуйста, попробуйте снова.');
@@ -208,7 +208,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           setError(bookingResult.error);
           return;
       }
-
+  
       if (bookingResult.booking.status === 'pending') {
           setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
       } else if (bookingResult.booking.status === 'queued') {
