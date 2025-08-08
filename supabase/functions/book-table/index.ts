@@ -20,7 +20,7 @@ serve(async (req) => {
         booking_date, 
         start_time, 
         end_time, 
-        num_guests, 
+        num_people, 
         comments,
         user_id,
         selected_room,
@@ -29,7 +29,7 @@ serve(async (req) => {
         organizer_contact
     } = await req.json();
 
-    if (!organizer_name || !booking_date || !start_time || !end_time || !num_guests || !selected_room) {
+    if (!organizer_name || !booking_date || !start_time || !end_time || !num_people || !selected_room) {
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
@@ -104,7 +104,7 @@ serve(async (req) => {
         booking_date,
         start_time,
         end_time,
-        num_people: num_guests,
+        num_people: num_people,
         comments: comments || null,
         user_id: user_id || null,
         selected_room: selected_room,
@@ -134,7 +134,7 @@ serve(async (req) => {
         Дата: ${booking_date}
         Время: с ${start_time} до ${end_time}
         Зал: ${selected_room}
-        Количество мест: ${num_guests}
+        Количество мест: ${num_people}
         ${comments ? `Комментарии: ${comments}` : ''}
 
         id брони: ${newBooking.id}
