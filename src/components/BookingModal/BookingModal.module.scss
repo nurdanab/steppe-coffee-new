@@ -1,10 +1,7 @@
 // src/components/BookingModal/BookingModal.module.scss
-@use "sass:color";
-@use '../../styles/variables' as *;
+@use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
-@use '../../styles/base' as *; 
-
 
 .modalOverlay {
   position: fixed;
@@ -12,11 +9,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba($black, 0.7); // Используем переменную $black
-  @include flex-center; // Используем миксин для центрирования
+  background-color: rgba($black, 0.7);
+  @include flex-center;
   z-index: 1000;
-  backdrop-filter: blur(5px); 
-  animation: fadeIn 0.3s ease-out; 
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
 
   @keyframes fadeIn {
     from {
@@ -29,33 +26,32 @@
 }
 
 .modalContent {
-  background-color: $white; // Используем переменную $white
-  padding: $spacing-lg; // Используем переменную отступа
-  border-radius: $border-radius-lg; // Используем переменную радиуса
-  box-shadow: $shadow-heavy; // Используем переменную тени
+  background-color: $white;
+  padding: $spacing-lg;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-heavy;
   position: relative;
-  width: 90%;  
-  max-width: 900px;  
-  max-height: 90vh; 
-  overflow-y: auto; // Добавлено для прокрутки контента, если он не помещается
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
   animation: slideIn 0.4s ease-out forwards;
 
-  @include sm-up { // Используем миксин для адаптивности
-    padding: $spacing-xl; // Увеличиваем паддинг на больших экранах
+  @include sm-up {
+    padding: $spacing-xl;
   }
 
-  // Заголовок модального окна
   h2 {
     font-family: 'Riffic', serif;
     font-size: 28px;
-    color: $yellow; // Используем переменную цвета
+    color: $yellow;
     text-align: center;
-    margin-bottom: $spacing-md; // Используем переменную отступа
+    margin-bottom: $spacing-md;
 
     @include sm-up {
       font-size: 36px;
     }
-    @include md-up { // Добавим для еще большей адаптивности
+    @include md-up {
         font-size: 42px;
     }
   }
@@ -74,37 +70,36 @@
 
 .closeButton {
   position: absolute;
-  top: $spacing-sm; // Используем переменную отступа
-  right: $spacing-sm; // Используем переменную отступа
+  top: $spacing-sm;
+  right: $spacing-sm;
   background: none;
   border: none;
   font-size: 2.5rem;
-  color: $gray-dark; // Используем переменную цвета
+  color: $gray-dark;
   cursor: pointer;
-  transition: color $transition-fast; // Используем переменную перехода
-  line-height: 1; 
-  padding: $spacing-xs; // Используем переменную отступа
-  border-radius: $border-radius-sm; // Используем переменную радиуса
+  transition: color $transition-fast;
+  line-height: 1;
+  padding: $spacing-xs;
+  border-radius: $border-radius-sm;
 
   &:hover {
-    color: $maroon; // Используем переменную цвета
+    color: $maroon;
   }
   &:focus-visible {
-    outline: 2px solid $maroon; // Используем переменную цвета
+    outline: 2px solid $maroon;
     outline-offset: 2px;
   }
 }
 
 .formGroup {
-  margin-bottom: $spacing-md; // Используем переменную отступа
+  margin-bottom: $spacing-md;
 
   label {
     display: block;
-    margin-bottom: $spacing-xs; // Используем переменную отступа
+    margin-bottom: $spacing-xs;
     font-weight: 600;
-    color: $black; // Используем переменную цвета
-    font-size: 16px; 
-    // @include t.gilroy-18; // Можно использовать миксин, если хотите, чтобы это был конкретный размер из типографики
+    color: $black;
+    font-size: 16px;
   }
 
   input[type="date"],
@@ -114,34 +109,33 @@
   select,
   textarea {
     width: 100%;
-    padding: $spacing-xs $spacing-sm; // Используем переменные отступов
-    border: 1px solid $gray-medium; // Используем переменную цвета
-    border-radius: $border-radius-sm; // Используем переменную радиуса
+    padding: $spacing-xs $spacing-sm;
+    border: 1px solid $gray-medium;
+    border-radius: $border-radius-sm;
     font-family: 'Gilroy', sans-serif;
     font-size: 16px;
-    color: $black; // Используем переменную цвета
-    background-color: $white; // Используем переменную цвета
-    transition: border-color $transition-fast; // Используем переменную перехода
+    color: $black;
+    background-color: $white;
+    transition: border-color $transition-fast;
 
     &:focus {
       outline: none;
-      border-color: $maroon; // Используем переменную цвета
-      box-shadow: 0 0 0 2px rgba($maroon, 0.2); // Используем переменную цвета
+      border-color: $maroon;
+      box-shadow: 0 0 0 2px rgba($maroon, 0.2);
     }
 
     &:disabled {
-      background-color: $gray-light; // Используем переменную цвета
+      background-color: $gray-light;
       cursor: not-allowed;
     }
   }
 
   textarea {
-    resize: vertical; 
-    min-height: 80px; // Добавим минимальную высоту для удобства ввода
+    resize: vertical;
+    min-height: 80px;
   }
 
-  // Стили для IMaskInput, если нужно
-  .input { 
+  .input {
     width: 100%;
     padding: $spacing-xs $spacing-sm;
     border: 1px solid $gray-medium;
@@ -166,15 +160,15 @@
 }
 
 .submitButton {
-  @include button-primary; // Используем миксин для первичной кнопки
+  @include button-primary;
   width: 100%;
-  margin-top: $spacing-md; // Используем переменную отступа
-  font-size: 18px; 
-  padding: $spacing-sm $spacing-xl; // Используем переменные отступов
-  border-radius: $border-radius-md; // Используем переменную радиуса
+  margin-top: $spacing-md;
+  font-size: 18px;
+  padding: $spacing-sm $spacing-xl;
+  border-radius: $border-radius-md;
 
   &:disabled {
-    background-color: $gray-medium; // Используем переменную цвета
+    background-color: $gray-medium;
     cursor: not-allowed;
     &:hover {
       transform: none;
@@ -184,61 +178,39 @@
 }
 
 .errorMessage {
-  color: #dc3545; // Можно заменить на переменную, если есть аналог
-  background-color: #f8d7da; // Можно заменить на переменную, если есть аналог
-  border: 1px solid #f5c6cb; // Можно заменить на переменную, если есть аналог
-  padding: $spacing-xs; // Используем переменную отступа
-  border-radius: $border-radius-sm; // Используем переменную радиуса
-  margin-top: $spacing-sm; // Используем переменную отступа
-  margin-bottom: $spacing-md; // Используем переменную отступа
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: $spacing-xs;
+  border-radius: $border-radius-sm;
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-md;
   text-align: center;
   font-size: 14px;
-  font-weight: 500; // Добавим немного жирности для лучшей читаемости
+  font-weight: 500;
 }
 
 .successMessage {
-  color: #28a745; // Можно заменить на переменную, если есть аналог
-  background-color: #d4edda; // Можно заменить на переменную, если есть аналог
-  border: 1px solid #c3e6cb; // Можно заменить на переменную, если есть аналог
-  padding: $spacing-xs; // Используем переменную отступа
-  border-radius: $border-radius-sm; // Используем переменную радиуса
-  margin-top: $spacing-sm; // Используем переменную отступа
-  margin-bottom: $spacing-md; // Используем переменную отступа
+  color: #28a745;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: $spacing-xs;
+  border-radius: $border-radius-sm;
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-md;
   text-align: center;
   font-size: 14px;
-  font-weight: 500; // Добавим немного жирности
+  font-weight: 500;
 }
 
-@include sm-down {
-  .formGroup {
-    margin-bottom: $spacing-sm;  
-    label {
-      font-size: 14px;
-    }
-    input[type="date"],
-    input[type="time"],
-    input[type="number"],
-    input[type="text"],
-    select,
-    textarea,
-    .input {
-      font-size: 14px;
-      padding: $spacing-xs;
-    }
-  }
-  .submitButton {
-    font-size: 16px;
-    padding: $spacing-xs $spacing-lg;
-  }
-}
 .agreementCheckbox {
   display: flex;
-  align-items: flex-start; 
+  align-items: flex-start;
   margin-top: $spacing-md;
   margin-bottom: $spacing-md;
 
   input[type="checkbox"] {
-    margin-right: $spacing-xs; 
+    margin-right: $spacing-xs;
     -webkit-appearance: none;
     appearance: none;
     background-color: $white;
@@ -284,11 +256,11 @@
 .agreementLabel {
     font-size: 14px;
     color: $black;
-    font-weight: 400; // Уменьшим жирность
+    font-weight: 400;
     line-height: 1.5;
     
     a {
-        color: $maroon; // Цвет ссылки
+        color: $maroon;
         text-decoration: underline;
         transition: color $transition-fast;
 
@@ -297,79 +269,198 @@
         }
     }
 }
-.conflictMessage {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: $spacing-md;
-  background-color: $gray-light;
-  border-radius: $border-radius-lg;
-  margin-top: $spacing-md;
-  border: 1px solid $maroon; 
+
+.backButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: $maroon;
+    align-self: flex-start;
+    margin-bottom: $spacing-sm;
+    padding: $spacing-xs;
+    border-radius: $border-radius-sm;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: transform $transition-fast;
+
+    &:hover {
+        transform: translateX(-5px);
+    }
 }
 
-.conflictHeader {
-  @include t.gilroy-18;
-  color: $maroon;
-  margin-bottom: $spacing-sm;
+.bookingStep2 {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+}
+
+.calendarContainer {
+    width: 100%;
+    
+    .react-calendar {
+        border: 1px solid $gray-medium;
+        border-radius: $border-radius-lg;
+        font-family: 'Gilroy', sans-serif;
+    }
+
+    .react-calendar__navigation button {
+        color: $maroon;
+        font-size: 18px;
+    }
+
+    .react-calendar__tile {
+        border-radius: $border-radius-sm;
+        padding: $spacing-sm;
+    }
+
+    .react-calendar__tile--now {
+        background-color: $yellow-light;
+        border: 1px solid $yellow;
+    }
+    
+    .react-calendar__tile--active {
+        background-color: $maroon;
+        color: $white;
+    }
+
+    .react-calendar__tile:disabled {
+        background-color: #f0f0f0;
+        color: #cccccc;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+}
+
+.availableSlotsContainer {
+    text-align: center;
+}
+
+.suggestedSlotsScroll {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    padding-right: 10px;
+    margin-bottom: $spacing-md;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $gray-light;
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $gray-medium;
+        border-radius: 10px;
+        &:hover {
+            background: $gray-dark;
+        }
+    }
 }
 
 .suggestedSlotsContainer {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: $spacing-xs;
-  margin-top: $spacing-sm;
-  margin-bottom: $spacing-sm;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $spacing-xs;
+    margin-top: $spacing-sm;
 }
 
 .suggestedSlotButton {
-  @include button-primary; 
-  background-color: $maroon;
-  color: $white;
-  border: 1px solid $maroon;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius-sm;
-  transition: all $transition-fast;
+    background-color: $maroon;
+    color: $white;
+    border: 1px solid $maroon;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-sm;
+    transition: all $transition-fast;
+    cursor: pointer;
 
-  &:hover {
-      background-color: darken($maroon, 10%);
-      border-color: darken($maroon, 10%);
-      transform: translateY(-2px);
-  }
+    &:hover {
+        background-color: darken($maroon, 10%);
+        border-color: darken($maroon, 10%);
+        transform: translateY(-2px);
+    }
 }
 
-.moreSuggestions {
-  @include t.gilroy-16;
-  color: $gray-dark;
-  margin-top: $spacing-xs;
+.selectedSlot {
+  background-color: $maroon;
+  color: $white;
+}
+
+.conflictMessage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: $spacing-md;
+    background-color: $gray-light;
+    border-radius: $border-radius-lg;
+    margin-top: $spacing-md;
+    border: 1px solid $maroon;
+}
+
+.conflictHeader {
+    @include t.gilroy-18;
+    color: $maroon;
+    font-weight: 700;
+    margin-bottom: $spacing-sm;
+}
+
+.noSlotsMessage {
+    color: $gray-dark;
+    text-align: center;
+    font-style: italic;
+    margin-top: $spacing-md;
 }
 
 .conflictActions {
-  display: flex;
-  gap: $spacing-md;
-  margin-top: $spacing-md;
-
-  .secondaryButton {
-      @include button-primary;
-  }
+    display: flex;
+    gap: $spacing-md;
+    margin-top: $spacing-md;
+    flex-direction: column;
+    width: 100%;
 }
 
-.submitButton {
-  @include button-primary;
-  width: 100%;
-  margin-top: $spacing-md;
-  font-size: 18px;
-  padding: $spacing-sm $spacing-xl;
-  border-radius: $border-radius-md;
+.secondaryButton {
+    background-color: transparent;
+    color: $maroon;
+    border: 1px solid $maroon;
+    width: 100%;
+    padding: $spacing-sm $spacing-xl;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-fast;
 
-  &:disabled {
-      background-color: $gray-medium;
-      cursor: not-allowed;
-      &:hover {
-          transform: none;
-          box-shadow: none;
-      }
+    &:hover {
+        background-color: $maroon;
+        color: $white;
+    }
+}
+
+// Дополнительные стили для улучшения внешнего вида формы на мобильных устройствах
+@include sm-down {
+  .formGroup {
+    margin-bottom: $spacing-sm;
+    label {
+      font-size: 14px;
+    }
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    input[type="text"],
+    select,
+    textarea,
+    .input {
+      font-size: 14px;
+      padding: $spacing-xs;
+    }
+  }
+  .submitButton {
+    font-size: 16px;
+    padding: $spacing-xs $spacing-lg;
   }
 }
