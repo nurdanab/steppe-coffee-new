@@ -168,27 +168,32 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   
       let isConflict = false;
       let hasPendingInSlot = false;
+
       for (const booking of bookingsToConsider) {
         const existingStartParts = booking.start_time.split(':').map(Number);
         const existingEndParts = booking.end_time.split(':').map(Number);
   
         const existingStartMinutes = existingStartParts[0] * 60 + existingStartParts[1];
         const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
-        // Учитываем время на уборку для всех броней, включая "pending"
-        const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
+        
+        // Учитываем час на уборку для всех броней, включая pending
+        const cleanUpEndMinutes = existingEndMinutes + cleanupMinutes;
   
-        if ((currentStartMinutes < cleanupEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
+        // Проверяем, пересекается ли предлагаемый слот с существующей бронью или часом на уборку
+        if ((currentStartMinutes < cleanUpEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
           if (booking.status === 'confirmed') {
             isConflict = true;
-            break;
+            break; // Если есть подтвержденная бронь, этот слот полностью недоступен
           }
           if (booking.status === 'pending') {
-            hasPendingInSlot = true;
+            hasPendingInSlot = true; // Отмечаем, что есть пересечение с ожидающей бронью
           }
         }
       }
       
       if (!isConflict) {
+        // Добавляем слот, если нет подтвержденного конфликта. 
+        // Он будет помечен как 'isPending', если есть пересечение с ожидающей бронью.
         availableSlots.push({ start: currentStart, end: currentEnd, isPending: hasPendingInSlot });
       }
     }
