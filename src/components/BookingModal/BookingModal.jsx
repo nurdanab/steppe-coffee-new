@@ -167,7 +167,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = `${String(Math.floor(currentEndMinutes / 60)).padStart(2, '0')}:${String(currentEndMinutes % 60).padStart(2, '0')}`;
   
       let isConflict = false;
-      let hasPendingInSlot = false;
+      let hasPendingInSlot = false; // <-- Перенесли объявление сюда!
 
       for (const booking of bookingsToConsider) {
         const existingStartParts = booking.start_time.split(':').map(Number);
@@ -176,11 +176,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const existingStartMinutes = existingStartParts[0] * 60 + existingStartParts[1];
         const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
         
-        // Учитываем час на уборку до и после бронирования
         const totalStartMinutes = existingStartMinutes - cleanupMinutes;
         const totalEndMinutes = existingEndMinutes + cleanupMinutes;
         
-        // Проверяем, пересекается ли предлагаемый слот с расширенным интервалом бронирования
         if ((currentStartMinutes < totalEndMinutes) && (currentEndMinutes > totalStartMinutes)) {
           if (booking.status === 'confirmed') {
             isConflict = true;
