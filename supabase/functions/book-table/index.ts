@@ -20,7 +20,7 @@ serve(async (req) => {
         booking_date, 
         start_time, 
         end_time, 
-        num_people, 
+        num_people, // ✅ ИСПРАВЛЕНО
         comments,
         user_id,
         selected_room,
@@ -104,7 +104,7 @@ serve(async (req) => {
         booking_date,
         start_time,
         end_time,
-        num_people: num_people,
+        num_people, // ✅ ИСПРАВЛЕНО
         comments: comments || null,
         user_id: user_id || null,
         selected_room: selected_room,

@@ -61,9 +61,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     
     const dateString = date.toISOString().split('T')[0];
     
-    // 🔍 Отладочное сообщение: проверяем, что мы запрашиваем
-    console.log(`Запрос бронирований для:`, { date: dateString, room: room });
-
     setLoading(true);
     try {
       const { data: bookings, error: fetchError } = await supabase
@@ -78,12 +75,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return [];
       }
       
-      // 🔍 Отладочное сообщение: смотрим, что вернула база данных
-      console.log('Данные из Supabase:', bookings);
-
       const availableSlots = [];
       const cafeOpenHour = 9;
-      const cafeCloseHour = 22; // Слоты будут до 22:00
+      const cafeCloseHour = 22;
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
       const cleanupMinutes = cleanupTimeHours * 60;
@@ -96,7 +90,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         pending: [],
       };
       
-      // Если bookings пустой, этот цикл не запустится
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
@@ -110,11 +103,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           occupiedIntervals.pending.push(occupiedInterval);
         }
       }
-      
-      // 🔍 Отладочное сообщение: проверяем, какие интервалы считаются занятыми
-      console.log('Занятые интервалы (подтвержденные):', occupiedIntervals.confirmed.map(i => i.toString()));
-      console.log('Занятые интервалы (ожидающие):', occupiedIntervals.pending.map(i => i.toString()));
-
+  
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
       const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour - duration, minute: 0, second: 0, millisecond: 0 });
   
@@ -154,9 +143,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         currentStart = currentStart.plus({ minutes: intervalMinutes });
       }
       
-      // 🔍 Отладочное сообщение: итоговый список доступных слотов
-      console.log('Итоговые доступные слоты:', availableSlots);
-
       return availableSlots;
     } finally {
       setLoading(false);
@@ -169,6 +155,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setError(null);
     setConflict(null);
 
+    // Добавляем проверку, чтобы убедиться, что все обязательные поля заполнены перед отправкой
     if (!isAgreed) {
         setError('Пожалуйста, примите правила бронирования.');
         setLoading(false);
@@ -186,6 +173,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setLoading(false);
       return;
     }
+    
+    // Проверяем, что startTime и endTime не пустые строки
+    if (startTime === '' || endTime === '') {
+        setError('Пожалуйста, выберите временной слот.');
+        setLoading(false);
+        return;
+    }
 
     try {
       const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
@@ -194,14 +188,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               booking_date: DateTime.fromJSDate(bookingDate).toISODate(),
               start_time: startTime,
               end_time: endTime,
-              num_guests: numberOfPeople,
+              num_people: numberOfPeople,
               comments: comment,
               user_id: currentUserId,
               selected_room: selectedRoom,
               event_name: eventName,
               event_description: eventDescription,
               organizer_contact: organizerContact,
-              // Передаем статус, который хотим установить
               status_to_set: statusToSet, 
           },
           method: 'POST',
