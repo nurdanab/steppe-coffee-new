@@ -1,5 +1,4 @@
 // src/components/BookingModal/BookingModal.module.scss
-@use "sass:color";
 @use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
@@ -317,7 +316,7 @@
     }
 
     .react-calendar__tile--now {
-        background-color: $light-yellow;
+        background-color: $yellow-light;
         border: 1px solid $yellow;
     }
     
@@ -331,6 +330,16 @@
         color: #cccccc;
         cursor: not-allowed;
         pointer-events: none;
+    }
+
+    .fullyBooked {
+        background-color: #f0f0f0; // Цвет для полностью занятых дней (как disabled)
+        color: #cccccc;
+    }
+
+    .hasPending {
+        background-color: $yellow-light; // Например, светло-желтый для дней с ожидающими бронями
+        border: 1px solid $yellow;
     }
 }
 
@@ -442,7 +451,6 @@
     }
 }
 
-// Дополнительные стили для улучшения внешнего вида формы на мобильных устройствах
 @include sm-down {
   .formGroup {
     margin-bottom: $spacing-sm;

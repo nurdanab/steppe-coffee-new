@@ -31,8 +31,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   
   const [conflict, setConflict] = useState(null);
   const [suggestedSlots, setSuggestedSlots] = useState([]);
-  const [confirmedBookings, setConfirmedBookings] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
+  const [pendingDates, setPendingDates] = useState([]); // Новое состояние для дат с ожидающими бронями
+  const [allBookings, setAllBookings] = useState([]); // Новое состояние для всех броней
 
   useEffect(() => {
     if (isOpen) {
@@ -54,8 +55,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setIsAgreed(false);
       setConflict(null);
       setSuggestedSlots([]);
-      setConfirmedBookings([]);
       setFullyBookedDates([]);
+      setPendingDates([]);
+      setAllBookings([]);
       setDurationHours(1);
     }
   }, [isOpen, currentUserId, currentUserEmail]);
@@ -66,29 +68,36 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         setLoading(true);
         const { data, error } = await supabase
           .from('bookings')
-          .select('booking_date, start_time, end_time')
+          .select('booking_date, start_time, end_time, status')
           .eq('selected_room', selectedRoom)
-          .eq('status', 'confirmed')
           .gte('booking_date', new Date().toISOString().split('T')[0]);
         
         if (error) {
-          console.error('Ошибка при получении подтвержденных бронирований:', error.message);
+          console.error('Ошибка при получении бронирований:', error.message);
           setLoading(false);
           return;
         }
-
-        const bookedDates = data.map(b => b.booking_date);
-        const uniqueDates = [...new Set(bookedDates)];
         
+        setAllBookings(data);
+
+        const allDates = [...new Set(data.map(b => b.booking_date))];
         const fullyBooked = [];
-        for (const date of uniqueDates) {
+        const pendingBooked = [];
+
+        for (const date of allDates) {
           const tempDate = new Date(date);
-          const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
+          const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours, data);
           if (slots.length === 0) {
             fullyBooked.push(date);
+          } else {
+            const hasPending = data.some(b => b.booking_date === date && b.status === 'pending');
+            if (hasPending) {
+              pendingBooked.push(date);
+            }
           }
         }
         setFullyBookedDates(fullyBooked);
+        setPendingDates(pendingBooked);
         
         setLoading(false);
       }
@@ -114,21 +123,28 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   };
 
-  const getAvailableSlots = async (date, room, duration) => {
+  const getAvailableSlots = async (date, room, duration, existingBookings = null) => {
     if (!date || !room || !duration) return [];
     
     const dateString = date.toISOString().split('T')[0];
-    const { data: existingBookings, error: fetchError } = await supabase
-      .from('bookings')
-      .select('start_time, end_time, status')
-      .eq('booking_date', dateString)
-      .eq('selected_room', room);
     
-    if (fetchError) {
-      console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-      return [];
+    let bookingsToConsider;
+    if (existingBookings) {
+      bookingsToConsider = existingBookings.filter(b => b.booking_date === dateString);
+    } else {
+      const { data, error: fetchError } = await supabase
+        .from('bookings')
+        .select('start_time, end_time, status')
+        .eq('booking_date', dateString)
+        .eq('selected_room', room);
+      
+      if (fetchError) {
+        console.error('Ошибка при получении существующих бронирований:', fetchError.message);
+        return [];
+      }
+      bookingsToConsider = data;
     }
-
+    
     const availableSlots = [];
     const intervalMinutes = 30;
     const cafeOpenTimeMinutes = 8 * 60;
@@ -149,7 +165,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = `${String(Math.floor(currentEndMinutes / 60)).padStart(2, '0')}:${String(currentEndMinutes % 60).padStart(2, '0')}`;
   
       let isConflict = false;
-      for (const booking of existingBookings) {
+      for (const booking of bookingsToConsider) {
         const existingStartParts = booking.start_time.split(':').map(Number);
         const existingEndParts = booking.end_time.split(':').map(Number);
   
@@ -157,8 +173,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
         const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
   
-        // Убрана лишняя проверка на статус. Эта функция просто ищет свободные слоты,
-        // учитывая все бронирования
         if ((currentStartMinutes < cleanupEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
           isConflict = true;
           break;
@@ -272,6 +286,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return { available: false, message: 'Нельзя забронировать на прошедшее время сегодня.' };
     }
     
+    // Новая логика проверки на конфликт с бронированиями
     const { data: existingBookings, error: fetchError } = await supabase
         .from('bookings')
         .select('start_time, end_time, status')
@@ -285,6 +300,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     
     let isConflict = false;
     let hasConfirmedConflict = false;
+    let hasPendingConflict = false;
 
     for (const booking of existingBookings) {
       const existingStart = booking.start_time;
@@ -298,18 +314,19 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           isConflict = true;
           if (bookingStatus === 'confirmed') {
               hasConfirmedConflict = true;
-              break;
+              break; // Если есть подтвержденная, сразу выходим
+          }
+          if (bookingStatus === 'pending') {
+              hasPendingConflict = true;
           }
       }
     }
     
-    // Новая логика: если есть подтвержденная бронь, не даем бронировать
     if (hasConfirmedConflict) {
         return { available: false, message: 'Выбранное время уже занято подтвержденной бронью или недоступно. Выберите другое время.' };
     }
 
-    // Если есть конфликт с ожидающей бронью, предлагаем лист ожидания
-    if (isConflict) {
+    if (hasPendingConflict) {
         return { 
           available: 'queued', 
           message: 'На выбранное время уже есть ожидающая бронь. Ваша бронь может быть добавлена в очередь.',
@@ -448,10 +465,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     const availabilityCheckResult = await checkAvailability();
 
-    if (!availabilityCheckResult.available) {
+    if (availabilityCheckResult.available === false) {
         setError(availabilityCheckResult.message);
         setConflict(availabilityCheckResult.conflictType);
-        setSuggestedSlots([]); // Сбрасываем предложенные слоты, так как они не нужны в этом случае
+        setSuggestedSlots([]);
         setLoading(false);
         return;
     } 
@@ -459,7 +476,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     if (availabilityCheckResult.available === 'queued') {
         setError(availabilityCheckResult.message);
         setConflict(availabilityCheckResult.conflictType);
-        setSuggestedSlots([]); // Сбрасываем предложенные слоты
+        setSuggestedSlots([]);
         setLoading(false);
         return;
     }
@@ -484,7 +501,19 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     return fullyBookedDates.includes(dateString);
   };
-
+  
+  const tileClassName = ({ date, view }) => {
+    if (view === 'month') {
+        const dateString = date.toISOString().split('T')[0];
+        if (fullyBookedDates.includes(dateString)) {
+            return styles.fullyBooked;
+        }
+        if (pendingDates.includes(dateString)) {
+            return styles.hasPending;
+        }
+    }
+    return null;
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -560,6 +589,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         value={bookingDate}
                         minDate={new Date()}
                         tileDisabled={isDateDisabled}
+                        tileClassName={tileClassName} // Добавлена новая функция для стилей
                     />
                 </div>
                 
