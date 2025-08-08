@@ -63,9 +63,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   // Memoized function for getAvailableSlots
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
-    
+
     const dateString = date.toISOString().split('T')[0];
-    
+
     // Fetch bookings for the specific date, excluding canceled ones
     setLoading(true);
     const { data: bookings, error: fetchError } = await supabase
@@ -75,35 +75,34 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       .eq('selected_room', room)
       .neq('status', 'canceled');
     setLoading(false);
-    
+
     if (fetchError) {
       console.error('Ошибка при получении существующих бронирований:', fetchError.message);
       return [];
     }
     
     const availableSlots = [];
-    const cafeOpenHour = 9; // Bookings can start from 9:00 (after 1-hour cleanup)
-    const cafeCloseHour = 22; // Last possible end time is 22:00
-    const intervalMinutes = 30; // Slot interval
+    const cafeOpenHour = 8; // Кафе открывается в 8:00
+    const cafeCloseHour = 22; // Последнее время бронирования
+    const intervalMinutes = 30;
     const durationMinutes = duration * 60;
     const cleanupMinutes = cleanupTimeHours * 60;
     
-    // Convert current date to a Luxon DateTime object
     const dateObj = DateTime.fromJSDate(date);
     const now = DateTime.local();
 
-    // Create intervals for existing bookings, including cleanup time
     const confirmedIntervals = [];
     const pendingIntervals = [];
-    
+
+    // Создаем интервалы для существующих бронирований
     for (const booking of bookings) {
       const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
       const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
-      
-      // The occupied interval starts 1 hour before the booking and ends at the booking's end time
+
+      // Занятый интервал начинается за 1 час до бронирования и заканчивается в его конце
       const occupiedStart = bookingStartTime.minus({ minutes: cleanupMinutes });
       const occupiedInterval = Interval.fromDateTimes(occupiedStart, bookingEndTime);
-      
+
       if (booking.status === 'confirmed') {
         confirmedIntervals.push(occupiedInterval);
       } else if (booking.status === 'pending') {
@@ -111,48 +110,65 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       }
     }
 
-    // Generate and check all possible slots
-    let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-    const cafeCloseTime = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 });
+    // Определяем самое раннее время для начала генерации слотов
+    let firstPossibleBookingStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 }).plus({ minutes: cleanupMinutes });
+    if (now > firstPossibleBookingStart) {
+        firstPossibleBookingStart = now; // Не предлагать слоты, которые уже прошли
+    }
     
+    // Проверяем, есть ли бронирования, которые мешают началу
+    for (const interval of confirmedIntervals) {
+        if (interval.end > firstPossibleBookingStart) {
+            // Если есть бронь, которая заканчивается после нашего начального времени
+            firstPossibleBookingStart = interval.end; // Сдвигаем начало генерации на время окончания брони
+        }
+    }
+    
+    for (const interval of pendingIntervals) {
+        if (interval.end > firstPossibleBookingStart) {
+            firstPossibleBookingStart = interval.end;
+        }
+    }
+
+    let currentStart = firstPossibleBookingStart;
+    const cafeCloseTime = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 });
+
+    // Генерация и проверка всех возможных слотов
     while (currentStart.plus({ minutes: durationMinutes }) <= cafeCloseTime) {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
-      // Check if the current slot is in the past
-      if (currentEnd < now) {
-          currentStart = currentStart.plus({ minutes: intervalMinutes });
-          continue; // Skip slots that are in the past
-      }
-
-      // Check for conflicts with ALL occupied intervals
-      let hasConfirmedConflict = false;
+      
+      // Сначала проверяем на пересечение со всеми бронями (подтвержденными и ожидающими)
+      let isAvailable = true;
+      let isPending = false;
+      
+      // Проверка на пересечение с подтвержденными бронями
       for (const confirmedInterval of confirmedIntervals) {
         if (slotInterval.overlaps(confirmedInterval) || confirmedInterval.contains(slotInterval)) {
-          hasConfirmedConflict = true;
+          isAvailable = false;
           break;
         }
       }
-
-      if (!hasConfirmedConflict) {
-        let hasPendingConflict = false;
+      
+      // Если слот свободен от подтвержденных броней, проверяем на брони в ожидании
+      if (isAvailable) {
         for (const pendingInterval of pendingIntervals) {
           if (slotInterval.overlaps(pendingInterval) || pendingInterval.contains(slotInterval)) {
-            hasPendingConflict = true;
+            isPending = true;
             break;
           }
         }
         
         availableSlots.push({
-            start: currentStart.toFormat('HH:mm'),
-            end: currentEnd.toFormat('HH:mm'),
-            isPending: hasPendingConflict
+          start: currentStart.toFormat('HH:mm'),
+          end: currentEnd.toFormat('HH:mm'),
+          isPending: isPending
         });
       }
       
       currentStart = currentStart.plus({ minutes: intervalMinutes });
     }
-    
+
     return availableSlots;
   }, [cleanupTimeHours]);
 
