@@ -731,9 +731,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
-    
+
     const dateString = date.toISOString().split('T')[0];
-    
+
     setLoading(true);
     try {
       const { data: bookings, error: fetchError } = await supabase
@@ -742,84 +742,86 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         .eq('booking_date', dateString)
         .eq('selected_room', room)
         .neq('status', 'canceled');
-      
+
       if (fetchError) {
         console.error('Ошибка при получении существующих бронирований:', fetchError.message);
         return [];
       }
-      
+
       const availableSlots = [];
       const cafeOpenHour = 9;
       const cafeCloseHour = 22;
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
       const bufferMinutes = bufferTimeHours * 60;
-      
+
       const dateObj = DateTime.fromJSDate(date);
       const now = DateTime.local();
-  
+
       const occupiedIntervals = {
         confirmed: [],
         pending: [],
       };
-      
+
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
-        
+
         // Создаем интервал с учетом буферного времени
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
-        
+
         if (booking.status === 'confirmed') {
           occupiedIntervals.confirmed.push(occupiedInterval);
         } else if (booking.status === 'pending' || booking.status === 'queued') {
           occupiedIntervals.pending.push(occupiedInterval);
         }
       }
-  
+
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      // Учитываем длительность и буферное время для последнего возможного слота
+      // 💡 Измененная логика: Учитываем длительность и буферное время для последнего возможного слота
       const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes }).minus({ minutes: bufferMinutes });
-  
+
       while (currentStart <= lastPossibleSlotStart) {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-  
+
         // Проверяем, что слот не в прошлом
         if (currentEnd < now) {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
         }
-  
+
         let hasConfirmedConflict = false;
         for (const confirmedInterval of occupiedIntervals.confirmed) {
+          // 💡 Измененная проверка: достаточно overlaps, т.к. contains уже включено в overlaps
           if (slotInterval.overlaps(confirmedInterval)) {
             hasConfirmedConflict = true;
             break;
           }
         }
-  
+
         if (!hasConfirmedConflict) {
           let hasPendingConflict = false;
           for (const pendingInterval of occupiedIntervals.pending) {
+            // 💡 Измененная проверка: достаточно overlaps
             if (slotInterval.overlaps(pendingInterval)) {
               hasPendingConflict = true;
               break;
             }
           }
-          
+
           availableSlots.push({
               start: currentStart.toFormat('HH:mm'),
               end: currentEnd.toFormat('HH:mm'),
               isPending: hasPendingConflict
           });
         }
-        
+
         currentStart = currentStart.plus({ minutes: intervalMinutes });
       }
-      
+
       return availableSlots;
     } finally {
       setLoading(false);
