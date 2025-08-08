@@ -13,7 +13,6 @@ const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [step, setStep] = useState(1);
-  
   const [bookingDate, setBookingDate] = useState(null);
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
@@ -23,17 +22,14 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [userName, setUserName] = useState('');
   const [comment, setComment] = useState('');
   const [durationHours, setDurationHours] = useState(1);
- 
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [organizerContact, setOrganizerContact] = useState('');
-
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
   const [isAgreed, setIsAgreed] = useState(false);
   const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
-  
   const [conflict, setConflict] = useState(null);
   const [suggestedSlots, setSuggestedSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
@@ -41,7 +37,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [isSlotPending, setIsSlotPending] = useState(false);
 
   const maxBookingDurationHours = 3;
-  const cleanupTimeHours = 1;
+  const bufferTimeHours = 1;
   
   const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
 
@@ -80,7 +76,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const cafeCloseHour = 22;
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
-      const cleanupMinutes = cleanupTimeHours * 60;
+      const bufferMinutes = bufferTimeHours * 60;
       
       const dateObj = DateTime.fromJSDate(date);
       const now = DateTime.local();
@@ -94,8 +90,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
         
-        const occupiedEnd = bookingEndTime.plus({ minutes: cleanupMinutes });
-        const occupiedInterval = Interval.fromDateTimes(bookingStartTime, occupiedEnd);
+        const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
+        const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
+        const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
         
         if (booking.status === 'confirmed') {
           occupiedIntervals.confirmed.push(occupiedInterval);
@@ -147,7 +144,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     } finally {
       setLoading(false);
     }
-  }, [cleanupTimeHours]);
+  }, [bufferTimeHours]);
   
   const sendBooking = async (statusToSet = 'pending') => {
     setLoading(true);
@@ -155,15 +152,16 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setError(null);
     setConflict(null);
 
-    // Добавляем проверку, чтобы убедиться, что все обязательные поля заполнены перед отправкой
-    if (!isAgreed) {
-        setError('Пожалуйста, примите правила бронирования.');
-        setLoading(false);
-        return;
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      setError('Пожалуйста, войдите, чтобы забронировать.');
+      setLoading(false);
+      return;
     }
 
-    if (!currentUserId) {
-        setError('Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.');
+    if (!isAgreed) {
+        setError('Пожалуйста, примите правила бронирования.');
         setLoading(false);
         return;
     }
@@ -174,7 +172,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       return;
     }
     
-    // Проверяем, что startTime и endTime не пустые строки
     if (startTime === '' || endTime === '') {
         setError('Пожалуйста, выберите временной слот.');
         setLoading(false);
@@ -190,7 +187,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               end_time: endTime,
               num_people: numberOfPeople,
               comments: comment,
-              user_id: currentUserId,
+              user_id: user.id,
               selected_room: selectedRoom,
               event_name: eventName,
               event_description: eventDescription,
@@ -540,6 +537,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                                 onClick={() => handleTimeSelect(slot)}
                               >
                                 {slot.start} - {slot.end}
+                                {slot.isPending && <span className={styles.pendingIcon}> ⏳</span>}
                               </button>
                             ))}
                           </div>
