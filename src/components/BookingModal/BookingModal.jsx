@@ -7,6 +7,9 @@ import { IMaskInput } from 'react-imask';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
+// Helper function to get today's date string
+const getTodayDateString = () => new Date().toISOString().split('T')[0];
+
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [step, setStep] = useState(1);
   
@@ -33,12 +36,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [suggestedSlots, setSuggestedSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
   const [pendingDates, setPendingDates] = useState([]);
-  const [allBookings, setAllBookings] = useState([]);
   const [isSlotPending, setIsSlotPending] = useState(false);
 
   // Constants
   const cafeOpenTime = '08:00';
-  const cafeCloseTime = '23:00'; // Updated to 23:00 as per user request
+  const cafeCloseTime = '23:00';
   const maxBookingDurationHours = 3;
   const cleanupTimeHours = 1;
 
@@ -55,38 +57,33 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   }, []);
   
   // Memoized function for getAvailableSlots
-  const getAvailableSlots = useCallback(async (date, room, duration, existingBookings = null) => {
+  const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
     
     const dateString = date.toISOString().split('T')[0];
     
-    let bookingsToConsider;
-    if (existingBookings) {
-      bookingsToConsider = existingBookings.filter(b => b.booking_date === dateString);
-    } else {
-      setLoading(true);
-      const { data, error: fetchError } = await supabase
-        .from('bookings')
-        .select('start_time, end_time, status')
-        .eq('booking_date', dateString)
-        .eq('selected_room', room);
-      setLoading(false);
-      
-      if (fetchError) {
-        console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-        return [];
-      }
-      bookingsToConsider = data;
+    // Fetch bookings for the specific date
+    setLoading(true);
+    const { data: bookingsToConsider, error: fetchError } = await supabase
+      .from('bookings')
+      .select('start_time, end_time, status')
+      .eq('booking_date', dateString)
+      .eq('selected_room', room);
+    setLoading(false);
+    
+    if (fetchError) {
+      console.error('Ошибка при получении существующих бронирований:', fetchError.message);
+      return [];
     }
     
     const availableSlots = [];
     const intervalMinutes = 30;
     const cafeOpenTimeMinutes = 8 * 60;
-    const cafeCloseTimeMinutes = 23 * 60; // Using the updated cafe close time
+    const cafeCloseTimeMinutes = 23 * 60;
     const durationMinutes = duration * 60;
     const cleanupMinutes = cleanupTimeHours * 60;
     const today = new Date();
-    const currentDayString = today.toISOString().split('T')[0];
+    const currentDayString = getTodayDateString();
     const currentTimeMinutes = today.getHours() * 60 + today.getMinutes();
 
     for (let currentStartMinutes = cafeOpenTimeMinutes; currentStartMinutes <= cafeCloseTimeMinutes - durationMinutes; currentStartMinutes += intervalMinutes) {
@@ -220,54 +217,55 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setSuggestedSlots([]);
       setFullyBookedDates([]);
       setPendingDates([]);
-      setAllBookings([]);
       setDurationHours(1);
     }
   }, [isOpen]);
   
-  // UseEffect for fetching bookings when room or duration changes
+  // UseEffect for fetching calendar highlights
   useEffect(() => {
-    const fetchBookingsOnRoomChange = async () => {
+    const fetchCalendarHighlights = async () => {
       if (step === 2 && selectedRoom && durationHours) {
         setLoading(true);
-        const { data, error } = await supabase
-          .from('bookings')
-          .select('booking_date, start_time, end_time, status')
-          .eq('selected_room', selectedRoom)
-          .gte('booking_date', new Date().toISOString().split('T')[0]);
+        // Step 1: Get all future bookings for the room
+        const { data: allBookings, error } = await supabase
+            .from('bookings')
+            .select('booking_date, start_time, end_time, status')
+            .eq('selected_room', selectedRoom)
+            .gte('booking_date', getTodayDateString());
         
         if (error) {
-          console.error('Ошибка при получении бронирований:', error.message);
-          setError('Ошибка при загрузке данных о бронированиях.');
-          setLoading(false);
-          return;
+            console.error('Ошибка при получении бронирований:', error.message);
+            setError('Ошибка при загрузке данных о бронированиях.');
+            setLoading(false);
+            return;
         }
-        
-        setAllBookings(data);
 
-        const allDates = [...new Set(data.map(b => b.booking_date))];
+        const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
         const fullyBooked = [];
         const pendingBooked = [];
+        
+        // Step 2: For each date, check for available slots and pending bookings
+        for (const dateString of datesWithBookings) {
+            const dateBookings = allBookings.filter(b => b.booking_date === dateString);
+            const tempDate = new Date(dateString);
+            const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours, dateBookings);
 
-        for (const date of allDates) {
-          const tempDate = new Date(date);
-          const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours, data);
-          if (slots.length === 0) {
-            fullyBooked.push(date);
-          } else {
-            const hasPending = data.some(b => b.booking_date === date && b.status === 'pending');
-            if (hasPending) {
-              pendingBooked.push(date);
+            if (slots.length === 0) {
+                fullyBooked.push(dateString);
+            } else {
+                const hasPending = dateBookings.some(b => b.status === 'pending');
+                if (hasPending) {
+                    pendingBooked.push(dateString);
+                }
             }
-          }
         }
+
         setFullyBookedDates(fullyBooked);
         setPendingDates(pendingBooked);
-        
         setLoading(false);
       }
     };
-    fetchBookingsOnRoomChange();
+    fetchCalendarHighlights();
   }, [step, selectedRoom, durationHours, getAvailableSlots]);
 
   if (!isOpen) return null;
