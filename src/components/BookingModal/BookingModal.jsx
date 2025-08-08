@@ -38,7 +38,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
   // Constants
   const cafeOpenTime = '08:00';
-  const cafeCloseTime = '22:00';
+  const cafeCloseTime = '23:00';
   const maxBookingDurationHours = 3;
   const cleanupTimeHours = 1;
 
