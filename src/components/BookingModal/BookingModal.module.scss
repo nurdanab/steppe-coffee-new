@@ -316,7 +316,7 @@
     }
 
     .react-calendar__tile--now {
-        background-color: $yellow-light;
+        background-color: $light-yellow;
         border: 1px solid $yellow;
     }
     
@@ -338,7 +338,7 @@
     }
 
     .hasPending {
-        background-color: $yellow-light; // Например, светло-желтый для дней с ожидающими бронями
+        background-color: $light-yellow; // Например, светло-желтый для дней с ожидающими бронями
         border: 1px solid $yellow;
     }
 }
