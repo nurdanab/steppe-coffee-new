@@ -98,6 +98,10 @@
   margin-bottom: $spacing-lg;
   border: 1px solid $gray-medium;
 
+  @include sm-up {
+    margin-bottom: $spacing-xl;
+  }
+
   h3 {
     @include t.gilroy-18;
     color: $black;
@@ -305,7 +309,7 @@
     cursor: pointer;
     font-size: 1rem;
     color: $black;
-    align-self: center;
+    align-self: flex-start;
     margin-bottom: $spacing-sm;
     padding: $spacing-xs;
     border-radius: $border-radius-xxxxl;
@@ -323,6 +327,10 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
+
+    @include sm-up {
+        gap: $spacing-lg;
+    }
 }
 
 .calendarContainer {
@@ -331,8 +339,8 @@
     
     .react-calendar {
       @include t.gilroy-14;
-        border: 1px solid $gray-medium;
-        border-radius: $border-radius-lg;
+      border: 1px solid $gray-medium;
+      border-radius: $border-radius-lg;
     }
 
     .react-calendar__navigation button {
@@ -346,8 +354,6 @@
     }
 
     .react-calendar__tile--now {
-        // background-color: $light-yellow;
-
         border: 1px solid $maroon;
     }
     
@@ -367,15 +373,14 @@
         background-color: #f0f0f0;
         color: #cccccc;
     }
-
-    // .hasPending {
-    //     background-color: $light-yellow;
-    //     border: 1px solid $yellow;
-    // }
 }
 
 .availableSlotsContainer {
     text-align: center;
+    margin-bottom: $spacing-md;
+    @include sm-up {
+        margin-bottom: $spacing-lg;
+    }
 }
 
 .slotsHeader {
@@ -509,6 +514,10 @@
 .hallSelector {
   display: flex;
   gap: $spacing-sm;
+  
+  @include sm-up {
+    gap: $spacing-md;
+  }
 }
 
 .hallButton {
@@ -521,6 +530,11 @@
   color: $black;
   background-color: $white;
   transition: all $transition-fast;
+  
+  @include sm-up {
+    padding: $spacing-md $spacing-lg;
+    font-size: 16px;
+  }
 
   &:hover {
     border-color: $black;
@@ -539,7 +553,11 @@
 .partySizeControl {
   display: flex;
   align-items: center;
+  justify-content: center; // Центрируем весь блок
   gap: $spacing-xs;
+  width: 100%;
+  max-width: 250px; // Ограничиваем максимальную ширину
+  margin: 0 auto; // Центрируем по горизонтали
   
   // Обновлённые стили кнопок +/-
   button {
@@ -568,6 +586,7 @@
 
   input {
     flex-grow: 1;
+    max-width: 80px; // Делаем поле ввода более компактным
     text-align: center;
   }
 }
@@ -689,169 +708,6 @@
     }
 }
 
-.hallSelector {
-  display: flex;
-  gap: $spacing-sm;
-}
-
-.hallButton {
-  @include button-base-2;
-  flex: 1;
-  text-align: center;
-  padding: $spacing-md;
-  border: 2px solid $gray-medium;
-  border-radius: $border-radius-xxxxl;
-  color: $black;
-  background-color: $white;
-  transition: all $transition-fast;
-
-  &:hover {
-    border-color: $black;
-    box-shadow: 0 2px 4px rgba($black, 0.1);
-  }
-
-  &.active {
-    background-color: $yellow;
-    border-color: $yellow;
-    color: $black;
-    box-shadow: 0 2px 8px rgba($yellow, 0.3);
-    font-weight: 700;
-  }
-}
-
-.availableSlotsContainer {
-  text-align: center;
-}
-
-.slotsHeader {
-  @include t.gilroy-18;
-  font-weight: 700;
-  color: $black;
-}
-
-.suggestedSlotsScroll {
-    max-height: 200px;
-    overflow-y: auto;
-    width: 100%;
-    padding-right: 10px;
-    margin-bottom: $spacing-md;
-
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: $gray-light;
-        border-radius: 10px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: $gray-medium;
-        border-radius: 10px;
-        &:hover {
-            background: $gray-dark;
-        }
-    }
-}
-
-.suggestedSlotsContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: $spacing-xs;
-    margin-top: $spacing-sm;
-}
-
-.suggestedSlotButton {
-    background-color: $white;
-    color: $black;
-    border: 1px solid $black;
-    padding: $spacing-xs $spacing-sm;
-    border-radius: $border-radius-xxxxl;
-    transition: all $transition-fast;
-    cursor: pointer;
-
-    &:hover {
-        background-color: $black;
-        color: $white;
-        transform: translateY(-2px);
-    }
-}
-
-.selectedSlot {
-  background-color: $black;
-  color: $white;
-}
-
-.slotIsPending {
-    background-color: $light-yellow;
-    border: 1px solid $yellow;
-    color: $black;
-    
-    &:hover {
-        background-color: darken($light-yellow, 5%);
-        border-color: darken($yellow, 5%);
-        color: $black;
-    }
-}
-
-.conflictMessage {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: $spacing-md;
-    background-color: $light-yellow;
-    border-radius: $border-radius-lg;
-    margin-top: $spacing-md;
-    border: 1px solid $yellow;
-}
-
-.conflictIcon {
-    font-size: 3rem;
-    line-height: 1;
-    margin-bottom: $spacing-xs;
-}
-
-.conflictHeader {
-    @include t.gilroy-18;
-    color: $black;
-    font-weight: 700;
-    margin-bottom: $spacing-sm;
-}
-
-.noSlotsMessage {
-    color: $gray-dark;
-    text-align: center;
-    font-style: italic;
-    margin-top: $spacing-md;
-}
-
-.conflictActions {
-    display: flex;
-    gap: $spacing-md;
-    margin-top: $spacing-md;
-    flex-direction: column;
-    width: 100%;
-}
-
-.secondaryButton {
-    background-color: transparent;
-    color: $black;
-    border: 1px solid $black;
-    width: 100%;
-    padding: $spacing-sm $spacing-xl;
-    border-radius: $border-radius-xxxxl;
-    cursor: pointer;
-    transition: all $transition-fast;
-
-    &:hover {
-        background-color: $black;
-        color: $white;
-    }
-}
-
-// Новые стили для успешного бронирования
 .successContainer {
   @include flex-center;
   flex-direction: column;
@@ -915,4 +771,75 @@
   .durationSteps {
       font-size: 10px;
   }
+  
+  .hallButton {
+      span {
+          display: none; // Скрываем текст "(до 20 человек)" на маленьких экранах
+      }
+  }
+}
+
+// Применение адаптивных стилей с учетом твоих миксинов
+.modalContent {
+    @include md-up {
+        padding: $spacing-xxl;
+    }
+    @include lg-up {
+        padding: $spacing-xxl;
+    }
+}
+
+.bookingStep2 {
+    gap: $spacing-lg;
+    @include md-up {
+        gap: $spacing-xl;
+    }
+}
+
+.calendarContainer {
+    @include lg-up {
+        // Здесь можно добавить стили для календаря на больших экранах, если нужно
+    }
+}
+
+.availableSlotsContainer {
+    margin-top: $spacing-md;
+    @include md-up {
+        margin-top: $spacing-lg;
+    }
+}
+
+.suggestedSlotsContainer {
+    gap: $spacing-sm;
+    @include md-up {
+        gap: $spacing-md;
+    }
+}
+
+.section {
+    margin-bottom: $spacing-lg;
+    @include md-up {
+        margin-bottom: $spacing-xl;
+    }
+}
+
+.formGroup {
+    margin-bottom: $spacing-md;
+    @include md-up {
+        margin-bottom: $spacing-lg;
+    }
+}
+
+.submitButton {
+    margin-top: $spacing-lg;
+    @include md-up {
+        margin-top: $spacing-xl;
+    }
+}
+
+.hallSelector {
+    gap: $spacing-sm;
+    @include md-up {
+        gap: $spacing-md;
+    }
 }

@@ -555,7 +555,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         disabled={loading}
                       >
                         Зал
-                        <span>(до 20 человек)</span>
                       </button>
                       <button
                         type="button"
@@ -567,7 +566,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         disabled={loading}
                       >
                         Летняя терраса
-                        <span>(до 10 человек)</span>
                       </button>
                     </div>
                   </div>
@@ -636,17 +634,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
                 <div className={styles.bookingStep2}>
                     <div className={styles.calendarContainer}>
-                        <div className={styles.legend}>
-                          <div className={styles.legendItem}>
-                              <span className={`${styles.legendColor} ${styles.fullyBooked}`} /> Занято
-                          </div>
-                          <div className={styles.legendItem}>
-                              <span className={`${styles.legendColor} ${styles.hasPending}`} /> Лист ожидания
-                          </div>
-                          <div className={styles.legendItem}>
-                              <span className={`${styles.legendColor} ${styles.available}`} /> Свободно
-                          </div>
-                        </div>
+                        {/* Легенда удалена */}
                         <Calendar
                             onChange={handleDateChange}
                             value={bookingDate}
@@ -660,7 +648,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     
                     {suggestedSlots.length > 0 && !loading ? (
                       <div className={styles.availableSlotsContainer}>
-                        <p className={styles.slotsHeader}>Свободные слоты на **{bookingDate?.toLocaleDateString()}**</p>
+                        <p className={styles.slotsHeader}>Свободные слоты на {bookingDate?.toLocaleDateString()}</p>
                         <div className={styles.suggestedSlotsScroll}>
                           <div className={styles.suggestedSlotsContainer}>
                             {suggestedSlots.map((slot, index) => (
