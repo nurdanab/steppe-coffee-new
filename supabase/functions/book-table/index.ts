@@ -27,14 +27,15 @@ serve(async (req) => {
         event_name,
         event_description,
         organizer_contact,
+        phone_number,
         status_to_set, // Получаем статус для установки
     } = await req.json();
 
     console.log('Received booking data:', {
-        organizer_name, booking_date, start_time, end_time, num_people, comments, user_id, selected_room, event_name, event_description, organizer_contact
+      organizer_name, booking_date, start_time, end_time, num_people, comments, user_id, selected_room, event_name, event_description, organizer_contact, phone_number
     });
 
-    if (!organizer_name || !booking_date || !start_time || !end_time || !num_people || !selected_room) {
+    if (!organizer_name || !booking_date || !start_time || !end_time || !num_people || !selected_room || !phone_number) { // Добавляем phone_number в проверку
       console.error('Validation error: Missing required fields');
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -122,6 +123,7 @@ serve(async (req) => {
         event_name: event_name || null,
         event_description: event_description || null,
         organizer_contact: organizer_contact || null,
+        phone_number: phone_number,
         status: statusToSet,
       })
       .select()
