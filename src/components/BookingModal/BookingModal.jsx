@@ -12,7 +12,6 @@ import { DateTime, Interval } from 'luxon';
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
-  // ... (весь твой код состояния остается без изменений)
   const [step, setStep] = useState(1);
   const [bookingDate, setBookingDate] = useState(null);
   const [startTime, setStartTime] = useState('');
@@ -52,13 +51,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return 'Неизвестный зал';
     }
   }, []);
-
+  
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
 
     const dateString = date.toISOString().split('T')[0];
-    setLoading(true);
 
+    setLoading(true);
     try {
       const { data: bookings, error: fetchError } = await supabase
         .from('bookings')
@@ -66,27 +65,28 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         .eq('booking_date', dateString)
         .eq('selected_room', room)
         .neq('status', 'canceled');
-
+      
       if (fetchError) {
         console.error('Ошибка при получении существующих бронирований:', fetchError.message);
         return [];
       }
-
+      
       const allSlots = [];
       const cafeOpenHour = 9;
       const cafeCloseHour = 22;
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
       const bufferMinutes = bufferTimeHours * 60;
-
+      
       const dateObj = DateTime.fromJSDate(date);
       const now = DateTime.local();
-      
-      const occupiedIntervals = [];
 
+      // 💡 Объединяем все интервалы (подтвержденные и ожидающие) в один массив
+      const occupiedIntervals = [];
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
+        
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
@@ -103,50 +103,46 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
         }
-
+        
+        // 💡 Одна общая проверка на конфликт со всеми занятыми интервалами
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
-        const isPending = bookings.some(b => 
-            (b.status === 'pending' || b.status === 'queued') && 
-            Interval.fromDateTimes(DateTime.fromISO(`${dateString}T${b.start_time}`), DateTime.fromISO(`${dateString}T${b.end_time}`)).overlaps(slotInterval)
-        );
-
+        
         allSlots.push({
             start: currentStart.toFormat('HH:mm'),
             end: currentEnd.toFormat('HH:mm'),
-            isAvailable: isAvailable, // 💡 Добавляем флаг доступности
-            isPending: isPending
+            isAvailable: isAvailable,
+            isPending: false // 💡 Флаг isPending теперь всегда false, т.к. такие слоты не будут отображаться как "ожидающие"
         });
         
         currentStart = currentStart.plus({ minutes: intervalMinutes });
       }
-
+      
       return allSlots;
     } finally {
       setLoading(false);
     }
   }, [bufferTimeHours]);
   
-  
   const sendBooking = async (statusToSet = 'pending') => {
     setLoading(true);
     setMessage('');
     setError(null);
     setConflict(null);
-
+  
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-
+  
     if (authError || !user) {
       setError('Пожалуйста, войдите, чтобы забронировать.');
       setLoading(false);
       return;
     }
-
+      
     if (!isAgreed) {
         setError('Пожалуйста, примите правила бронирования.');
         setLoading(false);
         return;
     }
-
+  
     if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
       setError('Пожалуйста, заполните все обязательные поля.');
       setLoading(false);
@@ -158,7 +154,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         setLoading(false);
         return;
     }
-
+  
     try {
       const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
           body: {
@@ -178,7 +174,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           },
           method: 'POST',
       });
-
+  
       if (invokeError) {
           console.error('Ошибка вызова Edge Function:', invokeError);
           setError('Произошла ошибка при отправке брони. Пожалуйста, попробуйте снова.');
@@ -189,7 +185,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           setError(bookingResult.error);
           return;
       }
-
+  
       if (bookingResult.booking.status === 'pending') {
           setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
       } else if (bookingResult.booking.status === 'queued') {
@@ -270,7 +266,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             if (slots.length === 0) {
                 fullyBooked.push(dateString);
             } else {
-                const hasPending = slots.some(slot => slot.isPending);
+                const hasPending = slots.some(slot => !slot.isAvailable && slot.isPending);
                 if (hasPending) {
                     pendingBooked.push(dateString);
                 }
@@ -507,18 +503,18 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     
                     {suggestedSlots.length > 0 && !loading ? (
                       <div className={styles.availableSlotsContainer}>
-                        <p className={styles.slotsHeader}>Свободные слоты на {bookingDate?.toLocaleDateString()}</p>
+                        <p className={styles.slotsHeader}>Слоты на {bookingDate?.toLocaleDateString()}</p>
                         <div className={styles.suggestedSlotsScroll}>
                           <div className={styles.suggestedSlotsContainer}>
                             {suggestedSlots.map((slot, index) => (
                               <button 
                                 key={index} 
                                 type="button"
-                                className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${slot.isPending ? styles.slotIsPending : ''}`}
-                                onClick={() => handleTimeSelect(slot)}
+                                className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${!slot.isAvailable ? styles.slotUnavailable : ''}`}
+                                onClick={() => slot.isAvailable && handleTimeSelect(slot)}
+                                disabled={!slot.isAvailable}
                               >
                                 {slot.start} - {slot.end}
-                                {slot.isPending && <span className={styles.pendingIcon}> ⏳</span>}
                               </button>
                             ))}
                           </div>
@@ -528,42 +524,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                       !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов.</p>
                     )}
                 </div>
-                {loading && <p className={styles.loadingMessage}>Загрузка свободных времен...</p>}
-            
-            {suggestedSlots.length > 0 && !loading ? (
-              <div className={styles.availableSlotsContainer}>
-                <p className={styles.slotsHeader}>Слоты на {bookingDate?.toLocaleDateString()}</p>
-                <div className={styles.suggestedSlotsScroll}>
-                  <div className={styles.suggestedSlotsContainer}>
-                    {suggestedSlots.map((slot, index) => (
-                      <button 
-                        key={index} 
-                        type="button"
-                        className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${!slot.isAvailable ? styles.slotUnavailable : ''} ${slot.isPending ? styles.slotIsPending : ''}`}
-                        onClick={() => slot.isAvailable && handleTimeSelect(slot)} // 💡 Клик работает только если слот доступен
-                        disabled={!slot.isAvailable} // 💡 Делаем кнопку неактивной, если слот недоступен
-                      >
-                        {slot.start} - {slot.end}
-                        {slot.isPending && <span className={styles.pendingIcon}> ⏳</span>}
-                        {!slot.isAvailable && <span className={styles.unavailableIcon}> 🚫</span>}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов.</p>
-            )}
+
                 {startTime && (
                     <form onSubmit={handleSubmit}>
-                        {isSlotPending && (
-                            <div className={styles.conflictMessage}>
-                              <p className={styles.conflictIcon}>⏳</p>
-                              <p className={styles.conflictHeader}>На выбранное время уже есть ожидающая бронь.</p>
-                              <p>Ваша бронь будет добавлена в лист ожидания.</p>
-                            </div>
-                        )}
-                        
                         <div className={styles.section}>
                           <h3>Ваши контактные данные</h3>
                           <p className={styles.sectionDescription}>Для связи по вопросам бронирования.</p>
@@ -660,15 +623,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         </label>
                         </div>
                         
-                        {isSlotPending ? (
-                            <button type="button" onClick={handleQueueBooking} className={styles.submitButton} disabled={!isAgreed || loading}>
-                                {loading ? 'Отправка...' : 'Встать в лист ожидания'}
-                            </button>
-                        ) : (
-                            <button type="submit" className={styles.submitButton} disabled={!isAgreed || loading}>
-                                {loading ? 'Отправка...' : 'Подтвердить бронирование'}
-                            </button>
-                        )}
+                        <button type="submit" className={styles.submitButton} disabled={!isAgreed || loading}>
+                            {loading ? 'Отправка...' : 'Подтвердить бронирование'}
+                        </button>
                     </form>
                 )}
               </>
