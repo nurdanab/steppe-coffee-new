@@ -82,7 +82,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         
         const fullyBooked = [];
         for (const date of uniqueDates) {
-          // Временно устанавливаем bookingDate для проверки доступности
           const tempDate = new Date(date);
           const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
           if (slots.length === 0) {
@@ -158,6 +157,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
         const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
   
+        // Убрана лишняя проверка на статус. Эта функция просто ищет свободные слоты,
+        // учитывая все бронирования
         if ((currentStartMinutes < cleanupEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
           isConflict = true;
           break;
@@ -271,32 +272,43 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return { available: false, message: 'Нельзя забронировать на прошедшее время сегодня.' };
     }
     
-    const { data: pendingBookings, error: fetchError } = await supabase
+    const { data: existingBookings, error: fetchError } = await supabase
         .from('bookings')
         .select('start_time, end_time, status')
         .eq('booking_date', date.toISOString().split('T')[0])
-        .eq('selected_room', room)
-        .eq('status', 'pending');
+        .eq('selected_room', room);
 
     if (fetchError) {
-      console.error('Ошибка при получении ожидающих бронирований:', fetchError.message);
+      console.error('Ошибка при получении существующих бронирований:', fetchError.message);
       return { available: false, message: 'Произошла ошибка при проверке доступности. Пожалуйста, попробуйте снова.' };
     }
     
     let isConflict = false;
-    for (const booking of pendingBookings) {
-        const existingStart = booking.start_time;
-        const existingEnd = booking.end_time;
-        const cleanUpStartTime = new Date(`${date.toISOString().split('T')[0]}T${existingEnd}`);
-        cleanUpStartTime.setHours(cleanUpStartTime.getHours() + cleanupTimeHours);
-        const requiredNextAvailableTime = cleanUpStartTime.toTimeString().substring(0, 5);
+    let hasConfirmedConflict = false;
 
-        if ((start < requiredNextAvailableTime) && (end > existingStart)) {
-            isConflict = true;
-            break;
-        }
+    for (const booking of existingBookings) {
+      const existingStart = booking.start_time;
+      const existingEnd = booking.end_time;
+      const bookingStatus = booking.status;
+      const cleanUpStartTime = new Date(`${date.toISOString().split('T')[0]}T${existingEnd}`);
+      cleanUpStartTime.setHours(cleanUpStartTime.getHours() + cleanupTimeHours);
+      const requiredNextAvailableTime = cleanUpStartTime.toTimeString().substring(0, 5);
+
+      if ((start < requiredNextAvailableTime) && (end > existingStart)) {
+          isConflict = true;
+          if (bookingStatus === 'confirmed') {
+              hasConfirmedConflict = true;
+              break;
+          }
+      }
     }
     
+    // Новая логика: если есть подтвержденная бронь, не даем бронировать
+    if (hasConfirmedConflict) {
+        return { available: false, message: 'Выбранное время уже занято подтвержденной бронью или недоступно. Выберите другое время.' };
+    }
+
+    // Если есть конфликт с ожидающей бронью, предлагаем лист ожидания
     if (isConflict) {
         return { 
           available: 'queued', 
@@ -317,7 +329,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setMessage('');
       setError(null);
       setConflict(null);
-      setSuggestedSlots([]);
 
       try {
         const { data: newBookingData, error: insertError } = await supabase
@@ -440,6 +451,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     if (!availabilityCheckResult.available) {
         setError(availabilityCheckResult.message);
         setConflict(availabilityCheckResult.conflictType);
+        setSuggestedSlots([]); // Сбрасываем предложенные слоты, так как они не нужны в этом случае
         setLoading(false);
         return;
     } 
@@ -447,6 +459,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     if (availabilityCheckResult.available === 'queued') {
         setError(availabilityCheckResult.message);
         setConflict(availabilityCheckResult.conflictType);
+        setSuggestedSlots([]); // Сбрасываем предложенные слоты
         setLoading(false);
         return;
     }
