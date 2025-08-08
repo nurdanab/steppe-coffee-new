@@ -77,54 +77,59 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       
       const availableSlots = [];
       const cafeOpenHour = 9;
-      const cafeCloseHour = 22;
+      const cafeCloseHour = 22; // Слоты будут до 22:00
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
       const cleanupMinutes = cleanupTimeHours * 60;
       
       const dateObj = DateTime.fromJSDate(date);
       const now = DateTime.local();
-
-      const confirmedIntervals = [];
-      const pendingIntervals = [];
+  
+      const occupiedIntervals = {
+        confirmed: [],
+        pending: [],
+      };
       
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
         
-        const occupiedStart = bookingStartTime.minus({ minutes: cleanupMinutes });
-        const occupiedInterval = Interval.fromDateTimes(occupiedStart, bookingEndTime);
+        // Занятый интервал = время брони + время на уборку ПОСЛЕ
+        const occupiedEnd = bookingEndTime.plus({ minutes: cleanupMinutes });
+        const occupiedInterval = Interval.fromDateTimes(bookingStartTime, occupiedEnd);
         
         if (booking.status === 'confirmed') {
-          confirmedIntervals.push(occupiedInterval);
+          occupiedIntervals.confirmed.push(occupiedInterval);
         } else if (booking.status === 'pending' || booking.status === 'queued') {
-          pendingIntervals.push(occupiedInterval);
+          occupiedIntervals.pending.push(occupiedInterval);
         }
       }
-
+  
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      const cafeCloseTime = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 });
-      
-      while (currentStart.plus({ minutes: durationMinutes }) <= cafeCloseTime) {
+      // Закрытие кафе в 23:00, но последняя бронь должна начинаться так,
+      // чтобы с учетом продолжительности она не выходила за 22:00
+      const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour - duration, minute: 0, second: 0, millisecond: 0 });
+  
+      while (currentStart <= lastPossibleSlotStart) {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
+  
         if (currentEnd < now) {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
         }
-
+  
         let hasConfirmedConflict = false;
-        for (const confirmedInterval of confirmedIntervals) {
+        for (const confirmedInterval of occupiedIntervals.confirmed) {
           if (slotInterval.overlaps(confirmedInterval) || confirmedInterval.contains(slotInterval)) {
             hasConfirmedConflict = true;
             break;
           }
         }
-
+  
         if (!hasConfirmedConflict) {
           let hasPendingConflict = false;
-          for (const pendingInterval of pendingIntervals) {
+          for (const pendingInterval of occupiedIntervals.pending) {
             if (slotInterval.overlaps(pendingInterval) || pendingInterval.contains(slotInterval)) {
               hasPendingConflict = true;
               break;

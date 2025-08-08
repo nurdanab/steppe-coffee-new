@@ -68,8 +68,9 @@ serve(async (req) => {
         const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`);
         const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`);
 
-        const occupiedStart = existingBookingStart.minus({ minutes: cleanupMinutes });
-        const occupiedInterval = Interval.fromDateTimes(occupiedStart, existingBookingEnd);
+        // Занятый интервал = время брони + время на уборку ПОСЛЕ
+        const occupiedEnd = existingBookingEnd.plus({ minutes: cleanupMinutes });
+        const occupiedInterval = Interval.fromDateTimes(existingBookingStart, occupiedEnd);
         
         const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
         
