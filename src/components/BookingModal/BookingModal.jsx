@@ -7,10 +7,8 @@ import { IMaskInput } from 'react-imask';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-// Import Luxon
 import { DateTime, Interval } from 'luxon';
 
-// Helper function to get today's date string
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
@@ -145,212 +143,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     
     return availableSlots;
   }, [cleanupTimeHours]);
-  
-  const checkAvailability = useCallback(async (manualStartTime, manualEndTime) => {
-    const startTimeToCheck = manualStartTime || startTime;
-    const endTimeToCheck = manualEndTime || endTime;
-
-    if (!bookingDate || !startTimeToCheck || !endTimeToCheck || !selectedRoom || !numberOfPeople) {
-      return { available: false, message: 'Пожалуйста, заполните все обязательные поля.' };
-    }
-
-    if (numberOfPeople < 1 || numberOfPeople > maxPeople) {
-      return { available: false, message: `Для выбранного зала количество человек должно быть от 1 до ${maxPeople}.` };
-    }
-    
-    const startDateTime = DateTime.fromJSDate(bookingDate).set({ hour: parseInt(startTimeToCheck.split(':')[0]), minute: parseInt(startTimeToCheck.split(':')[1]) });
-    const endDateTime = DateTime.fromJSDate(bookingDate).set({ hour: parseInt(endTimeToCheck.split(':')[0]), minute: parseInt(endTimeToCheck.split(':')[1]) });
-    const duration = endDateTime.diff(startDateTime, 'hours').hours;
-
-    if (duration <= 0 || duration > maxBookingDurationHours) {
-        return { available: false, message: `Продолжительность должна быть от 0.5 до ${maxBookingDurationHours} часов.` };
-    }
-    
-    const { data: existingBookings, error: fetchError } = await supabase
-        .from('bookings')
-        .select('start_time, end_time, status')
-        .eq('booking_date', bookingDate.toISOString().split('T')[0])
-        .eq('selected_room', selectedRoom)
-        .neq('status', 'canceled');
-
-    if (fetchError) {
-      console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-      return { available: false, message: 'Произошла ошибка при проверке доступности. Пожалуйста, попробуйте снова.' };
-    }
-
-    const cleanupMinutes = cleanupTimeHours * 60;
-    
-    let hasConfirmedConflict = false;
-    let hasPendingConflict = false;
-    
-    const proposedBookingStart = DateTime.fromISO(`${bookingDate.toISOString().split('T')[0]}T${startTimeToCheck}`);
-    const proposedBookingEnd = DateTime.fromISO(`${bookingDate.toISOString().split('T')[0]}T${endTimeToCheck}`);
-    const proposedBookingInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
-
-    for (const booking of existingBookings) {
-      const existingBookingStart = DateTime.fromISO(`${bookingDate.toISOString().split('T')[0]}T${booking.start_time}`);
-      const existingBookingEnd = DateTime.fromISO(`${bookingDate.toISOString().split('T')[0]}T${booking.end_time}`);
-      const occupiedStart = existingBookingStart.minus({ minutes: cleanupMinutes });
-      const occupiedInterval = Interval.fromDateTimes(occupiedStart, existingBookingEnd);
-      
-      if (proposedBookingInterval.overlaps(occupiedInterval) || occupiedInterval.contains(proposedBookingInterval)) {
-        if (booking.status === 'confirmed') {
-          hasConfirmedConflict = true;
-          break;
-        }
-        if (booking.status === 'pending') {
-          hasPendingConflict = true;
-        }
-      }
-    }
-    
-    if (hasConfirmedConflict) {
-      return { available: false, message: 'Выбранное время уже занято подтвержденной бронью или недоступно. Выберите другое время.' };
-    }
-
-    if (hasPendingConflict) {
-      return { 
-        available: 'queued', 
-        message: 'На выбранное время уже есть ожидающая бронь. Ваша бронь может быть добавлена в очередь.',
-        conflictType: 'pending'
-      };
-    }
-
-    return { available: true };
-  }, [bookingDate, startTime, endTime, selectedRoom, numberOfPeople, cleanupTimeHours, maxBookingDurationHours, maxPeople]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setStep(1);
-      setUserName('');
-      const today = new Date();
-      setBookingDate(today);
-      setStartTime('');
-      setEndTime('');
-      setSelectedRoom('');
-      setNumberOfPeople(1);
-      setPhoneNumber('');
-      setComment('');
-      setEventName('');
-      setEventDescription('');
-      setOrganizerContact('');
-      setMessage('');
-      setError(null);
-      setIsAgreed(false);
-      setConflict(null);
-      setSuggestedSlots([]);
-      setFullyBookedDates([]);
-      setPendingDates([]);
-      setDurationHours(1);
-      setIsBookingSuccessful(false);
-    }
-  }, [isOpen]);
-  
-  useEffect(() => {
-    const fetchCalendarHighlights = async () => {
-      if (step === 2 && selectedRoom && durationHours) {
-        setLoading(true);
-        const { data: allBookings, error } = await supabase
-            .from('bookings')
-            .select('booking_date, status')
-            .eq('selected_room', selectedRoom)
-            .gte('booking_date', getTodayDateString());
-        
-        if (error) {
-            console.error('Ошибка при получении бронирований:', error.message);
-            setError('Ошибка при загрузке данных о бронированиях.');
-            setLoading(false);
-            return;
-        }
-
-        const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
-        const fullyBooked = [];
-        const pendingBooked = [];
-        
-        for (const dateString of datesWithBookings) {
-            const tempDate = new Date(dateString);
-            const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-
-            if (slots.length === 0) {
-                fullyBooked.push(dateString);
-            } else {
-                const hasPending = slots.some(slot => slot.isPending);
-                if (hasPending) {
-                    pendingBooked.push(dateString);
-                }
-            }
-        }
-
-        setFullyBookedDates(fullyBooked);
-        setPendingDates(pendingBooked);
-        setLoading(false);
-      }
-    };
-    fetchCalendarHighlights();
-  }, [step, selectedRoom, durationHours, getAvailableSlots]);
-
-  if (!isOpen) return null;
-
-  const handleNextStep = async () => {
-    setError(null);
-    setMessage('');
-    if (!selectedRoom || !numberOfPeople || !durationHours) {
-        setError('Пожалуйста, заполните все обязательные поля.');
-        return;
-    }
-    
-    const minPeople = 1;
-    if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
-        setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
-        return;
-    }
-    
-    if (durationHours <= 0) {
-      setError('Продолжительность бронирования должна быть больше 0.');
-      return;
-    }
-    if (durationHours > maxBookingDurationHours) {
-      setError(`Максимальное время бронирования - ${maxBookingDurationHours} часа.`);
-      return;
-    }
-    
-    setStep(2);
-    const today = new Date();
-    setBookingDate(today);
-    setLoading(true);
-    const slots = await getAvailableSlots(today, selectedRoom, durationHours);
-    setSuggestedSlots(slots);
-    setLoading(false);
-  };
-  
-  const handleDateChange = async (date) => {
-    setBookingDate(date);
-    setError(null);
-    setMessage('');
-    setStartTime('');
-    setEndTime('');
-    setLoading(true);
-    const slots = await getAvailableSlots(date, selectedRoom, durationHours);
-    setSuggestedSlots(slots);
-    setLoading(false);
-  };
-
-  const handleTimeSelect = (slot) => {
-    setStartTime(slot.start);
-    setEndTime(slot.end);
-    setIsSlotPending(slot.isPending);
-    setError(null);
-    setMessage('');
-  };
-
-  const handleQueueBooking = async (e) => {
-    e.preventDefault();
-    if (!isAgreed) {
-        setError('Пожалуйста, примите правила бронирования.');
-        return;
-    }
-    await sendBooking('queued');
-  };
 
   const sendBooking = async (statusToSet = 'pending') => {
       setLoading(true);
@@ -363,7 +155,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           .from('bookings')
           .insert([
             {
-              // ИСПРАВЛЕНИЕ: Используем .toISODate() для корректного сохранения даты
               booking_date: DateTime.fromJSDate(bookingDate).toISODate(),
               start_time: startTime,
               end_time: endTime,
@@ -458,25 +249,52 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       return;
     }
 
-    const availabilityCheckResult = await checkAvailability(startTime, endTime);
-    
-    if (availabilityCheckResult.available === false) {
-        setError(availabilityCheckResult.message);
-        setConflict(availabilityCheckResult.conflictType);
-        setSuggestedSlots([]);
-        setLoading(false);
-        return;
-    } 
+    // Вызываем Edge Function для проверки и создания брони
+    const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
+        body: {
+            organizer_name: userName,
+            booking_date: DateTime.fromJSDate(bookingDate).toISODate(),
+            start_time: startTime,
+            end_time: endTime,
+            num_guests: numberOfPeople,
+            comments: comment,
+            user_id: currentUserId,
+            selected_room: selectedRoom,
+            event_name: eventName,
+            event_description: eventDescription,
+            organizer_contact: organizerContact,
+        },
+        method: 'POST',
+    });
 
-    if (availabilityCheckResult.available === 'queued') {
-        setError(availabilityCheckResult.message);
-        setConflict(availabilityCheckResult.conflictType);
-        setSuggestedSlots([]);
+    if (invokeError) {
+        console.error('Ошибка вызова Edge Function:', invokeError);
+        setError('Произошла ошибка при отправке брони. Пожалуйста, попробуйте снова.');
         setLoading(false);
         return;
     }
     
-    await sendBooking('pending');
+    if (bookingResult.error) {
+        if (bookingResult.error.includes('already booked')) {
+            setError('Выбранное время уже занято подтвержденной бронью или недоступно. Выберите другое время.');
+            setConflict('confirmed');
+        } else if (bookingResult.error.includes('pending reservation')) {
+            setError('На выбранное время уже есть ожидающая бронь. Ваша бронь может быть добавлена в очередь.');
+            setConflict('pending');
+        } else {
+            setError(`Ошибка при отправке брони: ${bookingResult.error}. Пожалуйста, попробуйте снова.`);
+        }
+        setLoading(false);
+        return;
+    }
+
+    if (bookingResult.booking.status === 'pending') {
+        setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
+    } else if (bookingResult.booking.status === 'queued') {
+        setMessage('Ваша бронь успешно добавлена в лист ожидания!');
+    }
+    setIsBookingSuccessful(true);
+    setLoading(false);
   };
 
   const handleBackStep = () => {
@@ -634,7 +452,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
                 <div className={styles.bookingStep2}>
                     <div className={styles.calendarContainer}>
-                        {/* Легенда удалена */}
                         <Calendar
                             onChange={handleDateChange}
                             value={bookingDate}
@@ -771,7 +588,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                             disabled={loading}
                         />
                         <label htmlFor="agreement" className={styles.agreementLabel}>
-                            Я ознакомился с <a href="/documentsPdf/rules_compressed.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
+                            Я ознакомился с <a href="/documentsPdf/information-about-payment security.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
                         </label>
                         </div>
                         

@@ -309,7 +309,7 @@
     cursor: pointer;
     font-size: 1rem;
     color: $black;
-    align-self: flex-center;
+    align-self: flex-start;
     margin-bottom: $spacing-sm;
     padding: $spacing-xs;
     border-radius: $border-radius-xxxxl;
@@ -464,6 +464,7 @@
     background-color: $light-yellow;
     border-radius: $border-radius-lg;
     margin-top: $spacing-md;
+    margin-bottom: $spacing-md;
     border: 1px solid $yellow;
 }
 
@@ -498,7 +499,7 @@
 .secondaryButton {
     background-color: transparent;
     color: $black;
-    border: 1px solid $black;
+    border: 1-px solid $black;
     width: 100%;
     padding: $spacing-sm $spacing-xl;
     border-radius: $border-radius-xxxxl;
@@ -553,13 +554,12 @@
 .partySizeControl {
   display: flex;
   align-items: center;
-  justify-content: center; // Центрируем весь блок
+  justify-content: center;
   gap: $spacing-xs;
   width: 100%;
-  max-width: 250px; // Ограничиваем максимальную ширину
-  margin: 0 auto; // Центрируем по горизонтали
+  max-width: 250px;
+  margin: 0 auto;
   
-  // Обновлённые стили кнопок +/-
   button {
     @include flex-center;
     width: 40px;
@@ -586,7 +586,7 @@
 
   input {
     flex-grow: 1;
-    max-width: 80px; // Делаем поле ввода более компактным
+    max-width: 80px;
     text-align: center;
   }
 }
@@ -602,7 +602,6 @@
   position: relative;
   padding-top: $spacing-xl;
   
-  // Улучшенные стили для ползунка
   input[type="range"] {
     width: 100%;
     -webkit-appearance: none;
@@ -640,7 +639,6 @@
   }
 }
 
-// Новый стиль для временной шкалы над ползунком
 .durationLabel {
     @include t.gilroy-16;
     font-weight: 700;
@@ -669,42 +667,6 @@
         text-align: center;
         &:first-child { text-align: left; }
         &:last-child { text-align: right; }
-    }
-}
-
-.legend {
-    display: flex;
-    justify-content: center;
-    gap: $spacing-md;
-    margin-top: $spacing-md;
-    margin-bottom: $spacing-md;
-    flex-wrap: wrap;
-}
-
-.legendItem {
-    display: flex;
-    align-items: center;
-    gap: $spacing-xs;
-    font-size: 14px;
-    
-    span {
-        display: block;
-        width: 20px;
-        height: 20px;
-        border-radius: $border-radius-sm;
-        border: 1px solid $gray-medium;
-    }
-    
-    .fullyBooked {
-        background-color: #f0f0f0;
-    }
-    
-    .hasPending {
-        background-color: $light-yellow;
-    }
-    
-    .available {
-        background-color: $white;
     }
 }
 
@@ -774,12 +736,11 @@
   
   .hallButton {
       span {
-          display: none; // Скрываем текст "(до 20 человек)" на маленьких экранах
+          display: none;
       }
   }
 }
 
-// Применение адаптивных стилей с учетом твоих миксинов
 .modalContent {
     @include md-up {
         padding: $spacing-xxl;
