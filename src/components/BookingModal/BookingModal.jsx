@@ -1,5 +1,5 @@
 // src/components/BookingModal/BookingModal.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
 import { IMaskInput } from 'react-imask';
@@ -36,6 +36,168 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [allBookings, setAllBookings] = useState([]);
   const [isSlotPending, setIsSlotPending] = useState(false);
 
+  // Constants
+  const cafeOpenTime = '08:00';
+  const cafeCloseTime = '22:00';
+  const maxBookingDurationHours = 3;
+  const cleanupTimeHours = 1;
+
+  // Memoized function for getRoomName
+  const getRoomName = useCallback((roomKey) => {  
+    switch (roomKey) {
+      case 'second_hall':
+        return 'Второй зал внутри';
+      case 'summer_terrace':
+        return 'Летняя терраса';
+      default:
+        return 'Неизвестный зал';
+    }
+  }, []);
+  
+  // Memoized function for getAvailableSlots
+  const getAvailableSlots = useCallback(async (date, room, duration, existingBookings = null) => {
+    if (!date || !room || !duration) return [];
+    
+    const dateString = date.toISOString().split('T')[0];
+    
+    let bookingsToConsider;
+    if (existingBookings) {
+      bookingsToConsider = existingBookings.filter(b => b.booking_date === dateString);
+    } else {
+      setLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from('bookings')
+        .select('start_time, end_time, status')
+        .eq('booking_date', dateString)
+        .eq('selected_room', room);
+      setLoading(false);
+      
+      if (fetchError) {
+        console.error('Ошибка при получении существующих бронирований:', fetchError.message);
+        return [];
+      }
+      bookingsToConsider = data;
+    }
+    
+    const availableSlots = [];
+    const intervalMinutes = 30;
+    const cafeOpenTimeMinutes = 8 * 60;
+    const cafeCloseTimeMinutes = 22 * 60;
+    const durationMinutes = duration * 60;
+    const cleanupMinutes = cleanupTimeHours * 60;
+    const today = new Date();
+    const currentDayString = today.toISOString().split('T')[0];
+    const currentTimeMinutes = today.getHours() * 60 + today.getMinutes();
+
+    for (let currentStartMinutes = cafeOpenTimeMinutes; currentStartMinutes <= cafeCloseTimeMinutes - durationMinutes; currentStartMinutes += intervalMinutes) {
+      if (dateString === currentDayString && currentStartMinutes < currentTimeMinutes) {
+        continue;
+      }
+
+      const currentEndMinutes = currentStartMinutes + durationMinutes;
+      const currentStart = `${String(Math.floor(currentStartMinutes / 60)).padStart(2, '0')}:${String(currentStartMinutes % 60).padStart(2, '0')}`;
+      const currentEnd = `${String(Math.floor(currentEndMinutes / 60)).padStart(2, '0')}:${String(currentEndMinutes % 60).padStart(2, '0')}`;
+  
+      let isConflict = false;
+      let hasPendingInSlot = false;
+      for (const booking of bookingsToConsider) {
+        const existingStartParts = booking.start_time.split(':').map(Number);
+        const existingEndParts = booking.end_time.split(':').map(Number);
+  
+        const existingStartMinutes = existingStartParts[0] * 60 + existingStartParts[1];
+        const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
+        const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
+  
+        if ((currentStartMinutes < cleanupEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
+          if (booking.status === 'confirmed') {
+            isConflict = true;
+            break;
+          }
+          if (booking.status === 'pending') {
+            hasPendingInSlot = true;
+          }
+        }
+      }
+      
+      if (!isConflict) {
+        availableSlots.push({ start: currentStart, end: currentEnd, isPending: hasPendingInSlot });
+      }
+    }
+    
+    return availableSlots;
+  }, [cleanupTimeHours]);
+  
+  // Memoized function for checkAvailability
+  const checkAvailability = useCallback(async () => {
+    // Валидация на уровне UI, дублирование для надёжности
+    if (!bookingDate || !startTime || !endTime || !selectedRoom || !numberOfPeople) {
+        return { available: false, message: 'Пожалуйста, заполните все обязательные поля.' };
+    }
+
+    const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
+    if (numberOfPeople < 1 || numberOfPeople > maxPeople) {
+        return { available: false, message: `Для выбранного зала количество человек должно быть от 1 до ${maxPeople}.` };
+    }
+
+    const startDateTime = new Date(`${bookingDate.toISOString().split('T')[0]}T${startTime}`);
+    const endDateTime = new Date(`${bookingDate.toISOString().split('T')[0]}T${endTime}`);
+    const durationMs = endDateTime - startDateTime;
+    const durationHoursCheck = durationMs / (1000 * 60 * 60);
+
+    if (durationHoursCheck <= 0 || durationHoursCheck > maxBookingDurationHours) {
+        return { available: false, message: `Продолжительность должна быть от 0.5 до ${maxBookingDurationHours} часов.` };
+    }
+    
+    const { data: existingBookings, error: fetchError } = await supabase
+        .from('bookings')
+        .select('start_time, end_time, status')
+        .eq('booking_date', bookingDate.toISOString().split('T')[0])
+        .eq('selected_room', selectedRoom);
+
+    if (fetchError) {
+      console.error('Ошибка при получении существующих бронирований:', fetchError.message);
+      return { available: false, message: 'Произошла ошибка при проверке доступности. Пожалуйста, попробуйте снова.' };
+    }
+
+    const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
+    const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
+    const cleanupMinutes = cleanupTimeHours * 60;
+    
+    let hasConfirmedConflict = false;
+    let hasPendingConflict = false;
+
+    for (const booking of existingBookings) {
+      const existingStartMinutes = parseInt(booking.start_time.split(':')[0]) * 60 + parseInt(booking.start_time.split(':')[1]);
+      const existingEndMinutes = parseInt(booking.end_time.split(':')[0]) * 60 + parseInt(booking.end_time.split(':')[1]);
+      const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
+      
+      if ((startMinutes < cleanupEndMinutes) && (endMinutes > existingStartMinutes)) {
+          if (booking.status === 'confirmed') {
+              hasConfirmedConflict = true;
+              break;
+          }
+          if (booking.status === 'pending') {
+              hasPendingConflict = true;
+          }
+      }
+    }
+    
+    if (hasConfirmedConflict) {
+        return { available: false, message: 'Выбранное время уже занято подтвержденной бронью или недоступно. Выберите другое время.' };
+    }
+
+    if (hasPendingConflict) {
+        return { 
+          available: 'queued', 
+          message: 'На выбранное время уже есть ожидающая бронь. Ваша бронь может быть добавлена в очередь.',
+          conflictType: 'pending'
+        };
+    }
+
+    return { available: true };
+  }, [bookingDate, startTime, endTime, selectedRoom, numberOfPeople, cleanupTimeHours, maxBookingDurationHours]);
+
+  // UseEffect for initial state and data fetching
   useEffect(() => {
     if (isOpen) {
       setStep(1);
@@ -61,8 +223,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setAllBookings([]);
       setDurationHours(1);
     }
-  }, [isOpen, currentUserId, currentUserEmail]);
+  }, [isOpen]);
   
+  // UseEffect for fetching bookings when room or duration changes
   useEffect(() => {
     const fetchBookingsOnRoomChange = async () => {
       if (step === 2 && selectedRoom && durationHours) {
@@ -75,6 +238,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         
         if (error) {
           console.error('Ошибка при получении бронирований:', error.message);
+          setError('Ошибка при загрузке данных о бронированиях.');
           setLoading(false);
           return;
         }
@@ -104,107 +268,20 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       }
     };
     fetchBookingsOnRoomChange();
-  }, [step, selectedRoom, durationHours]);
+  }, [step, selectedRoom, durationHours, getAvailableSlots]);
 
   if (!isOpen) return null;
 
-  const cafeOpenTime = '08:00';
-  const cafeCloseTime = '22:00';
-  const maxBookingDurationHours = 3;
-  const cleanupTimeHours = 1;
   const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
 
-  const getRoomName = (roomKey) => {  
-    switch (roomKey) {
-      case 'second_hall':
-        return 'Второй зал внутри';
-      case 'summer_terrace':
-        return 'Летняя терраса';
-      default:
-        return 'Неизвестный зал';
-    }
-  };
-
-  const getAvailableSlots = async (date, room, duration, existingBookings = null) => {
-    if (!date || !room || !duration) return [];
-    
-    const dateString = date.toISOString().split('T')[0];
-    
-    let bookingsToConsider;
-    if (existingBookings) {
-      bookingsToConsider = existingBookings.filter(b => b.booking_date === dateString);
-    } else {
-      const { data, error: fetchError } = await supabase
-        .from('bookings')
-        .select('start_time, end_time, status')
-        .eq('booking_date', dateString)
-        .eq('selected_room', room);
-      
-      if (fetchError) {
-        console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-        return [];
-      }
-      bookingsToConsider = data;
-    }
-    
-    const availableSlots = [];
-    const intervalMinutes = 30;
-    const cafeOpenTimeMinutes = 8 * 60;
-    const cafeCloseTimeMinutes = 22 * 60;
-    const durationMinutes = duration * 60;
-    const cleanupMinutes = cleanupTimeHours * 60;
-    const today = new Date();
-    const currentDayString = today.toISOString().split('T')[0];
-    const currentTimeMinutes = today.getHours() * 60 + today.getMinutes();
-
-    for (let currentStartMinutes = cafeOpenTimeMinutes; currentStartMinutes <= cafeCloseTimeMinutes - durationMinutes; currentStartMinutes += intervalMinutes) {
-      if (dateString === currentDayString && currentStartMinutes < currentTimeMinutes) {
-        continue;
-      }
-
-      const currentEndMinutes = currentStartMinutes + durationMinutes;
-      const currentStart = `${String(Math.floor(currentStartMinutes / 60)).padStart(2, '0')}:${String(currentStartMinutes % 60).padStart(2, '0')}`;
-      const currentEnd = `${String(Math.floor(currentEndMinutes / 60)).padStart(2, '0')}:${String(currentEndMinutes % 60).padStart(2, '0')}`;
-  
-      let isConflict = false;
-      let hasPendingInSlot = false; // <-- Перенесли объявление сюда!
-
-      for (const booking of bookingsToConsider) {
-        const existingStartParts = booking.start_time.split(':').map(Number);
-        const existingEndParts = booking.end_time.split(':').map(Number);
-  
-        const existingStartMinutes = existingStartParts[0] * 60 + existingStartParts[1];
-        const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
-        
-        const totalStartMinutes = existingStartMinutes - cleanupMinutes;
-        const totalEndMinutes = existingEndMinutes + cleanupMinutes;
-        
-        if ((currentStartMinutes < totalEndMinutes) && (currentEndMinutes > totalStartMinutes)) {
-          if (booking.status === 'confirmed') {
-            isConflict = true;
-            break; 
-          }
-          if (booking.status === 'pending') {
-            hasPendingInSlot = true;
-          }
-        }
-      }
-      
-      if (!isConflict) {
-        availableSlots.push({ start: currentStart, end: currentEnd, isPending: hasPendingInSlot });
-      }
-    }
-    
-    return availableSlots;
-  };
-  
   const handleNextStep = async () => {
     setError(null);
+    setMessage('');
     if (!selectedRoom || !numberOfPeople || !durationHours) {
         setError('Пожалуйста, заполните все обязательные поля.');
         return;
     }
-
+    
     const minPeople = 1;
     if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
         setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
@@ -219,7 +296,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setError(`Максимальное время бронирования - ${maxBookingDurationHours} часа.`);
       return;
     }
-
+    
     setStep(2);
     const today = new Date();
     setBookingDate(today);
@@ -232,6 +309,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const handleDateChange = async (date) => {
     setBookingDate(date);
     setError(null);
+    setMessage('');
     setStartTime('');
     setEndTime('');
     setLoading(true);
@@ -245,99 +323,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setEndTime(slot.end);
     setIsSlotPending(slot.isPending);
     setError(null);
+    setMessage('');
   };
 
-  const checkAvailability = async () => {
-    setError(null);
-    setConflict(null);
-    
-    const date = bookingDate;
-    const start = startTime;
-    const end = endTime;
-    const room = selectedRoom;
-    const numPpl = numberOfPeople;
-
-    const minPeople = 1;
-
-    if (numPpl < minPeople || numPpl > maxPeople) {
-      return { available: false, message: `Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.` };
-    }
-
-    const startDateTime = new Date(`${date.toISOString().split('T')[0]}T${start}`);
-    const endDateTime = new Date(`${date.toISOString().split('T')[0]}T${end}`);
-    const durationMs = endDateTime - startDateTime;
-    const durationHours = durationMs / (1000 * 60 * 60);
-
-    if (durationHours <= 0) {
-      return { available: false, message: 'Время начала не может быть позже или равно времени окончания.' };
-    }
-    if (durationHours > maxBookingDurationHours) {
-      return { available: false, message: `Максимальное время бронирования - ${maxBookingDurationHours} часа.` };
-    }
-
-    if (start < cafeOpenTime || end > cafeCloseTime) {
-      return { available: false, message: `Кофейня работает с ${cafeOpenTime} до ${cafeCloseTime}.` };
-    }
-
-    const currentDateTime = new Date();
-    const currentDay = currentDateTime.toISOString().split('T')[0];
-    const currentTime = currentDateTime.toTimeString().substring(0, 5);
-
-    if (date.toISOString().split('T')[0] < currentDay) {
-        return { available: false, message: 'Нельзя забронировать на прошедшую дату.' };
-    }
-    if (date.toISOString().split('T')[0] === currentDay && start < currentTime) {
-        return { available: false, message: 'Нельзя забронировать на прошедшее время сегодня.' };
-    }
-    
-    const { data: existingBookings, error: fetchError } = await supabase
-        .from('bookings')
-        .select('start_time, end_time, status')
-        .eq('booking_date', date.toISOString().split('T')[0])
-        .eq('selected_room', room);
-
-    if (fetchError) {
-      console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-      return { available: false, message: 'Произошла ошибка при проверке доступности. Пожалуйста, попробуйте снова.' };
-    }
-    
-    let hasConfirmedConflict = false;
-    let hasPendingConflict = false;
-
-    for (const booking of existingBookings) {
-      const existingStart = booking.start_time;
-      const existingEnd = booking.end_time;
-      const bookingStatus = booking.status;
-      const cleanUpStartTime = new Date(`${date.toISOString().split('T')[0]}T${existingEnd}`);
-      cleanUpStartTime.setHours(cleanUpStartTime.getHours() + cleanupTimeHours);
-      const requiredNextAvailableTime = cleanUpStartTime.toTimeString().substring(0, 5);
-
-      if ((start < requiredNextAvailableTime) && (end > existingStart)) {
-          if (bookingStatus === 'confirmed') {
-              hasConfirmedConflict = true;
-              break;
-          }
-          if (bookingStatus === 'pending') {
-              hasPendingConflict = true;
-          }
-      }
-    }
-    
-    if (hasConfirmedConflict) {
-        return { available: false, message: 'Выбранное время уже занято подтвержденной бронью или недоступно. Выберите другое время.' };
-    }
-
-    if (hasPendingConflict) {
-        return { 
-          available: 'queued', 
-          message: 'На выбранное время уже есть ожидающая бронь. Ваша бронь может быть добавлена в очередь.',
-          conflictType: 'pending'
-        };
-    }
-
-    return { available: true };
-  };
-  
   const handleQueueBooking = async (e) => {
     e.preventDefault();
     if (!isAgreed) {
@@ -470,7 +458,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
 
     const availabilityCheckResult = await checkAvailability();
-
+    
     if (availabilityCheckResult.available === false) {
         setError(availabilityCheckResult.message);
         setConflict(availabilityCheckResult.conflictType);
@@ -652,7 +640,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     </div>
                 </div>
                 
-                {loading && <p>Загрузка свободных времен...</p>}
+                {loading && <p className={styles.loadingMessage}>Загрузка свободных времен...</p>}
                 
                 {suggestedSlots.length > 0 && !loading ? (
                   <div className={styles.availableSlotsContainer}>
@@ -662,6 +650,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         {suggestedSlots.map((slot, index) => (
                           <button 
                             key={index} 
+                            type="button"
                             className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${slot.isPending ? styles.slotIsPending : ''}`}
                             onClick={() => handleTimeSelect(slot)}
                           >
@@ -775,7 +764,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     </div>
                     
                     {isSlotPending ? (
-                        <button onClick={handleQueueBooking} className={styles.submitButton} disabled={!isAgreed || loading}>
+                        <button type="button" onClick={handleQueueBooking} className={styles.submitButton} disabled={!isAgreed || loading}>
                             {loading ? 'Отправка...' : 'Встать в лист ожидания'}
                         </button>
                     ) : (
