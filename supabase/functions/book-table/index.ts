@@ -20,16 +20,22 @@ serve(async (req) => {
         booking_date, 
         start_time, 
         end_time, 
-        num_people, // ✅ ИСПРАВЛЕНО
+        num_people, 
         comments,
         user_id,
         selected_room,
         event_name,
         event_description,
-        organizer_contact
+        organizer_contact,
+        status_to_set, // Получаем статус для установки
     } = await req.json();
 
+    console.log('Received booking data:', {
+        organizer_name, booking_date, start_time, end_time, num_people, comments, user_id, selected_room, event_name, event_description, organizer_contact
+    });
+
     if (!organizer_name || !booking_date || !start_time || !end_time || !num_people || !selected_room) {
+      console.error('Validation error: Missing required fields');
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
@@ -68,7 +74,6 @@ serve(async (req) => {
         const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`);
         const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`);
 
-        // Занятый интервал = время брони + время на уборку ПОСЛЕ
         const occupiedEnd = existingBookingEnd.plus({ minutes: cleanupMinutes });
         const occupiedInterval = Interval.fromDateTimes(existingBookingStart, occupiedEnd);
         
@@ -86,6 +91,7 @@ serve(async (req) => {
     }
 
     if (hasConfirmedConflict) {
+      console.log('Booking conflict detected with a confirmed reservation.');
       return new Response(JSON.stringify({ error: 'Selected room is already booked by a confirmed reservation.' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 409,
@@ -96,6 +102,11 @@ serve(async (req) => {
     if (hasPendingConflict) {
         statusToSet = 'queued';
     }
+    
+    // Используем status_to_set из клиента, если он есть
+    if (status_to_set) {
+        statusToSet = status_to_set;
+    }
 
     const { data: newBooking, error: insertError } = await supabaseClient
       .from('bookings')
@@ -104,10 +115,10 @@ serve(async (req) => {
         booking_date,
         start_time,
         end_time,
-        num_people, // ✅ ИСПРАВЛЕНО
+        num_people,
         comments: comments || null,
         user_id: user_id || null,
-        selected_room: selected_room,
+        selected_room,
         event_name: event_name || null,
         event_description: event_description || null,
         organizer_contact: organizer_contact || null,
@@ -162,7 +173,8 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in Edge Function:', error);
+    console.error('Error in Edge Function:', error.message);
+    // Добавляем полное сообщение об ошибке в ответ
     return new Response(JSON.stringify({ error: error.message || 'An unexpected error occurred' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
