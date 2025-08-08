@@ -352,7 +352,7 @@
   margin-top: $spacing-md;
 
   .secondaryButton {
-      @include button-secondary;
+      @include button-primary;
   }
 }
 
