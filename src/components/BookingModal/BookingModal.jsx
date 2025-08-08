@@ -174,6 +174,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   
         const existingStartMinutes = existingStartParts[0] * 60 + existingStartParts[1];
         const existingEndMinutes = existingEndParts[0] * 60 + existingEndParts[1];
+        // Учитываем время на уборку для всех броней, включая "pending"
         const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
   
         if ((currentStartMinutes < cleanupEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
