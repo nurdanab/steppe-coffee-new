@@ -37,12 +37,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [pendingDates, setPendingDates] = useState([]);
   const [isSlotPending, setIsSlotPending] = useState(false);
 
-  // 💡 Здесь мы определяем буферное время. Например, 1 час.
-  const bufferTimeHours = 1;
   const maxBookingDurationHours = 3;
+  const bufferTimeHours = 1;
   
   const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
-  
+
   const getRoomName = useCallback((roomKey) => {  
     switch (roomKey) {
       case 'second_hall':
@@ -58,8 +57,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     if (!date || !room || !duration) return [];
 
     const dateString = date.toISOString().split('T')[0];
-
     setLoading(true);
+
     try {
       const { data: bookings, error: fetchError } = await supabase
         .from('bookings')
@@ -73,12 +72,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return [];
       }
 
-      const availableSlots = [];
+      const allSlots = [];
       const cafeOpenHour = 9;
       const cafeCloseHour = 22;
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
-      const bufferMinutes = bufferTimeHours * 60; // 💡 Получаем буфер в минутах
+      const bufferMinutes = bufferTimeHours * 60;
 
       const dateObj = DateTime.fromJSDate(date);
       const now = DateTime.local();
@@ -88,42 +87,40 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
-
-        // 💡 Создаем интервал, который начинается на `bufferMinutes` раньше и заканчивается на `bufferMinutes` позже.
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
       }
 
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      // 💡 Последний возможный слот должен заканчиваться не позднее времени закрытия кафе.
       const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
 
       while (currentStart <= lastPossibleSlotStart) {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-        // Проверяем, что слот не в прошлом
         if (currentEnd < now) {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
         }
 
-        // 💡 Проверяем, что наш потенциальный слот не пересекается ни с одним из занятых интервалов
-        const hasConflict = occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
+        const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
+        const isPending = bookings.some(b => 
+            (b.status === 'pending' || b.status === 'queued') && 
+            Interval.fromDateTimes(DateTime.fromISO(`${dateString}T${b.start_time}`), DateTime.fromISO(`${dateString}T${b.end_time}`)).overlaps(slotInterval)
+        );
 
-        if (!hasConflict) {
-          availableSlots.push({
-              start: currentStart.toFormat('HH:mm'),
-              end: currentEnd.toFormat('HH:mm'),
-              isPending: false
-          });
-        }
+        allSlots.push({
+            start: currentStart.toFormat('HH:mm'),
+            end: currentEnd.toFormat('HH:mm'),
+            isAvailable: isAvailable, // 💡 Добавляем флаг доступности
+            isPending: isPending
+        });
         
         currentStart = currentStart.plus({ minutes: intervalMinutes });
       }
 
-      return availableSlots;
+      return allSlots;
     } finally {
       setLoading(false);
     }
@@ -531,7 +528,32 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                       !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов.</p>
                     )}
                 </div>
-
+                {loading && <p className={styles.loadingMessage}>Загрузка свободных времен...</p>}
+            
+            {suggestedSlots.length > 0 && !loading ? (
+              <div className={styles.availableSlotsContainer}>
+                <p className={styles.slotsHeader}>Слоты на {bookingDate?.toLocaleDateString()}</p>
+                <div className={styles.suggestedSlotsScroll}>
+                  <div className={styles.suggestedSlotsContainer}>
+                    {suggestedSlots.map((slot, index) => (
+                      <button 
+                        key={index} 
+                        type="button"
+                        className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${!slot.isAvailable ? styles.slotUnavailable : ''} ${slot.isPending ? styles.slotIsPending : ''}`}
+                        onClick={() => slot.isAvailable && handleTimeSelect(slot)} // 💡 Клик работает только если слот доступен
+                        disabled={!slot.isAvailable} // 💡 Делаем кнопку неактивной, если слот недоступен
+                      >
+                        {slot.start} - {slot.end}
+                        {slot.isPending && <span className={styles.pendingIcon}> ⏳</span>}
+                        {!slot.isAvailable && <span className={styles.unavailableIcon}> 🚫</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов.</p>
+            )}
                 {startTime && (
                     <form onSubmit={handleSubmit}>
                         {isSlotPending && (
