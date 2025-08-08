@@ -21,12 +21,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
-  const [isAgreed, setIsAgreed] = useState(false); // Новое состояние для отслеживания флажка
+  const [isAgreed, setIsAgreed] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setUserName('');
-      
+
       const today = new Date().toISOString().split('T')[0];
       setBookingDate(today);
       setStartTime('');
@@ -35,12 +35,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setNumberOfPeople(1);
       setPhoneNumber('');
       setComment('');
+      // Сброс новых полей
       setEventName('');
       setEventDescription('');
       setOrganizerContact('');
       setMessage('');
       setError(null);
-      setIsAgreed(false); и
+      setIsAgreed(false);
     }
   }, [isOpen, currentUserId, currentUserEmail]);
 
@@ -161,7 +162,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setMessage('');
     setError(null);
 
-    // Добавляем проверку согласия перед отправкой
     if (!isAgreed) {
         setError('Пожалуйста, примите правила бронирования.');
         setLoading(false);
@@ -264,12 +264,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setSelectedRoom('');
       setNumberOfPeople(1);
       setPhoneNumber('');
-      setUserName(currentUserEmail || '');
+      setUserName('');
       setComment('');
       setEventName('');
       setEventDescription('');
       setOrganizerContact('');
-      setIsAgreed(false); // Сбрасываем флажок после успешной отправки
+      setIsAgreed(false);
 
       setTimeout(() => {
         onClose();
@@ -388,7 +388,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               onChange={(e) => setUserName(e.target.value)}
               required
               disabled={loading}
-              placeholder="Введите ваше имя или название организации"
+              placeholder="Введите ваше имя или название организации" // ✅ Добавлен плейсхолдер
             />
           </div>
 
@@ -440,7 +440,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             ></textarea>
           </div>
 
-          {/* Добавляем флажок согласия */}
           <div className={`${styles.formGroup} ${styles.agreementCheckbox}`}>
             <input
               type="checkbox"
@@ -450,7 +449,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               disabled={loading}
             />
             <label htmlFor="agreement" className={styles.agreementLabel}>
-                <a href="/documentsPdf/rules_compressed.pdf" target="_blank" rel="noopener noreferrer">Я ознакомился и принимаю правила кофейни.</a>
+                Я ознакомился с <a href="/documentsPdf/information-about-payment security.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
             </label>
           </div>
 
