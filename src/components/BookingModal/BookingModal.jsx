@@ -38,7 +38,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
   // Constants
   const cafeOpenTime = '08:00';
-  const cafeCloseTime = '23:00';
+  const cafeCloseTime = '23:00'; // Updated to 23:00 as per user request
   const maxBookingDurationHours = 3;
   const cleanupTimeHours = 1;
 
@@ -82,7 +82,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const availableSlots = [];
     const intervalMinutes = 30;
     const cafeOpenTimeMinutes = 8 * 60;
-    const cafeCloseTimeMinutes = 22 * 60;
+    const cafeCloseTimeMinutes = 23 * 60; // Using the updated cafe close time
     const durationMinutes = duration * 60;
     const cleanupMinutes = cleanupTimeHours * 60;
     const today = new Date();
