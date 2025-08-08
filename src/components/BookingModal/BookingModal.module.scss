@@ -1,4 +1,5 @@
 // src/components/BookingModal/BookingModal.module.scss
+@use "sass:color";
 @use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
@@ -316,7 +317,7 @@
     }
 
     .react-calendar__tile--now {
-        background-color: $yellow-light;
+        background-color: $light-yellow;
         border: 1px solid $yellow;
     }
     
