@@ -676,6 +676,7 @@
 
 // export default BookingModal;
 // src/components/BookingModal/BookingModal.jsx
+// src/components/BookingModal/BookingModal.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
@@ -767,6 +768,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
         
+        // Создаем интервал с учетом буферного времени
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
@@ -779,12 +781,14 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       }
   
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour - duration, minute: 0, second: 0, millisecond: 0 });
+      // Учитываем длительность и буферное время для последнего возможного слота
+      const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes }).minus({ minutes: bufferMinutes });
   
       while (currentStart <= lastPossibleSlotStart) {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
   
+        // Проверяем, что слот не в прошлом
         if (currentEnd < now) {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
@@ -792,7 +796,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   
         let hasConfirmedConflict = false;
         for (const confirmedInterval of occupiedIntervals.confirmed) {
-          if (slotInterval.overlaps(confirmedInterval) || confirmedInterval.contains(slotInterval)) {
+          if (slotInterval.overlaps(confirmedInterval)) {
             hasConfirmedConflict = true;
             break;
           }
@@ -801,7 +805,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         if (!hasConfirmedConflict) {
           let hasPendingConflict = false;
           for (const pendingInterval of occupiedIntervals.pending) {
-            if (slotInterval.overlaps(pendingInterval) || pendingInterval.contains(slotInterval)) {
+            if (slotInterval.overlaps(pendingInterval)) {
               hasPendingConflict = true;
               break;
             }
