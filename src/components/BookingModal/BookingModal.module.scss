@@ -296,3 +296,80 @@
         }
     }
 }
+.conflictMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: $spacing-md;
+  background-color: $gray-light;
+  border-radius: $border-radius-lg;
+  margin-top: $spacing-md;
+  border: 1px solid $maroon; // Выделим блок
+}
+
+.conflictHeader {
+  @include t.gilroy-18;
+  color: $maroon;
+  font-weight: 700;
+  margin-bottom: $spacing-sm;
+}
+
+.suggestedSlotsContainer {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  margin-top: $spacing-sm;
+  margin-bottom: $spacing-sm;
+}
+
+.suggestedSlotButton {
+  @include button-secondary; // Если есть миксин для вторичных кнопок
+  background-color: $maroon;
+  color: $white;
+  border: 1px solid $maroon;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-sm;
+  transition: all $transition-fast;
+
+  &:hover {
+      background-color: darken($maroon, 10%);
+      border-color: darken($maroon, 10%);
+      transform: translateY(-2px);
+  }
+}
+
+.moreSuggestions {
+  @include t.gilroy-16;
+  color: $gray-dark;
+  margin-top: $spacing-xs;
+}
+
+.conflictActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+
+  .secondaryButton {
+      @include button-secondary;
+  }
+}
+
+.submitButton {
+  @include button-primary;
+  width: 100%;
+  margin-top: $spacing-md;
+  font-size: 18px;
+  padding: $spacing-sm $spacing-xl;
+  border-radius: $border-radius-md;
+
+  &:disabled {
+      background-color: $gray-medium;
+      cursor: not-allowed;
+      &:hover {
+          transform: none;
+          box-shadow: none;
+      }
+  }
+}
