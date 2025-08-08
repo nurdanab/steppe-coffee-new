@@ -91,6 +91,36 @@
   }
 }
 
+// Новый стиль для разделения секций формы
+.section {
+  background-color: $gray-light;
+  border-radius: $border-radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  border: 1px solid $gray-medium;
+
+  h3 {
+    @include t.gilroy-18;
+    color: $maroon;
+    font-weight: 700;
+    margin-bottom: $spacing-sm;
+    border-bottom: 2px solid $yellow;
+    padding-bottom: $spacing-xs;
+  }
+  
+  .sectionDescription {
+      @include t.gilroy-14;
+      color: $gray-dark;
+      margin-top: -($spacing-sm);
+      margin-bottom: $spacing-md;
+  }
+  
+  small {
+      color: $gray-dark;
+      font-weight: 400;
+  }
+}
+
 .formGroup {
   margin-bottom: $spacing-md;
 
@@ -347,6 +377,12 @@
     text-align: center;
 }
 
+.slotsHeader {
+  @include t.gilroy-18;
+  font-weight: 700;
+  color: $black;
+}
+
 .suggestedSlotsScroll {
     max-height: 200px;
     overflow-y: auto;
@@ -381,8 +417,8 @@
 }
 
 .suggestedSlotButton {
-    background-color: $maroon;
-    color: $white;
+    background-color: $white;
+    color: $maroon;
     border: 1px solid $maroon;
     padding: $spacing-xs $spacing-sm;
     border-radius: $border-radius-sm;
@@ -390,8 +426,8 @@
     cursor: pointer;
 
     &:hover {
-        background-color: darken($maroon, 10%);
-        border-color: darken($maroon, 10%);
+        background-color: $maroon;
+        color: $white;
         transform: translateY(-2px);
     }
 }
@@ -405,6 +441,12 @@
     background-color: $light-yellow;
     border: 1px solid $yellow;
     color: $black;
+    
+    &:hover {
+        background-color: darken($light-yellow, 5%);
+        border-color: darken($yellow, 5%);
+        color: $black;
+    }
 }
 
 .conflictMessage {
@@ -413,10 +455,16 @@
     align-items: center;
     text-align: center;
     padding: $spacing-md;
-    background-color: $gray-light;
+    background-color: $light-yellow;
     border-radius: $border-radius-lg;
     margin-top: $spacing-md;
-    border: 1px solid $maroon;
+    border: 1px solid $yellow;
+}
+
+.conflictIcon {
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: $spacing-xs;
 }
 
 .conflictHeader {
@@ -606,6 +654,7 @@
     justify-content: center;
     gap: $spacing-md;
     margin-top: $spacing-md;
+    margin-bottom: $spacing-md;
     flex-wrap: wrap;
 }
 
@@ -667,5 +716,13 @@
   }
   .durationSteps {
       font-size: 10px;
+  }
+  .bookingStep2 {
+    gap: $spacing-sm;
+  }
+  .calendarContainer {
+    .react-calendar {
+      padding: $spacing-xs;
+    }
   }
 }

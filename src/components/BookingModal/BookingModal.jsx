@@ -560,83 +560,88 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
         {step === 1 && (
           <form onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
-            <div className={styles.formGroup}>
-              <label htmlFor="selectedRoom">Выберите зал:</label>
-              <div className={styles.hallSelector}>
-                <button
-                  type="button"
-                  className={`${styles.hallButton} ${selectedRoom === 'second_hall' ? styles.active : ''}`}
-                  onClick={() => {
-                    setSelectedRoom('second_hall');
-                    setNumberOfPeople(1);
-                  }}
-                  disabled={loading}
-                >
-                  Зал
-                  <span>(до 20 человек)</span>
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.hallButton} ${selectedRoom === 'summer_terrace' ? styles.active : ''}`}
-                  onClick={() => {
-                    setSelectedRoom('summer_terrace');
-                    setNumberOfPeople(1);
-                  }}
-                  disabled={loading}
-                >
-                  Летник
-                  <span>(до 10 человек)</span>
-                </button>
-              </div>
-            </div>
             
-            <div className={styles.formGroup}>
-              <label htmlFor="numberOfPeople">Количество человек:</label>
-              <div className={styles.partySizeControl}>
-                <button type="button" onClick={() => setNumberOfPeople(prev => Math.max(1, prev - 1))} disabled={loading || numberOfPeople <= 1 || !selectedRoom}>-</button>
-                <input
-                  type="number"
-                  id="numberOfPeople"
-                  value={numberOfPeople}
-                  onChange={(e) => setNumberOfPeople(Number(e.target.value))}
-                  min="1"
-                  max={maxPeople}
-                  required
-                  disabled={loading || !selectedRoom}
-                />
-                <button type="button" onClick={() => setNumberOfPeople(prev => Math.min(maxPeople, prev + 1))} disabled={loading || numberOfPeople >= maxPeople || !selectedRoom}>+</button>
-              </div>
-              {selectedRoom && (
-                <p className={styles.maxPeopleInfo}>Максимум: {maxPeople} человек</p>
-              )}
-            </div>
-            
-            <div className={styles.formGroup}>
-                <label htmlFor="durationHours">Продолжительность:</label>
-                <div className={styles.durationControl}>
-                    <input
-                        type="range"
-                        id="durationHours"
-                        value={durationHours}
-                        onChange={(e) => setDurationHours(Number(e.target.value))}
-                        min="0.5"
-                        max={maxBookingDurationHours}
-                        step="0.5"
-                        required
-                        disabled={loading}
-                    />
-                    <div className={styles.durationLabel}>
-                        {formatDurationLabel(durationHours)}
-                    </div>
-                    <div className={styles.durationSteps}>
-                        <span>30 мин</span>
-                        <span>1 ч</span>
-                        <span>1.5 ч</span>
-                        <span>2 ч</span>
-                        <span>2.5 ч</span>
-                        <span>3 ч</span>
-                    </div>
+            {/* Улучшенная секция выбора зала */}
+            <div className={styles.section}>
+              <h3>Детали бронирования</h3>
+              <div className={styles.formGroup}>
+                <label htmlFor="selectedRoom">Выберите зал:</label>
+                <div className={styles.hallSelector}>
+                  <button
+                    type="button"
+                    className={`${styles.hallButton} ${selectedRoom === 'second_hall' ? styles.active : ''}`}
+                    onClick={() => {
+                      setSelectedRoom('second_hall');
+                      setNumberOfPeople(1);
+                    }}
+                    disabled={loading}
+                  >
+                    Зал
+                    <span>(до 20 человек)</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.hallButton} ${selectedRoom === 'summer_terrace' ? styles.active : ''}`}
+                    onClick={() => {
+                      setSelectedRoom('summer_terrace');
+                      setNumberOfPeople(1);
+                    }}
+                    disabled={loading}
+                  >
+                    Летняя терраса
+                    <span>(до 10 человек)</span>
+                  </button>
                 </div>
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label htmlFor="numberOfPeople">Количество человек:</label>
+                <div className={styles.partySizeControl}>
+                  <button type="button" onClick={() => setNumberOfPeople(prev => Math.max(1, prev - 1))} disabled={loading || numberOfPeople <= 1 || !selectedRoom}>-</button>
+                  <input
+                    type="number"
+                    id="numberOfPeople"
+                    value={numberOfPeople}
+                    onChange={(e) => setNumberOfPeople(Number(e.target.value))}
+                    min="1"
+                    max={maxPeople}
+                    required
+                    disabled={loading || !selectedRoom}
+                  />
+                  <button type="button" onClick={() => setNumberOfPeople(prev => Math.min(maxPeople, prev + 1))} disabled={loading || numberOfPeople >= maxPeople || !selectedRoom}>+</button>
+                </div>
+                {selectedRoom && (
+                  <p className={styles.maxPeopleInfo}>Максимум: {maxPeople} человек</p>
+                )}
+              </div>
+              
+              <div className={styles.formGroup}>
+                  <label htmlFor="durationHours">Продолжительность:</label>
+                  <div className={styles.durationControl}>
+                      <input
+                          type="range"
+                          id="durationHours"
+                          value={durationHours}
+                          onChange={(e) => setDurationHours(Number(e.target.value))}
+                          min="0.5"
+                          max={maxBookingDurationHours}
+                          step="0.5"
+                          required
+                          disabled={loading}
+                      />
+                      <div className={styles.durationLabel}>
+                          {formatDurationLabel(durationHours)}
+                      </div>
+                      <div className={styles.durationSteps}>
+                          <span>30 мин</span>
+                          <span>1 ч</span>
+                          <span>1.5 ч</span>
+                          <span>2 ч</span>
+                          <span>2.5 ч</span>
+                          <span>3 ч</span>
+                      </div>
+                  </div>
+              </div>
             </div>
 
             <button type="submit" className={styles.submitButton} disabled={loading || !selectedRoom}>
@@ -653,6 +658,17 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
             <div className={styles.bookingStep2}>
                 <div className={styles.calendarContainer}>
+                    <div className={styles.legend}>
+                      <div className={styles.legendItem}>
+                          <span className={`${styles.legendColor} ${styles.fullyBooked}`} /> Занято
+                      </div>
+                      <div className={styles.legendItem}>
+                          <span className={`${styles.legendColor} ${styles.hasPending}`} /> Лист ожидания
+                      </div>
+                      <div className={styles.legendItem}>
+                          <span className={`${styles.legendColor} ${styles.available}`} /> Свободно
+                      </div>
+                    </div>
                     <Calendar
                         onChange={handleDateChange}
                         value={bookingDate}
@@ -660,24 +676,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         tileDisabled={isDateDisabled}
                         tileClassName={tileClassName}
                     />
-                    <div className={styles.legend}>
-                        <div className={styles.legendItem}>
-                            <span className={styles.fullyBooked} /> Полностью занято
-                        </div>
-                        <div className={styles.legendItem}>
-                            <span className={styles.hasPending} /> Есть ожидающие брони
-                        </div>
-                        <div className={styles.legendItem}>
-                            <span className={styles.available} /> Свободно
-                        </div>
-                    </div>
                 </div>
                 
                 {loading && <p className={styles.loadingMessage}>Загрузка свободных времен...</p>}
                 
                 {suggestedSlots.length > 0 && !loading ? (
                   <div className={styles.availableSlotsContainer}>
-                    <p>Свободные слоты на {bookingDate?.toLocaleDateString()}:</p>
+                    <p className={styles.slotsHeader}>Свободные слоты на **{bookingDate?.toLocaleDateString()}**</p>
                     <div className={styles.suggestedSlotsScroll}>
                       <div className={styles.suggestedSlotsContainer}>
                         {suggestedSlots.map((slot, index) => (
@@ -702,85 +707,93 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                 <form onSubmit={handleSubmit}>
                     {isSlotPending && (
                         <div className={styles.conflictMessage}>
-                            <p className={styles.conflictHeader}>На выбранное время уже есть ожидающая бронь.</p>
-                            <p>Вы можете либо изменить детали бронирования, либо встать в лист ожидания.</p>
+                          <p className={styles.conflictIcon}>⏳</p>
+                          <p className={styles.conflictHeader}>На выбранное время уже есть ожидающая бронь.</p>
+                          <p>Ваша бронь будет добавлена в лист ожидания.</p>
                         </div>
                     )}
                     
-                    <div className={styles.formGroup}>
-                    <label htmlFor="phoneNumber">Контактный номер телефона:</label>
-                    <IMaskInput
-                        mask="+{7}(000)000-00-00"
-                        definitions={{
-                        '#': /[0-9]/,
-                        }}
-                        value={phoneNumber}
-                        onAccept={(value) => setPhoneNumber(value)}
-                        placeholder="+7(___)___-__-__"
-                        required
-                        disabled={loading}
-                        className={styles.input}
-                    />
+                    <div className={styles.section}>
+                      <h3>Ваши контактные данные</h3>
+                      <p className={styles.sectionDescription}>Для связи по вопросам бронирования.</p>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="userName">Ваше имя (или название организации):</label>
+                        <input
+                            type="text"
+                            id="userName"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                            required
+                            disabled={loading}
+                            placeholder="Введите ваше имя или название организации"
+                        />
+                      </div>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="phoneNumber">Контактный номер телефона:</label>
+                        <IMaskInput
+                            mask="+{7}(000)000-00-00"
+                            definitions={{
+                            '#': /[0-9]/,
+                            }}
+                            value={phoneNumber}
+                            onAccept={(value) => setPhoneNumber(value)}
+                            placeholder="+7(___)___-__-__"
+                            required
+                            disabled={loading}
+                            className={styles.input}
+                        />
+                      </div>
                     </div>
 
-                    <div className={styles.formGroup}>
-                    <label htmlFor="userName">Ваше имя (или название организации):</label>
-                    <input
-                        type="text"
-                        id="userName"
-                        value={userName}
-                        onChange={(e) => setUserName(e.target.value)}
-                        required
-                        disabled={loading}
-                        placeholder="Введите ваше имя или название организации"
-                    />
+                    <div className={styles.section}>
+                      <h3>Информация о событии <small>(необязательно)</small></h3>
+                      <p className={styles.sectionDescription}>Эти данные будут использованы для анонса в наших соцсетях.</p>
+                      <div className={styles.formGroup}>
+                        <label htmlFor="eventName">Название события:</label>
+                        <input
+                            type="text"
+                            id="eventName"
+                            value={eventName}
+                            onChange={(e) => setEventName(e.target.value)}
+                            disabled={loading}
+                            placeholder="Например: Мастер-класс по рисованию"
+                        />
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor="eventDescription">Описание события:</label>
+                        <textarea
+                            id="eventDescription"
+                            rows="3"
+                            value={eventDescription}
+                            onChange={(e) => setEventDescription(e.target.value)}
+                            disabled={loading}
+                            placeholder="Расскажите о вашем мероприятии, что будет происходить."
+                        ></textarea>
+                      </div>
+
+                      <div className={styles.formGroup}>
+                        <label htmlFor="organizerContact">Контакт для связи с организацией:</label>
+                        <input
+                            type="text"
+                            id="organizerContact"
+                            value={organizerContact}
+                            onChange={(e) => setOrganizerContact(e.target.value)}
+                            disabled={loading}
+                            placeholder="Например: @наш_инстаграм или +77001234567"
+                        />
+                      </div>
                     </div>
                     
                     <div className={styles.formGroup}>
-                    <label htmlFor="eventName">Название события (для анонса, необязательно):</label>
-                    <input
-                        type="text"
-                        id="eventName"
-                        value={eventName}
-                        onChange={(e) => setEventName(e.target.value)}
-                        disabled={loading}
-                        placeholder="Например: Мастер-класс по рисованию"
-                    />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                    <label htmlFor="eventDescription">Описание события (для анонса, необязательно):</label>
-                    <textarea
-                        id="eventDescription"
-                        rows="3"
-                        value={eventDescription}
-                        onChange={(e) => setEventDescription(e.target.value)}
-                        disabled={loading}
-                        placeholder="Расскажите о вашем мероприятии, что будет происходить."
-                    ></textarea>
-                    </div>
-
-                    <div className={styles.formGroup}>
-                    <label htmlFor="organizerContact">Контакт для связи с организацией (телефон/Instagram, необязательно):</label>
-                    <input
-                        type="text"
-                        id="organizerContact"
-                        value={organizerContact}
-                        onChange={(e) => setOrganizerContact(e.target.value)}
-                        disabled={loading}
-                        placeholder="Например: @наш_инстаграм или +77001234567"
-                    />
-                    </div>
-
-                    <div className={styles.formGroup}>
-                    <label htmlFor="comment">Комментарий (для администрации, необязательно):</label>
-                    <textarea
-                        id="comment"
-                        rows="3"
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        disabled={loading}
-                    ></textarea>
+                      <label htmlFor="comment">Комментарий <small>(для администрации, необязательно)</small>:</label>
+                      <textarea
+                          id="comment"
+                          rows="3"
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                          disabled={loading}
+                      ></textarea>
                     </div>
 
                     <div className={`${styles.formGroup} ${styles.agreementCheckbox}`}>
