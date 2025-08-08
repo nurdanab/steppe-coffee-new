@@ -190,6 +190,7 @@
 //   }
 // });
 // supabase/functions/book-table/index.ts
+// supabase/functions/book-table/index.ts
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.44.2'
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
@@ -247,7 +248,6 @@ serve(async (req) => {
     const proposedBookingStart = DateTime.fromISO(`${booking_date}T${start_time}`);
     const proposedBookingEnd = DateTime.fromISO(`${booking_date}T${end_time}`);
     
-    // ВАЖНО: Устанавливаем буферное время в 1 час
     const bufferTimeHours = 1;
     const bufferMinutes = bufferTimeHours * 60;
     
@@ -273,14 +273,12 @@ serve(async (req) => {
         const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`);
         const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`);
 
-        // Создаем интервал с учетом буферного времени (час до и час после)
         const occupiedStart = existingBookingStart.minus({ minutes: bufferMinutes });
         const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
         const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
         
         const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
         
-        // Если предлагаемый слот пересекается с буферным интервалом
         if (proposedInterval.overlaps(occupiedInterval)) {
             if (booking.status === 'confirmed') {
                 hasConfirmedConflict = true;

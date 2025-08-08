@@ -676,7 +676,6 @@
 
 // export default BookingModal;
 // src/components/BookingModal/BookingModal.jsx
-// src/components/BookingModal/BookingModal.jsx
 import React, { useState, useEffect, useCallback } from 'react';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
