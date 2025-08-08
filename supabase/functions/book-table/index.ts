@@ -22,7 +22,7 @@ serve(async (req) => {
         end_time, 
         num_people, 
         comments,
-        user_id, // 💡 Получаем user_id из запроса
+        user_id,
         selected_room,
         event_name,
         event_description,
@@ -43,15 +43,7 @@ serve(async (req) => {
       });
     }
 
-    // 💡 Добавляем проверку user_id в Edge Function
-    if (!user_id) {
-        console.error('Validation error: user_id is missing');
-        return new Response(JSON.stringify({ error: 'User not authenticated' }), {
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 401,
-        });
-    }
-
+    // 💡 Здесь мы передаем заголовок авторизации в Supabase-клиент
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -65,7 +57,6 @@ serve(async (req) => {
     const proposedBookingStart = DateTime.fromISO(`${booking_date}T${start_time}`);
     const proposedBookingEnd = DateTime.fromISO(`${booking_date}T${end_time}`);
     
-    // Новая переменная для времени на подготовку и уборку
     const bufferTimeHours = 1;
     const bufferMinutes = bufferTimeHours * 60;
     
@@ -91,14 +82,12 @@ serve(async (req) => {
         const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`);
         const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`);
 
-        // 💡 Здесь мы создаем буферный интервал, который включает время до и после брони
         const occupiedStart = existingBookingStart.minus({ minutes: bufferMinutes });
         const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
         const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
         
         const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
         
-        // 💡 Проверяем, пересекается ли предлагаемый интервал с занятым буферным интервалом
         if (proposedInterval.overlaps(occupiedInterval)) {
             if (booking.status === 'confirmed') {
                 hasConfirmedConflict = true;
@@ -136,7 +125,7 @@ serve(async (req) => {
         end_time,
         num_people,
         comments: comments || null,
-        user_id: user_id || null,
+        user_id,
         selected_room,
         event_name: event_name || null,
         event_description: event_description || null,
