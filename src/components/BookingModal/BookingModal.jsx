@@ -21,8 +21,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
+  const [isAgreed, setIsAgreed] = useState(false); // Новое состояние для отслеживания флажка
 
-   useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       if (currentUserId) {
         setUserName(currentUserEmail || '');
@@ -44,6 +45,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setOrganizerContact('');
       setMessage('');
       setError(null);
+      setIsAgreed(false); // Сбрасываем флажок при открытии
     }
   }, [isOpen, currentUserId, currentUserEmail]);
 
@@ -164,6 +166,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setMessage('');
     setError(null);
 
+    // Добавляем проверку согласия перед отправкой
+    if (!isAgreed) {
+        setError('Пожалуйста, примите правила бронирования.');
+        setLoading(false);
+        return;
+    }
+
     if (!currentUserId) {
         setError('Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.');
         setLoading(false);
@@ -265,6 +274,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setEventName('');
       setEventDescription('');
       setOrganizerContact('');
+      setIsAgreed(false); // Сбрасываем флажок после успешной отправки
 
       setTimeout(() => {
         onClose();
@@ -434,7 +444,21 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             ></textarea>
           </div>
 
-          <button type="submit" className={styles.submitButton} disabled={loading}>
+          {/* Добавляем флажок согласия */}
+          <div className={`${styles.formGroup} ${styles.agreementCheckbox}`}>
+            <input
+              type="checkbox"
+              id="agreement"
+              checked={isAgreed}
+              onChange={(e) => setIsAgreed(e.target.checked)}
+              disabled={loading}
+            />
+            <label htmlFor="agreement" className={styles.agreementLabel}>
+                Я ознакомился с <a href="/documentsPdf/information-about-payment security.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
+            </label>
+          </div>
+
+          <button type="submit" className={styles.submitButton} disabled={!isAgreed || loading}>
             {loading ? 'Отправка...' : 'Подтвердить бронирование'}
           </button>
         </form>

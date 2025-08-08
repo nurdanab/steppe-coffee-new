@@ -229,3 +229,70 @@
     padding: $spacing-xs $spacing-lg;
   }
 }
+.agreementCheckbox {
+  display: flex;
+  align-items: flex-start; // Используем flex-start, чтобы текст не выравнивался по центру
+  margin-top: $spacing-md;
+  margin-bottom: $spacing-md;
+
+  input[type="checkbox"] {
+    margin-right: $spacing-xs; // Добавляем небольшой отступ справа от флажка
+    // Убираем стандартные стили браузера и делаем свои
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: $white;
+    margin: 0;
+    font: inherit;
+    color: $maroon;
+    width: 1.5em;
+    height: 1.5em;
+    border: 2px solid $maroon;
+    border-radius: $border-radius-sm;
+    transform: translateY(-0.075em);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    &::before {
+      content: "";
+      width: 0.8em;
+      height: 0.8em;
+      transform: scale(0);
+      transition: transform 0.2s ease-in-out;
+      box-shadow: inset 1em 1em $white;
+      clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    &:checked {
+      background-color: $maroon;
+      border-color: $maroon;
+      
+      &::before {
+        transform: scale(1);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid $maroon;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.agreementLabel {
+    font-size: 14px;
+    color: $black;
+    font-weight: 400; // Уменьшим жирность
+    line-height: 1.5;
+    
+    a {
+        color: $maroon; // Цвет ссылки
+        text-decoration: underline;
+        transition: color $transition-fast;
+
+        &:hover {
+            color: darken($maroon, 15%);
+        }
+    }
+}
