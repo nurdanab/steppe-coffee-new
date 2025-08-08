@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../supabaseClient';
 import styles from './AdminDashboard.module.scss';
 import { useNavigate } from 'react-router-dom';
-import BookingEditModal from './BookingEditModal'; // Импортируем новый компонент модального окна редактирования
+import BookingEditModal from './BookingEditModal';
 
 const AdminDashboard = ({ session }) => {
   const [bookings, setBookings] = useState([]);
@@ -14,12 +14,11 @@ const AdminDashboard = ({ session }) => {
   const [sortBy, setSortBy] = useState({ field: 'booking_date', order: 'desc' });
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Стейт для открытия/закрытия модалки редактирования
-  const [bookingToEdit, setBookingToEdit] = useState(null); // Стейт для хранения данных бронирования, которое редактируем
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [bookingToEdit, setBookingToEdit] = useState(null);
 
   const navigate = useNavigate();
 
-  // Функция для получения имени зала
   const getRoomName = useCallback((roomKey) => {
     switch (roomKey) {
       case 'second_hall':
@@ -27,7 +26,7 @@ const AdminDashboard = ({ session }) => {
       case 'summer_terrace':
         return 'Летняя терраса';
       default:
-        return 'Неизвестный зал'; // Если появятся новые залы, добавить сюда
+        return 'Неизвестный зал';
     }
   }, []);
 
@@ -82,10 +81,9 @@ const AdminDashboard = ({ session }) => {
           setError("У вас нет прав для доступа к этой панели. Только администраторы могут просматривать эту страницу.");
           setIsAdmin(false);
           setLoading(false);
-          // navigate('/'); // Можно раскомментировать для автоматического редиректа
           return;
         }
-        
+
         setIsAdmin(true);
         fetchBookings();
       } catch (err) {
@@ -98,10 +96,32 @@ const AdminDashboard = ({ session }) => {
 
     checkAdminAccess();
   }, [session, fetchBookings, navigate]);
+  
+  // Новый блок кода для подписки на изменения в реальном времени
+  useEffect(() => {
+    if (isAdmin) {
+      console.log("Подписываемся на изменения в таблице 'bookings'...");
+      const channel = supabase.channel('realtime:public:bookings')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'bookings' },
+          (payload) => {
+            console.log('Изменение получено!', payload);
+            fetchBookings();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+        console.log("Отписываемся от канала 'realtime:public:bookings'");
+      };
+    }
+  }, [isAdmin, fetchBookings]);
+  // Конец нового блока
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      // Получаем текущие данные бронирования для уведомления
       const currentBooking = bookings.find(b => b.id === id);
       if (!currentBooking) {
         console.error('Бронирование не найдено для обновления статуса.');
@@ -118,7 +138,6 @@ const AdminDashboard = ({ session }) => {
         throw updateError;
       }
 
-      // --- ДОБАВЛЯЕМ ОТПРАВКУ УВЕДОМЛЕНИЯ В TELEGRAM ---
       const telegramMessage = `
         <b>Изменение статуса бронирования:</b>
         #ID: <code>${currentBooking.id.substring(0, 8)}</code>
@@ -144,9 +163,6 @@ const AdminDashboard = ({ session }) => {
       } catch (err) {
         console.error('Ошибка вызова Telegram Edge Function:', err);
       }
-      // --- КОНЕЦ ОТПРАВКИ УВЕДОМЛЕНИЯ ---
-
-      fetchBookings(); // Обновляем список бронирований после изменения статуса
     } catch (err) {
       console.error('Ошибка при изменении статуса:', err.message);
       alert('Ошибка при изменении статуса: ' + err.message);
@@ -156,7 +172,6 @@ const AdminDashboard = ({ session }) => {
   const handleDeleteBooking = async (id) => {
     if (window.confirm('Вы уверены, что хотите удалить это бронирование?')) {
       try {
-        // Получаем текущие данные бронирования для уведомления перед удалением
         const currentBooking = bookings.find(b => b.id === id);
         if (!currentBooking) {
           console.error('Бронирование не найдено для удаления.');
@@ -172,7 +187,6 @@ const AdminDashboard = ({ session }) => {
           throw deleteError;
         }
 
-        // --- ДОБАВЛЯЕМ ОТПРАВКУ УВЕДОМЛЕНИЯ В TELEGRAM ОБ УДАЛЕНИИ ---
         const telegramMessage = `
           <b>Бронирование удалено:</b>
           #ID: <code>${currentBooking.id.substring(0, 8)}</code>
@@ -197,9 +211,6 @@ const AdminDashboard = ({ session }) => {
         } catch (err) {
           console.error('Ошибка вызова Telegram Edge Function при удалении:', err);
         }
-        // --- КОНЕЦ ОТПРАВКИ УВЕДОМЛЕНИЯ ---
-
-        fetchBookings();
       } catch (err) {
         console.error('Ошибка при удалении бронирования:', err.message);
         alert('Ошибка при удалении бронирования: ' + err.message);
@@ -207,23 +218,19 @@ const AdminDashboard = ({ session }) => {
     }
   };
 
-  // Новая функция для открытия модалки редактирования
   const openEditModal = (booking) => {
     setBookingToEdit(booking);
     setIsEditModalOpen(true);
   };
 
-  // Новая функция для закрытия модалки редактирования
   const closeEditModal = () => {
     setIsEditModalOpen(false);
-    setBookingToEdit(null); // Очищаем данные редактируемого бронирования
+    setBookingToEdit(null);
   };
 
-  // Функция, вызываемая после успешного обновления бронирования в модалке
   const handleBookingUpdated = () => {
-    fetchBookings(); // Перезагружаем список бронирований
+    fetchBookings();
   };
-
 
   if (!isAdmin) {
     return (
@@ -290,7 +297,7 @@ const AdminDashboard = ({ session }) => {
             <option value="start_time">Время начала</option>
             <option value="status">Статус</option>
             <option value="num_people">Кол-во человек</option>
-          </select> {/* <-- Исправленный закрывающий тег */}
+          </select>
           <button
             onClick={() => setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' })}
             className={styles.sortOrderButton}
@@ -354,7 +361,6 @@ const AdminDashboard = ({ session }) => {
         </div>
       )}
 
-      {/* Модальное окно редактирования бронирования */}
       <BookingEditModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
