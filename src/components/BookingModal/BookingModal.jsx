@@ -32,8 +32,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [conflict, setConflict] = useState(null);
   const [suggestedSlots, setSuggestedSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
-  const [pendingDates, setPendingDates] = useState([]); // Новое состояние для дат с ожидающими бронями
-  const [allBookings, setAllBookings] = useState([]); // Новое состояние для всех броней
+  const [pendingDates, setPendingDates] = useState([]);
+  const [allBookings, setAllBookings] = useState([]);
+  const [isSlotPending, setIsSlotPending] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -166,6 +167,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = `${String(Math.floor(currentEndMinutes / 60)).padStart(2, '0')}:${String(currentEndMinutes % 60).padStart(2, '0')}`;
   
       let isConflict = false;
+      let hasPendingInSlot = false;
       for (const booking of bookingsToConsider) {
         const existingStartParts = booking.start_time.split(':').map(Number);
         const existingEndParts = booking.end_time.split(':').map(Number);
@@ -175,13 +177,18 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const cleanupEndMinutes = existingEndMinutes + cleanupMinutes;
   
         if ((currentStartMinutes < cleanupEndMinutes) && (currentEndMinutes > existingStartMinutes)) {
-          isConflict = true;
-          break;
+          if (booking.status === 'confirmed') {
+            isConflict = true;
+            break;
+          }
+          if (booking.status === 'pending') {
+            hasPendingInSlot = true;
+          }
         }
       }
       
       if (!isConflict) {
-        availableSlots.push({ start: currentStart, end: currentEnd });
+        availableSlots.push({ start: currentStart, end: currentEnd, isPending: hasPendingInSlot });
       }
     }
     
@@ -233,6 +240,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const handleTimeSelect = (slot) => {
     setStartTime(slot.start);
     setEndTime(slot.end);
+    setIsSlotPending(slot.isPending); // Сохраняем информацию о статусе слота
     setError(null);
   };
 
@@ -246,7 +254,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const room = selectedRoom;
     const numPpl = numberOfPeople;
 
-    let minPeople = 1;
+    const minPeople = 1;
 
     if (numPpl < minPeople || numPpl > maxPeople) {
       return { available: false, message: `Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.` };
@@ -307,7 +315,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           isConflict = true;
           if (bookingStatus === 'confirmed') {
               hasConfirmedConflict = true;
-              break; // Если есть подтвержденная, сразу выходим
+              break;
           }
           if (bookingStatus === 'pending') {
               hasPendingConflict = true;
@@ -508,7 +516,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     return null;
   };
   
-  // Добавляем функцию для форматирования продолжительности
   const formatDurationLabel = (value) => {
     if (value < 1) return `${value * 60} минут`;
     if (value === 1) return `1 час`;
@@ -560,7 +567,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             <div className={styles.formGroup}>
               <label htmlFor="numberOfPeople">Количество человек:</label>
               <div className={styles.partySizeControl}>
-                <button type="button" onClick={() => setNumberOfPeople(prev => Math.max(1, prev - 1))} disabled={loading || numberOfPeople <= 1}>-</button>
+                <button type="button" onClick={() => setNumberOfPeople(prev => Math.max(1, prev - 1))} disabled={loading || numberOfPeople <= 1 || !selectedRoom}>-</button>
                 <input
                   type="number"
                   id="numberOfPeople"
@@ -571,7 +578,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                   required
                   disabled={loading || !selectedRoom}
                 />
-                <button type="button" onClick={() => setNumberOfPeople(prev => Math.min(maxPeople, prev + 1))} disabled={loading || numberOfPeople >= maxPeople}>+</button>
+                <button type="button" onClick={() => setNumberOfPeople(prev => Math.min(maxPeople, prev + 1))} disabled={loading || numberOfPeople >= maxPeople || !selectedRoom}>+</button>
               </div>
               {selectedRoom && (
                 <p className={styles.maxPeopleInfo}>Максимум: {maxPeople} человек</p>
@@ -650,7 +657,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         {suggestedSlots.map((slot, index) => (
                           <button 
                             key={index} 
-                            className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot}`}
+                            className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${slot.isPending ? styles.slotIsPending : ''}`}
                             onClick={() => handleTimeSelect(slot)}
                           >
                             {slot.start} - {slot.end}
@@ -664,15 +671,15 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                 )}
             </div>
 
-            {conflict ? (
+            {isSlotPending && startTime ? (
               <div className={styles.conflictMessage}>
-                <p className={styles.conflictHeader}>{error}</p>
+                <p className={styles.conflictHeader}>На выбранное время уже есть ожидающая бронь.</p>
                 <p>Вы можете либо изменить детали бронирования, либо встать в лист ожидания.</p>
                 <div className={styles.conflictActions}>
                   <button onClick={handleQueueBooking} className={styles.submitButton} disabled={loading}>
                     Встать в лист ожидания
                   </button>
-                  <button onClick={() => setConflict(null)} className={styles.secondaryButton} disabled={loading}>
+                  <button onClick={() => setIsSlotPending(false)} className={styles.secondaryButton} disabled={loading}>
                     Изменить детали
                   </button>
                 </div>

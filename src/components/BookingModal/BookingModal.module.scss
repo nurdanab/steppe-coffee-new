@@ -1,9 +1,7 @@
 // src/components/BookingModal/BookingModal.module.scss
-@use "sass:color";
-@use '../../styles/variables' as *;
+@use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
-@use '../../styles/base' as *; 
 
 .modalOverlay {
   position: fixed;
@@ -403,6 +401,12 @@
   color: $white;
 }
 
+.slotIsPending {
+    background-color: $light-yellow;
+    border: 1px solid $yellow;
+    color: $black;
+}
+
 .conflictMessage {
     display: flex;
     flex-direction: column;
@@ -453,7 +457,6 @@
     }
 }
 
-// Новые стили для первого модального окна
 .hallSelector {
   display: flex;
   gap: $spacing-sm;
@@ -632,7 +635,6 @@
         background-color: $white;
     }
 }
-
 
 @include sm-down {
   .formGroup {
