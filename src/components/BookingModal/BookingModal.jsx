@@ -13,7 +13,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState('');
   const [comment, setComment] = useState('');
-  // Новые состояния для публичных полей события
+ 
   const [eventName, setEventName] = useState('');
   const [eventDescription, setEventDescription] = useState('');
   const [organizerContact, setOrganizerContact] = useState('');
@@ -54,7 +54,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const maxBookingDurationHours = 3;
   const cleanupTimeHours = 1;
 
-  const getRoomName = (roomKey) => { // Добавим эту функцию, если ее нет
+  const getRoomName = (roomKey) => {  
     switch (roomKey) {
       case 'second_hall':
         return 'Второй зал внутри';
@@ -164,7 +164,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setMessage('');
     setError(null);
 
-    // Удаляем alert и используем setError для отображения сообщения в модальном окне
     if (!currentUserId) {
         setError('Пожалуйста, войдите или зарегистрируйтесь, чтобы забронировать столик.');
         setLoading(false);

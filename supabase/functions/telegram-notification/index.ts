@@ -1,6 +1,6 @@
 // supabase/functions/telegram-notification/index.ts
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { corsHeaders } from '../_shared/cors.ts'; // Убедись, что этот путь существует и корректен
+import { corsHeaders } from '../_shared/cors.ts';
 
 console.log(`Function "telegram-notification" up and running!`);
 
@@ -11,9 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { message } = await req.json(); // Ожидаем, что в теле запроса будет JSON с полем 'message'
-
-    // Get secrets from environment variables
+    const { message } = await req.json();
     const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
     const chatId = Deno.env.get('TELEGRAM_CHAT_ID');
 
@@ -31,7 +29,7 @@ serve(async (req) => {
       body: JSON.stringify({
         chat_id: chatId,
         text: message,
-        parse_mode: 'HTML', // Можно использовать Markdown или HTML для форматирования
+        parse_mode: 'HTML',
       }),
     });
 
