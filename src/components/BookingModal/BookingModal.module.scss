@@ -1,7 +1,9 @@
 // src/components/BookingModal/BookingModal.module.scss
-@use '../../styles/variables' as *;  
+@use "sass:color";
+@use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
+@use '../../styles/base' as *; 
 
 .modalOverlay {
   position: fixed;
