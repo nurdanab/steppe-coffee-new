@@ -61,6 +61,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     
     const dateString = date.toISOString().split('T')[0];
     
+    // 🔍 Отладочное сообщение: проверяем, что мы запрашиваем
+    console.log(`Запрос бронирований для:`, { date: dateString, room: room });
+
     setLoading(true);
     try {
       const { data: bookings, error: fetchError } = await supabase
@@ -75,6 +78,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return [];
       }
       
+      // 🔍 Отладочное сообщение: смотрим, что вернула база данных
+      console.log('Данные из Supabase:', bookings);
+
       const availableSlots = [];
       const cafeOpenHour = 9;
       const cafeCloseHour = 22; // Слоты будут до 22:00
@@ -90,11 +96,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         pending: [],
       };
       
+      // Если bookings пустой, этот цикл не запустится
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
         
-        // Занятый интервал = время брони + время на уборку ПОСЛЕ
         const occupiedEnd = bookingEndTime.plus({ minutes: cleanupMinutes });
         const occupiedInterval = Interval.fromDateTimes(bookingStartTime, occupiedEnd);
         
@@ -104,10 +110,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           occupiedIntervals.pending.push(occupiedInterval);
         }
       }
-  
+      
+      // 🔍 Отладочное сообщение: проверяем, какие интервалы считаются занятыми
+      console.log('Занятые интервалы (подтвержденные):', occupiedIntervals.confirmed.map(i => i.toString()));
+      console.log('Занятые интервалы (ожидающие):', occupiedIntervals.pending.map(i => i.toString()));
+
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      // Закрытие кафе в 23:00, но последняя бронь должна начинаться так,
-      // чтобы с учетом продолжительности она не выходила за 22:00
       const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour - duration, minute: 0, second: 0, millisecond: 0 });
   
       while (currentStart <= lastPossibleSlotStart) {
@@ -146,6 +154,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         currentStart = currentStart.plus({ minutes: intervalMinutes });
       }
       
+      // 🔍 Отладочное сообщение: итоговый список доступных слотов
+      console.log('Итоговые доступные слоты:', availableSlots);
+
       return availableSlots;
     } finally {
       setLoading(false);
