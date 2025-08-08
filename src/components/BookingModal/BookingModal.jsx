@@ -111,6 +111,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const cafeCloseTime = '22:00';
   const maxBookingDurationHours = 3;
   const cleanupTimeHours = 1;
+  const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
 
   const getRoomName = (roomKey) => {  
     switch (roomKey) {
@@ -194,9 +195,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return;
     }
 
-    const minPeople = selectedRoom === 'second_hall' ? 1 : selectedRoom === 'summer_terrace' ? 1 : 1;
-    const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 50;
-
+    const minPeople = 1;
     if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
         setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
         return;
@@ -247,13 +246,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const room = selectedRoom;
     const numPpl = numberOfPeople;
 
-    let minPeople = 0;
-    let maxPeople = 0;
-    switch (room) {
-      case 'second_hall': minPeople = 1; maxPeople = 20; break;
-      case 'summer_terrace': minPeople = 1; maxPeople = 10; break;
-      default: minPeople = 1; maxPeople = 50; break;
-    }
+    let minPeople = 1;
 
     if (numPpl < minPeople || numPpl > maxPeople) {
       return { available: false, message: `Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.` };
@@ -514,6 +507,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
     return null;
   };
+  
+  // Добавляем функцию для форматирования продолжительности
+  const formatDurationLabel = (value) => {
+    if (value < 1) return `${value * 60} минут`;
+    if (value === 1) return `1 час`;
+    return `${value} часа`;
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -529,48 +529,84 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
           <form onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
             <div className={styles.formGroup}>
               <label htmlFor="selectedRoom">Выберите зал:</label>
-              <select
-                id="selectedRoom"
-                value={selectedRoom}
-                onChange={(e) => setSelectedRoom(e.target.value)}
-                required
-                disabled={loading}
-              >
-                <option value="">-- Выберите зал --</option>
-                <option value="second_hall">Второй зал внутри (до 20 человек)</option>
-                <option value="summer_terrace">Летник (до 10 человек)</option>
-              </select>
+              <div className={styles.hallSelector}>
+                <button
+                  type="button"
+                  className={`${styles.hallButton} ${selectedRoom === 'second_hall' ? styles.active : ''}`}
+                  onClick={() => {
+                    setSelectedRoom('second_hall');
+                    setNumberOfPeople(1);
+                  }}
+                  disabled={loading}
+                >
+                  Зал
+                  <span>(до 20 человек)</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.hallButton} ${selectedRoom === 'summer_terrace' ? styles.active : ''}`}
+                  onClick={() => {
+                    setSelectedRoom('summer_terrace');
+                    setNumberOfPeople(1);
+                  }}
+                  disabled={loading}
+                >
+                  Летник
+                  <span>(до 10 человек)</span>
+                </button>
+              </div>
             </div>
             
             <div className={styles.formGroup}>
               <label htmlFor="numberOfPeople">Количество человек:</label>
-              <input
-                type="number"
-                id="numberOfPeople"
-                value={numberOfPeople}
-                onChange={(e) => setNumberOfPeople(Number(e.target.value))}
-                min="1"
-                required
-                disabled={loading}
-              />
+              <div className={styles.partySizeControl}>
+                <button type="button" onClick={() => setNumberOfPeople(prev => Math.max(1, prev - 1))} disabled={loading || numberOfPeople <= 1}>-</button>
+                <input
+                  type="number"
+                  id="numberOfPeople"
+                  value={numberOfPeople}
+                  onChange={(e) => setNumberOfPeople(Number(e.target.value))}
+                  min="1"
+                  max={maxPeople}
+                  required
+                  disabled={loading || !selectedRoom}
+                />
+                <button type="button" onClick={() => setNumberOfPeople(prev => Math.min(maxPeople, prev + 1))} disabled={loading || numberOfPeople >= maxPeople}>+</button>
+              </div>
+              {selectedRoom && (
+                <p className={styles.maxPeopleInfo}>Максимум: {maxPeople} человек</p>
+              )}
             </div>
             
             <div className={styles.formGroup}>
-                <label htmlFor="durationHours">Продолжительность (часы):</label>
-                <input
-                    type="number"
-                    id="durationHours"
-                    value={durationHours}
-                    onChange={(e) => setDurationHours(Number(e.target.value))}
-                    min="0.5"
-                    max={maxBookingDurationHours}
-                    step="0.5"
-                    required
-                    disabled={loading}
-                />
+                <label htmlFor="durationHours">Продолжительность:</label>
+                <div className={styles.durationControl}>
+                    <input
+                        type="range"
+                        id="durationHours"
+                        value={durationHours}
+                        onChange={(e) => setDurationHours(Number(e.target.value))}
+                        min="0.5"
+                        max={maxBookingDurationHours}
+                        step="0.5"
+                        required
+                        disabled={loading}
+                    />
+                    <div className={styles.durationLabel}>
+                        {formatDurationLabel(durationHours)}
+                    </div>
+                    <div className={styles.durationSteps}>
+                        <span>30 мин</span>
+                        <span>1 ч</span>
+                        <span>1.5 ч</span>
+                        <span>2 ч</span>
+                        <span>2.5 ч</span>
+                        <span>3 ч</span>
+                    </div>
+                </div>
             </div>
 
-            <button type="submit" className={styles.submitButton} disabled={loading}>
+            <button type="submit" className={styles.submitButton} disabled={loading || !selectedRoom}>
               Далее
             </button>
           </form>
@@ -589,8 +625,19 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         value={bookingDate}
                         minDate={new Date()}
                         tileDisabled={isDateDisabled}
-                        tileClassName={tileClassName} // Добавлена новая функция для стилей
+                        tileClassName={tileClassName}
                     />
+                    <div className={styles.legend}>
+                        <div className={styles.legendItem}>
+                            <span className={styles.fullyBooked} /> Полностью занято
+                        </div>
+                        <div className={styles.legendItem}>
+                            <span className={styles.hasPending} /> Есть ожидающие брони
+                        </div>
+                        <div className={styles.legendItem}>
+                            <span className={styles.available} /> Свободно
+                        </div>
+                    </div>
                 </div>
                 
                 {loading && <p>Загрузка свободных времен...</p>}

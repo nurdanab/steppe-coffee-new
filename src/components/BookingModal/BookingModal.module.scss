@@ -451,6 +451,187 @@
     }
 }
 
+// Новые стили для первого модального окна
+.hallSelector {
+  display: flex;
+  gap: $spacing-sm;
+}
+
+.hallButton {
+  @include button-secondary; // Если есть миксин для вторичной кнопки, используем его
+  flex: 1;
+  text-align: center;
+  padding: $spacing-md;
+  border: 2px solid $gray-medium;
+  border-radius: $border-radius-md;
+  color: $black;
+  background-color: $white;
+  transition: all $transition-fast;
+
+  &:hover {
+    border-color: $maroon;
+    box-shadow: 0 2px 4px rgba($black, 0.1);
+  }
+
+  &.active {
+    background-color: $yellow;
+    border-color: $yellow;
+    color: $black;
+    box-shadow: 0 2px 8px rgba($yellow, 0.3);
+    font-weight: 700;
+  }
+}
+
+.partySizeControl {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  button {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    background-color: $gray-light;
+    border: 1px solid $gray-medium;
+    border-radius: $border-radius-sm;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color $transition-fast;
+    
+    &:hover {
+      background-color: $gray-medium;
+    }
+    &:disabled {
+      background-color: $gray-light;
+      color: $gray-dark;
+      cursor: not-allowed;
+    }
+  }
+
+  input {
+    flex-grow: 1;
+    text-align: center;
+  }
+}
+
+.maxPeopleInfo {
+  @include t.gilroy-14;
+  color: $gray-dark;
+  text-align: center;
+  margin-top: $spacing-xs;
+}
+
+.durationControl {
+  position: relative;
+  padding-top: $spacing-xl;
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    background: linear-gradient(to right, $maroon 0%, $maroon 50%, $gray-medium 50%, $gray-medium 100%);
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 5px;
+    cursor: pointer;
+    
+    &:focus {
+        outline: none;
+    }
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: $maroon;
+      border: 2px solid $white;
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: 0 0 0 2px $maroon;
+    }
+
+    &::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: $maroon;
+      border: 2px solid $white;
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: 0 0 0 2px $maroon;
+    }
+  }
+}
+
+.durationLabel {
+    @include t.gilroy-16;
+    font-weight: 700;
+    color: $maroon;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: $spacing-xs;
+    background: $white;
+    border: 1px solid $maroon;
+    border-radius: $border-radius-sm;
+    min-width: 100px;
+}
+
+.durationSteps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-sm;
+    font-size: 12px;
+    color: $gray-dark;
+    
+    span {
+        flex: 1;
+        text-align: center;
+        &:first-child { text-align: left; }
+        &:last-child { text-align: right; }
+    }
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-md;
+    margin-top: $spacing-md;
+    flex-wrap: wrap;
+}
+
+.legendItem {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: 14px;
+    
+    span {
+        display: block;
+        width: 20px;
+        height: 20px;
+        border-radius: $border-radius-sm;
+        border: 1px solid $gray-medium;
+    }
+    
+    .fullyBooked {
+        background-color: #f0f0f0;
+    }
+    
+    .hasPending {
+        background-color: $light-yellow;
+    }
+    
+    .available {
+        background-color: $white;
+    }
+}
+
+
 @include sm-down {
   .formGroup {
     margin-bottom: $spacing-sm;
@@ -471,5 +652,16 @@
   .submitButton {
     font-size: 16px;
     padding: $spacing-xs $spacing-lg;
+  }
+
+  .durationControl {
+    padding-top: $spacing-lg;
+  }
+  .durationLabel {
+      top: -10px;
+      font-size: 14px;
+  }
+  .durationSteps {
+      font-size: 10px;
   }
 }
