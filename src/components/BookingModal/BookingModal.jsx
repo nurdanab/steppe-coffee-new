@@ -642,7 +642,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                             disabled={loading}
                         />
                         <label htmlFor="agreement" className={styles.agreementLabel}>
-                            Я ознакомился с <a href="/documentsPdf/information-about-payment security.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
+                            Я ознакомился с <a href="/documentsPdf/rules_compressed.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
                         </label>
                         </div>
                         
