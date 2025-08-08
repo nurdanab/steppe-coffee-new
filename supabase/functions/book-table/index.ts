@@ -28,14 +28,14 @@ serve(async (req) => {
         event_description,
         organizer_contact,
         phone_number,
-        status_to_set, // Получаем статус для установки
+        status_to_set, 
     } = await req.json();
 
     console.log('Received booking data:', {
-      organizer_name, booking_date, start_time, end_time, num_people, comments, user_id, selected_room, event_name, event_description, organizer_contact, phone_number
+        organizer_name, booking_date, start_time, end_time, num_people, comments, user_id, selected_room, event_name, event_description, organizer_contact, phone_number
     });
 
-    if (!organizer_name || !booking_date || !start_time || !end_time || !num_people || !selected_room || !phone_number) { // Добавляем phone_number в проверку
+    if (!organizer_name || !booking_date || !start_time || !end_time || !num_people || !selected_room || !phone_number) {
       console.error('Validation error: Missing required fields');
       return new Response(JSON.stringify({ error: 'Missing required fields' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -104,7 +104,6 @@ serve(async (req) => {
         statusToSet = 'queued';
     }
     
-    // Используем status_to_set из клиента, если он есть
     if (status_to_set) {
         statusToSet = status_to_set;
     }
@@ -123,7 +122,7 @@ serve(async (req) => {
         event_name: event_name || null,
         event_description: event_description || null,
         organizer_contact: organizer_contact || null,
-        phone_number: phone_number,
+        phone_number: phone_number || null,
         status: statusToSet,
       })
       .select()
@@ -176,7 +175,6 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in Edge Function:', error.message);
-    // Добавляем полное сообщение об ошибке в ответ
     return new Response(JSON.stringify({ error: error.message || 'An unexpected error occurred' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
