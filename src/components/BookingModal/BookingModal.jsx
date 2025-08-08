@@ -25,12 +25,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
   useEffect(() => {
     if (isOpen) {
-      if (currentUserId) {
-        setUserName(currentUserEmail || '');
-      } else {
-        setUserName('');
-      }
-
+      setUserName('');
+      
       const today = new Date().toISOString().split('T')[0];
       setBookingDate(today);
       setStartTime('');
@@ -39,13 +35,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setNumberOfPeople(1);
       setPhoneNumber('');
       setComment('');
-      // Сброс новых полей
       setEventName('');
       setEventDescription('');
       setOrganizerContact('');
       setMessage('');
       setError(null);
-      setIsAgreed(false); // Сбрасываем флажок при открытии
+      setIsAgreed(false); и
     }
   }, [isOpen, currentUserId, currentUserEmail]);
 
@@ -393,6 +388,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               onChange={(e) => setUserName(e.target.value)}
               required
               disabled={loading}
+              placeholder="Введите ваше имя или название организации"
             />
           </div>
 
@@ -454,7 +450,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               disabled={loading}
             />
             <label htmlFor="agreement" className={styles.agreementLabel}>
-                Я ознакомился с <a href="/documentsPdf/information-about-payment security.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
+                <a href="/documentsPdf/rules_compressed.pdf" target="_blank" rel="noopener noreferrer">Я ознакомился и принимаю правила кофейни.</a>
             </label>
           </div>
 
