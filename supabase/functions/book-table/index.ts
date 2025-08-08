@@ -50,8 +50,10 @@ serve(async (req) => {
     
     const proposedBookingStart = DateTime.fromISO(`${booking_date}T${start_time}`);
     const proposedBookingEnd = DateTime.fromISO(`${booking_date}T${end_time}`);
-    const cleanupTimeHours = 1;
-    const cleanupMinutes = cleanupTimeHours * 60;
+    
+    // Новая переменная для времени на подготовку и уборку
+    const bufferTimeHours = 1;
+    const bufferMinutes = bufferTimeHours * 60;
     
     const { data: existingBookings, error: fetchError } = await supabaseClient
       .from('bookings')
@@ -75,12 +77,15 @@ serve(async (req) => {
         const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`);
         const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`);
 
-        const occupiedEnd = existingBookingEnd.plus({ minutes: cleanupMinutes });
-        const occupiedInterval = Interval.fromDateTimes(existingBookingStart, occupiedEnd);
+        // 💡 Здесь мы создаем буферный интервал, который включает время до и после брони
+        const occupiedStart = existingBookingStart.minus({ minutes: bufferMinutes });
+        const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
+        const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
         
         const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
         
-        if (proposedInterval.overlaps(occupiedInterval) || occupiedInterval.contains(proposedInterval)) {
+        // 💡 Проверяем, пересекается ли предлагаемый интервал с занятым буферным интервалом
+        if (proposedInterval.overlaps(occupiedInterval)) {
             if (booking.status === 'confirmed') {
                 hasConfirmedConflict = true;
                 break;
