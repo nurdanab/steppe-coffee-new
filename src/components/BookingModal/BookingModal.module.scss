@@ -1,7 +1,10 @@
 // src/components/BookingModal/BookingModal.module.scss
-@use '../../styles/variables' as *;  
+@use "sass:color";
+@use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
+@use '../../styles/base' as *; 
+
 
 .modalOverlay {
   position: fixed;
@@ -206,10 +209,9 @@
   font-weight: 500; // Добавим немного жирности
 }
 
-// Дополнительные стили для улучшения внешнего вида формы на мобильных устройствах
 @include sm-down {
   .formGroup {
-    margin-bottom: $spacing-sm; // Чуть меньше отступ на мобильных
+    margin-bottom: $spacing-sm;  
     label {
       font-size: 14px;
     }
@@ -231,13 +233,12 @@
 }
 .agreementCheckbox {
   display: flex;
-  align-items: flex-start; // Используем flex-start, чтобы текст не выравнивался по центру
+  align-items: flex-start; 
   margin-top: $spacing-md;
   margin-bottom: $spacing-md;
 
   input[type="checkbox"] {
-    margin-right: $spacing-xs; // Добавляем небольшой отступ справа от флажка
-    // Убираем стандартные стили браузера и делаем свои
+    margin-right: $spacing-xs; 
     -webkit-appearance: none;
     appearance: none;
     background-color: $white;
@@ -305,13 +306,12 @@
   background-color: $gray-light;
   border-radius: $border-radius-lg;
   margin-top: $spacing-md;
-  border: 1px solid $maroon; // Выделим блок
+  border: 1px solid $maroon; 
 }
 
 .conflictHeader {
   @include t.gilroy-18;
   color: $maroon;
-  font-weight: 700;
   margin-bottom: $spacing-sm;
 }
 
@@ -325,7 +325,7 @@
 }
 
 .suggestedSlotButton {
-  @include button-secondary; // Если есть миксин для вторичных кнопок
+  @include button-primary; 
   background-color: $maroon;
   color: $white;
   border: 1px solid $maroon;
