@@ -168,6 +168,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         return;
     }
 
+    // Здесь мы добавили проверку на phoneNumber
     if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
       setError('Пожалуйста, заполните все обязательные поля.');
       setLoading(false);
@@ -195,6 +196,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
               event_name: eventName,
               event_description: eventDescription,
               organizer_contact: organizerContact,
+              phone_number: phoneNumber, // 👈 Вот здесь мы добавляем номер телефона
               status_to_set: statusToSet, 
           },
           method: 'POST',
