@@ -266,10 +266,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
 if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
     fullyBooked.push(dateString);
-}
-            // 💡 Проверяем, есть ли хотя бы один доступный слот на эту дату
-            if (slots.every(slot => !slot.isAvailable)) {
-                fullyBooked.push(dateString);
             }
         }
         
