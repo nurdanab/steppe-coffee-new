@@ -82,13 +82,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const dateObj = DateTime.fromJSDate(date).setZone('Asia/Almaty');
       const now = DateTime.local().setZone('Asia/Almaty');
 
-      // 💡 Добавлена инициализация массива occupiedIntervals
+      // 💡 Этот блок кода был пропущен в твоей версии.
+      // Он создает интервалы для всех существующих бронирований.
       const occupiedIntervals = [];
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`).setZone('Asia/Almaty');
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`).setZone('Asia/Almaty');
         
-        // 💡 Расширяем интервал на буферное время до и после
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
@@ -101,19 +101,18 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-        if (currentEnd <= now) {
+        // Проверка на прошедшие слоты только для сегодняшнего дня
+        if (dateObj.hasSame(now, 'day') && currentEnd <= now) {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
         }
         
-        // 💡 Проверяем, пересекается ли предлагаемый слот с каким-либо занятым интервалом
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
         
         allSlots.push({
             start: currentStart.toFormat('HH:mm'),
             end: currentEnd.toFormat('HH:mm'),
-            isAvailable: isAvailable,
-            isPending: false
+            isAvailable: isAvailable
         });
         
         currentStart = currentStart.plus({ minutes: intervalMinutes });
