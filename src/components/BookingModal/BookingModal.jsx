@@ -126,7 +126,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         if (fetchError) {
             throw fetchError;
         }
-
+        console.log('Загруженные бронирования:', bookings); // Добавили логирование
         setMonthlyBookings(bookings);
         
         // Теперь вычисляем fullyBookedDates на основе полученных данных
