@@ -50,6 +50,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   }, []);
   
+  // Эта функция проверяет доступность слотов, учитывая подтвержденные и ожидающие брони
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
 
