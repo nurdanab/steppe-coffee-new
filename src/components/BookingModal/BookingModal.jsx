@@ -82,47 +82,36 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const bufferMinutes = bufferTimeHours * 60;
       
       const dateObj = DateTime.fromJSDate(date).setZone('Asia/Almaty');
-    const now = DateTime.local().setZone('Asia/Almaty');
+const now = DateTime.local().setZone('Asia/Almaty');
 
-      // Объединяем все интервалы (подтвержденные и ожидающие) в один массив
-      const occupiedIntervals = [];
-      for (const booking of bookings) {
-        const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
-        const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
-        
-        // 💡 Расширяем интервал на буферное время до и после
-        const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
-        const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
-        occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
-      }
+let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
+const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
 
-      let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      // 💡 Учитываем длительность брони и буферное время для последнего возможного слота
-      const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
+while (currentStart <= lastPossibleSlotStart) {
+  const currentEnd = currentStart.plus({ minutes: durationMinutes });
+  const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-      while (currentStart <= lastPossibleSlotStart) {
-        const currentEnd = currentStart.plus({ minutes: durationMinutes });
-        const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
+  // 💡 ЭТА ПРОВЕРКА - КЛЮЧЕВАЯ. Мы проверяем, закончился ли слот.
+  if (currentEnd <= now) {
+    currentStart = currentStart.plus({ minutes: intervalMinutes });
+    continue; // Пропускаем этот слот и переходим к следующему
+  }
+  
+  // ... остальная логика проверки на доступность ...
+  const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
+  
+  allSlots.push({
+    start: currentStart.toFormat('HH:mm'),
+    end: currentEnd.toFormat('HH:mm'),
+    isAvailable: isAvailable,
+    isPending: false
+  });
+  
+  currentStart = currentStart.plus({ minutes: intervalMinutes });
+}
 
-        if (currentEnd < now) {
-            currentStart = currentStart.plus({ minutes: intervalMinutes });
-            continue;
-        }
-        
-        // 💡 Проверяем, пересекается ли предлагаемый слот с каким-либо занятым интервалом
-        const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
-        
-        allSlots.push({
-            start: currentStart.toFormat('HH:mm'),
-            end: currentEnd.toFormat('HH:mm'),
-            isAvailable: isAvailable,
-            isPending: false // 💡 Это поле больше не нужно, так как все занятые слоты просто будут isAvailable: false
-        });
-        
-        currentStart = currentStart.plus({ minutes: intervalMinutes });
-      }
-      
-      return allSlots;
+return allSlots;
+
     } finally {
       setLoading(false);
     }
