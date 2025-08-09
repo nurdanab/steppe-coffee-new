@@ -261,8 +261,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         
         for (const dateString of datesWithBookings) {
             const tempDate = new Date(dateString);
+            // const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
             const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-            
+if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
+    fullyBooked.push(dateString);
+}
             // 💡 Проверяем, есть ли хотя бы один доступный слот на эту дату
             if (slots.every(slot => !slot.isAvailable)) {
                 fullyBooked.push(dateString);
@@ -443,7 +446,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     )}
                   </div>
                   
-                  <div className={styles.formGroup}>
+                  {/* <div className={styles.formGroup}>
                       <label htmlFor="durationHours">Продолжительность:</label>
                       <div className={styles.durationControl}>
                           <input
@@ -469,7 +472,27 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                               <span>3 ч</span>
                           </div>
                       </div>
-                  </div>
+                  </div> */}
+                  <div className={styles.formGroup}>
+    <label htmlFor="durationHours">Продолжительность:</label>
+    <div className={styles.durationControl}>
+        <input
+            type="range"
+            id="durationHours"
+            value={durationHours}
+            onChange={(e) => setDurationHours(Number(e.target.value))}
+            min="0.5"
+            max={maxBookingDurationHours}
+            step="0.5"
+            required
+            disabled={loading}
+        />
+        {/* Здесь мы оставляем только динамический лейбл */}
+        <div className={styles.durationLabel}>
+            {formatDurationLabel(durationHours)}
+        </div>
+    </div>
+</div>
                 </div>
 
                 <button type="submit" className={styles.submitButton} disabled={loading || !selectedRoom}>
@@ -519,7 +542,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                         </div>
                       </div>
                     ) : (
-                      !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов.</p>
+                      !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов. Попробуйте выбрать другую дату или изменить продолжительность бронирования.</p>
                     )}
                 </div>
 
