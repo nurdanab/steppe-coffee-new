@@ -1,5 +1,5 @@
 // src/components/BookingModal/BookingModal.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { IMaskInput } from 'react-imask';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
@@ -11,7 +11,7 @@ import { DateTime, Interval } from 'luxon';
 
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [step, setStep] = useState(1);
-  const [bookingDate, setBookingDate] = useState(null);
+  const [bookingDate, setBookingDate] = useState(new Date());
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
@@ -29,16 +29,24 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [isAgreed, setIsAgreed] = useState(false);
   const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
   const [suggestedSlots, setSuggestedSlots] = useState([]);
+  
+  // Добавляем новое состояние для хранения всех бронирований на месяц
+  const [monthlyBookings, setMonthlyBookings] = useState([]);
+  // Добавляем новое состояние для хранения полностью занятых дат
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
   
-  // Создаём стандартный объект Date для Calendar
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, []);
 
   const maxBookingDurationHours = 3;
   const bufferTimeHours = 1; 
   
   const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
+  const cafeOpenHour = 8;
+  const cafeCloseHour = 22;
 
   const getRoomName = useCallback((roomKey) => {  
     switch (roomKey) {
@@ -51,70 +59,110 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   }, []);
   
-  const getAvailableSlots = useCallback(async (date, room, duration) => {
-    if (!date || !room || !duration) return [];
-
-    // Конвертируем стандартный Date в Luxon DateTime для вычислений
+  const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
     const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty');
     const dateString = luxonDate.toISODate();
+    const allSlots = [];
+    const intervalMinutes = 30;
+    const durationMinutes = duration * 60;
+    const bufferMinutes = bufferTimeHours * 60;
+    const now = DateTime.local().setZone('Asia/Almaty');
 
-    setLoading(true);
-    try {
-      const { data: bookings, error: fetchError } = await supabase
-        .from('bookings')
-        .select('start_time, end_time, status')
-        .eq('booking_date', dateString)
-        .eq('selected_room', room)
-        .neq('status', 'canceled');
+    // Фильтруем бронирования только для выбранной даты и комнаты
+    const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
+
+    const occupiedIntervals = [];
+    for (const booking of dailyBookings) {
+      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone('Asia/Almaty');
+      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone('Asia/Almaty');
       
-      if (fetchError) {
-        console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-        return [];
-      }
-      
-      const allSlots = [];
-      const cafeOpenHour = 8;
-      const cafeCloseHour = 22;
-      const intervalMinutes = 30;
-      const durationMinutes = duration * 60;
-      const bufferMinutes = bufferTimeHours * 60;
-      
-      const now = DateTime.local().setZone('Asia/Almaty');
-
-      const occupiedIntervals = [];
-      for (const booking of bookings) {
-        const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`).setZone('Asia/Almaty');
-        const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`).setZone('Asia/Almaty');
-        
-        const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
-        const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
-        occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
-      }
-
-      let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
-
-      while (currentStart <= lastPossibleSlotStart) {
-        const currentEnd = currentStart.plus({ minutes: durationMinutes });
-        const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
-        const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
-        
-        allSlots.push({
-            start: currentStart.toFormat('HH:mm'),
-            end: currentEnd.toFormat('HH:mm'),
-            isAvailable: isAvailable
-        });
-        
-        currentStart = currentStart.plus({ minutes: intervalMinutes });
-      }
-      
-      return allSlots;
-    } finally {
-      setLoading(false);
+      const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
+      const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
+      occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
     }
+
+    let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
+    const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
+
+    while (currentStart <= lastPossibleSlotStart) {
+      const currentEnd = currentStart.plus({ minutes: durationMinutes });
+      const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
+
+      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
+      
+      allSlots.push({
+          start: currentStart.toFormat('HH:mm'),
+          end: currentEnd.toFormat('HH:mm'),
+          isAvailable: isAvailable
+      });
+      
+      currentStart = currentStart.plus({ minutes: intervalMinutes });
+    }
+    
+    return allSlots;
   }, [bufferTimeHours]);
   
+  const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
+    if (!room || !duration || !date) {
+        setMonthlyBookings([]);
+        setFullyBookedDates([]);
+        return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    const startOfMonth = DateTime.fromJSDate(date).setZone('Asia/Almaty').startOf('month').toISODate();
+    const endOfMonth = DateTime.fromJSDate(date).setZone('Asia/Almaty').endOf('month').toISODate();
+    
+    try {
+        const { data: bookings, error: fetchError } = await supabase
+            .from('bookings')
+            .select('booking_date, start_time, end_time, selected_room, status')
+            .eq('selected_room', room)
+            .neq('status', 'canceled')
+            .gte('booking_date', startOfMonth)
+            .lte('booking_date', endOfMonth);
+
+        if (fetchError) {
+            throw fetchError;
+        }
+
+        setMonthlyBookings(bookings);
+        
+        // Теперь вычисляем fullyBookedDates на основе полученных данных
+        const datesWithBookings = [...new Set(bookings.map(b => b.booking_date))];
+        const fullyBooked = [];
+        
+        const now = DateTime.local().setZone('Asia/Almaty');
+
+        for (const dateString of datesWithBookings) {
+            const tempDate = new Date(dateString);
+            const slots = calculateAvailableSlots(tempDate, room, duration, bookings);
+            
+            // Если все слоты на дату заняты или находятся в прошлом
+            const allSlotsUnavailable = slots.every(slot => !slot.isAvailable);
+            
+            // Проверяем, что хотя бы один слот был бы потенциально доступен (не в прошлом)
+            const atLeastOneFutureSlotExists = slots.some(slot => 
+                DateTime.fromFormat(slot.start, 'HH:mm').set({year: tempDate.getFullYear(), month: tempDate.getMonth() + 1, day: tempDate.getDate()}) > now
+            );
+
+            if (allSlotsUnavailable && atLeastOneFutureSlotExists) {
+                fullyBooked.push(dateString);
+            }
+        }
+        
+        setFullyBookedDates(fullyBooked);
+
+    } catch (err) {
+        console.error('Ошибка при получении бронирований за месяц:', err.message);
+        setError('Ошибка при загрузке данных о бронированиях.');
+    } finally {
+        setLoading(false);
+    }
+  }, [calculateAvailableSlots]);
+  
+  // Переименуем старую функцию, чтобы не путаться
   const sendBooking = async (statusToSet = 'pending') => {
     setLoading(true);
     setMessage('');
@@ -196,10 +244,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     await sendBooking('queued');
   };
 
+  // Логика инициализации и очистки
   useEffect(() => {
     if (isOpen) {
       setStep(1);
-      setUserName('');
       setBookingDate(new Date());
       setStartTime('');
       setEndTime('');
@@ -214,46 +262,27 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setError(null);
       setIsAgreed(false);
       setSuggestedSlots([]);
+      setMonthlyBookings([]);
       setFullyBookedDates([]);
       setDurationHours(1);
       setIsBookingSuccessful(false);
     }
   }, [isOpen]);
   
+  // Эффект для загрузки бронирований на месяц, срабатывает при изменении комнаты, продолжительности или месяца
   useEffect(() => {
-    const fetchCalendarHighlights = async () => {
-      if (step === 2 && selectedRoom && durationHours) {
-        setLoading(true);
-        const { data: allBookings, error } = await supabase
-            .from('bookings')
-            .select('booking_date, status')
-            .eq('selected_room', selectedRoom)
-            .gte('booking_date', today.toISOString().split('T')[0]);
-        
-        if (error) {
-            console.error('Ошибка при получении бронирований:', error.message);
-            setError('Ошибка при загрузке данных о бронированиях.');
-            setLoading(false);
-            return;
-        }
-
-        const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
-        const fullyBooked = [];
-        
-        for (const dateString of datesWithBookings) {
-            const tempDate = new Date(dateString);
-            const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-            if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
-                fullyBooked.push(dateString);
-            }
-        }
-        
-        setFullyBookedDates(fullyBooked);
-        setLoading(false);
-      }
-    };
-    fetchCalendarHighlights();
-  }, [step, selectedRoom, durationHours, getAvailableSlots, today]);
+    if (step === 2 && selectedRoom && durationHours && bookingDate) {
+        fetchMonthlyBookings(selectedRoom, durationHours, bookingDate);
+    }
+  }, [step, selectedRoom, durationHours, bookingDate, fetchMonthlyBookings]);
+  
+  // Эффект для обновления слотов при смене даты
+  useEffect(() => {
+    if (step === 2 && bookingDate && selectedRoom && durationHours && monthlyBookings.length > 0) {
+        const slots = calculateAvailableSlots(bookingDate, selectedRoom, durationHours, monthlyBookings);
+        setSuggestedSlots(slots);
+    }
+  }, [step, bookingDate, selectedRoom, durationHours, monthlyBookings, calculateAvailableSlots]);
 
   const validateStep1 = () => {
     setError(null);
@@ -287,26 +316,16 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     if (!validateStep1()) {
         return;
     }
-    
     setStep(2);
-    const today = new Date();
-    setBookingDate(today);
-    setLoading(true);
-    const slots = await getAvailableSlots(today, selectedRoom, durationHours);
-    setSuggestedSlots(slots);
-    setLoading(false);
+    // Теперь загрузка слотов на первый день второго шага будет происходить в useEffect
   };
   
-  const handleDateChange = async (date) => {
+  const handleDateChange = (date) => {
     setBookingDate(date);
     setError(null);
     setMessage('');
     setStartTime('');
     setEndTime('');
-    setLoading(true);
-    const slots = await getAvailableSlots(date, selectedRoom, durationHours);
-    setSuggestedSlots(slots);
-    setLoading(false);
   };
 
   const handleTimeSelect = (slot) => {
@@ -320,12 +339,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setStep(1);
     setError(null);
     setSuggestedSlots([]);
+    setMonthlyBookings([]);
+    setFullyBookedDates([]);
   };
 
   const isDateDisabled = ({ date }) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
     if (date < today) {
       return true;
     }
@@ -342,6 +360,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         }
     }
     return null;
+  };
+
+  const handleCalendarNavigation = ({ activeStartDate }) => {
+    if (activeStartDate) {
+        setBookingDate(activeStartDate);
+    }
   };
   
   const formatDurationLabel = (value) => {
@@ -462,10 +486,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     <div className={styles.calendarContainer}>
                         <Calendar
                           minDate={today}
-                            onChange={handleDateChange}
-                            value={bookingDate}
-                            tileDisabled={isDateDisabled}
-                            tileClassName={tileClassName}
+                          onChange={handleDateChange}
+                          value={bookingDate}
+                          tileDisabled={isDateDisabled}
+                          tileClassName={tileClassName}
+                          onActiveStartDateChange={handleCalendarNavigation}
                         />
                     </div>
                     
