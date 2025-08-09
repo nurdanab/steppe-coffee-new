@@ -1,728 +1,384 @@
 // src/components/BookingModal/BookingModal.jsx
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-
 import { IMaskInput } from 'react-imask';
-
 import styles from './BookingModal.module.scss';
-
 import { supabase } from '../../supabaseClient';
-
-
-
 import Calendar from 'react-calendar';
-
 import 'react-calendar/dist/Calendar.css';
-
-
-
 import { DateTime, Interval } from 'luxon';
 
-
-
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
-
-const [step, setStep] = useState(1);
-
-const [bookingDate, setBookingDate] = useState(new Date());
-
-const [startTime, setStartTime] = useState('');
-
-const [endTime, setEndTime] = useState('');
-
-const [selectedRoom, setSelectedRoom] = useState('');
-
-const [numberOfPeople, setNumberOfPeople] = useState(1);
-
-const [phoneNumber, setPhoneNumber] = useState('');
-
-const [userName, setUserName] = useState('');
-
-const [comment, setComment] = useState('');
-
-const [durationHours, setDurationHours] = useState(1);
-
-const [eventName, setEventName] = useState('');
-
-const [eventDescription, setEventDescription] = useState('');
-
-const [organizerContact, setOrganizerContact] = useState('');
-
-const [loading, setLoading] = useState(false);
-
-const [message, setMessage] = useState('');
-
-const [error, setError] = useState(null);
-
-const [isAgreed, setIsAgreed] = useState(false);
-
-const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
-
-const [suggestedSlots, setSuggestedSlots] = useState([]);
-
-
-// Добавляем новое состояние для хранения всех бронирований на месяц
-
-const [monthlyBookings, setMonthlyBookings] = useState([]);
-
-// Добавляем новое состояние для хранения полностью занятых дат
-
-const [fullyBookedDates, setFullyBookedDates] = useState([]);
-
-
-const today = useMemo(() => {
-
-const date = new Date();
-
-date.setHours(0, 0, 0, 0);
-
-return date;
-
-}, []);
-
-
-
-const maxBookingDurationHours = 3;
-
-const bufferTimeHours = 1;
-
-
-const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
-
-const cafeOpenHour = 8;
-
-const cafeCloseHour = 22;
-
-
-
-const getRoomName = useCallback((roomKey) => {
-
-switch (roomKey) {
-
-case 'second_hall':
-
-return 'Второй зал внутри';
-
-case 'summer_terrace':
-
-return 'Летняя терраса';
-
-default:
-
-return 'Неизвестный зал';
-
-}
-
-}, []);
-
-
-const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
-
-const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty');
-
-const dateString = luxonDate.toISODate();
-
-const allSlots = [];
-
-const intervalMinutes = 30;
-
-const durationMinutes = duration * 60;
-
-const bufferMinutes = bufferTimeHours * 60;
-
-const now = DateTime.local().setZone('Asia/Almaty');
-
-
-
-// Фильтруем бронирования только для выбранной даты и комнаты
-
-const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
-
-
-
-const occupiedIntervals = [];
-
-for (const booking of dailyBookings) {
-
-const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone('Asia/Almaty');
-
-const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone('Asia/Almaty');
-
-
-const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
-
-const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
-
-occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
-
-}
-
-
-
-let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-
-const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
-
-
-
-while (currentStart <= lastPossibleSlotStart) {
-
-const currentEnd = currentStart.plus({ minutes: durationMinutes });
-
-const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
-
-
-const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
-
-
-allSlots.push({
-
-start: currentStart.toFormat('HH:mm'),
-
-end: currentEnd.toFormat('HH:mm'),
-
-isAvailable: isAvailable
-
-});
-
-
-currentStart = currentStart.plus({ minutes: intervalMinutes });
-
-}
-
-
-return allSlots;
-
-}, [bufferTimeHours]);
-
-
-const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
-
-if (!room || !duration || !date) {
-
-setMonthlyBookings([]);
-
-setFullyBookedDates([]);
-
-return;
-
-}
-
-
-setLoading(true);
-
-setError(null);
-
-const startOfMonth = DateTime.fromJSDate(date).setZone('Asia/Almaty').startOf('month').toISODate();
-
-const endOfMonth = DateTime.fromJSDate(date).setZone('Asia/Almaty').endOf('month').toISODate();
-
-
-try {
-
-// ИСПОЛЬЗУЕМ НОВОЕ ПРЕДСТАВЛЕНИЕ ВМЕСТО ПРЯМОГО ЗАПРОСА
-
-const { data: bookings, error: fetchError } = await supabase
-
-.from('public_bookings_for_calendar')
-
-.select('booking_date, start_time, end_time, selected_room, status') // Убедись, что выбираешь только те столбцы, что есть в VIEW
-
-.eq('selected_room', room)
-
-.gte('booking_date', startOfMonth)
-
-.lte('booking_date', endOfMonth);
-
-
-if (fetchError) {
-
-throw fetchError;
-
-}
-
-
-setMonthlyBookings(bookings);
-
-
-// Теперь вычисляем fullyBookedDates на основе полученных данных
-
-const datesWithBookings = [...new Set(bookings.map(b => b.booking_date))];
-
-const fullyBooked = [];
-
-
-const now = DateTime.local().setZone('Asia/Almaty');
-
-
-
-for (const dateString of datesWithBookings) {
-
-const tempDate = new Date(dateString);
-
-const slots = calculateAvailableSlots(tempDate, room, duration, bookings);
-
-
-// Если все слоты на дату заняты или находятся в прошлом
-
-const allSlotsUnavailable = slots.every(slot => !slot.isAvailable);
-
-
-// Проверяем, что хотя бы один слот был бы потенциально доступен (не в прошлом)
-
-const atLeastOneFutureSlotExists = slots.some(slot =>
-
-DateTime.fromFormat(slot.start, 'HH:mm').set({year: tempDate.getFullYear(), month: tempDate.getMonth() + 1, day: tempDate.getDate()}) > now
-
-);
-
-
-
-if (allSlotsUnavailable && atLeastOneFutureSlotExists) {
-
-fullyBooked.push(dateString);
-
-}
-
-}
-
-
-setFullyBookedDates(fullyBooked);
-
-
-
-} catch (err) {
-
-console.error('Ошибка при получении бронирований за месяц:', err.message);
-
-setError('Ошибка при загрузке данных о бронированиях.');
-
-} finally {
-
-setLoading(false);
-
-}
-
-}, [calculateAvailableSlots]);
-
-
-// Переименуем старую функцию, чтобы не путаться
-
-const sendBooking = async (statusToSet = 'pending') => {
-
-setLoading(true);
-
-setMessage('');
-
-setError(null);
-
-
-const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-
-if (authError || !user) {
-
-setError('Пожалуйста, войдите, чтобы забронировать.');
-
-setLoading(false);
-
-return;
-
-}
-
-
-if (!isAgreed) {
-
-setError('Пожалуйста, примите правила бронирования.');
-
-setLoading(false);
-
-return;
-
-}
-
-
-if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
-
-setError('Пожалуйста, заполните все обязательные поля и выберите временной слот.');
-
-setLoading(false);
-
-return;
-
-}
-
-
-try {
-
-const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
-
-body: {
-
-organizer_name: userName,
-
-booking_date: DateTime.fromJSDate(bookingDate).toISODate(),
-
-start_time: startTime,
-
-end_time: endTime,
-
-num_people: numberOfPeople,
-
-comments: comment,
-
-user_id: user.id,
-
-selected_room: selectedRoom,
-
-event_name: eventName,
-
-event_description: eventDescription,
-
-organizer_contact: organizerContact,
-
-phone_number: phoneNumber,
-
-status_to_set: statusToSet,
-
-},
-
-method: 'POST',
-
-});
-
-
-if (invokeError) {
-
-console.error('Ошибка вызова Edge Function:', invokeError);
-
-setError('Произошла ошибка при отправке брони. Пожалуйста, попробуйте снова.');
-
-return;
-
-}
-
-
-if (bookingResult.error) {
-
-setError(bookingResult.error);
-
-return;
-
-}
-
-
-if (bookingResult.booking.status === 'pending') {
-
-setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
-
-} else if (bookingResult.booking.status === 'queued') {
-
-setMessage('Ваша бронь успешно добавлена в лист ожидания!');
-
-}
-
-setIsBookingSuccessful(true);
-
-
-} catch (err) {
-
-console.error('Ошибка при отправке брони:', err.message);
-
-setError(`Ошибка при отправке брони: ${err.message}. Пожалуйста, попробуйте снова.`);
-
-} finally {
-
-setLoading(false);
-
-}
-
-};
-
-
-
-const handleSubmit = async (e) => {
-
-e.preventDefault();
-
-await sendBooking('pending');
-
-};
-
-
-
-const handleQueueBooking = async (e) => {
-
-e.preventDefault();
-
-await sendBooking('queued');
-
-};
-
-
-
-// Логика инициализации и очистки
-
-useEffect(() => {
-
-if (isOpen) {
-
-setStep(1);
-
-setBookingDate(new Date());
-
-setStartTime('');
-
-setEndTime('');
-
-setSelectedRoom('');
-
-setNumberOfPeople(1);
-
-setPhoneNumber('');
-
-setComment('');
-
-setEventName('');
-
-setEventDescription('');
-
-setOrganizerContact('');
-
-setMessage('');
-
-setError(null);
-
-setIsAgreed(false);
-
-setSuggestedSlots([]);
-
-setMonthlyBookings([]);
-
-setFullyBookedDates([]);
-
-setDurationHours(1);
-
-setIsBookingSuccessful(false);
-
-}
-
-}, [isOpen]);
-
-
-// Эффект для загрузки бронирований на месяц, срабатывает при изменении комнаты, продолжительности или месяца
-
-useEffect(() => {
-
-if (step === 2 && selectedRoom && durationHours && bookingDate) {
-
-fetchMonthlyBookings(selectedRoom, durationHours, bookingDate);
-
-}
-
-}, [step, selectedRoom, durationHours, bookingDate, fetchMonthlyBookings]);
-
-
-// Эффект для обновления слотов при смене даты
-
-useEffect(() => {
-
-if (step === 2 && bookingDate && selectedRoom && durationHours && monthlyBookings.length > 0) {
-
-const slots = calculateAvailableSlots(bookingDate, selectedRoom, durationHours, monthlyBookings);
-
-setSuggestedSlots(slots);
-
-}
-
-}, [step, bookingDate, selectedRoom, durationHours, monthlyBookings, calculateAvailableSlots]);
-
-
-
-const validateStep1 = () => {
-
-setError(null);
-
-if (!selectedRoom || !numberOfPeople || !durationHours) {
-
-setError('Пожалуйста, заполните все обязательные поля.');
-
-return false;
-
-}
-
-
-const minPeople = 1;
-
-if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
-
-setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
-
-return false;
-
-}
-
-
-if (durationHours <= 0) {
-
-setError('Продолжительность бронирования должна быть больше 0.');
-
-return false;
-
-}
-
-if (durationHours > maxBookingDurationHours) {
-
-setError(`Максимальное время бронирования - ${maxBookingDurationHours} часа.`);
-
-return false;
-
-}
-
-
-return true;
-
-};
-
-
-
-if (!isOpen) return null;
-
-
-
-const handleNextStep = async () => {
-
-setMessage('');
-
-if (!validateStep1()) {
-
-return;
-
-}
-
-setStep(2);
-
-// Теперь загрузка слотов на первый день второго шага будет происходить в useEffect
-
-};
-
-
-const handleDateChange = (date) => {
-
-setBookingDate(date);
-
-setError(null);
-
-setMessage('');
-
-setStartTime('');
-
-setEndTime('');
-
-};
-
-
-
-const handleTimeSelect = (slot) => {
-
-setStartTime(slot.start);
-
-setEndTime(slot.end);
-
-setError(null);
-
-setMessage('');
-
-};
-
-
-
-const handleBackStep = () => {
-
-setStep(1);
-
-setError(null);
-
-setSuggestedSlots([]);
-
-setMonthlyBookings([]);
-
-setFullyBookedDates([]);
-
-};
-
-
-
-const isDateDisabled = ({ date }) => {
-
-if (date < today) {
-
-return true;
-
-}
-
-
-const dateString = date.toISOString().split('T')[0];
-
-return fullyBookedDates.includes(dateString);
-
-};
-
-
-const tileClassName = ({ date, view }) => {
-
-if (view === 'month') {
-
-const dateString = date.toISOString().split('T')[0];
-
-if (fullyBookedDates.includes(dateString)) {
-
-return styles.fullyBooked;
-
-}
-
-}
-
-return null;
-
-};
-
-
-
-const handleCalendarNavigation = ({ activeStartDate }) => {
-
-if (activeStartDate) {
-
-setBookingDate(activeStartDate);
-
-}
-
-};
-
-
-const formatDurationLabel = (value) => {
-
-if (value < 1) return `${value * 60} минут`;
-
-if (value === 1) return `1 час`;
-
-return `${value} часа`;
-
-};
-
-
-
-return (
-
-<div className={styles.modalOverlay} onClick={onClose}>
-
-<div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-
-<button className={styles.closeButton} onClick={onClose} disabled={loading}>
-
-&times;
-
+  const [step, setStep] = useState(1);
+  const [bookingDate, setBookingDate] = useState(new Date());
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState('');
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [userName, setUserName] = useState('');
+  const [comment, setComment] = useState('');
+  const [durationHours, setDurationHours] = useState(1);
+  const [eventName, setEventName] = useState('');
+  const [eventDescription, setEventDescription] = useState('');
+  const [organizerContact, setOrganizerContact] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState(null);
+  const [isAgreed, setIsAgreed] = useState(false);
+  const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
+  const [suggestedSlots, setSuggestedSlots] = useState([]);
+  const [monthlyBookings, setMonthlyBookings] = useState([]);
+  const [fullyBookedDates, setFullyBookedDates] = useState([]);
+
+  // 🛠️ ИСПРАВЛЕНИЕ: Используем Luxon для создания 'today' в нужной временной зоне.
+  const today = useMemo(() => {
+    return DateTime.now().setZone('Asia/Almaty').startOf('day').toJSDate();
+  }, []);
+
+  const maxBookingDurationHours = 3;
+  const bufferTimeHours = 1;
+  const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
+  const cafeOpenHour = 8;
+  const cafeCloseHour = 22;
+
+  const getRoomName = useCallback((roomKey) => {
+    switch (roomKey) {
+      case 'second_hall':
+        return 'Второй зал внутри';
+      case 'summer_terrace':
+        return 'Летняя терраса';
+      default:
+        return 'Неизвестный зал';
+    }
+  }, []);
+
+  const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
+    // 🛠️ ИСПРАВЛЕНИЕ: Явно указываем зону при создании DateTime из JS Date.
+    const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+    const dateString = luxonDate.toISODate();
+    const allSlots = [];
+    const intervalMinutes = 30;
+    const durationMinutes = duration * 60;
+    const bufferMinutes = bufferTimeHours * 60;
+    // 🛠️ ИСПРАВЛЕНИЕ: Получаем текущее время в правильной зоне.
+    const now = DateTime.now().setZone('Asia/Almaty');
+
+    const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
+
+    const occupiedIntervals = [];
+    for (const booking of dailyBookings) {
+      // 🛠️ ИСПРАВЛЕНИЕ: Явно указываем зону при создании DateTime из строки.
+      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
+      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
+      
+      const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
+      const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
+      occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
+    }
+
+    let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
+    const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
+
+    while (currentStart <= lastPossibleSlotStart) {
+      const currentEnd = currentStart.plus({ minutes: durationMinutes });
+      const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
+
+      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
+      
+      allSlots.push({
+        start: currentStart.toFormat('HH:mm'),
+        end: currentEnd.toFormat('HH:mm'),
+        isAvailable: isAvailable
+      });
+
+      currentStart = currentStart.plus({ minutes: intervalMinutes });
+    }
+
+    return allSlots;
+  }, [bufferTimeHours]);
+
+  const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
+    if (!room || !duration || !date) {
+      setMonthlyBookings([]);
+      setFullyBookedDates([]);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    // 🛠️ ИСПРАВЛЕНИЕ: Убеждаемся, что мы работаем с датой в правильной зоне.
+    const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+    const startOfMonth = luxonDate.startOf('month').toISODate();
+    const endOfMonth = luxonDate.endOf('month').toISODate();
+
+    try {
+      const { data: bookings, error: fetchError } = await supabase
+        .from('public_bookings_for_calendar')
+        .select('booking_date, start_time, end_time, selected_room, status')
+        .eq('selected_room', room)
+        .gte('booking_date', startOfMonth)
+        .lte('booking_date', endOfMonth);
+
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      setMonthlyBookings(bookings);
+
+      const datesWithBookings = [...new Set(bookings.map(b => b.booking_date))];
+      const fullyBooked = [];
+      const now = DateTime.now().setZone('Asia/Almaty');
+
+      for (const dateString of datesWithBookings) {
+        // 🛠️ ИСПРАВЛЕНИЕ: Создаем временный объект DateTime с нужной зоной.
+        const tempDateLuxon = DateTime.fromISO(dateString, { zone: 'Asia/Almaty' });
+        const tempDate = tempDateLuxon.toJSDate();
+        const slots = calculateAvailableSlots(tempDate, room, duration, bookings);
+
+        const allSlotsUnavailable = slots.every(slot => !slot.isAvailable);
+        const atLeastOneFutureSlotExists = slots.some(slot =>
+          DateTime.fromFormat(slot.start, 'HH:mm', { zone: 'Asia/Almaty' })
+            .set({
+              year: tempDateLuxon.year,
+              month: tempDateLuxon.month,
+              day: tempDateLuxon.day
+            }) > now
+        );
+
+        if (allSlotsUnavailable && atLeastOneFutureSlotExists) {
+          fullyBooked.push(dateString);
+        }
+      }
+
+      setFullyBookedDates(fullyBooked);
+
+    } catch (err) {
+      console.error('Ошибка при получении бронирований за месяц:', err.message);
+      setError('Ошибка при загрузке данных о бронированиях.');
+    } finally {
+      setLoading(false);
+    }
+  }, [calculateAvailableSlots]);
+
+  const sendBooking = async (statusToSet = 'pending') => {
+    setLoading(true);
+    setMessage('');
+    setError(null);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      setError('Пожалуйста, войдите, чтобы забронировать.');
+      setLoading(false);
+      return;
+    }
+
+    if (!isAgreed) {
+      setError('Пожалуйста, примите правила бронирования.');
+      setLoading(false);
+      return;
+    }
+
+    if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
+      setError('Пожалуйста, заполните все обязательные поля и выберите временной слот.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
+        body: {
+          organizer_name: userName,
+          // 🛠️ ИСПРАВЛЕНИЕ: Преобразуем дату в ISO-строку с учетом зоны.
+          booking_date: DateTime.fromJSDate(bookingDate, { zone: 'Asia/Almaty' }).toISODate(),
+          start_time: startTime,
+          end_time: endTime,
+          num_people: numberOfPeople,
+          comments: comment,
+          user_id: user.id,
+          selected_room: selectedRoom,
+          event_name: eventName,
+          event_description: eventDescription,
+          organizer_contact: organizerContact,
+          phone_number: phoneNumber,
+          status_to_set: statusToSet,
+        },
+        method: 'POST',
+      });
+
+      if (invokeError) {
+        console.error('Ошибка вызова Edge Function:', invokeError);
+        setError('Произошла ошибка при отправке брони. Пожалуйста, попробуйте снова.');
+        return;
+      }
+
+      if (bookingResult.error) {
+        setError(bookingResult.error);
+        return;
+      }
+
+      if (bookingResult.booking.status === 'pending') {
+        setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
+      } else if (bookingResult.booking.status === 'queued') {
+        setMessage('Ваша бронь успешно добавлена в лист ожидания!');
+      }
+
+      setIsBookingSuccessful(true);
+
+    } catch (err) {
+      console.error('Ошибка при отправке брони:', err.message);
+      setError(`Ошибка при отправке брони: ${err.message}. Пожалуйста, попробуйте снова.`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await sendBooking('pending');
+  };
+
+  const handleQueueBooking = async (e) => {
+    e.preventDefault();
+    await sendBooking('queued');
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep(1);
+      setBookingDate(new Date());
+      setStartTime('');
+      setEndTime('');
+      setSelectedRoom('');
+      setNumberOfPeople(1);
+      setPhoneNumber('');
+      setComment('');
+      setEventName('');
+      setEventDescription('');
+      setOrganizerContact('');
+      setMessage('');
+      setError(null);
+      setIsAgreed(false);
+      setSuggestedSlots([]);
+      setMonthlyBookings([]);
+      setFullyBookedDates([]);
+      setDurationHours(1);
+      setIsBookingSuccessful(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (step === 2 && selectedRoom && durationHours && bookingDate) {
+      fetchMonthlyBookings(selectedRoom, durationHours, bookingDate);
+    }
+  }, [step, selectedRoom, durationHours, bookingDate, fetchMonthlyBookings]);
+
+  useEffect(() => {
+    if (step === 2 && bookingDate && selectedRoom && durationHours && monthlyBookings.length > 0) {
+      const slots = calculateAvailableSlots(bookingDate, selectedRoom, durationHours, monthlyBookings);
+      setSuggestedSlots(slots);
+    }
+  }, [step, bookingDate, selectedRoom, durationHours, monthlyBookings, calculateAvailableSlots]);
+
+  const validateStep1 = () => {
+    setError(null);
+    if (!selectedRoom || !numberOfPeople || !durationHours) {
+        setError('Пожалуйста, заполните все обязательные поля.');
+        return false;
+    }
+
+    const minPeople = 1;
+    if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
+        setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
+        return false;
+    }
+
+    if (durationHours <= 0) {
+        setError('Продолжительность бронирования должна быть больше 0.');
+        return false;
+    }
+    if (durationHours > maxBookingDurationHours) {
+        setError(`Максимальное время бронирования - ${maxBookingDurationHours} часа.`);
+        return false;
+    }
+
+    return true;
+  };
+
+  if (!isOpen) return null;
+
+  const handleNextStep = async () => {
+    setMessage('');
+    if (!validateStep1()) {
+      return;
+    }
+    setStep(2);
+  };
+
+  const handleDateChange = (date) => {
+    setBookingDate(date);
+    setError(null);
+    setMessage('');
+    setStartTime('');
+    setEndTime('');
+  };
+
+  const handleTimeSelect = (slot) => {
+    setStartTime(slot.start);
+    setEndTime(slot.end);
+    setError(null);
+    setMessage('');
+  };
+
+  const handleBackStep = () => {
+    setStep(1);
+    setError(null);
+    setSuggestedSlots([]);
+    setMonthlyBookings([]);
+    setFullyBookedDates([]);
+  };
+
+  const isDateDisabled = ({ date }) => {
+    // 🛠️ ИСПРАВЛЕНИЕ: Сравниваем даты с помощью Luxon, чтобы избежать смещения.
+    const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+    const luxonToday = DateTime.now().setZone('Asia/Almaty').startOf('day');
+    if (luxonDate < luxonToday) {
+      return true;
+    }
+
+    const dateString = luxonDate.toISODate();
+    return fullyBookedDates.includes(dateString);
+  };
+
+  const tileClassName = ({ date, view }) => {
+    if (view === 'month') {
+      // 🛠️ ИСПРАВЛЕНИЕ: Получаем dateString, явно указывая временную зону.
+      const dateString = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' }).toISODate();
+      if (fullyBookedDates.includes(dateString)) {
+        return styles.fullyBooked;
+      }
+    }
+    return null;
+  };
+
+  const handleCalendarNavigation = ({ activeStartDate }) => {
+    if (activeStartDate) {
+      setBookingDate(activeStartDate);
+    }
+  };
+
+  const formatDurationLabel = (value) => {
+    if (value < 1) return `${value * 60} минут`;
+    if (value === 1) return `1 час`;
+    return `${value} часа`;
+  };
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose} disabled={loading}>
+          &times;
 </button>
 
 
