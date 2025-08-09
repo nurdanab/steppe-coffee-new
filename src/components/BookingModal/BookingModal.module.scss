@@ -804,9 +804,9 @@
         gap: $spacing-md;
     }
 }
-.suggestedSlotButton.slotUnavailable {
-  background-color: #f0f0f0; /* Светло-серый фон */
-  color: #999; /* Серый текст */
-  cursor: not-allowed; /* Запрещенный курсор */
-  text-decoration: line-through; /* Можно добавить зачеркивание */
+.slotUnavailable {
+  background-color: #f0f0f0;
+  color: #a0a0a0;
+  cursor: not-allowed;
+  text-decoration: line-through;
 }

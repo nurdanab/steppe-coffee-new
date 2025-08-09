@@ -37,7 +37,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [isSlotPending, setIsSlotPending] = useState(false);
 
   const maxBookingDurationHours = 3;
-  const bufferTimeHours = 1;
+  // 💡 Теперь буферное время - 1 час
+  const bufferTimeHours = 1; 
   
   const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
 
@@ -64,6 +65,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         .select('start_time, end_time, status')
         .eq('booking_date', dateString)
         .eq('selected_room', room)
+        // 💡 Не учитываем бронирования со статусом 'canceled'
         .neq('status', 'canceled');
       
       if (fetchError) {
@@ -72,27 +74,30 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       }
       
       const allSlots = [];
-      const cafeOpenHour = 9;
+      // 💡 Изменено время открытия с 9:00 на 8:00
+      const cafeOpenHour = 8;
       const cafeCloseHour = 22;
       const intervalMinutes = 30;
       const durationMinutes = duration * 60;
       const bufferMinutes = bufferTimeHours * 60;
       
-      const dateObj = DateTime.fromJSDate(date);
-      const now = DateTime.local();
+      const dateObj = DateTime.fromJSDate(date).setZone('Asia/Almaty');
+    const now = DateTime.local().setZone('Asia/Almaty');
 
-      // 💡 Объединяем все интервалы (подтвержденные и ожидающие) в один массив
+      // Объединяем все интервалы (подтвержденные и ожидающие) в один массив
       const occupiedIntervals = [];
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`);
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`);
         
+        // 💡 Расширяем интервал на буферное время до и после
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
       }
 
       let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
+      // 💡 Учитываем длительность брони и буферное время для последнего возможного слота
       const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
 
       while (currentStart <= lastPossibleSlotStart) {
@@ -104,14 +109,14 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             continue;
         }
         
-        // 💡 Одна общая проверка на конфликт со всеми занятыми интервалами
+        // 💡 Проверяем, пересекается ли предлагаемый слот с каким-либо занятым интервалом
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
         
         allSlots.push({
             start: currentStart.toFormat('HH:mm'),
             end: currentEnd.toFormat('HH:mm'),
             isAvailable: isAvailable,
-            isPending: false // 💡 Флаг isPending теперь всегда false, т.к. такие слоты не будут отображаться как "ожидающие"
+            isPending: false // 💡 Это поле больше не нужно, так как все занятые слоты просто будут isAvailable: false
         });
         
         currentStart = currentStart.plus({ minutes: intervalMinutes });
@@ -257,24 +262,20 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
         const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
         const fullyBooked = [];
-        const pendingBooked = [];
         
         for (const dateString of datesWithBookings) {
             const tempDate = new Date(dateString);
             const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-
-            if (slots.length === 0) {
+            
+            // 💡 Проверяем, есть ли хотя бы один доступный слот на эту дату
+            if (slots.every(slot => !slot.isAvailable)) {
                 fullyBooked.push(dateString);
-            } else {
-                const hasPending = slots.some(slot => !slot.isAvailable && slot.isPending);
-                if (hasPending) {
-                    pendingBooked.push(dateString);
-                }
             }
         }
-
+        
+        // 💡 Удаляем лишний стейт для pendingDates, так как вся логика теперь в isAvailable
         setFullyBookedDates(fullyBooked);
-        setPendingDates(pendingBooked);
+        setPendingDates([]);
         setLoading(false);
       }
     };
@@ -330,7 +331,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const handleTimeSelect = (slot) => {
     setStartTime(slot.start);
     setEndTime(slot.end);
-    setIsSlotPending(slot.isPending);
+    // 💡 Этот флаг больше не нужен, т.к. все занятые слоты просто некликабельны
+    // setIsSlotPending(slot.isPending); 
     setError(null);
     setMessage('');
   };
@@ -359,9 +361,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         if (fullyBookedDates.includes(dateString)) {
             return styles.fullyBooked;
         }
-        if (pendingDates.includes(dateString)) {
-            return styles.hasPending;
-        }
+        // 💡 Удаляем логику для pendingDates, так как она больше не нужна
     }
     return null;
   };
@@ -510,7 +510,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                               <button 
                                 key={index} 
                                 type="button"
+                                // 💡 Добавляем класс, чтобы визуально выделить недоступные слоты
                                 className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${!slot.isAvailable ? styles.slotUnavailable : ''}`}
+                                // 💡 Делаем кнопку некликабельной, если isAvailable: false
                                 onClick={() => slot.isAvailable && handleTimeSelect(slot)}
                                 disabled={!slot.isAvailable}
                               >
