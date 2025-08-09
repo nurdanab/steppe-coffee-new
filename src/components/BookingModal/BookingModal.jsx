@@ -1,8 +1,9 @@
 // src/components/BookingModal/BookingModal.jsx
-import React, { useState, useEffect, useCallback } from 'react-imask';
+import React, { useState, useEffect, useCallback } from 'react';
+// А потом отдельно импортируем IMaskInput
+import { IMaskInput } from 'react-imask';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
-import { IMaskInput } from 'react-imask';
 
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
