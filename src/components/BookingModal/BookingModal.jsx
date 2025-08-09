@@ -53,7 +53,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
 
-    const dateString = date.toISOString().split('T')[0];
+    // Используем Luxon для получения строки даты, чтобы избежать проблем с таймзонами
+    const dateString = DateTime.fromJSDate(date).toISODate();
 
     setLoading(true);
     try {
@@ -86,6 +87,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`).setZone('Asia/Almaty');
         const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`).setZone('Asia/Almaty');
         
+        // Учитываем буферное время ДО и ПОСЛЕ бронирования
         const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
         const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
         occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
@@ -98,14 +100,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-        if (dateObj.hasSame(now, 'day') && currentEnd <= now) {
-            currentStart = currentStart.plus({ minutes: intervalMinutes });
-            continue;
-        }
-        
-        // Проверяем, пересекается ли предлагаемый слот с любым из занятых интервалов (включая буферное время)
-        // Логика уже исключает брони со статусом 'pending' и 'confirmed' из доступных слотов
-        const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
+        // Проверяем, не пересекается ли предлагаемый слот с любым из занятых интервалов (включая буферное время)
+        // и не является ли он в прошлом относительно текущего времени
+        const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
         
         allSlots.push({
             start: currentStart.toFormat('HH:mm'),
