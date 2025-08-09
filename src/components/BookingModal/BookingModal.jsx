@@ -1,9 +1,8 @@
 // src/components/BookingModal/BookingModal.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-// А потом отдельно импортируем IMaskInput
-import { IMaskInput } from 'react-imask';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
+import { IMaskInput } from 'react-imask';
 
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -32,7 +31,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [suggestedSlots, setSuggestedSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
   
-  // Создаём стандартный объект Date для Calendar
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -55,7 +53,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
 
-    // Конвертируем стандартный Date в Luxon DateTime для вычислений
     const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty');
     const dateString = luxonDate.toISODate();
 
@@ -70,7 +67,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       
       if (fetchError) {
         console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-        return [];
+        // Вместо возврата пустых данных, выбрасываем ошибку для обработки
+        throw fetchError;
       }
       
       const allSlots = [];
@@ -99,7 +97,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-        // Проверяем, не пересекается ли слот с занятыми интервалами и не является ли он в прошлом
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
         
         allSlots.push({
@@ -112,6 +109,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       }
       
       return allSlots;
+    } catch(err) {
+      setError(`Ошибка при загрузке слотов: ${err.message}`);
+      return [];
     } finally {
       setLoading(false);
     }
@@ -202,7 +202,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     if (isOpen) {
       setStep(1);
       setUserName('');
-      // Устанавливаем текущую дату в состоянии
       setBookingDate(new Date());
       setStartTime('');
       setEndTime('');
@@ -227,38 +226,42 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const fetchCalendarHighlights = async () => {
       if (step === 2 && selectedRoom && durationHours) {
         setLoading(true);
-        const { data: allBookings, error } = await supabase
-            .from('bookings')
-            .select('booking_date, status')
-            .eq('selected_room', selectedRoom)
-            .gte('booking_date', today.toISOString().split('T')[0]);
-        
-        if (error) {
-            console.error('Ошибка при получении бронирований:', error.message);
-            setError('Ошибка при загрузке данных о бронированиях.');
-            setLoading(false);
-            return;
-        }
+        try {
+          const { data: allBookings, error: fetchError } = await supabase
+              .from('bookings')
+              .select('booking_date, status')
+              .eq('selected_room', selectedRoom)
+              .gte('booking_date', today.toISOString().split('T')[0]);
+          
+          if (fetchError) {
+              console.error('Ошибка при получении бронирований:', fetchError.message);
+              setError('Ошибка при загрузке данных о бронированиях.');
+              return;
+          }
 
-        const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
-        const fullyBooked = [];
-        
-        for (const dateString of datesWithBookings) {
-            const tempDate = new Date(dateString);
-            const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-            if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
-                fullyBooked.push(dateString);
-            }
+          const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
+          const fullyBooked = [];
+          
+          for (const dateString of datesWithBookings) {
+              const tempDate = new Date(dateString);
+              const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
+              if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
+                  fullyBooked.push(dateString);
+              }
+          }
+          
+          setFullyBookedDates(fullyBooked);
+        } catch(err) {
+          console.error('Ошибка в fetchCalendarHighlights:', err.message);
+          setError('Не удалось загрузить календарь бронирований.');
+        } finally {
+          setLoading(false);
         }
-        
-        setFullyBookedDates(fullyBooked);
-        setLoading(false);
       }
     };
     fetchCalendarHighlights();
   }, [step, selectedRoom, durationHours, getAvailableSlots, today]);
 
-  // Вспомогательная функция для валидации первого шага
   const validateStep1 = () => {
     setError(null);
     if (!selectedRoom || !numberOfPeople || !durationHours) {
@@ -293,10 +296,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
     
     setStep(2);
-    const today = new Date();
-    setBookingDate(today);
     setLoading(true);
-    const slots = await getAvailableSlots(today, selectedRoom, durationHours);
+    const date = new Date();
+    setBookingDate(date);
+    const slots = await getAvailableSlots(date, selectedRoom, durationHours);
     setSuggestedSlots(slots);
     setLoading(false);
   };
@@ -330,7 +333,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Сравниваем стандартные объекты Date
     if (date < today) {
       return true;
     }
