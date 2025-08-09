@@ -115,19 +115,19 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const endOfMonth = DateTime.fromJSDate(date).setZone('Asia/Almaty').endOf('month').toISODate();
     
     try {
-        const { data: bookings, error: fetchError } = await supabase
-            .from('bookings')
-            .select('booking_date, start_time, end_time, selected_room, status')
-            .eq('selected_room', room)
-            .neq('status', 'canceled')
-            .gte('booking_date', startOfMonth)
-            .lte('booking_date', endOfMonth);
-
-        if (fetchError) {
-            throw fetchError;
-        }
-        console.log('Загруженные бронирования:', bookings); // Добавили логирование
-        setMonthlyBookings(bookings);
+      // ИСПОЛЬЗУЕМ НОВОЕ ПРЕДСТАВЛЕНИЕ ВМЕСТО ПРЯМОГО ЗАПРОСА
+      const { data: bookings, error: fetchError } = await supabase
+        .from('public_bookings_for_calendar')
+        .select('booking_date, start_time, end_time, selected_room, status') // Убедись, что выбираешь только те столбцы, что есть в VIEW
+        .eq('selected_room', room)
+        .gte('booking_date', startOfMonth)
+        .lte('booking_date', endOfMonth);
+  
+      if (fetchError) {
+          throw fetchError;
+      }
+  
+      setMonthlyBookings(bookings);
         
         // Теперь вычисляем fullyBookedDates на основе полученных данных
         const datesWithBookings = [...new Set(bookings.map(b => b.booking_date))];
