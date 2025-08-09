@@ -611,619 +611,281 @@
 // export default BookingModal;
 
 // src/components/BookingModal/BookingModal.jsx
-import React, { useState, useEffect, useCallback } from 'react';
-import styles from './BookingModal.module.scss';
-import { supabase } from '../../supabaseClient';
-import { IMaskInput } from 'react-imask';
+import React, { useState, useEffect, useCallback } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { DateTime, Interval } from "luxon";
+import { supabase } from "../supabaseClient"; // импорт твоего клиента Supabase
 
-import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+// Получение доступных слотов
+async function getAvailableSlots(date, roomType, durationHours) {
+  const luxonDate = DateTime.fromJSDate(date).setZone("Asia/Almaty");
+  const now = DateTime.now().setZone("Asia/Almaty");
 
-import { DateTime, Interval } from 'luxon';
+  const { data: bookings, error } = await supabase
+    .from("bookings")
+    .select("start_time, end_time")
+    .eq("selected_room", roomType)
+    .eq("booking_date", luxonDate.toISODate())
+    .in("status", ["confirmed", "pending"])
+    .order("start_time", { ascending: true });
 
-const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
-  const [step, setStep] = useState(1);
-  const [bookingDate, setBookingDate] = useState(null);
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [selectedRoom, setSelectedRoom] = useState('');
-  const [numberOfPeople, setNumberOfPeople] = useState(1);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [userName, setUserName] = useState('');
-  const [comment, setComment] = useState('');
-  const [durationHours, setDurationHours] = useState(1);
-  const [eventName, setEventName] = useState('');
-  const [eventDescription, setEventDescription] = useState('');
-  const [organizerContact, setOrganizerContact] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState(null);
-  const [isAgreed, setIsAgreed] = useState(false);
-  const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
-  const [suggestedSlots, setSuggestedSlots] = useState([]);
+  if (error) {
+    console.error("Ошибка получения бронирований:", error.message);
+    return [];
+  }
+
+  const occupiedIntervals = bookings.map((b) => {
+    const start = DateTime.fromFormat(b.start_time, "HH:mm:ss", { zone: "Asia/Almaty" })
+      .set({ year: luxonDate.year, month: luxonDate.month, day: luxonDate.day });
+    const end = DateTime.fromFormat(b.end_time, "HH:mm:ss", { zone: "Asia/Almaty" })
+      .set({ year: luxonDate.year, month: luxonDate.month, day: luxonDate.day });
+    return Interval.fromDateTimes(start, end);
+  });
+
+  const availableSlots = [];
+  for (let hour = 10; hour <= 22 - durationHours; hour++) {
+    const slotStart = luxonDate.set({ hour, minute: 0 });
+    const slotEnd = slotStart.plus({ hours: durationHours });
+    const slotInterval = Interval.fromDateTimes(slotStart, slotEnd);
+
+    const isNotPast = luxonDate.toISODate() !== now.toISODate() || slotStart > now;
+    const isFree = !occupiedIntervals.some((o) => slotInterval.overlaps(o));
+
+    availableSlots.push({
+      time: slotStart.toFormat("HH:mm"),
+      endTime: slotEnd.toFormat("HH:mm"),
+      isAvailable: isFree && isNotPast
+    });
+  }
+
+  return availableSlots;
+}
+
+// Получение дат, которые полностью забронированы
+async function fetchCalendarHighlights(selectedRoom, durationHours) {
+  const today = DateTime.now().setZone("Asia/Almaty").startOf("day");
+  
+  // Получаем бронирования только на будущие даты
+  const { data: bookings, error } = await supabase
+    .from("bookings")
+    .select("booking_date")
+    .eq("selected_room", selectedRoom)
+    .gte("booking_date", today.toISODate()) // Используем >= сегодня
+    .lte("booking_date", today.plus({ months: 3 }).toISODate())
+    .in("status", ["confirmed", "pending"]);
+
+  if (error) {
+    console.error("Ошибка при загрузке календаря:", error.message);
+    return [];
+  }
+
+  const datesWithBookings = Array.from(new Set(bookings.map((b) => b.booking_date)));
+
+  const slotsResults = await Promise.all(
+    datesWithBookings.map((dateString) => {
+      return getAvailableSlots(new Date(dateString), selectedRoom, durationHours);
+    })
+  );
+
+  return datesWithBookings.filter((dateString, i) => {
+    const slots = slotsResults[i];
+    return slots.length > 0 && slots.every((slot) => !slot.isAvailable);
+  });
+}
+
+export default function BookingModal({ roomType, durationHours, onClose }) {
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [availableSlots, setAvailableSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
-  
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    organizer_name: "",
+    phone_number: "",
+    num_people: 1,
+    event_name: "",
+    event_description: "",
+    comments: ""
+  });
 
-  const maxBookingDurationHours = 3;
-  const bufferTimeHours = 1; 
-  
-  const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
+  // Загрузка календаря с использованием useCallback
+  const refreshCalendar = useCallback(async () => {
+    const fullyBooked = await fetchCalendarHighlights(roomType, durationHours);
+    setFullyBookedDates(fullyBooked);
+  }, [roomType, durationHours]);
 
-  const getRoomName = useCallback((roomKey) => {  
-    switch (roomKey) {
-      case 'second_hall':
-        return 'Второй зал внутри';
-      case 'summer_terrace':
-        return 'Летняя терраса';
-      default:
-        return 'Неизвестный зал';
-    }
-  }, []);
-  
-  const getAvailableSlots = useCallback(async (date, room, duration) => {
-    if (!date || !room || !duration) return [];
-
-    const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty');
-    const dateString = luxonDate.toISODate();
-
-    setLoading(true);
-    try {
-      const { data: bookings, error: fetchError } = await supabase
-        .from('bookings')
-        .select('start_time, end_time, status')
-        .eq('booking_date', dateString)
-        .eq('selected_room', room)
-        .neq('status', 'canceled');
-      
-      if (fetchError) {
-        console.error('Ошибка при получении существующих бронирований:', fetchError.message);
-        // Вместо возврата пустых данных, выбрасываем ошибку для обработки
-        throw fetchError;
-      }
-      
-      const allSlots = [];
-      const cafeOpenHour = 8;
-      const cafeCloseHour = 22;
-      const intervalMinutes = 30;
-      const durationMinutes = duration * 60;
-      const bufferMinutes = bufferTimeHours * 60;
-      
-      const now = DateTime.local().setZone('Asia/Almaty');
-
-      const occupiedIntervals = [];
-      for (const booking of bookings) {
-        const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`).setZone('Asia/Almaty');
-        const bookingEndTime = DateTime.fromISO(`${dateString}T${booking.end_time}`).setZone('Asia/Almaty');
-        
-        const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
-        const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
-        occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
-      }
-
-      let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
-
-      while (currentStart <= lastPossibleSlotStart) {
-        const currentEnd = currentStart.plus({ minutes: durationMinutes });
-        const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
-        const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
-        
-        allSlots.push({
-            start: currentStart.toFormat('HH:mm'),
-            end: currentEnd.toFormat('HH:mm'),
-            isAvailable: isAvailable
-        });
-        
-        currentStart = currentStart.plus({ minutes: intervalMinutes });
-      }
-      
-      return allSlots;
-    } catch(err) {
-      setError(`Ошибка при загрузке слотов: ${err.message}`);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  }, [bufferTimeHours]);
-  
-  const sendBooking = async (statusToSet = 'pending') => {
-    setLoading(true);
-    setMessage('');
-    setError(null);
-  
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
-    if (authError || !user) {
-      setError('Пожалуйста, войдите, чтобы забронировать.');
-      setLoading(false);
-      return;
-    }
-      
-    if (!isAgreed) {
-        setError('Пожалуйста, примите правила бронирования.');
-        setLoading(false);
-        return;
-    }
-  
-    if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
-      setError('Пожалуйста, заполните все обязательные поля и выберите временной слот.');
-      setLoading(false);
-      return;
-    }
-  
-    try {
-      const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
-          body: {
-              organizer_name: userName,
-              booking_date: DateTime.fromJSDate(bookingDate).toISODate(),
-              start_time: startTime,
-              end_time: endTime,
-              num_people: numberOfPeople,
-              comments: comment,
-              user_id: user.id,
-              selected_room: selectedRoom,
-              event_name: eventName,
-              event_description: eventDescription,
-              organizer_contact: organizerContact,
-              phone_number: phoneNumber,
-              status_to_set: statusToSet, 
-          },
-          method: 'POST',
-      });
-  
-      if (invokeError) {
-          console.error('Ошибка вызова Edge Function:', invokeError);
-          setError('Произошла ошибка при отправке брони. Пожалуйста, попробуйте снова.');
-          return;
-      }
-      
-      if (bookingResult.error) {
-          setError(bookingResult.error);
-          return;
-      }
-  
-      if (bookingResult.booking.status === 'pending') {
-          setMessage('Ваша бронь успешно отправлена и ожидает подтверждения!');
-      } else if (bookingResult.booking.status === 'queued') {
-          setMessage('Ваша бронь успешно добавлена в лист ожидания!');
-      }
-      setIsBookingSuccessful(true);
-      
-    } catch (err) {
-      console.error('Ошибка при отправке брони:', err.message);
-      setError(`Ошибка при отправке брони: ${err.message}. Пожалуйста, попробуйте снова.`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await sendBooking('pending');
-  };
-
-  const handleQueueBooking = async (e) => {
-    e.preventDefault();
-    await sendBooking('queued');
-  };
+  // Загрузка слотов с использованием useCallback
+  const refreshSlots = useCallback(async (date) => {
+    setLoadingSlots(true);
+    const slots = await getAvailableSlots(date, roomType, durationHours);
+    setAvailableSlots(slots);
+    setLoadingSlots(false);
+  }, [roomType, durationHours]);
 
   useEffect(() => {
-    if (isOpen) {
-      setStep(1);
-      setUserName('');
-      setBookingDate(new Date());
-      setStartTime('');
-      setEndTime('');
-      setSelectedRoom('');
-      setNumberOfPeople(1);
-      setPhoneNumber('');
-      setComment('');
-      setEventName('');
-      setEventDescription('');
-      setOrganizerContact('');
-      setMessage('');
-      setError(null);
-      setIsAgreed(false);
-      setSuggestedSlots([]);
-      setFullyBookedDates([]);
-      setDurationHours(1);
-      setIsBookingSuccessful(false);
-    }
-  }, [isOpen]);
-  
+    if (roomType) refreshCalendar();
+  }, [roomType, durationHours, refreshCalendar]); // Добавил refreshCalendar в зависимости
+
   useEffect(() => {
-    const fetchCalendarHighlights = async () => {
-      if (step === 2 && selectedRoom && durationHours) {
-        setLoading(true);
-        try {
-          const { data: allBookings, error: fetchError } = await supabase
-              .from('bookings')
-              .select('booking_date, status')
-              .eq('selected_room', selectedRoom)
-              .gte('booking_date', today.toISOString().split('T')[0]);
-          
-          if (fetchError) {
-              console.error('Ошибка при получении бронирований:', fetchError.message);
-              setError('Ошибка при загрузке данных о бронированиях.');
-              return;
-          }
+    if (roomType && selectedDate) refreshSlots(selectedDate);
+  }, [selectedDate, roomType, durationHours, refreshSlots]); // Добавил refreshSlots в зависимости
 
-          const datesWithBookings = [...new Set(allBookings.map(b => b.booking_date))];
-          const fullyBooked = [];
-          
-          for (const dateString of datesWithBookings) {
-              const tempDate = new Date(dateString);
-              const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-              if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
-                  fullyBooked.push(dateString);
-              }
-          }
-          
-          setFullyBookedDates(fullyBooked);
-        } catch(err) {
-          console.error('Ошибка в fetchCalendarHighlights:', err.message);
-          setError('Не удалось загрузить календарь бронирований.');
-        } finally {
-          setLoading(false);
-        }
+  const isFullyBooked = (date) => {
+    const iso = DateTime.fromJSDate(date).toISODate();
+    return fullyBookedDates.includes(iso);
+  };
+  
+  // Обработчик изменения полей формы
+  const handleInputChange = (e) => {
+    const { name, value, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'number' ? parseInt(value, 10) : value,
+    }));
+  };
+
+  async function handleBooking(slot) {
+    if (!formData.organizer_name || !formData.phone_number) {
+      alert("Заполните имя и телефон!");
+      return;
+    }
+
+    setBookingLoading(true);
+
+    const freshSlots = await getAvailableSlots(selectedDate, roomType, durationHours);
+    const isSlotStillAvailable = freshSlots.find((s) => s.time === slot.time && s.isAvailable);
+
+    if (!isSlotStillAvailable) {
+      alert("Этот слот уже занят. Пожалуйста, обновите страницу или выберите другой.");
+      setBookingLoading(false);
+      // Обновляем слоты, чтобы пользователь увидел изменения
+      await refreshSlots(selectedDate);
+      return;
+    }
+
+    const start = slot.time + ":00";
+    const end = slot.endTime + ":00";
+
+    const { error } = await supabase.from("bookings").insert([
+      {
+        booking_date: DateTime.fromJSDate(selectedDate).toISODate(),
+        start_time: start,
+        end_time: end,
+        selected_room: roomType,
+        status: "pending",
+        ...formData
       }
-    };
-    fetchCalendarHighlights();
-  }, [step, selectedRoom, durationHours, getAvailableSlots, today]);
+    ]);
 
-  const validateStep1 = () => {
-    setError(null);
-    if (!selectedRoom || !numberOfPeople || !durationHours) {
-        setError('Пожалуйста, заполните все обязательные поля.');
-        return false;
-    }
-    
-    const minPeople = 1;
-    if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
-        setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
-        return false;
-    }
-    
-    if (durationHours <= 0) {
-      setError('Продолжительность бронирования должна быть больше 0.');
-      return false;
-    }
-    if (durationHours > maxBookingDurationHours) {
-      setError(`Максимальное время бронирования - ${maxBookingDurationHours} часа.`);
-      return false;
-    }
-    
-    return true;
-  };
+    setBookingLoading(false);
 
-  if (!isOpen) return null;
-
-  const handleNextStep = async () => {
-    setMessage('');
-    if (!validateStep1()) {
-        return;
+    if (error) {
+      console.error("Ошибка при бронировании:", error.message);
+      alert("Ошибка при бронировании: " + error.message);
+    } else {
+      alert("Бронирование создано!");
+      // После успешного бронирования обновляем и слоты, и календарь
+      await Promise.all([
+        refreshSlots(selectedDate),
+        refreshCalendar()
+      ]);
     }
-    
-    setStep(2);
-    setLoading(true);
-    const date = new Date();
-    setBookingDate(date);
-    const slots = await getAvailableSlots(date, selectedRoom, durationHours);
-    setSuggestedSlots(slots);
-    setLoading(false);
-  };
-  
-  const handleDateChange = async (date) => {
-    setBookingDate(date);
-    setError(null);
-    setMessage('');
-    setStartTime('');
-    setEndTime('');
-    setLoading(true);
-    const slots = await getAvailableSlots(date, selectedRoom, durationHours);
-    setSuggestedSlots(slots);
-    setLoading(false);
-  };
-
-  const handleTimeSelect = (slot) => {
-    setStartTime(slot.start);
-    setEndTime(slot.end);
-    setError(null);
-    setMessage('');
-  };
-
-  const handleBackStep = () => {
-    setStep(1);
-    setError(null);
-    setSuggestedSlots([]);
-  };
-
-  const isDateDisabled = ({ date }) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (date < today) {
-      return true;
-    }
-    
-    const dateString = date.toISOString().split('T')[0];
-    return fullyBookedDates.includes(dateString);
-  };
-  
-  const tileClassName = ({ date, view }) => {
-    if (view === 'month') {
-        const dateString = date.toISOString().split('T')[0];
-        if (fullyBookedDates.includes(dateString)) {
-            return styles.fullyBooked;
-        }
-    }
-    return null;
-  };
-  
-  const formatDurationLabel = (value) => {
-    if (value < 1) return `${value * 60} минут`;
-    if (value === 1) return `1 час`;
-    return `${value} часа`;
-  };
+  }
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose} disabled={loading}>
-          &times;
+    <div className="modal">
+      <div className="modal-content">
+        <button className="close-btn" onClick={onClose}>
+          Закрыть
         </button>
-        
-        {isBookingSuccessful ? (
-          <div className={styles.successContainer}>
-            <h2 className={styles.successTitle}>Бронирование успешно отправлено!</h2>
-            <p className={styles.successText}>{message}</p>
-            <p className={styles.successSubtext}>
-              Спасибо за ваш выбор. Мы свяжемся с вами в ближайшее время.
-            </p>
-            <button className={styles.backButton} onClick={onClose}>Закрыть</button>
+        <h2>Выберите дату и время</h2>
+
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          minDate={new Date()}
+          dateFormat="dd.MM.yyyy"
+          dayClassName={(date) => (isFullyBooked(date) ? "fully-booked-day" : "")}
+          inline
+        />
+
+        <h3>Данные для бронирования</h3>
+        <input
+          type="text"
+          placeholder="Имя организатора"
+          name="organizer_name"
+          value={formData.organizer_name}
+          onChange={handleInputChange}
+        />
+        <input
+          type="text"
+          placeholder="Телефон"
+          name="phone_number"
+          value={formData.phone_number}
+          onChange={handleInputChange}
+        />
+        <input
+          type="number"
+          placeholder="Количество человек"
+          name="num_people"
+          value={formData.num_people}
+          onChange={handleInputChange}
+        />
+        <input
+          type="text"
+          placeholder="Название события"
+          name="event_name"
+          value={formData.event_name}
+          onChange={handleInputChange}
+        />
+        <textarea
+          placeholder="Описание события"
+          name="event_description"
+          value={formData.event_description}
+          onChange={handleInputChange}
+        />
+        <textarea
+          placeholder="Комментарии"
+          name="comments"
+          value={formData.comments}
+          onChange={handleInputChange}
+        />
+
+        <h3>Доступные слоты</h3>
+        {loadingSlots ? (
+          <p>Загрузка...</p>
+        ) : availableSlots.length > 0 ? (
+          <div className="slots">
+            {[...availableSlots]
+              .sort((a, b) => {
+                // Сначала доступные, потом занятые
+                if (a.isAvailable !== b.isAvailable) {
+                  return a.isAvailable ? -1 : 1;
+                }
+                return a.time.localeCompare(b.time);
+              })
+              .map((slot) => (
+                <button
+                  key={slot.time}
+                  disabled={!slot.isAvailable || bookingLoading}
+                  onClick={() => handleBooking(slot)}
+                  style={{
+                    backgroundColor: !slot.isAvailable ? "#ccc" : "white", // Установим цвет для занятых слотов
+                    cursor: !slot.isAvailable ? "not-allowed" : "pointer"
+                  }}
+                  className={!slot.isAvailable ? "disabled" : ""}
+                >
+                  {slot.isAvailable
+                    ? `${slot.time} – ${slot.endTime}`
+                    : `${slot.time} – ${slot.endTime} (Занято)`}
+                </button>
+              ))}
           </div>
         ) : (
-          <>
-            <h2>Забронировать столик</h2>
-            {error && <p className={styles.errorMessage}>{error}</p>}
-            {message && <p className={styles.successMessage}>{message}</p>}
-
-            {step === 1 && (
-              <form onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
-                <div className={styles.section}>
-                  <h3>Детали бронирования</h3>
-                  <div className={styles.formGroup}>
-                    <label htmlFor="selectedRoom">Выберите зал:</label>
-                    <div className={styles.hallSelector}>
-                      <button
-                        type="button"
-                        className={`${styles.hallButton} ${selectedRoom === 'second_hall' ? styles.active : ''}`}
-                        onClick={() => {
-                          setSelectedRoom('second_hall');
-                          setNumberOfPeople(1);
-                        }}
-                        disabled={loading}
-                      >
-                        Зал
-                      </button>
-                      <button
-                        type="button"
-                        className={`${styles.hallButton} ${selectedRoom === 'summer_terrace' ? styles.active : ''}`}
-                        onClick={() => {
-                          setSelectedRoom('summer_terrace');
-                          setNumberOfPeople(1);
-                        }}
-                        disabled={loading}
-                      >
-                        Летняя терраса
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className={styles.formGroup}>
-                    <label htmlFor="numberOfPeople">Количество человек:</label>
-                    <div className={styles.partySizeControl}>
-                      <button type="button" onClick={() => setNumberOfPeople(prev => Math.max(1, prev - 1))} disabled={loading || numberOfPeople <= 1 || !selectedRoom}>-</button>
-                      <input
-                        type="number"
-                        id="numberOfPeople"
-                        value={numberOfPeople}
-                        onChange={(e) => setNumberOfPeople(Number(e.target.value))}
-                        min="1"
-                        max={maxPeople}
-                        required
-                        disabled={loading || !selectedRoom}
-                      />
-                      <button type="button" onClick={() => setNumberOfPeople(prev => Math.min(maxPeople, prev + 1))} disabled={loading || numberOfPeople >= maxPeople || !selectedRoom}>+</button>
-                    </div>
-                    {selectedRoom && (
-                      <p className={styles.maxPeopleInfo}>Максимум: {maxPeople} человек</p>
-                    )}
-                  </div>
-                  
-                  <div className={styles.formGroup}>
-                    <label htmlFor="durationHours">Продолжительность:</label>
-                    <div className={styles.durationControl}>
-                        <input
-                            type="range"
-                            id="durationHours"
-                            value={durationHours}
-                            onChange={(e) => setDurationHours(Number(e.target.value))}
-                            min="0.5"
-                            max={maxBookingDurationHours}
-                            step="0.5"
-                            required
-                            disabled={loading}
-                        />
-                        <div className={styles.durationLabel}>
-                            {formatDurationLabel(durationHours)}
-                        </div>
-                    </div>
-                  </div>
-                </div>
-
-                <button type="submit" className={styles.submitButton} disabled={loading || !selectedRoom}>
-                  Далее
-                </button>
-              </form>
-            )}
-
-            {step === 2 && (
-              <>
-                <button onClick={handleBackStep} className={styles.backButton} disabled={loading}>
-                    ← Назад
-                </button>
-
-                <div className={styles.bookingStep2}>
-                    <div className={styles.calendarContainer}>
-                        <Calendar
-                          minDate={today}
-                            onChange={handleDateChange}
-                            value={bookingDate}
-                            tileDisabled={isDateDisabled}
-                            tileClassName={tileClassName}
-                        />
-                    </div>
-                    
-                    {loading && <p className={styles.loadingMessage}>Загрузка свободных времен...</p>}
-                    
-                    {suggestedSlots.length > 0 && !loading ? (
-                      <div className={styles.availableSlotsContainer}>
-                        <p className={styles.slotsHeader}>Слоты на {bookingDate?.toLocaleDateString()}</p>
-                        <div className={styles.suggestedSlotsScroll}>
-                          <div className={styles.suggestedSlotsContainer}>
-                            {suggestedSlots.map((slot, index) => (
-                              <button 
-                                key={index} 
-                                type="button"
-                                className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${!slot.isAvailable ? styles.slotUnavailable : ''}`}
-                                onClick={() => slot.isAvailable && handleTimeSelect(slot)}
-                                disabled={!slot.isAvailable}
-                              >
-                                {slot.start} - {slot.end}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      !loading && <p className={styles.noSlotsMessage}>На выбранную дату нет свободных слотов. Попробуйте выбрать другую дату или изменить продолжительность бронирования.</p>
-                    )}
-                </div>
-
-                {startTime && (
-                    <form onSubmit={handleSubmit}>
-                        <div className={styles.section}>
-                          <h3>Ваши контактные данные</h3>
-                          <p className={styles.sectionDescription}>Для связи по вопросам бронирования.</p>
-                          <div className={styles.formGroup}>
-                            <label htmlFor="userName">Ваше имя (или название организации):</label>
-                            <input
-                                type="text"
-                                id="userName"
-                                value={userName}
-                                onChange={(e) => setUserName(e.target.value)}
-                                required
-                                disabled={loading}
-                                placeholder="Введите ваше имя или название организации"
-                            />
-                          </div>
-                          <div className={styles.formGroup}>
-                            <label htmlFor="phoneNumber">Контактный номер телефона:</label>
-                            <IMaskInput
-                                mask="+{7}(000)000-00-00"
-                                definitions={{
-                                '#': /[0-9]/,
-                                }}
-                                value={phoneNumber}
-                                onAccept={(value) => setPhoneNumber(value)}
-                                placeholder="+7(___)___-__-__"
-                                required
-                                disabled={loading}
-                                className={styles.input}
-                            />
-                          </div>
-                        </div>
-
-                        <div className={styles.section}>
-                          <h3>Информация о событии <small>(необязательно)</small></h3>
-                          <p className={styles.sectionDescription}>Эти данные будут использованы для анонса в наших соцсетях.</p>
-                          <div className={styles.formGroup}>
-                            <label htmlFor="eventName">Название события:</label>
-                            <input
-                                type="text"
-                                id="eventName"
-                                value={eventName}
-                                onChange={(e) => setEventName(e.target.value)}
-                                disabled={loading}
-                                placeholder="Например: Мастер-класс по рисованию"
-                            />
-                          </div>
-
-                          <div className={styles.formGroup}>
-                            <label htmlFor="eventDescription">Описание события:</label>
-                            <textarea
-                                id="eventDescription"
-                                rows="3"
-                                value={eventDescription}
-                                onChange={(e) => setEventDescription(e.target.value)}
-                                disabled={loading}
-                                placeholder="Расскажите о вашем мероприятии, что будет происходить."
-                            ></textarea>
-                          </div>
-
-                          <div className={styles.formGroup}>
-                            <label htmlFor="organizerContact">Контакт для связи с организацией:</label>
-                            <input
-                                type="text"
-                                id="organizerContact"
-                                value={organizerContact}
-                                onChange={(e) => setOrganizerContact(e.target.value)}
-                                disabled={loading}
-                                placeholder="Например: @наш_инстаграм или +77001234567"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className={styles.formGroup}>
-                          <label htmlFor="comment">Комментарий <small>(для администрации, необязательно)</small>:</label>
-                          <textarea
-                              id="comment"
-                              rows="3"
-                              value={comment}
-                              onChange={(e) => setComment(e.target.value)}
-                              disabled={loading}
-                          ></textarea>
-                        </div>
-
-                        <div className={`${styles.formGroup} ${styles.agreementCheckbox}`}>
-                        <input
-                            type="checkbox"
-                            id="agreement"
-                            checked={isAgreed}
-                            onChange={(e) => setIsAgreed(e.target.checked)}
-                            disabled={loading}
-                        />
-                        <label htmlFor="agreement" className={styles.agreementLabel}>
-                            Я ознакомился с <a href="/documentsPdf/rules_compressed.pdf" target="_blank" rel="noopener noreferrer">правилами</a>
-                        </label>
-                        </div>
-                        
-                        <button type="submit" className={styles.submitButton} disabled={!isAgreed || loading}>
-                            {loading ? 'Отправка...' : 'Подтвердить бронирование'}
-                        </button>
-                    </form>
-                )}
-              </>
-            )}
-          </>
+          <p>Нет доступных слотов</p>
         )}
       </div>
     </div>
   );
-};
-
-export default BookingModal;
+}
