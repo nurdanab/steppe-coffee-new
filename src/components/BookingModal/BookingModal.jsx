@@ -50,7 +50,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   }, []);
   
-  // Эта функция проверяет доступность слотов, учитывая подтвержденные и ожидающие брони
   const getAvailableSlots = useCallback(async (date, room, duration) => {
     if (!date || !room || !duration) return [];
 
@@ -105,6 +104,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         }
         
         // Проверяем, пересекается ли предлагаемый слот с любым из занятых интервалов (включая буферное время)
+        // Логика уже исключает брони со статусом 'pending' и 'confirmed' из доступных слотов
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
         
         allSlots.push({
@@ -262,8 +262,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     };
     fetchCalendarHighlights();
   }, [step, selectedRoom, durationHours, getAvailableSlots, today]);
-  
-  // Добавлена вспомогательная функция для валидации первого шага
+
+  // Вспомогательная функция для валидации первого шага
   const validateStep1 = () => {
     setError(null);
     if (!selectedRoom || !numberOfPeople || !durationHours) {
