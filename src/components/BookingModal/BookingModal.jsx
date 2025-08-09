@@ -612,9 +612,9 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { DateTime, Interval } from "luxon";
-import { supabase } from "../supabaseClient"; // путь к Supabase клиенту
+import { supabase } from "../supabaseClient"; // импорт твоего клиента Supabase
 
-// Получить список доступных слотов
+// Получение доступных слотов
 async function getAvailableSlots(date, roomType, durationHours) {
   const luxonDate = DateTime.fromJSDate(date).setZone("Asia/Almaty");
   const now = DateTime.now().setZone("Asia/Almaty");
@@ -659,7 +659,7 @@ async function getAvailableSlots(date, roomType, durationHours) {
   return availableSlots;
 }
 
-// Получить даты, которые полностью забронированы
+// Получение дат, которые полностью забронированы
 async function fetchCalendarHighlights(selectedRoom, durationHours) {
   const today = DateTime.now().setZone("Asia/Almaty").startOf("day");
 
@@ -684,12 +684,10 @@ async function fetchCalendarHighlights(selectedRoom, durationHours) {
     })
   );
 
-  const fullyBooked = datesWithBookings.filter((dateString, i) => {
+  return datesWithBookings.filter((dateString, i) => {
     const slots = slotsResults[i];
     return slots.length > 0 && slots.every((slot) => !slot.isAvailable);
   });
-
-  return fullyBooked;
 }
 
 export default function BookingModal({ roomType, durationHours, onClose }) {
@@ -707,11 +705,13 @@ export default function BookingModal({ roomType, durationHours, onClose }) {
     comments: ""
   });
 
+  // Загрузка календаря
   async function refreshCalendar() {
     const fullyBooked = await fetchCalendarHighlights(roomType, durationHours);
     setFullyBookedDates(fullyBooked);
   }
 
+  // Загрузка слотов
   async function refreshSlots(date) {
     setLoadingSlots(true);
     const slots = await getAvailableSlots(date, roomType, durationHours);
@@ -740,6 +740,7 @@ export default function BookingModal({ roomType, durationHours, onClose }) {
 
     setBookingLoading(true);
 
+    // Проверка актуальности слота
     const freshSlots = await getAvailableSlots(selectedDate, roomType, durationHours);
     if (!freshSlots.find((s) => s.time === slot.time && s.isAvailable)) {
       alert("Этот слот уже занят.");
@@ -828,19 +829,28 @@ export default function BookingModal({ roomType, durationHours, onClose }) {
           <p>Загрузка...</p>
         ) : availableSlots.length > 0 ? (
           <div className="slots">
-            {availableSlots.map((slot) => (
-              <button
-                key={slot.time}
-                disabled={!slot.isAvailable || bookingLoading}
-                onClick={() => handleBooking(slot)}
-                style={{
-                  backgroundColor: !slot.isAvailable ? "#ccc" : "",
-                  cursor: !slot.isAvailable ? "not-allowed" : "pointer"
-                }}
-              >
-                {slot.isAvailable ? `${slot.time} – ${slot.endTime}` : "Занято"}
-              </button>
-            ))}
+            {[...availableSlots]
+              .sort((a, b) => {
+                if (a.isAvailable === b.isAvailable) {
+                  return a.time.localeCompare(b.time);
+                }
+                return a.isAvailable ? -1 : 1;
+              })
+              .map((slot) => (
+                <button
+                  key={slot.time}
+                  disabled={!slot.isAvailable || bookingLoading}
+                  onClick={() => handleBooking(slot)}
+                  style={{
+                    backgroundColor: !slot.isAvailable ? "#ccc" : "",
+                    cursor: !slot.isAvailable ? "not-allowed" : "pointer"
+                  }}
+                >
+                  {slot.isAvailable
+                    ? `${slot.time} – ${slot.endTime}`
+                    : `${slot.time} – ${slot.endTime} (Занято)`}
+                </button>
+              ))}
           </div>
         ) : (
           <p>Нет доступных слотов</p>
