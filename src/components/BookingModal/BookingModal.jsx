@@ -1,5 +1,5 @@
 // src/components/BookingModal/BookingModal.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react-imask';
 import styles from './BookingModal.module.scss';
 import { supabase } from '../../supabaseClient';
 import { IMaskInput } from 'react-imask';
@@ -31,8 +31,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [suggestedSlots, setSuggestedSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
   
-  // Используем Luxon для текущей даты, чтобы избежать проблем с часовым поясом
-  const today = DateTime.local().setZone('Asia/Almaty').startOf('day');
+  // Создаём стандартный объект Date для Calendar
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const maxBookingDurationHours = 3;
   const bufferTimeHours = 1; 
@@ -51,10 +52,11 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   }, []);
   
   const getAvailableSlots = useCallback(async (date, room, duration) => {
-    // Вносим правки: теперь date приходит как объект Luxon
     if (!date || !room || !duration) return [];
 
-    const dateString = date.toISODate();
+    // Конвертируем стандартный Date в Luxon DateTime для вычислений
+    const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty');
+    const dateString = luxonDate.toISODate();
 
     setLoading(true);
     try {
@@ -77,7 +79,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const durationMinutes = duration * 60;
       const bufferMinutes = bufferTimeHours * 60;
       
-      const dateObj = date.startOf('day'); // Используем переданную дату
       const now = DateTime.local().setZone('Asia/Almaty');
 
       const occupiedIntervals = [];
@@ -90,15 +91,14 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
       }
 
-      let currentStart = dateObj.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-      const lastPossibleSlotStart = dateObj.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
+      let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
+      const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
 
       while (currentStart <= lastPossibleSlotStart) {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
         // Проверяем, не пересекается ли слот с занятыми интервалами и не является ли он в прошлом
-        // Сравниваем currentStart с now
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
         
         allSlots.push({
@@ -145,8 +145,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
           body: {
               organizer_name: userName,
-              // Отправляем дату в формате ISO, как и раньше
-              booking_date: bookingDate.toISODate(),
+              booking_date: DateTime.fromJSDate(bookingDate).toISODate(),
               start_time: startTime,
               end_time: endTime,
               num_people: numberOfPeople,
@@ -203,7 +202,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setStep(1);
       setUserName('');
       // Устанавливаем текущую дату в состоянии
-      setBookingDate(DateTime.local().setZone('Asia/Almaty'));
+      setBookingDate(new Date());
       setStartTime('');
       setEndTime('');
       setSelectedRoom('');
@@ -231,7 +230,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             .from('bookings')
             .select('booking_date, status')
             .eq('selected_room', selectedRoom)
-            .gte('booking_date', today.toISODate());
+            .gte('booking_date', today.toISOString().split('T')[0]);
         
         if (error) {
             console.error('Ошибка при получении бронирований:', error.message);
@@ -244,7 +243,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const fullyBooked = [];
         
         for (const dateString of datesWithBookings) {
-            const tempDate = DateTime.fromISO(dateString).setZone('Asia/Almaty');
+            const tempDate = new Date(dateString);
             const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
             if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
                 fullyBooked.push(dateString);
@@ -293,11 +292,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
     
     setStep(2);
-    // Отправляем текущую дату Luxon
-    const currentLuxonDate = DateTime.local().setZone('Asia/Almaty');
-    setBookingDate(currentLuxonDate.toJSDate());
+    const today = new Date();
+    setBookingDate(today);
     setLoading(true);
-    const slots = await getAvailableSlots(currentLuxonDate, selectedRoom, durationHours);
+    const slots = await getAvailableSlots(today, selectedRoom, durationHours);
     setSuggestedSlots(slots);
     setLoading(false);
   };
@@ -309,9 +307,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setStartTime('');
     setEndTime('');
     setLoading(true);
-    // Преобразуем объект Date в Luxon для единообразия
-    const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty');
-    const slots = await getAvailableSlots(luxonDate, selectedRoom, durationHours);
+    const slots = await getAvailableSlots(date, selectedRoom, durationHours);
     setSuggestedSlots(slots);
     setLoading(false);
   };
@@ -330,20 +326,21 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   };
 
   const isDateDisabled = ({ date }) => {
-    // Вносим правки: преобразуем `date` в Luxon и сравниваем с `today` Luxon
-    const luxonDate = DateTime.fromJSDate(date).setZone('Asia/Almaty').startOf('day');
-    
-    if (luxonDate < today) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Сравниваем стандартные объекты Date
+    if (date < today) {
       return true;
     }
     
-    const dateString = luxonDate.toISODate();
+    const dateString = date.toISOString().split('T')[0];
     return fullyBookedDates.includes(dateString);
   };
   
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
-        const dateString = DateTime.fromJSDate(date).setZone('Asia/Almaty').toISODate();
+        const dateString = date.toISOString().split('T')[0];
         if (fullyBookedDates.includes(dateString)) {
             return styles.fullyBooked;
         }
@@ -468,7 +465,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                 <div className={styles.bookingStep2}>
                     <div className={styles.calendarContainer}>
                         <Calendar
-                          minDate={today.toJSDate()}
+                          minDate={today}
                             onChange={handleDateChange}
                             value={bookingDate}
                             tileDisabled={isDateDisabled}
@@ -480,7 +477,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
                     
                     {suggestedSlots.length > 0 && !loading ? (
                       <div className={styles.availableSlotsContainer}>
-                        <p className={styles.slotsHeader}>Слоты на {DateTime.fromJSDate(bookingDate).toFormat('dd.MM.yyyy')}</p>
+                        <p className={styles.slotsHeader}>Слоты на {bookingDate?.toLocaleDateString()}</p>
                         <div className={styles.suggestedSlotsScroll}>
                           <div className={styles.suggestedSlotsContainer}>
                             {suggestedSlots.map((slot, index) => (
