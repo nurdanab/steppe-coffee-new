@@ -35,6 +35,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
   const [pendingDates, setPendingDates] = useState([]);
   const [isSlotPending, setIsSlotPending] = useState(false);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const maxBookingDurationHours = 3;
   // 💡 Теперь буферное время - 1 час
@@ -261,7 +263,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         
         for (const dateString of datesWithBookings) {
             const tempDate = new Date(dateString);
-            // const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
             const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
 if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
     fullyBooked.push(dateString);
@@ -510,9 +511,10 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
                 <div className={styles.bookingStep2}>
                     <div className={styles.calendarContainer}>
                         <Calendar
+                          minDate={today}
                             onChange={handleDateChange}
                             value={bookingDate}
-                            minDate={new Date()}
+                
                             tileDisabled={isDateDisabled}
                             tileClassName={tileClassName}
                         />
