@@ -615,7 +615,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { DateTime, Interval } from "luxon";
-import { supabase } from "../supabaseClient"; // импорт твоего клиента Supabase
+import { supabase } from "../../supabaseClient"; // импорт твоего клиента Supabase
 
 // Получение доступных слотов
 async function getAvailableSlots(date, roomType, durationHours) {
