@@ -9,8 +9,6 @@ import 'react-calendar/dist/Calendar.css';
 
 import { DateTime, Interval } from 'luxon';
 
-const getTodayDateString = () => new Date().toISOString().split('T')[0];
-
 const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [step, setStep] = useState(1);
   const [bookingDate, setBookingDate] = useState(null);
@@ -30,16 +28,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [error, setError] = useState(null);
   const [isAgreed, setIsAgreed] = useState(false);
   const [isBookingSuccessful, setIsBookingSuccessful] = useState(false);
-  const [conflict, setConflict] = useState(null);
   const [suggestedSlots, setSuggestedSlots] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
-  const [pendingDates, setPendingDates] = useState([]);
-  const [isSlotPending, setIsSlotPending] = useState(false);
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const maxBookingDurationHours = 3;
-  // 💡 Теперь буферное время - 1 час
   const bufferTimeHours = 1; 
   
   const maxPeople = selectedRoom === 'second_hall' ? 20 : selectedRoom === 'summer_terrace' ? 10 : 1;
@@ -84,8 +79,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const dateObj = DateTime.fromJSDate(date).setZone('Asia/Almaty');
       const now = DateTime.local().setZone('Asia/Almaty');
 
-      // 💡 Этот блок кода был пропущен в твоей версии.
-      // Он создает интервалы для всех существующих бронирований.
       const occupiedIntervals = [];
       for (const booking of bookings) {
         const bookingStartTime = DateTime.fromISO(`${dateString}T${booking.start_time}`).setZone('Asia/Almaty');
@@ -103,7 +96,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const currentEnd = currentStart.plus({ minutes: durationMinutes });
         const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-        // Проверка на прошедшие слоты только для сегодняшнего дня
         if (dateObj.hasSame(now, 'day') && currentEnd <= now) {
             currentStart = currentStart.plus({ minutes: intervalMinutes });
             continue;
@@ -130,7 +122,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     setLoading(true);
     setMessage('');
     setError(null);
-    setConflict(null);
   
     const { data: { user }, error: authError } = await supabase.auth.getUser();
   
@@ -147,15 +138,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   
     if (!bookingDate || !startTime || !endTime || !selectedRoom || !phoneNumber || !userName) {
-      setError('Пожалуйста, заполните все обязательные поля.');
+      setError('Пожалуйста, заполните все обязательные поля и выберите временной слот.');
       setLoading(false);
       return;
-    }
-    
-    if (startTime === '' || endTime === '') {
-        setError('Пожалуйста, выберите временной слот.');
-        setLoading(false);
-        return;
     }
   
     try {
@@ -232,10 +217,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       setMessage('');
       setError(null);
       setIsAgreed(false);
-      setConflict(null);
       setSuggestedSlots([]);
       setFullyBookedDates([]);
-      setPendingDates([]);
       setDurationHours(1);
       setIsBookingSuccessful(false);
     }
@@ -249,7 +232,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             .from('bookings')
             .select('booking_date, status')
             .eq('selected_room', selectedRoom)
-            .gte('booking_date', getTodayDateString());
+            .gte('booking_date', today.toISOString().split('T')[0]);
         
         if (error) {
             console.error('Ошибка при получении бронирований:', error.message);
@@ -264,19 +247,17 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         for (const dateString of datesWithBookings) {
             const tempDate = new Date(dateString);
             const slots = await getAvailableSlots(tempDate, selectedRoom, durationHours);
-if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
-    fullyBooked.push(dateString);
+            if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
+                fullyBooked.push(dateString);
             }
         }
         
-        // 💡 Удаляем лишний стейт для pendingDates, так как вся логика теперь в isAvailable
         setFullyBookedDates(fullyBooked);
-        setPendingDates([]);
         setLoading(false);
       }
     };
     fetchCalendarHighlights();
-  }, [step, selectedRoom, durationHours, getAvailableSlots]);
+  }, [step, selectedRoom, durationHours, getAvailableSlots, today]);
 
   if (!isOpen) return null;
 
@@ -327,8 +308,6 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
   const handleTimeSelect = (slot) => {
     setStartTime(slot.start);
     setEndTime(slot.end);
-    // 💡 Этот флаг больше не нужен, т.к. все занятые слоты просто некликабельны
-    // setIsSlotPending(slot.isPending); 
     setError(null);
     setMessage('');
   };
@@ -341,8 +320,6 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
 
   const isDateDisabled = ({ date }) => {
     const dateString = date.toISOString().split('T')[0];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     
     if (date < today) {
       return true;
@@ -357,7 +334,6 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
         if (fullyBookedDates.includes(dateString)) {
             return styles.fullyBooked;
         }
-        // 💡 Удаляем логику для pendingDates, так как она больше не нужна
     }
     return null;
   };
@@ -443,53 +419,25 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
                     )}
                   </div>
                   
-                  {/* <div className={styles.formGroup}>
-                      <label htmlFor="durationHours">Продолжительность:</label>
-                      <div className={styles.durationControl}>
-                          <input
-                              type="range"
-                              id="durationHours"
-                              value={durationHours}
-                              onChange={(e) => setDurationHours(Number(e.target.value))}
-                              min="0.5"
-                              max={maxBookingDurationHours}
-                              step="0.5"
-                              required
-                              disabled={loading}
-                          />
-                          <div className={styles.durationLabel}>
-                              {formatDurationLabel(durationHours)}
-                          </div>
-                          <div className={styles.durationSteps}>
-                              <span>30 мин</span>
-                              <span>1 ч</span>
-                              <span>1.5 ч</span>
-                              <span>2 ч</span>
-                              <span>2.5 ч</span>
-                              <span>3 ч</span>
-                          </div>
-                      </div>
-                  </div> */}
                   <div className={styles.formGroup}>
-    <label htmlFor="durationHours">Продолжительность:</label>
-    <div className={styles.durationControl}>
-        <input
-            type="range"
-            id="durationHours"
-            value={durationHours}
-            onChange={(e) => setDurationHours(Number(e.target.value))}
-            min="0.5"
-            max={maxBookingDurationHours}
-            step="0.5"
-            required
-            disabled={loading}
-        />
-        {/* Здесь мы оставляем только динамический лейбл */}
-        <div className={styles.durationLabel}>
-            {formatDurationLabel(durationHours)}
-        </div>
-    </div>
-</div>
+                    <label htmlFor="durationHours">Продолжительность:</label>
+                    <div className={styles.durationControl}>
+                        <input
+                            type="range"
+                            id="durationHours"
+                            value={durationHours}
+                            onChange={(e) => setDurationHours(Number(e.target.value))}
+                            min="0.5"
+                            max={maxBookingDurationHours}
+                            step="0.5"
+                            required
+                            disabled={loading}
+                        />
+                        <div className={styles.durationLabel}>
+                            {formatDurationLabel(durationHours)}
+                        </div>
+                    </div>
+                  </div>
                 </div>
 
                 <button type="submit" className={styles.submitButton} disabled={loading || !selectedRoom}>
@@ -510,7 +458,6 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
                           minDate={today}
                             onChange={handleDateChange}
                             value={bookingDate}
-                
                             tileDisabled={isDateDisabled}
                             tileClassName={tileClassName}
                         />
@@ -527,9 +474,7 @@ if (slots.length > 0 && slots.every(slot => !slot.isAvailable)) {
                               <button 
                                 key={index} 
                                 type="button"
-                                // 💡 Добавляем класс, чтобы визуально выделить недоступные слоты
                                 className={`${styles.suggestedSlotButton} ${startTime === slot.start && styles.selectedSlot} ${!slot.isAvailable ? styles.slotUnavailable : ''}`}
-                                // 💡 Делаем кнопку некликабельной, если isAvailable: false
                                 onClick={() => slot.isAvailable && handleTimeSelect(slot)}
                                 disabled={!slot.isAvailable}
                               >
