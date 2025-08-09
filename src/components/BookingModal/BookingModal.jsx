@@ -57,6 +57,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     setLoading(true);
     try {
+      // Запрашиваем все бронирования, кроме отменённых. 
+      // Это включает подтверждённые ('confirmed') и ожидающие ('pending').
       const { data: bookings, error: fetchError } = await supabase
         .from('bookings')
         .select('start_time, end_time, status')
@@ -101,6 +103,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             continue;
         }
         
+        // Проверяем, пересекается ли предлагаемый слот с любым из занятых интервалов (включая буферное время)
         const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
         
         allSlots.push({
@@ -258,30 +261,39 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     };
     fetchCalendarHighlights();
   }, [step, selectedRoom, durationHours, getAvailableSlots, today]);
-
-  if (!isOpen) return null;
-
-  const handleNextStep = async () => {
+  
+  // Добавлена вспомогательная функция для валидации первого шага
+  const validateStep1 = () => {
     setError(null);
-    setMessage('');
     if (!selectedRoom || !numberOfPeople || !durationHours) {
         setError('Пожалуйста, заполните все обязательные поля.');
-        return;
+        return false;
     }
     
     const minPeople = 1;
     if (numberOfPeople < minPeople || numberOfPeople > maxPeople) {
         setError(`Для выбранного зала количество человек должно быть от ${minPeople} до ${maxPeople}.`);
-        return;
+        return false;
     }
     
     if (durationHours <= 0) {
       setError('Продолжительность бронирования должна быть больше 0.');
-      return;
+      return false;
     }
     if (durationHours > maxBookingDurationHours) {
       setError(`Максимальное время бронирования - ${maxBookingDurationHours} часа.`);
-      return;
+      return false;
+    }
+    
+    return true;
+  };
+
+  if (!isOpen) return null;
+
+  const handleNextStep = async () => {
+    setMessage('');
+    if (!validateStep1()) {
+        return;
     }
     
     setStep(2);
