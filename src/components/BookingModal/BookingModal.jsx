@@ -73,8 +73,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
-      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone('Asia/Almaty');
-      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone('Asia/Almaty');
+      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
       
       const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
       const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
