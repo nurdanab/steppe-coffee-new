@@ -262,6 +262,8 @@ const AdminDashboard = ({ session }) => {
 
   return (
     <main className={styles.adminDashboard}>
+                <div className="container"> 
+
       <h1 className={styles.title}>Панель управления бронированиями</h1>
 
       <div className={styles.controls}>
@@ -367,6 +369,7 @@ const AdminDashboard = ({ session }) => {
         bookingToEdit={bookingToEdit}
         onBookingUpdated={handleBookingUpdated}
       />
+      </div>
     </main>
   );
 };

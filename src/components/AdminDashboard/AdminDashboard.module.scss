@@ -5,12 +5,10 @@
 @use '../../styles/typography' as t;
 
 .adminDashboard {
-  @include section-padding; // Используем миксин для адаптивных отступов
-  @include container-padding; // Используем миксин для адаптивных отступов
-  max-width: 1600px; // Максимальная ширина для админ-панели
+   max-width: 1600px;  
   margin: 0 auto;
-  min-height: calc(100vh - 150px); // Чтобы страница не была слишком короткой
-  background-color: $gray-light; // Легкий фон для панели
+  min-height: calc(100vh - 150px);  
+  background-color: $gray-light;  
 
   @include md-up {
     min-height: calc(100vh - 200px);
@@ -19,7 +17,7 @@
 
 .title {
   @include t.riffic-medium;
-  color: $maroon;
+  color: $black;
   text-align: center;
   margin-bottom: $spacing-xl;
 
@@ -57,7 +55,6 @@
 }
 
 .loadingMessage {
-  background-color: $light-yellow;
   color: $black;
 }
 
@@ -82,10 +79,10 @@
   box-shadow: $shadow-light;
 
   @include md-up {
-    @include flex-between; // Распределяем по горизонтали на больших экранах
+    @include flex-between; 
     flex-direction: row;
     align-items: center;
-    gap: $spacing-lg; // Увеличиваем отступы
+    gap: $spacing-lg;  
   }
 }
 
@@ -94,10 +91,10 @@
 .sortGroup {
   @include flex-column;
   gap: $spacing-xs;
-  flex-grow: 1; // Занимают доступное пространство
+  flex-grow: 1;  
 
   @include md-up {
-    flex-direction: row; // Элементы в строку
+    flex-direction: row;  
     align-items: center;
     gap: $spacing-sm;
   }
@@ -106,7 +103,7 @@
     @include t.gilroy-16;
     font-weight: 600;
     color: $black;
-    white-space: nowrap; // Предотвращает перенос текста
+    white-space: nowrap;  
   }
 
   select,
@@ -123,15 +120,15 @@
 
     &:focus {
       outline: none;
-      border-color: $maroon;
-      box-shadow: 0 0 0 2px rgba($maroon, 0.2);
+      border-color: $black;
+      box-shadow: 0 0 0 2px rgba($black, 0.2);
     }
   }
 }
 
 .sortOrderButton {
   @include button-base;
-  background-color: $orange;
+  background-color: $gray-light;
   color: $white;
   padding: $spacing-xs $spacing-sm;
   font-size: 14px;
@@ -142,7 +139,7 @@
 }
 
 .bookingsTableContainer {
-  overflow-x: auto; // Горизонтальная прокрутка для таблицы на маленьких экранах
+  overflow-x: auto; 
   border-radius: $border-radius-md;
   box-shadow: $shadow-medium;
 }
@@ -152,16 +149,16 @@
   border-collapse: collapse;
   background-color: $white;
   text-align: left;
-  min-width: 900px; // Минимальная ширина таблицы для предотвращения слишком сильного сжатия
+  min-width: 900px;
 
   thead {
-    background-color: $maroon;
+    background-color: $gray-dark;
     th {
       @include t.gilroy-14;
       color: $white;
       padding: $spacing-sm $spacing-md;
       font-weight: 700;
-      white-space: nowrap; // Заголовки не переносятся
+      white-space: nowrap;  
     }
   }
 
@@ -172,11 +169,11 @@
         border-bottom: none;
       }
       &.pending {
-        background-color: $light-yellow; // Светло-желтый для ожидающих
+        background-color: $gray-dark;  
       }
       &.cancelled {
-        background-color: color.adjust($gray-light, $lightness: 5%); // Очень светлый серый для отмененных
-        opacity: 0.7; // Слегка тусклый
+        background-color: color.adjust($gray-light, $lightness: 5%);  
+        opacity: 0.7; 
       }
       &:hover {
         background-color: $gray-light;
@@ -186,14 +183,13 @@
       @include t.gilroy-14;
       padding: $spacing-sm $spacing-md;
       color: $black;
-      vertical-align: top; // Выравнивание по верхнему краю
+      vertical-align: top; 
 
-      // Обрезание длинного текста в комментариях
-      &.commentsCell {
-        max-width: 200px; // Ограничиваем ширину колонки с комментариями
+       &.commentsCell {
+        max-width: 200px;  
         white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis; // Добавляем многоточие
+        text-overflow: ellipsis; 
       }
     }
   }
@@ -216,13 +212,12 @@
     box-shadow: 0 0 0 2px rgba($maroon, 0.2);
   }
 
-  // Стили для опций в зависимости от статуса
-  option[value="pending"] {
-    background-color: $light-yellow;
+   option[value="pending"] {
+    background-color: $gray-dark;
     color: $black;
   }
   option[value="confirmed"] {
-    background-color: #d4edda; // Зеленый из BookingModal
+    background-color: #d4edda; 
     color: #28a745;
   }
   option[value="cancelled"] {
@@ -233,7 +228,7 @@
 
 .deleteButton {
   @include button-base;
-  background-color: $maroon;
+  background-color: $gray-medium;
   color: $white;
   padding: $spacing-xs $spacing-sm;
   font-size: 14px;
@@ -250,15 +245,14 @@
     }
   }
 }
-/* ... (существующие стили) ... */
-
+ 
 .editButton {
     @include button-base;
-    background-color: $yellow; // Цвет кнопки редактирования
+    background-color: $black;  
     color: $black;
     padding: $spacing-xs $spacing-sm;
     font-size: 14px;
-    margin-right: $spacing-xs; // Небольшой отступ от кнопки "Удалить"
+    margin-right: $spacing-xs; 
   
     &:hover {
       background-color: color.adjust($yellow, $lightness: -10%);
@@ -274,8 +268,7 @@
   }
   
   .deleteButton {
-    // Этот стиль уже есть, просто для контекста
-    @include button-base;
+     @include button-base;
     background-color: $maroon;
     color: $white;
     padding: $spacing-xs $spacing-sm;

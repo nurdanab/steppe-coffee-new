@@ -13,8 +13,7 @@ const ProfilePage = ({ session, onLogout }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Эта логика будет выполняться только если пользователь авторизован,
-    // так как неавторизованные пользователи не смогут попасть на эту страницу.
+   
     if (!session) {
       return; 
     }
@@ -60,14 +59,11 @@ const ProfilePage = ({ session, onLogout }) => {
     navigate('/update-password');
   };
 
-  // Компонент ProfilePage теперь всегда будет рендериться, потому что доступ
-  // неавторизованным пользователям уже блокируется на уровне App.jsx
   if (!session) {
-    // В теории, этот код не должен выполняться, но оставим его для безопасности.
-    // Вместо пустой страницы будет заглушка с сообщением.
+    
     return (
       <main className={styles.profilePage}>
-        <div className="headerFullWidthContainer">
+        <div className="container">
           <div className={styles.notLoggedInMessage}>
             <p>Для просмотра профиля необходимо войти.</p>
           </div>
@@ -78,7 +74,7 @@ const ProfilePage = ({ session, onLogout }) => {
 
   return (
     <main className={styles.profilePage}>
-      <div className="headerFullWidthContainer">
+      <div className="container">
         <div className={styles.profileHeader}>
           <h1>Добро пожаловать!</h1>
           <div className={styles.profileActions}> 
