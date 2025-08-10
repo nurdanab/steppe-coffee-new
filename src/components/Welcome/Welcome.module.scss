@@ -35,7 +35,6 @@
 }
 
 .welcomeTitleBox {
-  // margin-left: auto;
   background-color: $white;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   text-align: right;
@@ -141,7 +140,7 @@
 .welcomeMainInfo {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
   @include lg-down {
     flex-direction: column;
@@ -151,38 +150,36 @@
   @include lg-up {
     flex-direction: row;
     justify-content: flex-start;
-    // align-items: flex-center;
+    align-items: center;
+    gap: 20px;
+  }
+  @include xl-up {
+    gap: 30px;
+  }
+  @include xxl-up {
+    gap: 40px;
+  }
+  @include xxxl-up {
     gap: 50px;
-
-    }
-    @include xl-up {
-      flex-direction: row;
-      justify-content: flex-start;
-      // align-items: flex-center;
-      gap: 100px;
-  
-      }
-    @include xxl-up {
-      flex-direction: row;
-      justify-content: flex-start;
-      // align-items: flex-center;
-      gap: 120px;
-      }
-      @include uhd-up {
-        flex-direction: row;
-        justify-content: flex-start;
-        // align-items: flex-center;
-        gap: 200px;
-    
-        }
-  
+  }
+  @include full-hd-up {
+    gap: 60px;
+  }
+  @include uhd-up {
+    gap: 80px;
+  }
+  @include uhd-4k-up {
+    gap: 100px;
+  }
 }
 
 .characterImage {
-  width: 300px;
+  width: 250px;
   height: auto;
   object-fit: contain;
   display: block;
+  flex-shrink: 0; 
+  flex-grow: 0;   
 
   opacity: 0;
   transform: translateY(20px);
@@ -194,43 +191,41 @@
   }
 
   @include xs-only { 
-    width: 150px;
+    width: 120px;
   }
   @include sm-up {
-    width: 170px;
+    width: 140px;
   }
   @include md-up {
-    width: 200px;
+    width: 160px;
   }
   @include lg-up {
-    width: 230px;
+    width: 180px;
   }
   @include xl-up {
-    width: 250px;
+    width: 200px;
   }
   @include xxl-up {
-    width: 270px;
+    width: 220px;
   }
   @include xxxl-up {
-    width: 300px;
+    width: 250px;
   }
   @include full-hd-up {
-    width: 400px;
+    width: 300px;
   }
   @include uhd-up {
-    width: 500px;
+    width: 400px;
   }
   @include uhd-4k-up {
-    width: 600px;
+    width: 500px;
   }
-
 }
 
 .textContainer {
   flex: 1;
   text-align: left;
   @include t.gilroy-18;
-  // max-width: 600px;
 
   p {
     margin-bottom: 1.2em;

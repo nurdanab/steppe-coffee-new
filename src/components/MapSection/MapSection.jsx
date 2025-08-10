@@ -52,7 +52,7 @@ const MapSection = () => {
                             <p className={styles.address}>Улица Курмангазы, 63</p>
                         </div>
                         <button className={styles.routeButton} onClick={handleRouteClick}>
-                            Проложить маршрут
+                            Построить маршрут
                         </button>
                     </div>
                 </div>

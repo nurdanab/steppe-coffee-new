@@ -30,7 +30,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
 
   const handleProfileClick = (e) => {
     if (!session) {
-      e.preventDefault(); // Prevent default link behavior
+      e.preventDefault();
       onOpenAuthModal();
     }
   };
@@ -64,8 +64,7 @@ const Header = ({ session, onOpenAuthModal, onLogout }) => {
               </nav>
 
               <div className={styles.headerActions}>
-                {/* Условный рендеринг для иконки профиля */}
-                {session ? (
+                 {session ? (
                   <Link to="/profile" className={styles.profileButton}>
                     <LazyImage src="/images/profile-icon.png" alt="Profile" className={styles.profileIcon} />
                   </Link>

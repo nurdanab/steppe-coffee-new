@@ -18,7 +18,6 @@ const FooterSection = () => {
     const emptyPageUrl = "/empty-document"; 
     
     const handleSubscribeClick = () => {
-        // Открываем ссылку WhatsApp в новой вкладке
         window.open(whatsappUrl, '_blank');
     };
 
@@ -32,17 +31,26 @@ const FooterSection = () => {
 
     return (
         <footer className={styles.footerSection}>
-            {/* Слой 0: Нижний фон с волной (footer-decor-2.jpg) */}
             <div className={styles.footerDecorBackground} />
 
-            {/* Слой 1: Основной контент верхней части - "Присоединяйтесь к сообществу" и телефон */}
             <div className="container"> 
                 <div className={styles.communityBlock}>
                     <div className={styles.communityContent}>
-                        <h2 className={styles.communityTitle}>Присоединяйтесь к 1000+ членам сообщества</h2>
+                        <h2 className={styles.communityTitle}>Присоединяйтесь к 1000+ любителям кофе!</h2>
                         <p className={styles.communityText}>
-                            Получайте доступ к эксклюзивным предложениям, бонусам и событиям,
-                            доступным только в приложении.
+                        Заходи чаще и получай больше!
+Получайте доступ к эксклюзивным предложениям, бонусам и событиям, доступным только в приложении.
+Стать участником легко - просто активируйте подписку за 3000 тенге в месяц в нашем приложении<br/>
+<ul>
+  <li>Наша подписка — это не просто приглашение в нашу семью, а сервис.</li>
+  <li>Получите личные бонусы:
+    <ul>
+      <li>3 бесплатных напитка каждый месяц</li>
+      <li>Керамическую чашку, созданную для вас</li>
+      <li>Доступ к бонусной и реферальной программам</li>
+    </ul>
+  </li>
+</ul>
                         </p>
                         <button className={styles.subscribeButton} onClick={handleSubscribeClick}>
                             Подробнее о подписке

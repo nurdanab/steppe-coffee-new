@@ -10,8 +10,37 @@
   display: block;
   justify-content: center;
   align-items: center;
-
-  // @include section-padding;
+  
+  @include xs-only { 
+    padding-bottom: 20px;
+  }
+  @include sm-up {
+    padding-bottom: 20px;
+  }
+  @include md-up {
+    padding-bottom: 30px;
+  }
+  @include lg-up {
+    padding-bottom: 40px;
+  }
+  @include xl-up {
+    padding-bottom: 50px;
+  }
+  @include xxl-up {
+    padding-bottom: 70px;
+  }
+  @include xxxl-up {
+    padding-bottom: 80px;
+  }
+  @include full-hd-up {
+    padding-bottom: 100px;
+  }
+  @include uhd-up {
+    padding-bottom: 130px;
+  }
+  @include uhd-4k-up {
+    padding-bottom: 150px;
+  }
 }
 
 .corkBoard {

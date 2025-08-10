@@ -16,23 +16,22 @@ const HeroSection = ({ onOpenBookingModal }) => {
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
             <h1 className={styles.headline}>
-              Ваше <span className={styles.highlight}>третье</span><br />пространство ждет вас
+            Твоё <span className={styles.highlight}>«четвёртое пространство»</span><br/> ждёт тебя!
             </h1>
             <p className={styles.subheadline}>
-              Пространство для общения, вдохновения и новых впечатлений.
+            Пространство для общения, творчества и вдохновения. Заходи днём за кофе, а вечером — за впечатлениями и настроением.
             </p>
             <button className={styles.ctaButton} onClick={onOpenBookingModal}>
-              Забронировать столик
+              Забронировать место
             </button>
           </div>
-          <div className={styles.heroSpacer}></div>
         </div>
-      </div>
-      <LazyImage 
+        <LazyImage 
         src="/images/hero-sgk.png"
         alt="Steppe Coffee Character"
         className={styles.character}
-      />
+      /></div>
+     
     </section>
   );
 };

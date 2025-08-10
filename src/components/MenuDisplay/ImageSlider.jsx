@@ -40,7 +40,7 @@ const ImageSlider = ({ deliverySectionRef }) => {
         style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
       >
               <div className="container">
-          <h1 className={styles.title}>МЕНЮ <br/> Steppe Cofee</h1>
+          <h1 className={styles.title}>МЕНЮ <br/> Steppe Coffee</h1>
           <button 
             onClick={handleScrollToDelivery}
             className={`${styles.button} button-primary`}

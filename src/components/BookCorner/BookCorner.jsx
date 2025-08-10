@@ -48,14 +48,13 @@ const BookCorner = () => {
   }, [currentBookIndex]);
 
 
-  const [currentCalendarDate] = useState(new Date()); // Это для недельного календаря, который у тебя уже есть
-  const todayDate = new Date(); // Сегодняшняя дата
+  const [currentCalendarDate] = useState(new Date()); 
+  const todayDate = new Date(); 
 
   const getWeekDates = (date) => {
     const today = new Date(date);
     const dayOfWeek = today.getDay();
     const startOfWeek = new Date(today);
-    // Для Monday-first week: 0 (Вс) -> 6, 1 (Пн) -> 0, ..., 6 (Сб) -> 5
     startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
 
     const weekDates = [];
@@ -86,13 +85,11 @@ const BookCorner = () => {
 
   const formattedEventDate = getFormattedCurrentDate();
 
-  // --- НОВОЕ: Состояние для событий за сегодня ---
-  const [todayEvents, setTodayEvents] = useState([]);
+   const [todayEvents, setTodayEvents] = useState([]);
   const [todayEventsLoading, setTodayEventsLoading] = useState(true);
   const [todayEventsError, setTodayEventsError] = useState(null);
 
-  // --- НОВОЕ: Функция для получения событий за сегодня ---
-  useEffect(() => {
+   useEffect(() => {
     const fetchTodayEvents = async () => {
       setTodayEventsLoading(true);
       setTodayEventsError(null);
@@ -101,14 +98,14 @@ const BookCorner = () => {
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
-        const todayFormatted = `${year}-${month}-${day}`; // Формат YYYY-MM-DD для запроса
+        const todayFormatted = `${year}-${month}-${day}`; 
 
         const { data, error } = await supabase
           .from('bookings')
-          .select('id, booking_date, start_time, end_time, status, organizer_name') // Выбираем нужные поля
-          .eq('booking_date', todayFormatted) // Фильтруем по сегодняшней дате
-          .eq('status', 'confirmed') // Только подтвержденные события (можно изменить)
-          .order('start_time', { ascending: true }); // Сортируем по времени начала
+          .select('id, booking_date, start_time, end_time, status, organizer_name') 
+          .eq('booking_date', todayFormatted)  
+          .eq('status', 'confirmed') 
+          .order('start_time', { ascending: true }); 
 
         if (error) {
           throw error;
@@ -123,7 +120,7 @@ const BookCorner = () => {
     };
 
     fetchTodayEvents();
-  }, []); // Запускаем один раз при монтировании
+  }, []); 
   const [activeTooltip, setActiveTooltip] = useState(null);
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
@@ -136,19 +133,24 @@ const BookCorner = () => {
             <div className={styles.yellowPartTextContent}>
               <h2 className={styles.yellowPartTitle}>{bookCornerData.yellowPart.title}</h2>
               <p className={styles.yellowPartDescription}>{bookCornerData.yellowPart.description}</p>
-              <button className={styles.yellowPartButton}>{bookCornerData.yellowPart.buttonText}</button>
-            </div>            </div>
+              <Link to="/events" className={styles.yellowPartButton}> 
+                {bookCornerData.yellowPart.buttonText}
+              </Link>
+            </div>            
+            </div>
 
-            <LazyImage 
+           
+          </div>
+          <LazyImage 
               src={bookCornerData.yellowPart.decorImage}
               alt="Декоративный элемент книжного уголка"
               className={styles.yellowPartDecor}
             />
-          </div>
           <div className="container"> 
 
           <div className={styles.bookShelfSection}>
-            <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>
+            <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>          </div>
+
             <div className={styles.bookShelfCarousel}>
     <button
         className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
@@ -167,8 +169,7 @@ const BookCorner = () => {
                 <p className={styles.bookTitle}>{book.title}</p>
                 <p className={styles.bookAuthor}>{book.author}</p>
                 
-                {/* Тултип теперь всегда в DOM, но скрыт по умолчанию */}
-                <div className={styles.bookTooltip}>
+                 <div className={styles.bookTooltip}>
                     <p>{book.description}</p>
                 </div>
             </div>
@@ -184,14 +185,13 @@ const BookCorner = () => {
 </div>
 
             
-          </div></div>
+          </div>
         </div>
 
         {/* Главная открытая книга */}
         <div className={styles.mainBookContainer}>
           <div 
             className={styles.mainBookImageWrapper}
-            // НОВОЕ: Обработчики для наведения на главную книгу
             onMouseEnter={() => bookCornerData.mainBook.description && setActiveTooltip('mainBook')}
             onMouseLeave={() => setActiveTooltip(null)}
           >
@@ -215,8 +215,7 @@ const BookCorner = () => {
               />
             )}
 
-            {/* НОВОЕ: Условный рендеринг тултипа для главной книги */}
-            {activeTooltip === 'mainBook' && (
+             {activeTooltip === 'mainBook' && (
               <div className={styles.bookTooltip}>
                 <p>{bookCornerData.mainBook.description}</p>
               </div>
@@ -284,7 +283,6 @@ const BookCorner = () => {
                     <p className={styles.todayEventTitle}>
                       {event.organizer_name ? `Бронь: ${event.organizer_name}` : 'Забронировано'}
                     </p>
-                    {/* Если нужно показать статус или другие детали */}
                   </div>
                 ))
               ) : (

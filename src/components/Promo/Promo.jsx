@@ -11,10 +11,10 @@ const Promo = () => {
     triggerOnce: true,
   });
 
-  const navigate = useNavigate(); // Инициализируем хук
+  const navigate = useNavigate();
 
   const handleNavigateToMenu = () => {
-    navigate('/menu'); // Функция для перехода на страницу '/menu'
+    navigate('/menu');
   };
 
   const { promoSlot1, promoSlot2 } = promotionsData;
@@ -28,7 +28,6 @@ const Promo = () => {
 
         {/* Контейнер для двух промо-карточек */}
         <div className={styles.promoCardsContainer}>
-          {/* Отображаем первую промо-карточку */}
           {promoSlot1 && (
             <div className={`${styles.promoCard} ${inView ? styles.cardVisible : ''}`}>
               {promoSlot1.imageUrl && (
@@ -41,7 +40,6 @@ const Promo = () => {
             </div>
           )}
 
-          {/* Отображаем вторую промо-карточку */}
           {promoSlot2 && (
             <div className={`${styles.promoCard} ${inView ? styles.cardVisible : ''}`}>
               {promoSlot2.imageUrl && (
@@ -56,7 +54,7 @@ const Promo = () => {
         </div>
         <button
           className={`${styles.menuButton} ${inView ? styles.buttonVisible : ''}`}
-          onClick={handleNavigateToMenu} // Добавляем обработчик клика
+          onClick={handleNavigateToMenu} 
         >
           Перейти в меню
         </button>

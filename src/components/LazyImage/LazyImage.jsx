@@ -7,7 +7,6 @@ const LazyImage = ({ src, alt, className, ...restProps }) => {
     triggerOnce: true,
   });
 
-  // Комбинируем переданный класс с классом из модуля
   const imageClassName = className ? `${styles.image} ${className}` : styles.image;
 
   return (

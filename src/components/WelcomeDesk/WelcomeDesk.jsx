@@ -6,9 +6,6 @@ import DeskItem from './DeskItem/DeskItem';
 import NewsSticker from './NewsSticker/NewsSticker';
 import SaigakSticker from './SaigakSticker/SaigakSticker';
 import LazyImage from '../LazyImage/LazyImage.jsx';
-
-
-// import deskItemsData from '../../data/deskData.json';
 import deskItemsDataWrapper from '../../data/deskData.json';
 
 const WelcomeDesk = () => {
@@ -25,7 +22,6 @@ const WelcomeDesk = () => {
     paperClip: '/images/desk/detail/paper-clip.png',
   };
   const allDeskItems = deskItemsDataWrapper.items;
-      // --- Верхние 3 полароидных фоток ---
 
   const polaroidItems = [
         // --- 3 полароида ---
@@ -119,10 +115,6 @@ const WelcomeDesk = () => {
         },
   ];
 
-  // const stickerItems = deskItemsData.filter(item => item.type === 'sticker'); 
-  // const decorationItems = deskItemsData.filter(item => item.type === 'decoration'); 
-  // const decorationWithPinItems = deskItemsData.filter(item => item.type === 'decoration_with_pin');  
-  // const saigakStickerItems = deskItemsData.filter(item => item.type === 'saigak_sticker');
   const stickerItems = allDeskItems.filter(item => item.type === 'sticker'); //
   const decorationItems = allDeskItems.filter(item => item.type === 'decoration'); //
   const decorationWithPinItems = allDeskItems.filter(item => item.type === 'decoration_with_pin'); //
@@ -136,7 +128,7 @@ const WelcomeDesk = () => {
         {/* заголовок фото */}
         <div className={styles.boardTitle}>
           <LazyImage
-            src="/images/desk/заголовок.png" 
+            src="/images/desk/заголовок.webp" 
             alt="Steppe Coffee – место, где оживает атмосфера"
             className={styles.titleImage}
           />        
@@ -258,12 +250,12 @@ const WelcomeDesk = () => {
 
         {/* Рендерим декоративные элементы С прищепками */}
         
-        {decorationWithPinItems.map(item => ( // Используем decorationWithPinItems
+        {decorationWithPinItems.map(item => (
           <React.Fragment key={item.id}>
             <LazyImage
               src={item.imageSrc}
               alt={`Декорация ${item.id}`}
-              className={styles.decorationItem} // Можно создать новый класс или использовать этот
+              className={styles.decorationItem} 
               style={{
                 position: 'absolute', 
                 top: `${item.position.top}%`,

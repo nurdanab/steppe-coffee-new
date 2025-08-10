@@ -1,3 +1,4 @@
+// src/components/Hero/HeroSection.module.scss
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
@@ -6,187 +7,197 @@
 
 .hero {
   min-height: 100vh;
-  background-image: url('/public/images/hero-back.webp');
+  background-image: url('/images/hero-back.webp');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;  
-  @include flex-between;
+  background-attachment: fixed;
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 
-  @include md-down {
-    min-height: 85vh;
-    background-attachment: scroll;
-    background-position: center top;
-  }
-  @include mobile-only {  
+
+  @include lg-down {
     min-height: 80vh;
+    flex-wrap: wrap;
+    align-content: center;
+    display: flex;
   }
-  @include xs-only {  
-    min-height: 70vh;
-  }
+
 
   &::after {
     content: '';
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -2px;  
-    height: 180px; 
-    background-image: url('/public/images/promo-back.png');
+    bottom: -2px;
+    background-image: url('/images/promo-back.png');
     background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
     z-index: 3;
 
-    @include xs-only { 
+
+    @include xs-only {
       height: 60px;
     }
     @include sm-up {
       height: 100px;
-      // bottom: -1px;
     }
     @include md-up {
       height: 160px;
-      bottom: -2px;
     }
     @include lg-up {
       height: 170px;
-      bottom: -2px;
     }
     @include xl-up {
       height: 180px;
-      bottom: -2px;
     }
     @include xxl-up {
       height: 200px;
-      bottom: -2px;
     }
     @include xxxl-up {
       height: 220px;
-      bottom: -2px;
     }
     @include full-hd-up {
       height: 250px;
-      bottom: -2px;
     }
     @include uhd-up {
       height: 350px;
-      bottom: -2px;
     }
     @include uhd-4k-up {
       height: 500px;
-      bottom: -2px;
     }
   }
 }
+
 
 .heroContent {
   display: grid;
   align-items: center;
   position: relative;
   width: 100%;
-  max-width: 1200px; 
-  margin: 0 auto;
-  // @include container-padding;
-  @include xs-only { 
-    gap: $spacing-sm;
+
+  @include lg-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 960px;
+    margin: 0 auto;
+    gap: $spacing-xxl;
+  }
+  @include xl-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 1140px;
+    margin: 0 auto;
+    gap: $spacing-xxl;
+  }
+  @include xxl-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 1320px;
+    margin: 0 auto;
+    gap: $spacing-xxl;
+  }
+  @include xxxl-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 1500px;
+    margin: 0 auto;
+    gap: $spacing-xxl;
+  }
+  @include full-hd-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 1800px;
+    margin: 0 auto;
+    gap: $spacing-xxxl;
+  }
+  @include uhd-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 2100px;
+    margin: 0 auto;
+  }
+  @include uhd-4k-up {
+    grid-template-columns: 2fr 1fr;
+    max-width: 3900px;
+    margin: 0 auto;
+  }
+}
+
+
+.heroText {
+  @include fade-in-left;
+  transition-delay: 0.2s;
+  text-align: left;
+  z-index: 2;
+
+
+  @include lg-down {
+    text-align: center;
+    order: 2;
+  }
+}
+
+
+.headline {
+  @include t.riffic-large;
+  color: $white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: $spacing-md;
+
+
+  .highlight {
+    color: $yellow;
+  }
+  @include sm-up {
+    margin-bottom: $spacing-xl;
+  }
+  @include lg-up {
+    white-space: nowrap;
+  }
+  @include uhd-up {
+    white-space: nowrap;
+  }
+  @include uhd-4k-up {
+    white-space: nowrap;
+  }
+}
+
+
+.subheadline {
+  @include t.gilroy-24;
+  color: $white;
+  font-weight: 300;
+  opacity: 1;
+  margin-bottom: $spacing-md;
+
+  @include xs-only {
   }
   @include sm-up {
   }
   @include md-up {
-    grid-template-columns: 1fr 0fr;
-    max-width: 1000px;
   }
   @include lg-up {
-    grid-template-columns: 1fr 0.0fr;
-    max-width: 1200px;
+    margin-bottom: $spacing-lg;
   }
-  @include xl-up {
-    grid-template-columns: 2fr 0.5fr;
-    max-width: 1300px;
-  }
-  @include xxl-up {
-    grid-template-columns: 2fr 0.4fr;
-    max-width: 1600px;
-  }
-  @include xxxl-up {
-    grid-template-columns: 3fr 0.4fr;
-    max-width: 1800px;
-  }
+  
   @include full-hd-up {
-    grid-template-columns: 1fr 0.3fr;
-    max-width: 2000px;
-  }
-  @include uhd-up {
-    grid-template-columns: 2fr 0.5fr;
-    max-width: 3000px;
-  }
-  @include uhd-4k-up {
-    grid-template-columns: 1fr 0.5fr;
-    gap: $spacing-xxl;
-    max-width: 3400px;
-  }
-}
- 
-.heroText {
-  @include fade-in-left;
-  transition-delay: 0.2s;
-  text-align: left; 
-
-  @include lg-down {
-    text-align: left;
-  }
-  @include md-down {  
-    order: 2;  
-  }
-}
-.headline {
-  @include t.riffic-large;
-  color: $white;
-  margin-bottom: $spacing-xxl; // По умолчанию для больших экранов
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  @include lg-down {
     margin-bottom: $spacing-xl;
   }
-  @include md-down {
-    margin-bottom: $spacing-md;
+  @include uhd-up {
+    margin-bottom: $spacing-xxl;
   }
-  @include mobile-only {
-    margin-bottom: $spacing-sm;
+  @include uhd-4k-up {
+    margin-bottom: $spacing-xxxl;
   }
 }
 
-.subheadline {
-  @include t.gilroy-18;
-  color: $white;
-  margin-bottom: $spacing-md;
-  font-weight: 300;
-  opacity: 1;
-
-  @include lg-down {
-    margin-bottom: $spacing-md;
-  }
-  @include md-down {
-    margin-bottom: $spacing-sm;
-  }
-  @include mobile-only {
-    margin-bottom: $spacing-xs;
-  }
-}
 
 .ctaButton {
   @include button-primary;
-  font-size: 14px;
-  padding: $spacing-sm $spacing-lg;
   position: relative;
   overflow: hidden;
   color: $black;
   box-shadow: $shadow-medium;
   z-index: 0;
-  display: inline-flex; 
-  
+
+
   &::before {
     content: '';
     position: absolute;
@@ -194,59 +205,42 @@
     left: 50%;
     width: 0;
     height: 0;
-    background: $white; 
+    background: $white;
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all $transition-slow;
     z-index: -1;
   }
 
+
   &:hover::before {
     width: 1000px;
     height: 1000px;
   }
 
+
   &:active {
     transform: translateY(-2px) scale(0.98);
   }
 
-  @include xs-only { 
-    font-size: 10px;
-    padding: $spacing-xs $spacing-md;
-    border-radius: $border-radius-xxxxl;
-  }
-  @include sm-up {
+
+  @include xs-only {
     font-size: 14px;
     padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-xxxxl;
+    border-radius: $border-radius-xxxl;
+  }
+  @include sm-up {
+    font-size: 16px;
+    padding: $spacing-sm $spacing-xl;
+    border-radius: $border-radius-xxxl;
   }
   @include md-up {
-    font-size: 16px;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-xxxxl;
+    font-size: 18px;
+    padding: $spacing-md $spacing-xxl;
+    border-radius: $border-radius-xxxl;
   }
   @include lg-up {
-    font-size: 18px;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-xxxxl;
-  }
-  @include xl-up {
-    font-size: 22px;
-    padding: $spacing-md $spacing-xl;
-    border-radius: $border-radius-xxxxl;
-  }
-  @include xxl-up {
-    font-size: 24px;
-    padding: $spacing-md $spacing-xl;
-    border-radius: $border-radius-xxxxl;
-  }
-  @include xxxl-up {
-    font-size: 28px;
-    padding: $spacing-lg $spacing-xxl;
-    border-radius: $border-radius-xxxxl;
-  }
-  @include full-hd-up {
-    font-size: 32px;
+    font-size: 20px;
     padding: $spacing-lg $spacing-xxl;
     border-radius: $border-radius-xxxxl;
   }
@@ -259,70 +253,56 @@
     font-size: 50px;
     padding: $spacing-xxl $spacing-xxxxl;
     border-radius: $border-radius-xxxxl;
-    
   }
 }
 
 .character {
-  position: absolute;
-  width: auto;
   height: auto;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
   animation: float 4s ease-in-out infinite;
   z-index: 1;
+  position: absolute;
 
-  @include sm-down { 
-    max-width: 120px;
-    right: 40px;
-    bottom: 40px;
-  }
-  @include sm-up {
-    max-width: 200px;
-    right: 50px;
-    bottom: 50px;
-  }
-  @include md-up {
-    max-width: 230px;
-    right: 50px;
-    bottom: 100px;
+  @include lg-down { 
+    display: none;
   }
   @include lg-up {
-    max-width: 240px;
-    right: 50px;
-    bottom: 110px;
+    max-width: 200px;
+    top: -110px;
+    right: 60px;
   }
   @include xl-up {
-    max-width: 250px;
-    right: 130px;
-    bottom: 70px;
+    max-width: 230px;
+    top: -140px;
+    right: 10px;
   }
   @include xxl-up {
     max-width: 300px;
-    right: 130px;
-    bottom: 80px;
+    top: -140px;
+    right: 80px;
   }
   @include xxxl-up {
     max-width: 400px;
-    right: 150px;
-    bottom: 90px;
+    top: -150px;
+    right: 110px;
   }
   @include full-hd-up {
-    max-width: 500px;
-    right: 150px;
-    bottom: 100px;
+    max-width: 350px;
+    top: -200px;
+    right: -30px;
   }
   @include uhd-up {
-    max-width: 600px;
-    right: 150px;
-    bottom: 120px;
+    max-width: 450px;
+    top: -270px;
+    right: -90px;
   }
   @include uhd-4k-up {
     max-width: 800px;
-    right: 200px;
-    bottom: 170px;
+    top: -400px;
+    right: -100px;
   }
-  
 }
+
 
 .hero.visible {
   .heroText {
