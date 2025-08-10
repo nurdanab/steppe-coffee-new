@@ -128,14 +128,11 @@
 
 .sortOrderButton {
   @include button-base;
-  background-color: $gray-light;
+  background-color: $yellow;
   color: $white;
   padding: $spacing-xs $spacing-sm;
   font-size: 14px;
   
-  &:hover {
-    background-color: color.adjust($orange, $lightness: -10%);
-  }
 }
 
 .bookingsTableContainer {
@@ -169,14 +166,14 @@
         border-bottom: none;
       }
       &.pending {
-        background-color: $gray-dark;  
+        background-color: $gray-light;  
       }
       &.cancelled {
         background-color: color.adjust($gray-light, $lightness: 5%);  
         opacity: 0.7; 
       }
       &:hover {
-        background-color: $gray-light;
+        border-color: $black;
       }
     }
     td {
@@ -228,43 +225,19 @@
 
 .deleteButton {
   @include button-base;
-  background-color: $gray-medium;
+  background-color: $maroon;
   color: $white;
   padding: $spacing-xs $spacing-sm;
   font-size: 14px;
-
-  &:hover {
-    background-color: color.adjust($maroon, $lightness: 10%);
-  }
-  &:disabled {
-    background-color: $gray-medium;
-    cursor: not-allowed;
-    &:hover {
-      transform: none;
-      box-shadow: none;
-    }
-  }
 }
  
 .editButton {
     @include button-base;
-    background-color: $black;  
+    background-color: $yellow;  
     color: $black;
     padding: $spacing-xs $spacing-sm;
     font-size: 14px;
     margin-right: $spacing-xs; 
-  
-    &:hover {
-      background-color: color.adjust($yellow, $lightness: -10%);
-    }
-    &:disabled {
-      background-color: $gray-medium;
-      cursor: not-allowed;
-      &:hover {
-        transform: none;
-        box-shadow: none;
-      }
-    }
   }
   
   .deleteButton {
@@ -273,16 +246,4 @@
     color: $white;
     padding: $spacing-xs $spacing-sm;
     font-size: 14px;
-  
-    &:hover {
-      background-color: color.adjust($maroon, $lightness: 10%);
-    }
-    &:disabled {
-      background-color: $gray-medium;
-      cursor: not-allowed;
-      &:hover {
-        transform: none;
-        box-shadow: none;
-      }
-    }
   }

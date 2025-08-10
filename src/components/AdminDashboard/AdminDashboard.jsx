@@ -97,8 +97,7 @@ const AdminDashboard = ({ session }) => {
     checkAdminAccess();
   }, [session, fetchBookings, navigate]);
   
-  // Новый блок кода для подписки на изменения в реальном времени
-  useEffect(() => {
+   useEffect(() => {
     if (isAdmin) {
       console.log("Подписываемся на изменения в таблице 'bookings'...");
       const channel = supabase.channel('realtime:public:bookings')
@@ -264,7 +263,7 @@ const AdminDashboard = ({ session }) => {
     <main className={styles.adminDashboard}>
                 <div className="container"> 
 
-      <h1 className={styles.title}>Панель управления бронированиями</h1>
+      <h1 className={styles.title}> </h1>
 
       <div className={styles.controls}>
         <div className={styles.filterGroup}>
