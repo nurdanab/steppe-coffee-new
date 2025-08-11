@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom'; 
 import styles from './BookCorner.module.scss';
 import bookCornerData from '../../data/bookCornerData.json';
 import { supabase } from '../../supabaseClient'; 
 import LazyImage from '../LazyImage/LazyImage.jsx';
+import { DateTime } from 'luxon';
 
 const BookCorner = () => {
   const { ref, inView } = useInView({
@@ -48,39 +49,36 @@ const BookCorner = () => {
   }, [currentBookIndex]);
 
 
-  const [currentCalendarDate] = useState(new Date()); 
-  const todayDate = new Date(); 
-
+  // ✨ ИСПРАВЛЕНИЕ: Используем Luxon для работы с датами в Алматы.
+  const todayAlmaty = useMemo(() => DateTime.now().setZone('Asia/Almaty'), []);
+  const [currentCalendarDate] = useState(todayAlmaty.toJSDate());
+  
   const getWeekDates = (date) => {
-    const today = new Date(date);
-    const dayOfWeek = today.getDay();
-    const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+    const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+    const dayOfWeek = luxonDate.weekday; // 1 (Пн) - 7 (Вс)
+    const startOfWeek = luxonDate.minus({ days: dayOfWeek - 1 }).startOf('day');
 
     const weekDates = [];
     for (let i = 0; i < 7; i++) {
-      const day = new Date(startOfWeek);
-      day.setDate(startOfWeek.getDate() + i);
-      weekDates.push(day);
+      weekDates.push(startOfWeek.plus({ days: i }).toJSDate());
     }
     return weekDates;
   };
 
   const weekDates = getWeekDates(currentCalendarDate);
 
-  const isSameDay = (d1, d2) =>
-    d1.getDate() === d2.getDate() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getFullYear() === d2.getFullYear();
+  const isSameDay = (d1, d2) => {
+    const luxonD1 = DateTime.fromJSDate(d1, { zone: 'Asia/Almaty' });
+    const luxonD2 = DateTime.fromJSDate(d2, { zone: 'Asia/Almaty' });
+    return luxonD1.hasSame(luxonD2, 'day');
+  };
 
   const dayNamesShort = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
   const getFormattedCurrentDate = () => {
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const year = today.getFullYear();
-    return `${day}.${month}.${year}`;
+    // ✨ ИСПРАВЛЕНИЕ: Получаем текущую дату в зоне Алматы и форматируем ее.
+    const today = DateTime.now().setZone('Asia/Almaty');
+    return today.toFormat('dd.MM.yyyy');
   };
 
   const formattedEventDate = getFormattedCurrentDate();
@@ -94,16 +92,13 @@ const BookCorner = () => {
       setTodayEventsLoading(true);
       setTodayEventsError(null);
       try {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        const todayFormatted = `${year}-${month}-${day}`; 
+        // ✨ ИСПРАВЛЕНИЕ: Получаем текущую дату в зоне Алматы и форматируем ее для запроса.
+        const todayAlmatyFormatted = DateTime.now().setZone('Asia/Almaty').toISODate();
 
         const { data, error } = await supabase
           .from('bookings')
           .select('id, booking_date, start_time, end_time, status, organizer_name') 
-          .eq('booking_date', todayFormatted)  
+          .eq('booking_date', todayAlmatyFormatted)  
           .eq('status', 'confirmed') 
           .order('start_time', { ascending: true }); 
 
@@ -121,6 +116,13 @@ const BookCorner = () => {
 
     fetchTodayEvents();
   }, []); 
+
+  // ✨ ИСПРАВЛЕНИЕ: Внутри todayEvents.map используем Luxon для корректного форматирования времени.
+  const formatTime = (timeString) => {
+    const [hours, minutes, seconds] = timeString.split(':');
+    return `${hours}:${minutes}`;
+  };
+
   const [activeTooltip, setActiveTooltip] = useState(null);
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
@@ -252,7 +254,7 @@ const BookCorner = () => {
               {/* Даты */}
               <div className={styles.calendarDates}>
                 {weekDates.map((dateObj, index) => {
-                  const isToday = isSameDay(dateObj, todayDate);
+                  const isToday = isSameDay(dateObj, todayAlmaty.toJSDate());
                   const currentDay = dateObj.getDay();
                   const isWeekend = currentDay === 0 || currentDay === 6;
 
@@ -278,7 +280,7 @@ const BookCorner = () => {
                 todayEvents.map(event => (
                   <div key={event.id} className={styles.todayEventItem}> {/* Добавим стили для этого */}
                     <p className={styles.todayEventTime}>
-                      {event.start_time.substring(0, 5)} - {event.end_time.substring(0, 5)}
+                      {formatTime(event.start_time)} - {formatTime(event.end_time)}
                     </p>
                     <p className={styles.todayEventTitle}>
                       {event.organizer_name ? `Бронь: ${event.organizer_name}` : 'Забронировано'}

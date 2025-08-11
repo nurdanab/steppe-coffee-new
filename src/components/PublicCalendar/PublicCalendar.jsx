@@ -8,6 +8,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 
 import { supabase } from '../../supabaseClient';  
 import styles from './PublicCalendar.module.scss';
+import { DateTime } from 'luxon'; // Импортируем DateTime из Luxon
 
 function PublicCalendar() {
   const [events, setEvents] = useState([]);
@@ -21,7 +22,7 @@ function PublicCalendar() {
       try {
         const { data, error } = await supabase
           .from('bookings')
-          .select('id, booking_date, start_time, end_time, selected_room, status, organizer_name, comments') // Добавил selected_room
+          .select('id, booking_date, start_time, end_time, selected_room, status, organizer_name, comments, event_name, event_description, organizer_contact')
           .eq('status', 'confirmed')
           .order('booking_date', { ascending: true })
           .order('start_time', { ascending: true });
@@ -30,21 +31,30 @@ function PublicCalendar() {
           throw error;
         }
 
-        const calendarEvents = data.map(booking => ({
-          id: booking.id,
-          title: `Занято (${booking.selected_room === 'second_hall' ? 'Второй зал' : 'Летник'}): ${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`, // Добавил название зала в заголовок события
-          start: `${booking.booking_date}T${booking.start_time}`,
-          end: `${booking.booking_date}T${booking.end_time}`,
-          backgroundColor: '#28a745', 
-          borderColor: '#28a745',
-          extendedProps: {
-            numPeople: booking.num_people,
-            organizerName: booking.organizer_name,
-            comments: booking.comments,
-            status: booking.status,
-            selectedRoom: booking.selected_room, 
-          }
-        }));
+        const calendarEvents = data.map(booking => {
+          // Используем Luxon для создания даты и времени с правильной временной зоной
+          const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
+          const endDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
+
+          return {
+            id: booking.id,
+            title: `Занято (${booking.selected_room === 'second_hall' ? 'Второй зал' : 'Летник'}): ${startDateTime.toFormat('HH:mm')} - ${endDateTime.toFormat('HH:mm')}`,
+            start: startDateTime.toISO(),
+            end: endDateTime.toISO(),
+            backgroundColor: '#28a745', 
+            borderColor: '#28a745',
+            extendedProps: {
+              numPeople: booking.num_people,
+              organizerName: booking.organizer_name,
+              comments: booking.comments,
+              status: booking.status,
+              selectedRoom: booking.selected_room,
+              eventName: booking.event_name,
+              eventDescription: booking.event_description,
+              organizerContact: booking.organizer_contact,
+            }
+          };
+        });
         setEvents(calendarEvents);
       } catch (err) {
         console.error("Не удалось загрузить события для календаря:", err);
@@ -83,13 +93,18 @@ function PublicCalendar() {
           height="auto" 
           className={styles.fc} 
           eventClick={(info) => {
-            alert(`Бронирование: ${info.event.title}\n` +
-                  `Дата: ${info.event.startStr.substring(0, 10)}\n` +
-                  `Время: ${info.event.startStr.substring(11, 16)} - ${info.event.endStr.substring(11, 16)}\n` +
-                  `Зал: ${info.event.extendedProps.selectedRoom === 'second_hall' ? 'Второй зал внутри' : 'Летняя терраса'}\n` + 
-                  `Статус: ${info.event.extendedProps.status}`);
-          }}
+            const eventProps = info.event.extendedProps;
+            const startStr = DateTime.fromISO(info.event.startStr, { zone: 'Asia/Almaty' });
+            const endStr = DateTime.fromISO(info.event.endStr, { zone: 'Asia/Almaty' });
 
+            alert(
+              `Название события: ${eventProps.eventName || 'Не указано'}\n` +
+              `Описание события: ${eventProps.eventDescription || 'Не указано'}\n` +
+              `Контакт для связи: ${eventProps.organizerContact || 'Не указано'}\n` +
+              `Дата: ${startStr.toFormat('dd.MM.yyyy')}\n` +
+              `Время: ${startStr.toFormat('HH:mm')} - ${endStr.toFormat('HH:mm')}`
+            );
+          }}
           allDaySlot={false} 
           nowIndicator={true} 
           slotLabelFormat={{
