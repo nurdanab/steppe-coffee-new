@@ -340,7 +340,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   };
 
   const isDateDisabled = ({ date }) => {
-    // 🛠️ ИСПРАВЛЕНИЕ: Сравниваем даты с помощью Luxon, чтобы избежать смещения.
     const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
     const luxonToday = DateTime.now().setZone('Asia/Almaty').startOf('day');
     if (luxonDate < luxonToday) {
@@ -353,7 +352,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
   const tileClassName = ({ date, view }) => {
     if (view === 'month') {
-      // 🛠️ ИСПРАВЛЕНИЕ: Получаем dateString, явно указывая временную зону.
       const dateString = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' }).toISODate();
       if (fullyBookedDates.includes(dateString)) {
         return styles.fullyBooked;

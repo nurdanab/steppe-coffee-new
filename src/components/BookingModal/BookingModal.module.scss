@@ -805,7 +805,7 @@
     }
 }
 .slotUnavailable {
-  background-color: #fe3939;
+  background-color: $gray-light;
   color: #8b5e5e;
   cursor: not-allowed;
   text-decoration: line-through;

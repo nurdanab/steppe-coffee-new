@@ -283,7 +283,7 @@ const BookCorner = () => {
                       {formatTime(event.start_time)} - {formatTime(event.end_time)}
                     </p>
                     <p className={styles.todayEventTitle}>
-                      {event.organizer_name ? `Бронь: ${event.organizer_name}` : 'Забронировано'}
+                      {event.organizer_name ? `На сегодня: ${event.event_name}` : 'Забронировано'}
                     </p>
                   </div>
                 ))

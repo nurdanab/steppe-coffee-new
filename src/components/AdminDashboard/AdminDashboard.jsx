@@ -320,6 +320,9 @@ const AdminDashboard = ({ session }) => {
                 <th>Зал</th>
                 <th>Человек</th>
                 <th>Организатор</th>
+                <th>Название события</th>
+                <th>Описание события</th>
+                <th>Контакты организации</th>
                 <th>Телефон</th>
                 <th>Комментарий</th>
                 <th>Статус</th>
@@ -334,6 +337,9 @@ const AdminDashboard = ({ session }) => {
                   <td>{getRoomName(booking.selected_room)}</td>
                   <td>{booking.num_people}</td>
                   <td>{booking.organizer_name}</td>
+                  <td>{booking.event_name}</td>
+                  <td>{booking.event_description}</td>
+                  <td>{booking.organizer_contact}</td>
                   <td>{booking.phone_number}</td>
                   <td>{booking.comments || 'Нет'}</td>
                   <td>
