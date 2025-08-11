@@ -51,9 +51,18 @@
   height: 100%;
   background-size: cover;
   background-position: center;
-  transition: background-image 1s ease-in-out;  
-  display: flex;
-  align-items: center;
+  /* Мы убрали старый переход и добавили новый для свойства `opacity`. 
+    Каждый контейнер с изображением теперь имеет начальную `opacity: 0`.
+    
+  */
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  
+  /* С помощью этого класса мы делаем текущее активное изображение видимым. 
+  */
+  &.activeImage {
+    opacity: 1;
+  }
 }
 
 .content {

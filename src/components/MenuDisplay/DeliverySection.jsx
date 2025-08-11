@@ -13,7 +13,6 @@ const DeliverySection = forwardRef((props, ref) => {
     <section ref={ref} className={`${styles.deliverySection} section`}>
                     <div className="container">
 
-      {/* <div className={`${styles.contentWrapper} container`}> */}
         <div className={styles.textContainer}>
           <h2 className={`${styles.heading} riffic-32`}>
             Заказывайте Steppe Coffe
@@ -33,16 +32,14 @@ const DeliverySection = forwardRef((props, ref) => {
           </a>
         </div>
         <div className={styles.decorContainer}>
-        <LazyImage
+        {/* <LazyImage
         src={decor1}
-        // alt="Wolt"
-        className={styles.decor1}
+         className={styles.decor1}
       />   
           <LazyImage
             src={decor2}
-            // alt="Wolt character"
             className={styles.decor2}
-          />
+          /> */}
         {/* </div> */}
 
 

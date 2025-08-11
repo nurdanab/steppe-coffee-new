@@ -28,38 +28,46 @@ const ImageSlider = ({ deliverySectionRef }) => {
       setCurrentImageIndex((prevIndex) => 
         (prevIndex + 1) % images.length
       );
-    }, 5000); // 5000 миллисекунд = 5 секунд
+    }, 5000); 
 
-    return () => clearInterval(interval); // Очистка интервала при размонтировании компонента
+    return () => clearInterval(interval);  
   }, []);
 
   return (
     <div className={styles.imageSlider}>
-      <div 
-        className={styles.imageContainer}
-        style={{ backgroundImage: `url(${images[currentImageIndex]})` }}
-      >
-              <div className="container">
-          <h1 className={styles.title}>МЕНЮ <br/> Steppe Coffee</h1>
-          <button 
-            onClick={handleScrollToDelivery}
-            className={`${styles.button} button-primary`}
-          >
-            Заказать онлайн
-          </button>
-        </div>
-      </div>
-      <div className={styles.dotsContainer}>
-        {images.map((_, index) => (
-          <span
-            key={index}
-            className={`${styles.dot} ${currentImageIndex === index ? styles.active : ''}`}
-            onClick={() => setCurrentImageIndex(index)}
-          ></span>
-        ))}
-    </div>    </div>
+  
+    {images.map((image, index) => (
+      <div
+        key={index}
+        className={`${styles.imageContainer} ${currentImageIndex === index ? styles.activeImage : ''}`}
+        style={{ backgroundImage: `url(${image})` }}
+      ></div>
+    ))}
 
-  );
+    <div className="container">
+    
+      <div className={styles.content}>
+        <h1 className={styles.title}>МЕНЮ <br/> Steppe Coffee</h1>
+        <button 
+          onClick={handleScrollToDelivery}
+          className={`${styles.button} button-primary`}
+        >
+          Заказать онлайн
+        </button>
+      </div>
+    </div>
+    <div className={styles.dotsContainer}>
+      {images.map((_, index) => (
+        <span
+          key={index}
+          className={`${styles.dot} ${currentImageIndex === index ? styles.active : ''}`}
+          onClick={() => setCurrentImageIndex(index)}
+        ></span>
+      ))}
+  </div>
+  </div>
+
+);
 };
 
 export default ImageSlider;

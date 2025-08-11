@@ -18,6 +18,20 @@ function MenuDisplay() {
 
     // Создаем ref для секции доставки
     const deliverySectionRef = useRef(null);
+    // 💡 Создаем новый ref для контейнера меню
+    const menuContentRef = useRef(null);
+
+    const handleCategoryClick = (category) => {
+        setActiveCategory(category);
+        // 💡 Прокручиваем страницу к контейнеру меню при клике на категорию
+        if (menuContentRef.current) {
+            menuContentRef.current.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+    };
+
 
     useEffect(() => {
         const getMenu = async () => {
@@ -86,7 +100,6 @@ function MenuDisplay() {
 
     return (
         <>
-
             <div className={styles.heroWrapper}>
                 <ImageSlider deliverySectionRef={deliverySectionRef} />
                 <div className={styles.heroContent}>
@@ -94,13 +107,14 @@ function MenuDisplay() {
             </div>               
 
             <div className="container">
-            <div className={styles.menuContentContainer}>
+            {/* 💡 Привязываем ref к контейнеру меню */}
+            <div ref={menuContentRef} className={styles.menuContentContainer}>
                 <div className={styles.menuCategories}>
                     {categoriesList.map(category => (
                         <button 
                             key={category} 
                             className={`${styles.categoryButton} ${activeCategory === category ? styles.activeCategory : ''}`}
-                            onClick={() => setActiveCategory(category)}
+                            onClick={() => handleCategoryClick(category)}
                         >
                             {category}
                         </button>
