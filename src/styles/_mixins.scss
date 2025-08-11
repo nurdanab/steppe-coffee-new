@@ -225,12 +225,6 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
   @include full-hd-up {
     padding: 0 $spacing-xxxl * 2.6;
   }
-  @include uhd-up {
-    padding: 0 $spacing-xxxl * 3.4;
-  }
-  @include uhd-4k-up {
-    padding: 0 $spacing-xxxl * 4.2;
-  }
 }
 
 // Миксины для флексбокса

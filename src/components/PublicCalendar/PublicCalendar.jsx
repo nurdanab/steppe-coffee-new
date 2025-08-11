@@ -5,10 +5,10 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-
+import EventSection from './EventSection.jsx'; // Импортируем компонент EventSection
 import { supabase } from '../../supabaseClient';  
 import styles from './PublicCalendar.module.scss';
-import { DateTime } from 'luxon'; // Импортируем DateTime из Luxon
+import { DateTime } from 'luxon';  
 
 function PublicCalendar() {
   const [events, setEvents] = useState([]);
@@ -32,8 +32,7 @@ function PublicCalendar() {
         }
 
         const calendarEvents = data.map(booking => {
-          // Используем Luxon для создания даты и времени с правильной временной зоной
-          const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
+           const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
           const endDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
 
           return {
@@ -41,8 +40,8 @@ function PublicCalendar() {
             title: `Занято (${booking.selected_room === 'second_hall' ? 'Второй зал' : 'Летник'}): ${startDateTime.toFormat('HH:mm')} - ${endDateTime.toFormat('HH:mm')}`,
             start: startDateTime.toISO(),
             end: endDateTime.toISO(),
-            backgroundColor: '#28a745', 
-            borderColor: '#28a745',
+            backgroundColor: '#FDE515', 
+            borderColor: '#ED9354',
             extendedProps: {
               numPeople: booking.num_people,
               organizerName: booking.organizer_name,
@@ -76,56 +75,60 @@ function PublicCalendar() {
 
   return (
     <div className={styles.publicCalendarWrapper}>  
-      <div className={styles.calendarContainer}> 
-        <h1 className={styles.calendarTitle}>Общее расписание бронирований</h1>
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="timeGridWeek" 
-          headerToolbar={{
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-          }}
-          events={events}
-          slotMinTime="08:00:00"
-          slotMaxTime="23:00:00"
-          locale="ru"  
-          height="auto" 
-          className={styles.fc} 
-          eventClick={(info) => {
-            const eventProps = info.event.extendedProps;
-            const startStr = DateTime.fromISO(info.event.startStr, { zone: 'Asia/Almaty' });
-            const endStr = DateTime.fromISO(info.event.endStr, { zone: 'Asia/Almaty' });
+      <div className="container"> 
+        <div className={styles.calendarContainer}> 
+          <h1 className={styles.calendarTitle}>Общее расписание бронирований</h1>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek" 
+            headerToolbar={{
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            }}
+            events={events}
+            slotMinTime="08:00:00"
+            slotMaxTime="23:00:00"
+            locale="ru"  
+            height="auto" 
+            className={styles.fc} 
+            eventClick={(info) => {
+              const eventProps = info.event.extendedProps;
+              const startStr = DateTime.fromISO(info.event.startStr, { zone: 'Asia/Almaty' });
+              const endStr = DateTime.fromISO(info.event.endStr, { zone: 'Asia/Almaty' });
 
-            alert(
-              `Название события: ${eventProps.eventName || 'Не указано'}\n` +
-              `Описание события: ${eventProps.eventDescription || 'Не указано'}\n` +
-              `Контакт для связи: ${eventProps.organizerContact || 'Не указано'}\n` +
-              `Дата: ${startStr.toFormat('dd.MM.yyyy')}\n` +
-              `Время: ${startStr.toFormat('HH:mm')} - ${endStr.toFormat('HH:mm')}`
-            );
-          }}
-          allDaySlot={false} 
-          nowIndicator={true} 
-          slotLabelFormat={{
-            hour: '2-digit',
-            minute: '2-digit',
-            omitZeroMinute: false,
-            meridiem: false
-          }}
-          eventTimeFormat={{
-            hour: '2-digit',
-            minute: '2-digit',
-            meridiem: false
-          }}
-          dayHeaderFormat={{
-            weekday: 'short',
-            day: 'numeric',
-            month: 'numeric',
-            omitZeroMinute: false
-          }}
-        />
+              alert(
+                `Название события: ${eventProps.eventName || 'Не указано'}\n` +
+                `Описание события: ${eventProps.eventDescription || 'Не указано'}\n` +
+                `Контакт для связи: ${eventProps.organizerContact || 'Не указано'}\n` +
+                `Дата: ${startStr.toFormat('dd.MM.yyyy')}\n` +
+                `Время: ${startStr.toFormat('HH:mm')} - ${endStr.toFormat('HH:mm')}`
+              );
+            }}
+            allDaySlot={false} 
+            nowIndicator={true} 
+            slotLabelFormat={{
+              hour: '2-digit',
+              minute: '2-digit',
+              omitZeroMinute: false,
+              meridiem: false
+            }}
+            eventTimeFormat={{
+              hour: '2-digit',
+              minute: '2-digit',
+              meridiem: false
+            }}
+            dayHeaderFormat={{
+              weekday: 'short',
+              day: 'numeric',
+              month: 'numeric',
+              omitZeroMinute: false
+            }}
+          />
+        </div>
       </div>
+      {/* Добавляем компонент EventSection здесь, после календаря */}
+      <EventSection />
     </div>
   );
 }

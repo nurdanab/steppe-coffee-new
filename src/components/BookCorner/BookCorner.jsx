@@ -97,7 +97,7 @@ const BookCorner = () => {
 
         const { data, error } = await supabase
           .from('bookings')
-          .select('id, booking_date, start_time, end_time, status, organizer_name') 
+          .select('id, booking_date, start_time, end_time, status, event_name') 
           .eq('booking_date', todayAlmatyFormatted)  
           .eq('status', 'confirmed') 
           .order('start_time', { ascending: true }); 
@@ -278,12 +278,12 @@ const BookCorner = () => {
                 <p className={styles.emptyEventsMessage} style={{ color: 'red' }}>{todayEventsError}</p>
               ) : todayEvents.length > 0 ? (
                 todayEvents.map(event => (
-                  <div key={event.id} className={styles.todayEventItem}> {/* Добавим стили для этого */}
+                  <div key={event.id} className={styles.todayEventItem}>  
                     <p className={styles.todayEventTime}>
                       {formatTime(event.start_time)} - {formatTime(event.end_time)}
                     </p>
                     <p className={styles.todayEventTitle}>
-                      {event.organizer_name ? `На сегодня: ${event.event_name}` : 'Забронировано'}
+                    {event.event_name || 'Забронировано'}
                     </p>
                   </div>
                 ))

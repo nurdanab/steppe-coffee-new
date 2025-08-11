@@ -6,44 +6,61 @@
 
 
 .publicCalendarWrapper {
-  @include section;
   background-color: $yellow;
-  position: relative;
-  overflow: hidden;
-  padding-top: $spacing-xl; 
-  padding-bottom: $spacing-xl; 
+    background-image: url('/images/delivery-back.webp');
+    background-repeat: repeat;
+    background-size: 800px; 
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+    z-index: 1;
+    display: flex;  
+    flex-direction: column;  
+    justify-content: center;
+    align-items: center;
+    padding-bottom: $spacing-xl; 
 
   @include xs-only { 
-
+    padding-top: 70px; 
+    padding-bottom: $spacing-md;
   }
   @include sm-up {
-   
+    padding-top: 90px; 
+
   }
   @include md-up {
+    padding-top: 100px; 
 
   }
   @include lg-up {
+    padding-top: 108px; 
+    padding-bottom: $spacing-lg;
 
   }
   @include xl-up {
-  
+    padding-top: 118px; 
+    padding-bottom: $spacing-xxl;
+
   }
   @include xxl-up {
+    padding-top: 128px; 
+    padding-bottom: $spacing-xxxl;
 
   }
   @include xxxl-up {
+    padding-top: 128px; 
+    padding-bottom: $spacing-xxxxl;
 
   }
   @include full-hd-up {
-    padding-top: $spacing-xxxxl; 
-    padding-bottom: $spacing-xl;
+    padding-top: 138px; 
+    padding-bottom: $spacing-xxxxl;
   }
 }
 
 .calendarContainer {
-  @include container-padding;
-  max-width: 1600px; 
-  margin: 0 auto; 
+  width: 100%; 
+  // margin: 0 auto; 
   background-color: $white;
   border-radius: $border-radius-xl; 
   box-shadow: $shadow-medium; 
@@ -56,6 +73,7 @@
 
   @include xl-up {
     padding: $spacing-xxl;
+    margin-bottom: $spacing-xl;
   }
 
   @include uhd-up {
@@ -80,19 +98,22 @@
 }
 
 .fc {
+  color: $yellow;
   @include t.gilroy-18;
+  background-color: $maroon !important; 
 
-  color: $gray-dark;
+  color: $yellow;
   .fc-toolbar-title {
     @include t.gilroy-24; 
     font-weight: 700; 
-    color: $black;
+    color: $yellow;
     text-align: center;
     flex-grow: 1; 
   }
 
   .fc-button {
-    @include button-base-3;  
+    @include button-primary; 
+    background-color: $maroon !important; 
     padding: $spacing-xs $spacing-md;  
     border-radius: $border-radius-md; 
     font-size: 14px;
@@ -117,8 +138,8 @@
   .fc-col-header-cell {
     background-color: $light-yellow;  
     padding: $spacing-xs 0;
-    border-bottom: 1px solid $yellow; /* Граница под шапкой */
-    text-transform: uppercase; /* Все заглавные буквы */
+    border-bottom: 1px solid $yellow;
+    text-transform: uppercase; 
 
     .fc-col-header-cell-cushion {
       color: $maroon;  
@@ -165,7 +186,7 @@
     }
 
     .fc-event-main {
-      color: $white; 
+      color: $black; 
       font-weight: 500;
     }
   }
