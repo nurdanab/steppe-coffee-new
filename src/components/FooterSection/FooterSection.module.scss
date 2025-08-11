@@ -1,3 +1,4 @@
+// FooterSection.module.scss
 @use '../../styles/variables' as *;  
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
@@ -11,81 +12,81 @@
     position: relative;  
     z-index: 0;
 
-    @include xs-only { 
-        min-height: auto; 
+    @include lg-down {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding-bottom: $spacing-lg; 
         text-align: center;
+    }
+
+    @include xs-only { 
+        padding-bottom: $spacing-lg; 
     }
     @include sm-up {
-        min-height: auto; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         padding-bottom: $spacing-xl; 
-        text-align: center;
     }
     @include md-up {
-        min-height: auto; 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         padding-bottom: $spacing-xl; 
-        text-align: center;
     }
+    
+    // Десктопная версия
     @include lg-up {
-        min-height: 900px;
-        display: block;
+        height: 900px;
         padding: 0;
         text-align: left;
     }
     @include xl-up {
-        min-height: 900px;
+        height: 900px;
     }
     @include xxl-up {
-        min-height: 1000px;
+        height: 1000px;
     }
     @include xxxl-up {
-        min-height: 1100px;
+        height: 1100px;
     }
     @include full-hd-up {
-        min-height: 1200px;
+        height: 1200px;
     }
     @include uhd-up {
-        min-height: 1400px;
+        height: 1400px;
     }
     @include uhd-4k-up {
-        min-height: 1800px;
+        height: 1800px;
     }
 }
 
 // --- Слой 0: Нижний фон с волной (footer-decor-2.png) ---
 .footerDecorBackground {
-    z-index: -2;
+    z-index: 1;
+    background-image: url('/images/footer-decor-2.png');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-position: center top;
+
     @include lg-up {
         position: absolute;
         bottom: 0; 
         left: 0;
         width: 100%;
         height: 600px; 
-        background-image: url('/images/footer-decor-2.png');  
-        background-size: cover; 
-        background-repeat: no-repeat;
-        background-position: center top; 
     }
-    @include xs-only { 
+    // Адаптивные стили для мобильной версии
+    @include lg-down {
         position: static; 
         height: 250px; 
+        order: 0; 
     }
     @include sm-up {
-        position: static; 
         height: 300px; 
     }
     @include md-up {
-        position: static; 
         height: 400px; 
+    }
+    @include xl-up {
+        height: 500px;
+    }
+    @include xxl-up {
+        height: 600px;
     }
     @include full-hd-up {
         height: 700px;
@@ -100,101 +101,122 @@
 
 // --- Слой 1: "Присоединяйтесь к сообществу" блок и телефон ---
 .communityBlock {
-    z-index: 3;
+    z-index: 1;
+    
+    // Десктопная версия (сверху, телефон справа)
     @include lg-up {
-        position: absolute;  
-        top: 0; 
+        position: absolute;
+        top: 0;
         left: 0;
         width: 100%;
-        height: auto; 
-        @include flex-between;
-        padding: $spacing-xxl $spacing-xxxl; 
-        box-sizing: border-box; 
+        height: auto;
+        @include flex-between; // Flexbox для выравнивания
+        padding-top: $spacing-xxl;
+        padding-bottom: $spacing-xxl;
+        box-sizing: border-box;
     }
-    @include xs-only {
+    
+    // Мобильная версия (блок-колонка)
+    @include lg-down {
         position: static; 
         flex-direction: column; 
-        padding: $spacing-md 0;
         order: 1;
+        padding-top: $spacing-md;
     }
     @include sm-up {
-        position: static; 
-        flex-direction: column; 
-        padding: $spacing-lg 0;
-        order: 1;
+        padding-top: $spacing-lg;
     }
     @include md-up {
-        position: static; 
-        flex-direction: column; 
-        padding: $spacing-xl 0;
-        order: 1;
+        padding-top: $spacing-xl;
     }
     @include full-hd-up {
-        padding: $spacing-xxxxl 100px;
-    }
-    @include uhd-up {
-        padding: $spacing-xxxxl 120px;
-    }
-    @include uhd-4k-up {
-        padding: $spacing-xxxxl 180px;
+        padding-top: $spacing-xxxxl;
     }
 }
 
 .communityContent {
     flex-grow: 1;  
     text-align: left;
-    @include xs-only {
+    
+    @include lg-down {
+        text-align: center;
         max-width: 100%;
         padding: 0 $spacing-xs;
     }
     @include sm-up {
-        max-width: 100%;
         padding: 0 $spacing-sm;
     }
     @include md-up {
-        max-width: 100%;
         padding: 0 $spacing-md;
     }
+
     @include lg-up {
-        max-width: 800px;
-        padding-left: $spacing-xxl;
+        max-width: 600px;
+        padding-left: 0; 
     }
     @include xl-up {
-        padding-left: $spacing-xxl;
+        max-width: 700px;
+        padding-left: 0; 
+    }
+    @include xxl-up {
+        max-width: 800px;
+        padding-left: 0; 
+    }
+    @include full-hd-up {
+        max-width: 1000px;
+        padding-left: 0; 
     }
 }
 
 .communityTitle {
-    @include t.riffic-large;
+    @include t.riffic-medium; 
     margin-bottom: $spacing-md;
 }
 
 .communityText {
-    @include t.gilroy-18;
+    @include t.gilroy-16;
     margin-bottom: $spacing-xl;
+    text-align: left; 
+    @include lg-down {
+        text-align: center; 
+    }
 }
 
 .subscribeButton {
-    @include button-primary;
+    @include button-primary; 
     border-radius: $border-radius-xxxl; 
     padding: $spacing-sm $spacing-xxl;
 }
 
 .communityImage {
     flex-shrink: 0; 
+    
+    // Стили для десктопа - позиционирование справа
+    @include lg-up {
+        position: absolute;
+        right: 250px;
+        top: 140px;
+        z-index: 1;
+        margin-top: $spacing-xxl * 2; // Регулировка отступа сверху
+    }
+
+    // Стили для мобильной версии
+    @include lg-down {
+        position: static;
+        order: 1;
+        margin-top: $spacing-md;
+    }
+    
     img {
         display: block;
         @include xs-only {
             max-width: 200px;
-            margin-top: $spacing-md;
         }
         @include sm-up {
             max-width: 250px; 
-            margin-top: $spacing-md;
         }
         @include md-up {
             max-width: 300px; 
-            margin-top: $spacing-md;
         }
         @include lg-up {
             max-width: 400px;
@@ -208,27 +230,15 @@
         @include full-hd-up {
             max-width: 550px;
         }
-        @include uhd-up {
-            max-width: 600px;
-        }
-        @include uhd-4k-up {
-            max-width: 700px;
-        }
     }
 }
 
 // --- Слой 1: Реклама приложения в нижней левой части ---
 .appPromoBlock {
     z-index: 3;
-    @include lg-up {
-        position: absolute;  
-        bottom: $spacing-xxxl;  
-        left: $spacing-xxxl; 
-        width: 400px; 
-        padding: 0;  
-        text-align: left; 
-    }
-    @include xs-only {
+    
+    
+    @include lg-down {
         position: static; 
         width: 100%;
         margin-top: $spacing-lg;
@@ -236,29 +246,43 @@
         @include flex-column;
         align-items: center;
     }
+
     @include sm-up {
-        position: static; 
-        width: 100%;
         margin-top: $spacing-xl;
-        order: 2;
-        @include flex-column;
-        align-items: center;
     }
     @include md-up {
-        position: static; 
-        width: 100%;
         margin-top: $spacing-xxl;
-        order: 2;
-        @include flex-column;
-        align-items: center;
     }
-    @include xxl-up {
-        left: $spacing-xxl;
-        width: 450px;
+    @include lg-up {
+        position: absolute;  
+        bottom: $spacing-xxxl;  
+        left: 0; 
+        width: 500px; 
+        padding-left: 0; 
+        text-align: left; 
     }
     @include xl-up {
-        left: $spacing-xl;
-        width: 400px;
+        position: absolute;  
+        bottom: $spacing-xxxl;  
+        left: 0; 
+        width: 600px; 
+        padding-left: 0; 
+        text-align: left; 
+    }@include xxl-up {
+        position: absolute;  
+        bottom: $spacing-xxxl;  
+        left: 0; 
+        width: 800px; 
+        padding-left: 0; 
+        text-align: left; 
+    }
+    @include full-hd-up {
+        position: absolute;  
+        bottom: $spacing-xxxl;  
+        left: 0; 
+        width: 1000px; 
+        padding-left: 0; 
+        text-align: left; 
     }
 }
 
@@ -268,7 +292,7 @@
 }
 
 .appPromoDescription {
-    @include t.gilroy-18;
+    @include t.gilroy-16;
     margin-bottom: $spacing-md;
 }
 
@@ -282,6 +306,7 @@
 
 .appPromoLogo {
     z-index: 3;
+    
     @include lg-up {
         position: absolute; 
         bottom: -50px; 
@@ -289,7 +314,7 @@
         width: 120px; 
         transform: rotate(20deg); 
     }
-    @include xs-only {
+    @include lg-down {
         position: static; 
         transform: none;
         margin-top: $spacing-sm;
@@ -297,18 +322,12 @@
         order: 3;
     }
     @include sm-up {
-        position: static; 
-        transform: none;
         margin-top: $spacing-md;
         width: 100px;
-        order: 3;
     }
     @include md-up {
-        position: static; 
-        transform: none;
         margin-top: $spacing-lg;
         width: 120px;
-        order: 3;
     }
     @include full-hd-up {
         width: 150px;
@@ -324,78 +343,101 @@
 
 // --- Слой 2: footer-decor-1.png в правой нижней части ---
 .footerDecorMid {
-    z-index: -1;
-    @include lg-up {
-        position: absolute;
+    z-index: 1;
+    position: absolute;
         bottom: 0; 
         right: 0; 
         width: 70%;  
-        height: 440px;  
+        height: 550px;  
         background-image: url('/images/footer-decor-1.png');
         background-size: cover; 
         background-repeat: no-repeat;
         background-position: right bottom; 
+    
+    @include xs-only { 
+        height: 230px;
+        width: 100%; 
     }
-    @include lg-down {
-        display: none;
+    @include sm-up {
+        height: 240px;
+        width: 100%; 
+    }
+    @include md-up {
+        height: 280px;
+        width: 85%; 
+    }
+    @include lg-up {
+        width: 70%;
+        height: 300px;
+    }
+    @include xl-up {
+        width: 70%;
+        height: 370px;
+    }
+    @include xxl-up {
+        height: 400px;
+    }
+    @include xxxl-up {
+        height: 500px;
+    }
+    @include full-hd-up {
+        height: 550px;
     }
 }
 
 // --- Слой 3: Основной контент футера - "Контакты" и "О нас" ---
 .mainFooterContent {
     z-index: 3;
+    
     @include lg-up {
         position: absolute;
         bottom: 0; 
         right: 0; 
-        width: 50%; 
+        width: 40%; 
         display: flex;
         justify-content: space-around; 
-        align-items: flex-end;
-        gap: $spacing-xxl;
-        padding: $spacing-xxl $spacing-xxxl; 
+        align-items: flex-start;
+        // gap: $spacing-xxl;
+        padding-top: $spacing-xxl;  
+        padding-bottom: $spacing-xxl;
         box-sizing: border-box;
     }
-    @include xs-only {
+    @include lg-down {
         position: static; 
         width: 100%;
         flex-direction: column;
         align-items: center;
-        gap: $spacing-lg;
-        padding: $spacing-xxl $spacing-xs;
+        // gap: $spacing-lg;
+        padding-top: $spacing-xxl;
         order: 4;
     }
     @include sm-up {
-        position: static; 
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-        gap: $spacing-lg;
-        padding: $spacing-xxl $spacing-sm;
-        order: 4;
+        width: 50%;
+        padding-top: $spacing-xxl;
     }
     @include md-up {
-        position: static; 
-        width: 100%;
-        flex-direction: column;
-        align-items: center;
-        gap: $spacing-lg;
-        padding: $spacing-xxl $spacing-md;
-        order: 4;
+        width: 50%;
+        padding-top: $spacing-xxl;
     }
-    @include full-hd-up {
-        padding: $spacing-xxxl 100px;
-    }
-    @include xxxl-up {
-        padding: $spacing-xxl 100px;
-    }
-    @include xxl-up {
-        padding: $spacing-xl 50px;
-        gap: $spacing-xl;
+    // @include full-hd-up {
+    //     padding-top: $spacing-xxxl;
+    // }
+    // @include xxxl-up {
+    //     padding-top: $spacing-xxl;
+    // }
+    @include lg-up {
+        width: 40%;
+        padding-top: $spacing-xxl;
+        gap: $spacing-sm;
     }
     @include xl-up {
-        width: 60%;
-        padding: $spacing-lg 50px;
+        width: 43%;
+        padding-top: $spacing-lg;
+        gap: $spacing-lg;
+    }
+    @include xxxl-up {
+        width: 50%;
+        padding-top: $spacing-lg;
         gap: $spacing-lg;
     }
 }
@@ -410,67 +452,73 @@
         min-width: 100%;
         max-width: 100%;
         text-align: center;
-        &:first-of-type {
-            order: 2; 
-        }
-        &:last-of-type {
-            order: 3; 
-            margin-top: $spacing-md;
-        }
     }
 }
 
 .columnTitle {
     @include t.gilroy-18;
+    font-weight: 700; 
     margin-bottom: $spacing-md;
 }
 
 .contactInfo,
 .documentLinks li {
-    @include t.gilroy-18;
+    @include t.gilroy-14; 
     line-height: 1.6;
     margin-bottom: $spacing-xs;
+    
+    @include lg-down {
+        text-align: center;
+    }
+    @include lg-up {
+        text-align: left;
+    }
 }
 
 .contactLink,
 .documentLink {
     color: $black; 
     text-decoration: none;
-    transition: color $transition-fast;
+    transition: all $transition-fast; 
+    
     &:hover {
-        color: $white; 
+        opacity: 0.7; 
     }
 }
 
 .socialIcons {
-    @include flex-center; 
+    // @include flex-center; 
+    display: flex;
+    align-items: flex-start;
     gap: $spacing-sm;
     margin-top: $spacing-md;
 }
 
 .socialLink {
-    @include flex-center;
+    // @include flex-start;
     width: 33px;
     height: 33px;
     border-radius: 50%;
-    transition: background-color $transition-fast;
+    transition: transform $transition-fast; 
+
     img {
         width: 30px;
         height: 30px;
+        transition: all $transition-fast;
     }
+
     &:hover {
-        img {
-            width: 33px;
-            height: 33px;
-        }
+        transform: scale(1.1); 
     }
 }
 
 .documentLinks {
     list-style: none;
     padding: 0;
+    
     li {
         margin-bottom: $spacing-xs;
+        
         &:last-child {
             margin-bottom: 0;
         }
@@ -480,6 +528,8 @@
 // --- Секция копирайта ---
 .copyright {
     z-index: 4;
+    @include t.gilroy-14; 
+    
     @include lg-up {
         position: absolute; 
         bottom: 0;
@@ -487,9 +537,9 @@
         width: 100%;
         text-align: center;
         padding: $spacing-sm $spacing-md; 
-        font-size: 14px;
     }
-    @include xs-only {
+    
+    @include lg-down {
         position: static; 
         width: 100%;
         text-align: center;
@@ -498,19 +548,9 @@
         order: 5; 
     }
     @include sm-up {
-        position: static; 
-        width: 100%;
-        text-align: center;
         padding: $spacing-sm $spacing-sm;
-        margin-top: $spacing-md; 
-        order: 5;
     }
     @include md-up {
-        position: static; 
-        width: 100%;
-        text-align: center;
         padding: $spacing-sm $spacing-md;
-        margin-top: $spacing-lg; 
-        order: 5;
     }
 }

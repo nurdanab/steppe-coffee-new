@@ -349,99 +349,90 @@
 @mixin gilroy-16 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 5px; 
+  font-size: 13px; 
   font-weight: 400;
 
-  @include xs-only { 
-    font-size: 5px;
-  }
   @include sm-up {
-    font-size: 6px;
-  }
-  @include md-up {
-    font-size: 7px;
-  }
-  @include lg-up {
-    font-size: 8px;
-  }
-  @include xl-up {
-    font-size: 8px;
-  }
-  @include xxl-up {
     font-size: 14px;
   }
-  @include xxxl-up {
-    font-size: 18px;
+  @include md-up {
+    font-size: 15px;
   }
-  @include full-hd-up {
+  @include lg-up {
+    font-size: 16px;
+  }
+  @include xl-up {
+    font-size: 16px;
+  }
+  @include xxl-up {
+    font-size: 20px;
+  }
+  @include xxxl-up {
     font-size: 22px;
   }
+  @include full-hd-up {
+    font-size: 24px;
+  }
   @include uhd-up {
-    font-size: 32px;
+    font-size: 26px;
   }
   @include uhd-4k-up {
-    font-size: 38px;
+    font-size: 30px;
   }
 }
 
 @mixin gilroy-14 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 6px; 
+  font-size: 10px; 
   font-weight: 300;
 
-  @include xs-only { 
-    font-size: 6px;
-  }
   @include sm-up {
-    font-size: 8px;
+    font-size: 11px;
   }
   @include md-up {
-    font-size: 10px;
+    font-size: 12px;
   }
   @include lg-up {
-    font-size: 12px;
+    font-size: 14px;
   }
   @include xl-up {
     font-size: 14px;
   }
   @include xxl-up {
-    font-size: 16px;
-  }
-  @include xxxl-up {
     font-size: 18px;
   }
-  @include full-hd-up {
+  @include xxxl-up {
     font-size: 20px;
   }
-  @include uhd-up {
+  @include full-hd-up {
     font-size: 22px;
   }
-  @include uhd-4k-up {
+  @include uhd-up {
     font-size: 28px;
+  }
+  @include uhd-4k-up {
+    font-size: 32px;
   }
 }
 
 @mixin gilroy-12 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 9px;  
+  font-size: 10px; 
   font-weight: 300;
 
-  @include xs-only { 
-    font-size: 9px;
-  }
   @include sm-up {
     font-size: 10px;
   }
   @include md-up {
-    font-size: 11px;
+    font-size: 10px;
   }
   @include lg-up {
     font-size: 12px;
   }
   @include xl-up {
-    font-size: 13px;
+    font-size: 12px;
   }
   @include xxl-up {
     font-size: 14px;
@@ -450,13 +441,12 @@
     font-size: 16px;
   }
   @include full-hd-up {
-    font-size: 18px;
-  }
-  @include uhd-up {
     font-size: 20px;
   }
-  @include uhd-4k-up {
-    font-size: 18px;
+  @include uhd-up {
+    font-size: 24px;
   }
-
+  @include uhd-4k-up {
+    font-size: 32px;
+  }
 }

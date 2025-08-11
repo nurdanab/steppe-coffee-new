@@ -33,15 +33,16 @@ const FooterSection = () => {
         <footer className={styles.footerSection}>
             <div className={styles.footerDecorBackground} />
 
-            <div className="container"> 
                 <div className={styles.communityBlock}>
+                <div className="container"> 
+
                     <div className={styles.communityContent}>
                         <h2 className={styles.communityTitle}>Присоединяйтесь к 1000+ любителям кофе!</h2>
                         <p className={styles.communityText}>
                         Заходи чаще и получай больше!
 Получайте доступ к эксклюзивным предложениям, бонусам и событиям, доступным только в приложении.
-Стать участником легко - просто активируйте подписку за 3000 тенге в месяц в нашем приложении<br/>
-<ul>
+Стать участником легко - просто активируйте подписку за 3000 тенге в месяц в нашем приложении<br/>Наша подписка — это не просто приглашение в нашу семью, а сервис.
+{/* <ul>
   <li>Наша подписка — это не просто приглашение в нашу семью, а сервис.</li>
   <li>Получите личные бонусы:
     <ul>
@@ -50,7 +51,7 @@ const FooterSection = () => {
       <li>Доступ к бонусной и реферальной программам</li>
     </ul>
   </li>
-</ul>
+</ul> */}
                         </p>
                         <button className={styles.subscribeButton} onClick={handleSubscribeClick}>
                             Подробнее о подписке
@@ -63,8 +64,8 @@ const FooterSection = () => {
             </div>
 
             {/* Слой 1: Реклама приложения в нижней левой части */}
-            <div className="container"> 
-                <div className={styles.appPromoBlock}>
+                <div className={styles.appPromoBlock}>            <div className="container"> 
+
                     <h3 className={styles.appPromoTitle}>Steppe Coffee: Membership app</h3>
                     <p className={styles.appPromoDescription}>
                         Оформляйте заказы, копите бонусы и участвуйте в мероприятиях.

@@ -1,7 +1,6 @@
 // src/components/WelcomeDesk/DeskItem/DeskItem.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './DeskItem.module.scss';
-import LazyImage from '../../LazyImage/LazyImage.jsx';
 
 const DeskItem = ({ item, pinImageSrc }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -53,14 +52,14 @@ const DeskItem = ({ item, pinImageSrc }) => {
     >
       {/* прищепки */}
       {pinImageSrc && (
-        <LazyImage
+        <img
           src={pinImageSrc}
           alt="Прищепка"
           className={styles.pin} 
         />
       )}
       <div className={styles.mediaContainer}>
-        <LazyImage
+        <img
           src={item.imageSrc}
           alt={item.altText}
           className={`${styles.media} ${isHovered && isVideoReady ? styles.hidden : ''}`}

@@ -6,7 +6,6 @@ import L from 'leaflet';
 import styles from './MapSection.module.scss';
 import LazyImage from '../LazyImage/LazyImage.jsx';
 
-
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -33,46 +32,42 @@ const MapSection = () => {
             <LazyImage src="/images/map-decor2.png" alt="Декоративный элемент" className={styles.mapDecor2} />
             <LazyImage src="/images/map-decor3.png" alt="Декоративный элемент" className={styles.mapDecor3} />
             
-            <div className="container"> 
+            <div className={styles.container}> 
+                <h2 className={styles.title}>Steppe Coffee на карте</h2>
 
-            <h2 className={styles.title}>Steppe Coffee на карте</h2>
+                <div className={styles.contentWrapper}>
+                    <div className={styles.infoBlock}>
+                        <LazyImage src="/images/address.webp" alt="Фото кофейни" className={styles.addressBackgroundImage} />
 
-            <div className={styles.contentWrapper}>
-                {/* Левая часть: информация о кофейне */}
-                <div className={styles.infoBlock}>
-                    {/* Изображение будет на заднем плане */}
-                    <LazyImage src="/images/address.webp" alt="Фото кофейни" className={styles.addressBackgroundImage} />
-
-                    <div className={styles.overlayContent}>
-                        <div className={styles.textInfo}>
-                            <p className={styles.scheduleTitle}>График работы:</p>
-                            <p className={styles.schedule}>Пн – Пт 07:45–23:00</p>
-                            <p className={styles.schedule}>Сб – Вс 08:00–23:00</p>
-                            <p className={styles.addressTitle}>Адрес:</p>
-                            <p className={styles.address}>Улица Курмангазы, 63</p>
+                        <div className={styles.overlayContent}>
+                            <div className={styles.textInfo}>
+                                <p className={styles.scheduleTitle}>График работы:</p>
+                                <p className={styles.schedule}>Пн – Пт 07:45–23:00</p>
+                                <p className={styles.schedule}>Сб – Вс 08:00–23:00</p>
+                                <p className={styles.addressTitle}>Адрес:</p>
+                                <p className={styles.address}>Улица Курмангазы, 63</p>
+                            </div>
+                            <button className={styles.routeButton} onClick={handleRouteClick}>
+                                Построить маршрут
+                            </button>
                         </div>
-                        <button className={styles.routeButton} onClick={handleRouteClick}>
-                            Построить маршрут
-                        </button>
+                    </div>
+
+                    <div className={styles.mapContainer}>
+                        <MapContainer center={steppeCoffeePosition} zoom={initialZoom} scrollWheelZoom={false}
+                                      style={{ height: '100%', width: '100%', borderRadius: '15px' }}>
+                            <TileLayer
+                                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            />
+                            <Marker position={steppeCoffeePosition}>
+                                <Popup>
+                                    Steppe Coffee <br /> Улица Курмангазы, 63.
+                                </Popup>
+                            </Marker>
+                        </MapContainer>
                     </div>
                 </div>
-
-                {/* Правая часть: карта Leaflet */}
-                <div className={styles.mapContainer}>
-                    <MapContainer center={steppeCoffeePosition} zoom={initialZoom} scrollWheelZoom={false}
-                                  style={{ height: '100%', width: '100%', borderRadius: '15px' }}>
-                        <TileLayer
-                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        />
-                        <Marker position={steppeCoffeePosition}>
-                            <Popup>
-                                Steppe Coffee <br /> Улица Курмангазы, 63.
-                            </Popup>
-                        </Marker>
-                    </MapContainer>
-                </div>
-            </div>
             </div>
         </section>
     );
