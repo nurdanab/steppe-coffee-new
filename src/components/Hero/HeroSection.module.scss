@@ -222,8 +222,6 @@
   &:active {
     transform: translateY(-2px) scale(0.98);
   }
-
-
   @include xs-only {
     font-size: 14px;
     padding: $spacing-sm $spacing-lg;
@@ -231,27 +229,37 @@
   }
   @include sm-up {
     font-size: 16px;
-    padding: $spacing-sm $spacing-xl;
+    padding: $spacing-sm $spacing-md;
     border-radius: $border-radius-xxxl;
   }
   @include md-up {
     font-size: 18px;
-    padding: $spacing-md $spacing-xxl;
+    padding: $spacing-md $spacing-lg;
     border-radius: $border-radius-xxxl;
   }
   @include lg-up {
-    font-size: 20px;
+    font-size: 18px;
+    padding: $spacing-md $spacing-lg;
+    border-radius: $border-radius-xxxxl;
+  }
+  @include xl-up {
+    font-size: 19px;
+    padding: $spacing-md $spacing-lg;
+    border-radius: $border-radius-xxxl;
+  }
+  @include xxl-up {
+    font-size: 22px;
+    padding: $spacing-md $spacing-xl;
+    border-radius: $border-radius-xxxl;
+  }
+  @include xxxl-up {
+    font-size: 24px;
     padding: $spacing-lg $spacing-xxl;
-    border-radius: $border-radius-xxxxl;
+    border-radius: $border-radius-xxxl;
   }
-  @include uhd-up {
-    font-size: 44px;
-    padding: $spacing-xl $spacing-xxxl;
-    border-radius: $border-radius-xxxxl;
-  }
-  @include uhd-4k-up {
-    font-size: 50px;
-    padding: $spacing-xxl $spacing-xxxxl;
+  @include full-hd-up {
+    font-size: 30px;
+    padding: $spacing-lg $spacing-xxl;
     border-radius: $border-radius-xxxxl;
   }
 }
@@ -277,7 +285,7 @@
     right: 10px;
   }
   @include xxl-up {
-    max-width: 300px;
+    max-width: 250px;
     top: -140px;
     right: 80px;
   }
@@ -290,16 +298,6 @@
     max-width: 350px;
     top: -200px;
     right: -30px;
-  }
-  @include uhd-up {
-    max-width: 450px;
-    top: -270px;
-    right: -90px;
-  }
-  @include uhd-4k-up {
-    max-width: 800px;
-    top: -400px;
-    right: -100px;
   }
 }
 

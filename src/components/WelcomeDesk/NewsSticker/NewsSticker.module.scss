@@ -19,16 +19,16 @@
   }
 
   @include xs-only { 
-    width: 100px;
-    padding: 8px;
+    width: 65px;
+    padding: 3px;
   }
   @include sm-up {
-    width: 120px;
-    padding: 10px;
+    width: 100px;
+    padding: 5px;
   }
   @include md-up {
-    width: 150px;
-    padding: 12px;
+    width: 140px;
+    padding: 6px;
   }
   @include lg-up {
     width: 180px;
@@ -85,7 +85,7 @@
   pointer-events: none; 
 
   @include mobile-only {
-    width: 40px; 
+    width: 20px !important;
     top: -10px !important; 
     left: -5px !important; 
   }

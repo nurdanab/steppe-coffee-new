@@ -7,6 +7,21 @@ import { supabase } from '../../supabaseClient';
 import LazyImage from '../LazyImage/LazyImage.jsx';
 import { DateTime } from 'luxon';
 
+// SVG для стрелки "влево"
+const LeftArrowSVG = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z"/>
+  </svg>
+);
+
+// SVG для стрелки "вправо"
+const RightArrowSVG = ({ className }) => (
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+    <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"/>
+  </svg>
+);
+
+
 const BookCorner = () => {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -15,38 +30,62 @@ const BookCorner = () => {
 
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const shelfRef = useRef(null);
-
-  const booksToScroll = 1;
-
+  
   const totalBooks = bookCornerData.bookShelf.books.length;
-  const canScrollLeft = currentBookIndex > 0;
-  const canScrollRight = currentBookIndex < totalBooks - booksToScroll;
 
-  const scrollShelf = (direction) => {
-    const newIndex = currentBookIndex + direction;
-    if (newIndex >= 0 && newIndex <= totalBooks - booksToScroll) {
-      setCurrentBookIndex(newIndex);
-    } else if (newIndex < 0) {
-        setCurrentBookIndex(0);
-    } else if (newIndex > totalBooks - booksToScroll) {
-        setCurrentBookIndex(totalBooks - booksToScroll);
+  // Рассчитываем, можно ли прокручивать, исходя из ширины контейнера и количества видимых книг
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScrollState = () => {
+    if (shelfRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = shelfRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth);
     }
   };
 
-  useEffect(() => {
+  const scrollShelf = (direction) => {
     if (shelfRef.current) {
-      const firstBookCard = shelfRef.current.children[0];
-      if (firstBookCard) {
-        const bookWidth = firstBookCard.offsetWidth;
-        const computedStyle = window.getComputedStyle(shelfRef.current);
-        const gapValue = parseFloat(computedStyle.getPropertyValue('gap'));
-        
-        const scrollAmount = bookWidth + gapValue;
-        
-        shelfRef.current.scrollLeft = currentBookIndex * scrollAmount;
-      }
+        const firstBookCard = shelfRef.current.children[0];
+        if (firstBookCard) {
+            const bookWidth = firstBookCard.offsetWidth;
+            const computedStyle = window.getComputedStyle(shelfRef.current);
+            const gapValue = parseFloat(computedStyle.getPropertyValue('gap'));
+            const scrollAmount = bookWidth + gapValue;
+            
+            shelfRef.current.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
+            });
+        }
     }
-  }, [currentBookIndex]);
+  };
+  
+  useEffect(() => {
+    const currentRef = shelfRef.current;
+    if (currentRef) {
+      currentRef.addEventListener('scroll', checkScrollState);
+      // Проверяем состояние при первой загрузке
+      checkScrollState();
+    }
+    
+    return () => {
+      if (currentRef) {
+        currentRef.removeEventListener('scroll', checkScrollState);
+      }
+    };
+  }, []);
+
+  // Дополнительная проверка состояния при изменении размера окна
+  useEffect(() => {
+    const handleResize = () => {
+      checkScrollState();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
   const todayAlmaty = useMemo(() => DateTime.now().setZone('Asia/Almaty'), []);
   const [currentCalendarDate] = useState(todayAlmaty.toJSDate());
@@ -119,6 +158,7 @@ const BookCorner = () => {
   };
 
   const [activeTooltip, setActiveTooltip] = useState(null);
+
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
 
@@ -157,49 +197,44 @@ const BookCorner = () => {
 
            
           </div>
-          {/* <LazyImage 
-              src={bookCornerData.yellowPart.decorImage}
-              alt="Декоративный элемент книжного уголка"
-              className={styles.yellowPartDecor}
-            /> */}
           <div className="container"> 
 
           <div className={styles.bookShelfSection}>
-            <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>          </div>
+            <h3 className={styles.bookShelfSubtitle}>{bookCornerData.bookShelf.subtitle}</h3>
+          </div>
 
-            <div className={styles.bookShelfCarousel}>
-    <button
-        className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
-        onClick={() => scrollShelf(-booksToScroll)}
-        disabled={!canScrollLeft}
-    >
-        <LazyImage  src="/images/left-vis.png" alt="Прокрутить влево" />
-    </button>
-    <div className={styles.booksContainer} ref={shelfRef}>
-        {bookCornerData.bookShelf.books.map(book => (
-            <div 
-                key={book.id} 
-                className={styles.bookCard}
+          <div className={styles.bookShelfCarouselContainer}> 
+            <button
+                className={`${styles.carouselButton} ${styles.leftButton} ${!canScrollLeft ? styles.disabled : ''}`}
+                onClick={() => scrollShelf(-1)}
+                disabled={!canScrollLeft}
             >
-                <LazyImage  src={book.coverImage} alt={book.title} className={styles.bookCover} />
-                <p className={styles.bookTitle}>{book.title}</p>
-                <p className={styles.bookAuthor}>{book.author}</p>
-                
-                 <div className={styles.bookTooltip}>
-                    <p>{book.description}</p>
-                </div>
+                <LeftArrowSVG className={styles.carouselArrow} />
+            </button>
+            <div className={styles.booksContainer} ref={shelfRef}>
+                {bookCornerData.bookShelf.books.map(book => (
+                    <div 
+                        key={book.id} 
+                        className={styles.bookCard}
+                    >
+                        <LazyImage  src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                        <p className={styles.bookTitle}>{book.title}</p>
+                        <p className={styles.bookAuthor}>{book.author}</p>
+                        
+                         <div className={styles.bookTooltip}>
+                            <p>{book.description}</p>
+                        </div>
+                    </div>
+                ))}
             </div>
-        ))}
-    </div>
-    <button
-        className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
-        onClick={() => scrollShelf(booksToScroll)}
-        disabled={!canScrollRight}
-    >
-        <LazyImage  src="/images/right-vis.png" alt="Прокрутить вправо" />
-    </button>
-</div>
-
+            <button
+                className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}
+                onClick={() => scrollShelf(1)}
+                disabled={!canScrollRight}
+            >
+                <RightArrowSVG className={styles.carouselArrow} />
+            </button>
+          </div>
             
           </div>
         </div>

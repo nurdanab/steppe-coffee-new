@@ -6,8 +6,8 @@ import communityImage from '../../../public/images/comunity-1.webp';
 
 const EventSection = ({ eventData }) => {
   const staticEvent = {
-    title: "TEXT",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    title: "Встречаемся в Steppe Coffee",
+    text: "Наша комьюнити-комната — это место, где собираются люди с разными интересами и целями. Здесь проходят встречи клубов, рабочие собрания, мастер-классы, игры и тёплые дружеские посиделки. Мы создаём атмосферу, в которой легко общаться, обмениваться идеями и проводить время с пользой. На этой странице вы можете посмотреть, какие события запланированы в ближайшее время.",
     photos: [
       communityImage,
     ],

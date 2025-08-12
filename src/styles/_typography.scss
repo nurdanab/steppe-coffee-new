@@ -113,19 +113,19 @@
     font-size: 38px;
   }
   @include lg-up {
-    font-size: 44px;
+    font-size: 40px;
   }
   @include xl-up {
-    font-size: 48px;
+    font-size: 46px;
   }
   @include xxl-up {
-    font-size: 54px;
+    font-size: 50px;
   }
   @include xxxl-up {
-    font-size: 58px;
+    font-size: 54px;
   }
   @include full-hd-up {
-    font-size: 62px;
+    font-size: 60px;
   }
   @include uhd-up {
     font-size: 72px;
@@ -288,19 +288,19 @@
     font-size: 18px;
   }
   @include lg-up {
-    font-size: 24px;
+    font-size: 20px;
   }
   @include xl-up {
-    font-size: 28px;
+    font-size: 24px;
   }
   @include xxl-up {
-    font-size: 34px;
+    font-size: 28px;
   }
   @include xxxl-up {
-    font-size: 38px;
+    font-size: 32px;
   }
   @include full-hd-up {
-    font-size: 42px;
+    font-size: 34px;
   }
   @include uhd-up {
     font-size: 52px;
@@ -384,11 +384,11 @@
 @mixin gilroy-14 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 10px; 
+  font-size: 7px; 
   font-weight: 300;
 
-  @include sm-up {
-    font-size: 11px;
+  @include md-down {
+    font-size: 7px;
   }
   @include md-up {
     font-size: 12px;
@@ -419,14 +419,14 @@
 @mixin gilroy-12 {
   font-family: 'Gilroy', sans-serif;
   line-height: 1.6;
-  font-size: 10px; 
+  font-size: 5px; 
   font-weight: 300;
 
-  @include sm-up {
-    font-size: 10px;
+  @include md-down {
+    font-size: 5px;
   }
   @include md-up {
-    font-size: 10px;
+    font-size: 8px;
   }
   @include lg-up {
     font-size: 12px;

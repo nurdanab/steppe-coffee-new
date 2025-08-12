@@ -202,16 +202,16 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
 }
 
 @mixin container-padding {
-  padding:$spacing-sm $spacing-md;
+  padding:$spacing-xl $spacing-md;
 
   @include sm-up {
-    padding: $spacing-sm $spacing-xl;
+    padding: $spacing-xl $spacing-xl;
   }
   @include md-up {
-    padding: $spacing-md $spacing-xxl;
+    padding: $spacing-xl $spacing-xxl;
   }
   @include lg-up {
-    padding: $spacing-lg $spacing-xxxl;
+    padding: $spacing-xl $spacing-xxxl;
   }
   @include xl-up {
     padding: $spacing-xl $spacing-xxxl * 1.2;
@@ -252,7 +252,6 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
     justify-content: center;
     padding: $spacing-sm $spacing-lg;
     border: none;
-    // border-radius: $border-radius-xxxxl;
     text-decoration: none;
     cursor: pointer;
     font-family: 'Gilroy', sans-serif;

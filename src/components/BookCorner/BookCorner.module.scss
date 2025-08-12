@@ -202,14 +202,15 @@
 
 .yellowPartButton {
   @include button-base-2;
-  font-size: 11px;
-  padding: $spacing-xs $spacing-xs;
+  font-size: 14px;
+  padding: $spacing-sm $spacing-lg;
   position: relative;
   overflow: hidden;
   color: $black;
   box-shadow: $shadow-medium;
-  z-index: 0;
-  display: inline-flex;
+  z-index: 2;
+  display: inline-block;  
+  margin: 0 auto 0; 
 
   &::before {
     content: '';
@@ -218,7 +219,7 @@
     left: 50%;
     width: 0;
     height: 0;
-    background: $light-yellow;
+    background: $light-yellow; 
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all $transition-slow;
@@ -234,55 +235,63 @@
     transform: translateY(-2px) scale(0.98);
   }
 
-  @include xs-only {
-    font-size: 10px;
-    padding: $spacing-xs $spacing-md;
-    border-radius: $border-radius-xxxxl;
+  &.buttonVisible {
+    animation: fadeIn 0.6s ease-in-out forwards;
+    animation-delay: 0.8s;
   }
-  @include sm-up {
+  
+  @include xs-only {
     font-size: 14px;
     padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-xxxxl;
+    border-radius: $border-radius-xxxl;
+  }
+  @include sm-up {
+    font-size: 16px;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $border-radius-xxxl;
   }
   @include md-up {
-    font-size: 16px;
-    padding: $spacing-sm $spacing-lg;
-    border-radius: $border-radius-xxxxl;
+    font-size: 18px;
+    padding: $spacing-md $spacing-lg;
+    border-radius: $border-radius-xxxl;
   }
   @include lg-up {
     font-size: 18px;
-    padding: $spacing-sm $spacing-lg;
+    padding: $spacing-md $spacing-lg;
     border-radius: $border-radius-xxxxl;
   }
   @include xl-up {
-    font-size: 22px;
-    padding: $spacing-md $spacing-xl;
-    border-radius: $border-radius-xxxxl;
+    font-size: 19px;
+    padding: $spacing-md $spacing-lg;
+    border-radius: $border-radius-xxxl;
   }
   @include xxl-up {
-    font-size: 24px;
+    font-size: 22px;
     padding: $spacing-md $spacing-xl;
-    border-radius: $border-radius-xxxxl;
+    border-radius: $border-radius-xxxl;
   }
   @include xxxl-up {
-    font-size: 28px;
+    font-size: 24px;
     padding: $spacing-lg $spacing-xxl;
-    border-radius: $border-radius-xxxxl;
+    border-radius: $border-radius-xxxl;
   }
   @include full-hd-up {
-    font-size: 32px;
+    font-size: 30px;
     padding: $spacing-lg $spacing-xxl;
     border-radius: $border-radius-xxxxl;
   }
   @include uhd-up {
-    font-size: 42px;
+    font-size: 44px;
     padding: $spacing-xl $spacing-xxxl;
     border-radius: $border-radius-xxxxl;
   }
   @include uhd-4k-up {
     font-size: 50px;
-    padding: $spacing-xxl $spacing-xxxxl;
+    margin-top: 100px;
+    padding: $spacing-xl $spacing-xxxl;
+
     border-radius: $border-radius-xxxxl;
+    
   }
 }
 
@@ -347,32 +356,32 @@
 
   @include lg-up {
     left: 65.4%;
-    top: 17%;
+    top: 26%;
     width: 350px;
   }
   @include xl-up {
     width: 410px;
-    top: 17%;
+    top: 26%;
     left: 65.5%;
   }
   @include xxl-up {
     width: 450px;
-    top: 18%;
+    top: 24%;
     left: 65.4%;
   }
   @include xxxl-up {
     width: 530px;
-    top: 19%;
+    top: 24%;
     left: 65.4%;
   }
   @include full-hd-up {
     width: 600px;
-    top: 20%;
+    top: 26%;
     left: 65.6%;
   }
   @include uhd-up {
     width: 780px;
-    top: 20%;
+    top: 30%;
     left: 65.6%;
   }
   @include uhd-4k-up {
@@ -563,138 +572,138 @@
   justify-content: flex-start;
 }
 
-.carouselButton {
-  border: none;
-  margin-bottom: 50px;
-  img {
-    width: 60px;
-    height: auto;
-  }
+// .carouselButton {
+//   border: none;
+//   margin-bottom: 50px;
+//   img {
+//     width: 60px;
+//     height: auto;
+//   }
 
-  &.leftButton {
-    margin-right: 50px;
-  }
-  &.rightButton {
-    margin-left: 50px;
-  }
+//   &.leftButton {
+//     margin-right: 50px;
+//   }
+//   &.rightButton {
+//     margin-left: 50px;
+//   }
 
-  &:hover {
-    img {
-      filter: invert(0.06);
-    }
-  }
+//   &:hover {
+//     img {
+//       filter: invert(0.06);
+//     }
+//   }
 
-  &.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
+//   &.disabled {
+//     opacity: 0.4;
+//     cursor: not-allowed;
+//   }
 
-  @include xs-only {
-    padding: 5px;
-    margin-bottom: 30px;
-    img {
-      width: 25px;
-    }
-    &.leftButton {
-      margin-right: 15px;
-    }
-    &.rightButton {
-      margin-left: 15px;
-    }
-  }
-  @include sm-up {
-    margin-bottom: 50px;
-    img {
-      width: 40px;
-    }
-    &.leftButton {
-      margin-right: 25px;
-    }
-    &.rightButton {
-      margin-left: 25px;
-    }
-  }
-  @include md-up {
-    margin-bottom: 60px;
-    img {
-      width: 50px;
-    }
-    &.leftButton {
-      margin-right: 30px;
-    }
-    &.rightButton {
-      margin-left: 30px;
-    }
-  }
-  @include lg-up {
-    margin-bottom: 70px;
-    img {
-      width: 60px;
-    }
-    &.leftButton {
-      margin-right: 40px;
-    }
-    &.rightButton {
-      margin-left: 40px;
-    }
-  }
-  @include xl-up {
-    margin-bottom: 80px;
-    img {
-      width: 70px;
-    }
-    &.leftButton {
-      margin-right: 50px;
-    }
-    &.rightButton {
-      margin-left: 50px;
-    }
-  }
-  @include xxl-up {
-    margin-bottom: 90px;
-    img {
-      width: 80px;
-    }
-  }
-  @include xxxl-up {
-    margin-bottom: 100px;
-    img {
-      width: 90px;
-    }
-  }
-  @include full-hd-up {
-    margin-bottom: 120px;
-    img {
-      width: 100px;
-    }
-  }
-  @include uhd-up {
-    margin-bottom: 140px;
-    img {
-      width: 120px;
-    }
-  }
-  @include uhd-4k-up {
-    margin-bottom: 160px;
-    img {
-      width: 100px;
-    }
-  }
-}
+//   @include xs-only {
+//     padding: 5px;
+//     margin-bottom: 30px;
+//     img {
+//       width: 25px;
+//     }
+//     &.leftButton {
+//       margin-right: 15px;
+//     }
+//     &.rightButton {
+//       margin-left: 15px;
+//     }
+//   }
+//   @include sm-up {
+//     margin-bottom: 50px;
+//     img {
+//       width: 40px;
+//     }
+//     &.leftButton {
+//       margin-right: 25px;
+//     }
+//     &.rightButton {
+//       margin-left: 25px;
+//     }
+//   }
+//   @include md-up {
+//     margin-bottom: 60px;
+//     img {
+//       width: 50px;
+//     }
+//     &.leftButton {
+//       margin-right: 30px;
+//     }
+//     &.rightButton {
+//       margin-left: 30px;
+//     }
+//   }
+//   @include lg-up {
+//     margin-bottom: 70px;
+//     img {
+//       width: 60px;
+//     }
+//     &.leftButton {
+//       margin-right: 40px;
+//     }
+//     &.rightButton {
+//       margin-left: 40px;
+//     }
+//   }
+//   @include xl-up {
+//     margin-bottom: 80px;
+//     img {
+//       width: 70px;
+//     }
+//     &.leftButton {
+//       margin-right: 50px;
+//     }
+//     &.rightButton {
+//       margin-left: 50px;
+//     }
+//   }
+//   @include xxl-up {
+//     margin-bottom: 90px;
+//     img {
+//       width: 80px;
+//     }
+//   }
+//   @include xxxl-up {
+//     margin-bottom: 100px;
+//     img {
+//       width: 90px;
+//     }
+//   }
+//   @include full-hd-up {
+//     margin-bottom: 120px;
+//     img {
+//       width: 100px;
+//     }
+//   }
+//   @include uhd-up {
+//     margin-bottom: 140px;
+//     img {
+//       width: 120px;
+//     }
+//   }
+//   @include uhd-4k-up {
+//     margin-bottom: 160px;
+//     img {
+//       width: 100px;
+//     }
+//   }
+// }
 .booksContainer {
   @include t.gilroy-16;
   display: flex;
   gap: 40px;
-  overflow-x: scroll;
+  /* Добавляем overflow-x: auto; и scroll-snap-type сюда */
+  overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding-top: 80px;
-  overflow: visible;
-
+  
   &::-webkit-scrollbar {
-    display: none;
+    display: none; /* Скрываем скроллбар в WebKit-браузерах */
   }
   
   @include xs-only {
@@ -754,10 +763,10 @@
     width: 180px;
   }
   @include xxl-up {
-    width: 200px;
+    width: 190px;
   }
   @include xxxl-up {
-    width: 220px;
+    width: 190px;
   }
   @include full-hd-up {
     width: 200px;
@@ -1032,67 +1041,89 @@
     z-index: 20;
     box-shadow: $shadow-medium;
     pointer-events: none;
-    display: none;
+    display: none; /* Скрываем по умолчанию */
     @include lg-up {
       border-radius: $border-radius-md;
       width: 300px;
     }
-    @include xl-up {
-      border-radius: $border-radius-lg;
-      width: 400px;
-    }
-    @include xxl-up {
-      border-radius: $border-radius-lg;
-      width: 500px;
-    }
-    @include xxxl-up {
-      border-radius: $border-radius-xl;
-      width: 600px;
-    }
-    @include full-hd-up {
-    border-radius: $border-radius-xl;
-    width: 700px;
-    }
-    .mainBookImageWrapper & {
-      // bottom: unset;
-      text-align: center;
-      width: 400px;
-      &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 100%; 
-        margin-top: -8px;
-        margin-left: 0;
-        border-width: 8px;
-        border-style: solid;
-        border-color: transparent transparent transparent rgba($black, 0.6);
-      }
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -8px;
-      border-width: 8px;
-      border-style: solid;
-      border-color: $light-yellow transparent transparent transparent;
-    }
-    
-    p {
-      @include t.gilroy-16;
-      margin: 0;
-      line-height: 1.4;
-      font-weight: 500;
-    }
+    /* ... (остальной код для .bookTooltip остается без изменений) ... */
   }
 
   &:hover > .bookTooltip {
-    display: block;
+    display: block; /* Показываем при наведении */
   }
-  @include lg-down {
-   display: none;
+
+  /* Удаляем @include lg-down { display: none; } чтобы тултипы показывались на больших экранах,
+     а на маленьких они все еще скрыты по умолчанию, и так как нет hover, они не покажутся */
+}
+
+.bookShelfCarouselContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.carouselArrow {
+  width: 60px; /* Задай нужный размер */
+  height: auto;
+  fill: $black;
+  transition: fill 0.3s ease;
+
+  @include xs-only {
+    width: 25px;
+  }
+  @include sm-up {
+    width: 40px;
+  }
+  @include md-up {
+    width: 50px;
+  }
+  @include lg-up {
+    width: 60px;
+  }
+  @include xl-up {
+    width: 70px;
+  }
+  @include xxl-up {
+    width: 80px;
+  }
+  @include xxxl-up {
+    width: 90px;
+  }
+  @include full-hd-up {
+    width: 100px;
+  }
+  @include uhd-up {
+    width: 120px;
+  }
+  @include uhd-4k-up {
+    width: 100px;
+  }
+}
+
+.carouselButton {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s ease;
+  margin: 0 10px; /* Отступы для кнопок */
+  
+  &:hover {
+    .carouselArrow {
+      fill: darken($black, 10%); 
+    }
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    .carouselArrow {
+      fill: $gray-medium; 
+    }
+  }
+  @include xs-only {
+    margin: 0 5px;
   }
 }

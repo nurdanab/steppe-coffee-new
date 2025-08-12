@@ -7,11 +7,11 @@ const SaigakSticker = ({ saigakImageSrc, text, backgroundShape, backgroundColor,
   return (
     <div className={styles.saigakStickerContainer}>
       {/* Изображение сайгака (самый верхний слой) */}
-      <LazyImage src={saigakImageSrc} alt="Сайгак" className={styles.saigakImage} /> 
+      <img src={saigakImageSrc} alt="Сайгак" className={styles.saigakImage} /> 
       
       {/* Прищепка (средний слой) */}
       {pinImageSrc && (
-        <LazyImage
+        <img
           src={pinImageSrc}
           alt="Прищепка"
           className={styles.saigakStickerPin}
