@@ -2,15 +2,13 @@
 
 import React from 'react';
 import styles from './EventSection.module.scss';
-import communityImage from '/images/comunity-1.webp'; 
+import communityImage from '../../../public/images/comunity-1.webp'; 
 
 const EventSection = ({ eventData }) => {
   const staticEvent = {
     title: "TEXT",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     photos: [
-      communityImage,
-      communityImage,
       communityImage,
     ],
     communities: [
@@ -24,37 +22,24 @@ const EventSection = ({ eventData }) => {
 
   return (
     <div className={styles.eventSectionWrapper}>
-
       <div className={styles.contentContainer}>
-      <div className="container"> 
-
-        <div className={styles.textAndPhotos}>
-          <div className={styles.textBlock}>
-            <h2 className={styles.title}>{data.title}</h2>
-            <p className={styles.text}>{data.text}</p>
-          </div>
-          <div className={styles.photosBlock}>
-            {data.photos.map((photo, index) => (
-              <div key={index} className={styles.photoWrapper}>
-                <img src={photo} alt={`Photo ${index + 1}`} className={styles.photo} />
-                <span className={styles.photoLabel}></span>
-              </div>
-            ))}
+        <div className="container"> 
+          <div className={styles.textAndPhotos}>
+            <div className={styles.textBlock}>
+              <h2 className={styles.title}>{data.title}</h2>
+              <p className={styles.text}>{data.text}</p>
+            </div>
+            <div className={styles.photosBlock}>
+              {data.photos.map((photo, index) => (
+                <div key={index} className={styles.photoWrapper}>
+                  <img src={photo} alt={`Photo ${index + 1}`} className={styles.photo} />
+                  <span className={styles.photoLabel}></span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        
-        {/* <div className={styles.communitiesBlock}>
-          {data.communities.map((community, index) => (
-            <div key={index} className={styles.communityItem}>
-              <h3 className={styles.communityName}>{community.name}</h3>
-              <div className={styles.communityLogo}>
-                <img src={community.logo} alt={`Logo of ${community.name}`} />
-                <span>Логотип или фото коммьюнити</span>
-              </div>
-            </div>
-          ))}
-        </div> */}
-      </div></div>
+      </div>
     </div>
   );
 };

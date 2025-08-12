@@ -15,15 +15,10 @@ function MenuDisplay() {
     const [error, setError] = useState(null);
     const [activeCategory, setActiveCategory] = useState('Все меню');
     const [categoriesList, setCategoriesList] = useState([]); 
-
-    // Создаем ref для секции доставки
     const deliverySectionRef = useRef(null);
-    // 💡 Создаем новый ref для контейнера меню
     const menuContentRef = useRef(null);
-
     const handleCategoryClick = (category) => {
         setActiveCategory(category);
-        // 💡 Прокручиваем страницу к контейнеру меню при клике на категорию
         if (menuContentRef.current) {
             menuContentRef.current.scrollIntoView({ 
                 behavior: 'smooth', 
@@ -31,7 +26,6 @@ function MenuDisplay() {
             });
         }
     };
-
 
     useEffect(() => {
         const getMenu = async () => {
@@ -56,11 +50,9 @@ function MenuDisplay() {
                 setLoading(false);
             }
         };
-
         getMenu();
         
         const menuChannel = supabase.channel('menu_items_changes');
-
         menuChannel
             .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, payload => {
                 console.log('Изменение в меню:', payload);
@@ -107,7 +99,6 @@ function MenuDisplay() {
             </div>               
 
             <div className="container">
-            {/* 💡 Привязываем ref к контейнеру меню */}
             <div ref={menuContentRef} className={styles.menuContentContainer}>
                 <div className={styles.menuCategories}>
                     {categoriesList.map(category => (
@@ -136,11 +127,14 @@ function MenuDisplay() {
                         </div>
                     ))}
                 </div>
+                
                 {filteredItems.length === 0 && (
                     <div className={styles.menuStatus}>В этой категории пока нет блюд.</div>
                 )}
-            </div>            
+                 
+            </div>      
             </div>
+           
             <DeliverySection ref={deliverySectionRef} />
         </>
     );

@@ -54,6 +54,27 @@
         height: 1800px;
     }
 }
+.waveTopContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    z-index: 10; /* Убедимся, что волна поверх других элементов */
+
+    svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 110px; /* Ты можешь настроить эту высоту */
+        transform: rotateY(180deg);
+    }
+
+    .shapeFill {
+        fill: #FEF8BC; /* Цвет волны. Ты можешь заменить на нужный. */
+    }
+}
 
 // --- Слой 0: Нижний фон с волной (footer-decor-2.png) ---
 .footerDecorBackground {

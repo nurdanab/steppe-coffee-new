@@ -10,7 +10,7 @@
   display: block;
   justify-content: center;
   align-items: center;
-  
+
   @include xs-only { 
     padding-bottom: 20px;
   }
@@ -40,6 +40,25 @@
   }
   @include uhd-4k-up {
     padding-bottom: 150px;
+  }
+  .waveContainer {
+    position: absolute;
+    bottom: 0; 
+    left: 0;
+    width: 100%;
+    height: 100px;
+    z-index: 10;
+    overflow: hidden;
+    @include lg-down {
+      height: 50px;
+    }
+    svg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 

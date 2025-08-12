@@ -202,28 +202,28 @@ $breakpoint-uhd-4k: map-get($breakpoints, uhd-4k);
 }
 
 @mixin container-padding {
-  padding: 0 $spacing-md;
+  padding:$spacing-sm $spacing-md;
 
   @include sm-up {
-    padding: 0 $spacing-xl;
+    padding: $spacing-sm $spacing-xl;
   }
   @include md-up {
-    padding: 0 $spacing-xxl;
+    padding: $spacing-md $spacing-xxl;
   }
   @include lg-up {
-    padding: 0 $spacing-xxxl;
+    padding: $spacing-lg $spacing-xxxl;
   }
   @include xl-up {
-    padding: 0 $spacing-xxxl * 1.2;
+    padding: $spacing-xl $spacing-xxxl * 1.2;
   }
   @include xxl-up {
-    padding: 0 $spacing-xxxl * 1.6;
+    padding: $spacing-xl $spacing-xxxl * 1.6;
   }
   @include xxxl-up {
-    padding: 0 $spacing-xxxl * 2.2;
+    padding: $spacing-xxl $spacing-xxxl * 2.2;
   }
   @include full-hd-up {
-    padding: 0 $spacing-xxxl * 2.6;
+    padding: $spacing-xxxl $spacing-xxxl * 2.6;
   }
 }
 

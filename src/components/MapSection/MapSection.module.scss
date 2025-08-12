@@ -6,7 +6,7 @@
     @include section-padding;
     background-color: $light-yellow;
     position: relative;
-    overflow: visible; // Делаем overflow видимым, чтобы декоративные элементы не обрезались
+    overflow: visible; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,7 +24,6 @@
     position: absolute;
     z-index: 0; 
     opacity: 1;
-    // Делаем элемент блочным, чтобы можно было задавать размеры и позицию
     display: block; 
 }
 

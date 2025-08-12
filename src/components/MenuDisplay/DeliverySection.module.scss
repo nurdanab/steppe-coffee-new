@@ -12,7 +12,7 @@
   background-repeat: repeat;
   background-size: 800px; 
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 0;
   z-index: 1;
   display: flex;  
@@ -21,22 +21,40 @@
   align-items: center;
 
    @include xs-only { 
-    margin-top: $spacing-xl;
+    // margin-top: $spacing-xl;
   }
   @include sm-up {
-    margin-top: $spacing-xxl;
+    // margin-top: $spacing-xxl;
     flex-direction: row; 
     justify-content: space-between;
     align-items: center;
   }
-  @include lg-up {
-    margin-top: $spacing-xxxl;
-  }
-  @include xxl-up {
-    margin-top: $spacing-xxxxl;
+  // @include lg-up {
+  //   margin-top: $spacing-xxxl;
+  // }
+  // @include xxl-up {
+  //   margin-top: $spacing-xxxxl;
+  // }
+  
+}
+.topWave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  z-index: 0;
+  margin-top: -2px;
+
+  svg {
+      position: relative;
+      display: block;
+      width: calc(100% + 1.3px);
+      height: 100px; 
+      transform: rotate(180deg);
   }
 }
-
 .textContainer {
   flex-basis: 50%;
   z-index: 10;

@@ -13,7 +13,7 @@ const Welcome = () => {
            <div className="container"> 
       <div className={styles.welcomeContent}>
          <div className={`${styles.welcomeTitleBox} ${inView ? styles.titleBoxVisible : ''}`}>
-          <h1 className={styles.welcomeTitle}>Добро пожаловать в ваше третье место!</h1>
+          <h1 className={styles.welcomeTitle}>Добро пожаловать в ваше четвёртое место!</h1>
         </div>
 
         <div className={styles.welcomeMainInfo}>
@@ -34,6 +34,7 @@ const Welcome = () => {
         </div>
       </div>
       </div>
+      
     </section>
   );
 };

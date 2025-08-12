@@ -48,8 +48,6 @@ const BookCorner = () => {
     }
   }, [currentBookIndex]);
 
-
-  // ✨ ИСПРАВЛЕНИЕ: Используем Luxon для работы с датами в Алматы.
   const todayAlmaty = useMemo(() => DateTime.now().setZone('Asia/Almaty'), []);
   const [currentCalendarDate] = useState(todayAlmaty.toJSDate());
   
@@ -76,8 +74,7 @@ const BookCorner = () => {
   const dayNamesShort = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
   const getFormattedCurrentDate = () => {
-    // ✨ ИСПРАВЛЕНИЕ: Получаем текущую дату в зоне Алматы и форматируем ее.
-    const today = DateTime.now().setZone('Asia/Almaty');
+     const today = DateTime.now().setZone('Asia/Almaty');
     return today.toFormat('dd.MM.yyyy');
   };
 
@@ -92,7 +89,6 @@ const BookCorner = () => {
       setTodayEventsLoading(true);
       setTodayEventsError(null);
       try {
-        // ✨ ИСПРАВЛЕНИЕ: Получаем текущую дату в зоне Алматы и форматируем ее для запроса.
         const todayAlmatyFormatted = DateTime.now().setZone('Asia/Almaty').toISODate();
 
         const { data, error } = await supabase
@@ -117,7 +113,6 @@ const BookCorner = () => {
     fetchTodayEvents();
   }, []); 
 
-  // ✨ ИСПРАВЛЕНИЕ: Внутри todayEvents.map используем Luxon для корректного форматирования времени.
   const formatTime = (timeString) => {
     const [hours, minutes, seconds] = timeString.split(':');
     return `${hours}:${minutes}`;
@@ -126,6 +121,25 @@ const BookCorner = () => {
   const [activeTooltip, setActiveTooltip] = useState(null);
   return (
     <section ref={ref} className={`${styles.bookCornerSection} ${inView ? styles.visible : ''}`}>
+
+       {/* SVG-волна для верхней части секции */}
+       <div className={styles.topWaveContainer}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path
+            fill="#FEF8BC" 
+            fillOpacity="1"
+            d="M0,64L48,85.3C96,107,192,149,288,138.7C384,128,480,64,576,48C672,32,768,64,864,69.3C960,75,1056,53,1152,48C1248,43,1344,53,1392,58.7L1440,64L1440,0L0,0Z">
+          </path>
+          <path
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="15"
+            d="M0,64L48,85.3C96,107,192,149,288,138.7C384,128,480,64,576,48C672,32,768,64,864,69.3C960,75,1056,53,1152,48C1248,43,1344,53,1392,58.7L1440,64">
+          </path>
+        </svg>
+      </div>
+
+
       <div className={styles.bookCornerContent}>
         {/* Желтая часть */}
         <div className={styles.yellowPart}>
@@ -143,11 +157,11 @@ const BookCorner = () => {
 
            
           </div>
-          <LazyImage 
+          {/* <LazyImage 
               src={bookCornerData.yellowPart.decorImage}
               alt="Декоративный элемент книжного уголка"
               className={styles.yellowPartDecor}
-            />
+            /> */}
           <div className="container"> 
 
           <div className={styles.bookShelfSection}>
@@ -299,6 +313,24 @@ const BookCorner = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className={styles.waveContainer}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          {/* Path для заливки волны. Цвет должен совпадать с фоном секции с картой. */}
+          <path
+            fill="#FEF8BC" 
+            fillOpacity="1"
+            d="M0,64L21.8,101.3C43.6,139,87,213,131,240C174.5,267,218,245,262,218.7C305.5,192,349,160,393,144C436.4,128,480,128,524,133.3C567.3,139,611,149,655,165.3C698.2,181,742,203,785,192C829.1,181,873,139,916,144C960,149,1004,203,1047,202.7C1090.9,203,1135,149,1178,144C1221.8,139,1265,181,1309,202.7C1352.7,224,1396,224,1418,224L1440,224L1440,320L1418.2,320C1396.4,320,1353,320,1309,320C1265.5,320,1222,320,1178,320C1134.5,320,1091,320,1047,320C1003.6,320,960,320,916,320C872.7,320,829,320,785,320C741.8,320,698,320,655,320C610.9,320,567,320,524,320C480,320,436,320,393,320C349.1,320,305,320,262,320C218.2,320,175,320,131,320C87.3,320,44,320,22,320L0,320Z">
+          </path>
+          {/* Path для контура волны. */}
+          <path
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="10"
+            d="M0,64L21.8,101.3C43.6,139,87,213,131,240C174.5,267,218,245,262,218.7C305.5,192,349,160,393,144C436.4,128,480,128,524,133.3C567.3,139,611,149,655,165.3C698.2,181,742,203,785,192C829.1,181,873,139,916,144C960,149,1004,203,1047,202.7C1090.9,203,1135,149,1178,144C1221.8,139,1265,181,1309,202.7C1352.7,224,1396,224,1418,224L1440,224">
+          </path>
+        </svg>
       </div>
     </section>
   );

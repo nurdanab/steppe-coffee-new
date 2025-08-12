@@ -10,13 +10,13 @@
 
 html {
   scroll-behavior: smooth;
-  font-size: 16px; // Базовый размер шрифта для root em-единиц
+  font-size: 16px;  
   width: 100%;
-  overflow-x: hidden; // Предотвращает горизонтальную прокрутку
+  overflow-x: hidden;  
 }
 
 body {
-  @include t.gilroy-16; // Применяем миксин для базового текста. Теперь Gilroy точно будет загружен.
+  @include t.gilroy-16;  
   color: $black;
   background-color: $white;
   width: 100%;
@@ -24,15 +24,15 @@ body {
 
 .container {
 
-  @include container-padding; // Используем миксин для адаптивных отступов
+  @include container-padding;  
 }
 
 @mixin section {
-  @include section-padding; // Используем миксин для адаптивных отступов секций
+  @include section-padding;  
 }
 
 h1 {
-  @include t.riffic-large; // Применяем миксин для заголовков h1. Теперь Riffic тоже будет загружен.
+  @include t.riffic-large;  
   color: $black;
 }
 
@@ -61,11 +61,11 @@ ul, ol {
 
 // Утилитарные классы
 .no-scrollbar {
-  -ms-overflow-style: none; // Для IE и Edge
-  scrollbar-width: none; // Для Firefox
+  -ms-overflow-style: none;  
+  scrollbar-width: none; 
 
   &::-webkit-scrollbar {
-    display: none; // Для Chrome, Safari и Opera
+    display: none;  
   }
 }
 

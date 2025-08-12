@@ -19,6 +19,7 @@
         align-items: center;
         width: 100%;
         max-width: map-get($breakpoints, uhd-4k); 
+        padding-bottom: 100px;
     }
 
     &::before {
@@ -150,6 +151,25 @@
           height: 600px;
         }
     }
+    .waveContainer {
+      position: absolute;
+      bottom: 0; 
+      left: 0;
+      width: 100%;
+      height: 100px;
+      z-index: 10;
+      overflow: hidden;
+      @include lg-down {
+        height: 50px;
+      }
+      svg {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
 }
 
 .promoTitle {
@@ -176,7 +196,6 @@
 .promoCardsContainer {
   width: 100%;
   z-index: 2;
-  // Используем flexbox для центрирования на маленьких экранах
   display: flex; 
   flex-direction: column;
   align-items: center;
@@ -185,9 +204,8 @@
   @include md-up {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      align-items: center; // Центрируем по вертикали
+      align-items: center; 
       justify-content: center; // Центрируем по горизонтали
-      max-width: 1000px;
   }
 
   @include lg-up {
@@ -306,8 +324,8 @@
   color: $black;
   box-shadow: $shadow-medium;
   z-index: 2;
-  display: block; // <-- Изменено на block
-  margin: $spacing-xl auto 0; // <-- Центрирование
+  display: block;  
+  margin: $spacing-xl auto 0; 
 
   &::before {
     content: '';

@@ -305,6 +305,7 @@ const WelcomeDesk = () => {
         ))}
       </div>
       </div>
+      
     </section>
   );
 };
