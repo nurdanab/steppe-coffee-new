@@ -6,8 +6,8 @@ import StructuredData from './StructuredData';
 const SeoHelmet = ({ title, description, ogImage, ogUrl, structuredData }) => {
   const defaultTitle = "Steppe Coffee - Уютная кофейня в Алматы: насладитесь лучшим кофе!";
   const defaultDescription = "Пространство для общения, вдохновения и новых впечатлений.";
-  const defaultOgImage = "https://steppecoffee.netlify.app/images/og/og-image.webp";
-  const defaultOgUrl = "https://steppecoffee.netlify.app/";
+  const defaultOgImage = "https://steppecoffee.kz/images/og/og-image.webp";
+  const defaultOgUrl = "https://steppecoffee.kz/";
 
   return (
     <Helmet>

@@ -5,4 +5,4 @@ Disallow: /dashboard
 Disallow: /update-password
 Disallow: /admin
 
-Sitemap: https://steppecoffee.netlify.app/sitemap.xml
+Sitemap: https://steppecoffee.kz/sitemap.xml

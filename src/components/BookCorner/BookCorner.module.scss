@@ -527,23 +527,18 @@
     padding: 30px 0 0;
   }
   @include sm-up {
-    // margin-top: 50px;
     padding-bottom: 40px;
   }
   @include md-up {
-    // margin-top: 80px;
     padding-bottom: 50px;
   }
   @include lg-up {
-    // margin-top: 100px;
     padding-bottom: 60px;
   }
   @include xl-up {
-    // margin-top: 120px;
     padding-bottom: 70px;
   }
   @include xxl-up {
-    // margin-top: 140px;
     padding-bottom: 80px;
   }
   @include xxxl-up {
@@ -566,135 +561,90 @@
   }
 }
 
-.bookShelfCarousel {
+.bookShelfCarouselContainer {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  position: relative;
 }
 
-// .carouselButton {
-//   border: none;
-//   margin-bottom: 50px;
-//   img {
-//     width: 60px;
-//     height: auto;
-//   }
+.carouselButton {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  
+  &:hover {
+    .carouselArrow {
+      fill: darken($black, 10%);
+    }
+  }
 
-//   &.leftButton {
-//     margin-right: 50px;
-//   }
-//   &.rightButton {
-//     margin-left: 50px;
-//   }
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    .carouselArrow {
+      fill: $gray-medium;
+    }
+  }
 
-//   &:hover {
-//     img {
-//       filter: invert(0.06);
-//     }
-//   }
+  &.leftButton {
+    margin-right: 20px;
+  }
+  &.rightButton {
+    margin-left: 20px;
+  }
+  
+  @include xs-only {
+    &.leftButton { margin-right: 10px; }
+    &.rightButton { margin-left: 10px; }
+  }
+}
 
-//   &.disabled {
-//     opacity: 0.4;
-//     cursor: not-allowed;
-//   }
+.carouselArrow {
+  width: 60px;
+  height: auto;
+  fill: $black;
+  transition: fill 0.3s ease;
+  
+  @include xs-only {
+    width: 25px;
+  }
+  @include sm-up {
+    width: 40px;
+  }
+  @include md-up {
+    width: 50px;
+  }
+  @include lg-up {
+    width: 60px;
+  }
+  @include xl-up {
+    width: 70px;
+  }
+  @include xxl-up {
+    width: 80px;
+  }
+  @include xxxl-up {
+    width: 90px;
+  }
+  @include full-hd-up {
+    width: 100px;
+  }
+  @include uhd-up {
+    width: 120px;
+  }
+  @include uhd-4k-up {
+    width: 100px;
+  }
+}
 
-//   @include xs-only {
-//     padding: 5px;
-//     margin-bottom: 30px;
-//     img {
-//       width: 25px;
-//     }
-//     &.leftButton {
-//       margin-right: 15px;
-//     }
-//     &.rightButton {
-//       margin-left: 15px;
-//     }
-//   }
-//   @include sm-up {
-//     margin-bottom: 50px;
-//     img {
-//       width: 40px;
-//     }
-//     &.leftButton {
-//       margin-right: 25px;
-//     }
-//     &.rightButton {
-//       margin-left: 25px;
-//     }
-//   }
-//   @include md-up {
-//     margin-bottom: 60px;
-//     img {
-//       width: 50px;
-//     }
-//     &.leftButton {
-//       margin-right: 30px;
-//     }
-//     &.rightButton {
-//       margin-left: 30px;
-//     }
-//   }
-//   @include lg-up {
-//     margin-bottom: 70px;
-//     img {
-//       width: 60px;
-//     }
-//     &.leftButton {
-//       margin-right: 40px;
-//     }
-//     &.rightButton {
-//       margin-left: 40px;
-//     }
-//   }
-//   @include xl-up {
-//     margin-bottom: 80px;
-//     img {
-//       width: 70px;
-//     }
-//     &.leftButton {
-//       margin-right: 50px;
-//     }
-//     &.rightButton {
-//       margin-left: 50px;
-//     }
-//   }
-//   @include xxl-up {
-//     margin-bottom: 90px;
-//     img {
-//       width: 80px;
-//     }
-//   }
-//   @include xxxl-up {
-//     margin-bottom: 100px;
-//     img {
-//       width: 90px;
-//     }
-//   }
-//   @include full-hd-up {
-//     margin-bottom: 120px;
-//     img {
-//       width: 100px;
-//     }
-//   }
-//   @include uhd-up {
-//     margin-bottom: 140px;
-//     img {
-//       width: 120px;
-//     }
-//   }
-//   @include uhd-4k-up {
-//     margin-bottom: 160px;
-//     img {
-//       width: 100px;
-//     }
-//   }
-// }
 .booksContainer {
   @include t.gilroy-16;
   display: flex;
   gap: 40px;
-  /* Добавляем overflow-x: auto; и scroll-snap-type сюда */
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
@@ -703,7 +653,7 @@
   padding-top: 80px;
   
   &::-webkit-scrollbar {
-    display: none; /* Скрываем скроллбар в WebKit-браузерах */
+    display: none;
   }
   
   @include xs-only {
@@ -791,16 +741,16 @@
     height: 220px;
   }
   @include lg-up {
-    height: 260px;
+    height: 230px;
   }
   @include xl-up {
-    height: 300px;
+    height: 250px;
   }
   @include xxl-up {
-    height: 350px;
+    height: 260px;
   }
   @include xxxl-up {
-    height: 400px;
+    height: 270px;
   }
   @include full-hd-up {
     height: 300px;
@@ -1041,89 +991,70 @@
     z-index: 20;
     box-shadow: $shadow-medium;
     pointer-events: none;
-    display: none; /* Скрываем по умолчанию */
+    display: none;
+    
     @include lg-up {
       border-radius: $border-radius-md;
       width: 300px;
     }
-    /* ... (остальной код для .bookTooltip остается без изменений) ... */
+    @include xl-up {
+      border-radius: $border-radius-lg;
+      width: 400px;
+    }
+    @include xxl-up {
+      border-radius: $border-radius-lg;
+      width: 500px;
+    }
+    @include xxxl-up {
+      border-radius: $border-radius-xl;
+      width: 600px;
+    }
+    @include full-hd-up {
+    border-radius: $border-radius-xl;
+    width: 700px;
+    }
+    .mainBookImageWrapper & {
+      text-align: center;
+      width: 400px;
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 100%; 
+        margin-top: -8px;
+        margin-left: 0;
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent transparent transparent rgba($black, 0.6);
+      }
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -8px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: $light-yellow transparent transparent transparent;
+    }
+    
+    p {
+      @include t.gilroy-16;
+      margin: 0;
+      line-height: 1.4;
+      font-weight: 500;
+    }
   }
 
   &:hover > .bookTooltip {
-    display: block; /* Показываем при наведении */
-  }
-
-  /* Удаляем @include lg-down { display: none; } чтобы тултипы показывались на больших экранах,
-     а на маленьких они все еще скрыты по умолчанию, и так как нет hover, они не покажутся */
-}
-
-.bookShelfCarouselContainer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  position: relative;
-}
-
-.carouselArrow {
-  width: 60px; /* Задай нужный размер */
-  height: auto;
-  fill: $black;
-  transition: fill 0.3s ease;
-
-  @include xs-only {
-    width: 25px;
-  }
-  @include sm-up {
-    width: 40px;
-  }
-  @include md-up {
-    width: 50px;
-  }
-  @include lg-up {
-    width: 60px;
-  }
-  @include xl-up {
-    width: 70px;
-  }
-  @include xxl-up {
-    width: 80px;
-  }
-  @include xxxl-up {
-    width: 90px;
-  }
-  @include full-hd-up {
-    width: 100px;
-  }
-  @include uhd-up {
-    width: 120px;
-  }
-  @include uhd-4k-up {
-    width: 100px;
-  }
-}
-
-.carouselButton {
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  padding: 0;
-  transition: opacity 0.3s ease;
-  margin: 0 10px; /* Отступы для кнопок */
-  
-  &:hover {
-    .carouselArrow {
-      fill: darken($black, 10%); 
+    @include lg-up {
+      display: block;
     }
   }
 
-  &.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    .carouselArrow {
-      fill: $gray-medium; 
-    }
-  }
-  @include xs-only {
-    margin: 0 5px;
+  @include lg-down {
+   display: none;
   }
 }

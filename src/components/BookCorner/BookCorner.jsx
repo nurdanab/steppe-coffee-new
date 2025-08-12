@@ -9,14 +9,14 @@ import { DateTime } from 'luxon';
 
 // SVG для стрелки "влево"
 const LeftArrowSVG = ({ className }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M15.41 7.41L14 6L8 12L14 18L15.41 16.59L10.83 12L15.41 7.41Z"/>
   </svg>
 );
 
 // SVG для стрелки "вправо"
 const RightArrowSVG = ({ className }) => (
-  <svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M8.59 16.59L13.17 12L8.59 7.41L10 6L16 12L10 18L8.59 16.59Z"/>
   </svg>
 );
@@ -28,20 +28,18 @@ const BookCorner = () => {
     threshold: 0.1,
   });
 
-  const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const shelfRef = useRef(null);
   
-  const totalBooks = bookCornerData.bookShelf.books.length;
-
-  // Рассчитываем, можно ли прокручивать, исходя из ширины контейнера и количества видимых книг
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
   const checkScrollState = () => {
     if (shelfRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = shelfRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft + clientWidth < scrollWidth);
+      // Проверяем, есть ли прокрутка влево
+      setCanScrollLeft(scrollLeft > 5); 
+      // Проверяем, есть ли прокрутка вправо
+      setCanScrollRight(Math.round(scrollLeft + clientWidth) < scrollWidth);
     }
   };
 
@@ -66,7 +64,6 @@ const BookCorner = () => {
     const currentRef = shelfRef.current;
     if (currentRef) {
       currentRef.addEventListener('scroll', checkScrollState);
-      // Проверяем состояние при первой загрузке
       checkScrollState();
     }
     
@@ -77,7 +74,6 @@ const BookCorner = () => {
     };
   }, []);
 
-  // Дополнительная проверка состояния при изменении размера окна
   useEffect(() => {
     const handleResize = () => {
       checkScrollState();
@@ -92,7 +88,7 @@ const BookCorner = () => {
   
   const getWeekDates = (date) => {
     const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
-    const dayOfWeek = luxonDate.weekday; // 1 (Пн) - 7 (Вс)
+    const dayOfWeek = luxonDate.weekday;
     const startOfWeek = luxonDate.minus({ days: dayOfWeek - 1 }).startOf('day');
 
     const weekDates = [];

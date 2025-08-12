@@ -29,7 +29,7 @@ const EventsPageContent = () => (
     <SeoComponent
       title="Афиша событий Steppe Coffee в Алматы | Бронирование столиков"
       description="Следите за афишей Steppe Coffee: музыкальные вечера, мастер-классы, встречи с авторами и многое другое. Бронируйте столики онлайн для участия в наших уникальных событиях в Алматы."
-      ogUrl="https://steppecoffee.netlify.app/events"
+      ogUrl="https://steppecoffee.kz/events"
     />
     <PublicCalendar />
   </main>
@@ -109,8 +109,8 @@ function App() {
     "@context": "https://schema.org",
     "@type": "CafeOrCoffeeShop",
     "name": "Steppe Coffee",
-    "image": "https://steppecoffee.netlify.app/images/og/og-image.webp",
-    "url": "https://steppecoffee.netlify.app/",
+    "image": "https://steppecoffee.kz/images/og/og-image.webp",
+    "url": "https://steppecoffee.kz/",
     "telephone": "+7 (777) 123-45-67",
     "address": {
       "@type": "PostalAddress",
@@ -200,8 +200,8 @@ function App() {
             <SeoComponent
               title="Steppe Coffee: Уютная кофейня в Алматы | Кофе, Выпечка и Подписка"
               description="Посетите Steppe Coffee — идеальное место для вдохновения и новых впечатлений. Насладитесь лучшим кофе, свежей выпечкой и выгодной кофейной подпиской в самом сердце Алматы."
-              ogImage="https://steppecoffee.netlify.app/images/og/og-image.webp"
-              ogUrl="https://steppecoffee.netlify.app/"
+              ogImage="https://steppecoffee.kz/images/og/og-image.webp"
+              ogUrl="https://steppecoffee.kz/"
               structuredData={localBusinessSchema}
             />
             <HeroSection onOpenBookingModal={handleOpenBookingModal} />
@@ -232,7 +232,7 @@ function App() {
           <SeoComponent
             title="Меню | Steppe Coffee - Кофе, напитки и десерты"
             description="Ознакомьтесь с полным меню Steppe Coffee. У нас есть широкий выбор кофе, чая, свежих десертов и закусок. Закажите любимое блюдо сегодня!"
-            ogUrl="https://steppecoffee.netlify.app/menu"
+            ogUrl="https://steppecoffee.kz/menu"
             structuredData={menuSchema}
           />
           <MenuDisplay />
