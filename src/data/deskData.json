@@ -3,7 +3,7 @@
     {
       "id": "news-sticker-1",
       "type": "sticker",
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. ",
+      "text": "Steppe coffee - это не только про кофе, но и про людей.",
       "position": {
         "top": 45,
         "left": 20,
@@ -87,7 +87,7 @@
         "transform": "rotate(-12deg)",
         "zIndex": 21
       },
-      "text": "Test-5",
+      "text": "Атмосфера меняется с наступлением вечера",
       "pinType": null,
       "backgroundShape": "rectangle",
       "backgroundColor": "yellow",
@@ -108,7 +108,7 @@
         "transform": "rotate(8deg)",
         "zIndex": 22
       },
-      "text": "Test-6",
+      "text": "Сайгак рекомендует",
       "pinType": null,
       "backgroundShape": "oval",
       "backgroundColor": "white",
