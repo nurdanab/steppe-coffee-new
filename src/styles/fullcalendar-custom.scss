@@ -1,0 +1,164 @@
+@use "sass:color";
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'base' as *;
+@use 'typography' as t;
+
+$event-colors: (
+  'second_hall': $orange, 
+  'summer_terrace': #5ecc69 
+);
+
+.fc {
+    font-family: 'Gilroy', sans-serif;
+    color: $gray-dark;
+    background-color: transparent; 
+
+    // Стили для заголовка календаря
+    .fc-toolbar-title {
+      @include t.gilroy-24;
+      color: $black;
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    // Стили для кнопок навигации
+    .fc-button {
+      background-color: $yellow !important;
+      color: $black !important;
+    //   border: 1px solid $black !important;
+      border-radius: $border-radius-xl;
+      font-size: 14px;
+      padding: $spacing-xs $spacing-sm;
+
+      @include sm-up {
+        padding: $spacing-sm $spacing-md;
+        font-size: 16px;
+      }
+      
+      @include xs-only {
+          font-size: 12px;
+          padding: $spacing-xs $spacing-sm;
+      }
+
+    //   &:hover {
+    //     color: $black !important;
+    //     border: 2px solid $black !important;
+    //   }
+    }
+
+    .fc-button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: $spacing-sm;
+
+      @include md-up {
+        margin-top: 0;
+      }
+    }
+
+    // Стили для заголовков дней недели
+    .fc-col-header-cell,
+    .fc-day-header {
+      background-color: $light-yellow;
+      padding: $spacing-xs 0;
+      border-bottom: 1px solid $yellow;
+      text-transform: uppercase;
+
+      @include xs-only {
+        padding: $spacing-xs 0;
+        font-size: 0.8em;
+      }
+
+      .fc-col-header-cell-cushion {
+        color: $black;
+        
+        @include md-up {
+          font-size: 1em;
+        }
+      }
+    }
+
+    // Стили для ячеек дней и временных слотов
+    .fc-daygrid-day,
+    .fc-timegrid-slot {
+      border: 3px solid $gray-light;
+    }
+
+    // Стили для номера дня
+    .fc-daygrid-day-number {
+      padding: 4px;
+      font-weight: 600;
+      color: $gray-dark;
+    }
+
+    // Стили для текущего дня
+    .fc-day-today {
+      border: 3px solid $yellow;
+    }
+
+    // Стили для событий
+    .fc-event {
+      border-radius: $border-radius-sm;
+    //   padding: 2px 6px;
+      margin-bottom: 2px;
+      font-size: 0.85em;
+      cursor: pointer;
+      border: none !important;
+      transition: all $transition-fast;
+      box-shadow: $shadow-light;
+      color: $white;
+
+      @each $room-name, $event-color in $event-colors {
+        &.event-#{$room-name} {
+          background-color: $event-color;
+          &:hover {
+            box-shadow: $shadow-medium;
+            transform: translateY(-1px);
+          }
+        }
+      }
+
+      .fc-event-title,
+      .fc-event-time {
+        color: $white;
+        font-weight: 500;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @include xs-only {
+            font-size: 0.7em;
+        }
+      }
+    }
+
+    // Стили для меток времени в timeGrid
+    .fc-timegrid-slot-label {
+      color: $gray-dark;
+      font-size: 0.9em;
+      font-weight: 500;
+
+      @include xs-only {
+          font-size: 0.8em;
+      }
+    }
+
+    // Стили для индикатора "сейчас"
+    .fc-timegrid-now-indicator-line {
+      border-color: $orange !important;
+    }
+
+    .fc-timegrid-now-indicator-arrow {
+      border-color: transparent transparent transparent $orange !important;
+    }
+
+    .fc-timegrid-now-indicator-timeline {
+      background-color: $orange !important;
+    }
+
+    .fc-scroller {
+      @include no-scrollbar;
+    }
+}

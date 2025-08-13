@@ -1,11 +1,13 @@
 // src/components/PublicCalendar/PublicCalendar.jsx
-
 import React, { useEffect, useState } from 'react';
+
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import EventSection from './EventSection.jsx'; // Импортируем компонент EventSection
+import '../../styles/fullcalendar-custom.scss';
+
+import EventSection from './EventSection.jsx'; 
 import { supabase } from '../../supabaseClient';  
 import styles from './PublicCalendar.module.scss';
 import { DateTime } from 'luxon';  
@@ -32,16 +34,16 @@ function PublicCalendar() {
         }
 
         const calendarEvents = data.map(booking => {
-           const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
-          const endDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
+          const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
+         const endDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
 
           return {
             id: booking.id,
-            title: `Занято (${booking.selected_room === 'second_hall' ? 'Второй зал' : 'Летник'}): ${startDateTime.toFormat('HH:mm')} - ${endDateTime.toFormat('HH:mm')}`,
+            title: `${booking.organizer_name} - ${booking.event_name}`,
             start: startDateTime.toISO(),
             end: endDateTime.toISO(),
-            backgroundColor: '#FDE515', 
-            borderColor: '#ED9354',
+            // Добавляем className, который будет соответствовать ключам в нашей Sass-карте
+            className: `event-${booking.selected_room}`, 
             extendedProps: {
               numPeople: booking.num_people,
               organizerName: booking.organizer_name,
@@ -91,7 +93,7 @@ function PublicCalendar() {
             slotMaxTime="23:00:00"
             locale="ru"  
             height="auto" 
-            className={styles.fc} 
+            // className={styles.fc} 
             eventClick={(info) => {
               const eventProps = info.event.extendedProps;
               const startStr = DateTime.fromISO(info.event.startStr, { zone: 'Asia/Almaty' });

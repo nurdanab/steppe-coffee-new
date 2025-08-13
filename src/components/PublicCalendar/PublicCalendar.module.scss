@@ -4,68 +4,66 @@
 @use '../../styles/base' as *;
 @use '../../styles/typography' as t;
 
-
 .publicCalendarWrapper {
   background-color: $yellow;
     background-image: url('/images/delivery-back.webp');
     background-repeat: repeat;
-    background-size: 800px; 
+    background-size: 800px;
     position: relative;
     overflow: hidden;
     border-radius: 0;
     z-index: 1;
-    display: flex;  
-    flex-direction: column;  
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-bottom: $spacing-xl; 
+    padding-bottom: $spacing-xl;
 
-  @include xs-only { 
-    padding-top: 70px; 
+  @include xs-only {
+    padding-top: 70px;
     padding-bottom: $spacing-md;
   }
   @include sm-up {
-    padding-top: 90px; 
+    padding-top: 90px;
 
   }
   @include md-up {
-    padding-top: 100px; 
+    padding-top: 100px;
 
   }
   @include lg-up {
-    padding-top: 108px; 
+    padding-top: 108px;
     padding-bottom: $spacing-lg;
 
   }
   @include xl-up {
-    padding-top: 118px; 
+    padding-top: 118px;
     padding-bottom: $spacing-xxl;
 
   }
   @include xxl-up {
-    padding-top: 128px; 
+    padding-top: 128px;
     padding-bottom: $spacing-xxxl;
 
   }
   @include xxxl-up {
-    padding-top: 128px; 
+    padding-top: 128px;
     padding-bottom: $spacing-xxxxl;
 
   }
   @include full-hd-up {
-    padding-top: 138px; 
+    padding-top: 138px;
     padding-bottom: $spacing-xxxxl;
   }
 }
 
 .calendarContainer {
-  width: 100%; 
-  // margin: 0 auto; 
+  width: 100%;
   background-color: $white;
-  border-radius: $border-radius-xl; 
-  box-shadow: $shadow-medium; 
-  padding: $spacing-lg; 
-  animation: fadeIn 0.8s ease-out forwards; 
+  border-radius: $border-radius-xl;
+  box-shadow: $shadow-medium;
+  padding: $spacing-lg;
+  animation: fadeIn 0.8s ease-out forwards;
 
   @include sm-up {
     padding: $spacing-xl;
@@ -82,11 +80,11 @@
 }
 
 .calendarTitle {
-  @include t.riffic-32;
+  @include t.riffic-medium;
   color: $black;
   text-align: center;
   margin-bottom: $spacing-lg;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); 
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 
   @include sm-up {
     margin-bottom: $spacing-xl;
@@ -97,139 +95,15 @@
   }
 }
 
-.fc {
-  color: $yellow;
-  @include t.gilroy-18;
-  background-color: $maroon !important; 
-
-  color: $yellow;
-  .fc-toolbar-title {
-    @include t.gilroy-24; 
-    font-weight: 700; 
-    color: $yellow;
-    text-align: center;
-    flex-grow: 1; 
-  }
-
-  .fc-button {
-    @include button-primary; 
-    background-color: $maroon !important; 
-    padding: $spacing-xs $spacing-md;  
-    border-radius: $border-radius-md; 
-    font-size: 14px;
-    margin: 0 6px;
-
-    @include sm-up {
-      padding: $spacing-sm $spacing-lg;
-      font-size: 16px;
-    }
-  }
-
-  .fc-button-group {
-    display: flex;
-    flex-wrap: wrap; 
-    justify-content: center;
-    margin-top: $spacing-sm; 
-
-    @include md-up {
-      margin-top: 0; 
-    }
-  }
-  .fc-col-header-cell {
-    background-color: $light-yellow;  
-    padding: $spacing-xs 0;
-    border-bottom: 1px solid $yellow;
-    text-transform: uppercase; 
-
-    .fc-col-header-cell-cushion {
-      color: $maroon;  
-      font-weight: 700; 
-      font-size: 0.9em;
-
-      @include md-up {
-        font-size: 1em;
-      }
-    }
-  }
-  .fc-daygrid-day,
-  .fc-timegrid-slot {
-    border: 1px solid $gray-light; 
-  }
-
-  .fc-daygrid-day-number {
-    padding: 4px;
-    font-weight: 600;
-    color: $gray-dark;
-  }
-
-  /* Текущий день */
-  .fc-day-today {
-    background-color: lighten($light-yellow, 5%); /* Более светлый желтый для текущего дня */
-    border: 1px solid $yellow; /* Добавляем границу текущему дню */
-  }
-
-   .fc-event {
-    background-color: $maroon; /* Основной цвет событий - бордовый */
-    border-radius: $border-radius-sm;
-    padding: 2px 6px; /* Увеличиваем padding для событий */
-    margin-bottom: 2px; /* Небольшой отступ между событиями */
-    font-size: 0.85em;
-    cursor: pointer;
-    border: none !important;
-    transition: all $transition-fast;  
-    box-shadow: $shadow-light;  
-
-    &:hover {
-      background-color: color.adjust($maroon, $lightness: 10%);  
-      box-shadow: $shadow-medium;  
-      transform: translateY(-1px);  
-    }
-
-    .fc-event-main {
-      color: $black; 
-      font-weight: 500;
-    }
-  }
-
-  .fc-timegrid-slot-label {
-    color: $gray-dark;
-    font-size: 0.9em;
-    font-weight: 500;
-  }
-
-  .fc-timegrid-now-indicator-line {
-    border-color: $orange !important; 
-  }
-
-  .fc-timegrid-now-indicator-arrow {
-    border-color: transparent transparent transparent $orange !important;  
-  }
-
-  .fc-timegrid-now-indicator-timeline {
-    background-color: $orange !important;  
-  }
-  .fc-day-header {
-    background-color: $light-yellow;
-    color: $maroon;
-    font-weight: 700;
-    padding: $spacing-xs 0;
-    border-bottom: 1px solid $yellow;
-  }
-
-  .fc-scroller {
-    @include no-scrollbar; 
-  }
-}
-
 .loadingMessage,
 .errorMessage {
-  @include t.gilroy-24; 
+  @include t.gilroy-24;
   text-align: center;
   padding: $spacing-md;
   font-weight: 600;
-  color: $gray-dark;  
+  color: $gray-dark;
 }
 
 .errorMessage {
-  color: $maroon;  
+  color: $maroon;
 }
