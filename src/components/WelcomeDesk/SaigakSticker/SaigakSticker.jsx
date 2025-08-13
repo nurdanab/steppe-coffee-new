@@ -10,7 +10,7 @@ const SaigakSticker = ({ saigakImageSrc, text, backgroundShape, backgroundColor,
       <img src={saigakImageSrc} alt="Сайгак" className={styles.saigakImage} /> 
       
       {/* Прищепка (средний слой) */}
-      {pinImageSrc && (
+      {/* {pinImageSrc && (
         <img
           src={pinImageSrc}
           alt="Прищепка"
@@ -21,7 +21,7 @@ const SaigakSticker = ({ saigakImageSrc, text, backgroundShape, backgroundColor,
             transform: `rotate(${pinOffset.rotate || '0deg'})`,
           }}
         />
-      )}
+      )} */}
 
       {/* Текстовый фон (самый нижний слой) */}
       <div className={`${styles.textBox} ${styles[`shape_${backgroundShape}`]} ${styles[`bg_${backgroundColor}`]}`}>

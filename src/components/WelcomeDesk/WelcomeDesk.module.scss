@@ -47,10 +47,10 @@
   @include sm-up { width: 30px; }
   @include md-up { width: 40px; }
   @include lg-up { width: 15зx; }
-  @include xl-up { width: 30px; top: 22%; left: 18%; transform: rotate(20deg); }
-  @include xxl-up { width: 35px; top: 23%; left: 20%; transform: rotate(22deg); }
-  @include xxxl-up { width: 40px; top: 24%; left: 22%; transform: rotate(25deg); }
-  @include full-hd-up { width: 90px; top: 100%; left: 34%; transform: rotate(28deg); }
+  @include xl-up { width: 30px; top: 22%; left: 18%; }
+  @include xxl-up { width: 35px; top: 23%; left: 20%; }
+  @include xxxl-up { width: 40px; top: 24%; left: 22%; }
+  @include full-hd-up { width: 90px; top: 100%; left: 34%; }
 }
 // Прищепки для полароидов
 .pin-polaroid1 {
@@ -434,48 +434,48 @@
 }
 
 
-.pin {
-  position: relative;
-  width: 22px;  
-  height: auto;
-  pointer-events: none;
-  transform-origin: center center;
-  z-index: 100; 
-  @include xs-only { 
-    width: 7px;
-  }
-  @include sm-up {
+// .pin {
+//   position: relative;
+//   width: 22px;  
+//   height: auto;
+//   pointer-events: none;
+//   transform-origin: center center;
+//   z-index: 100; 
+//   @include xs-only { 
+//     width: 7px;
+//   }
+//   @include sm-up {
    
-  }
-  @include md-up {
+//   }
+//   @include md-up {
 
-  }
-  @include lg-up {
-    width: 16px;
-  }
-  @include xxxl-up {
-    width: 20px;
-  }
-  @include xl-up {
-    width: 30px;
-  }
-  @include xxl-up {
-    width: 20px;
-  }
-  @include xxxl-up {
-    width: 20px;
-  }
-  @include full-hd-up {
-    width: 30px;
-  }
-  @include uhd-up {
-    width: 40px;
-  }
-  @include uhd-4k-up {
-    width: 50px;
-  }
+//   }
+//   @include lg-up {
+//     width: 16px;
+//   }
+//   @include xxxl-up {
+//     width: 20px;
+//   }
+//   @include xl-up {
+//     width: 30px;
+//   }
+//   @include xxl-up {
+//     width: 20px;
+//   }
+//   @include xxxl-up {
+//     width: 20px;
+//   }
+//   @include full-hd-up {
+//     width: 30px;
+//   }
+//   @include uhd-up {
+//     width: 40px;
+//   }
+//   @include uhd-4k-up {
+//     width: 50px;
+//   }
 
-}
+// }
 // .tape {  
 //   position: absolute;  
 //   width: 60px;
@@ -496,29 +496,29 @@
   position: absolute; 
 }
 
-.decorationItem {
-  @include xs-only { 
-    width: 30px;
-  }
-  @include sm-up {
-    width: 50px;
-  }
-  @include md-up {
-    width: 50px;
-  }
-  @include lg-up {
-    width: 50px;
-  }
-  @include xl-up {
-    width: 60px;
-  }
-  @include xxl-up {
-    width: 80px;
-  }
-  @include xxxl-up {
-    width: 100px;
-  }
-  @include full-hd-up {
-    width: 120px;
-  }
-}
+// .decorationItem {
+//   @include xs-only { 
+//     width: 30px;
+//   }
+//   @include sm-up {
+//     width: 50px;
+//   }
+//   @include md-up {
+//     width: 50px;
+//   }
+//   @include lg-up {
+//     width: 50px;
+//   }
+//   @include xl-up {
+//     width: 60px;
+//   }
+//   @include xxl-up {
+//     width: 80px;
+//   }
+//   @include xxxl-up {
+//     width: 100px;
+//   }
+//   @include full-hd-up {
+//     width: 120px;
+//   }
+// }

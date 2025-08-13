@@ -36,3 +36,13 @@
   @include xxxl-up { top: 220px; left: 150px; transform: rotate(20deg); }
   @include full-hd-up { top: 380px; left: 1200px; transform: rotate(-10deg); }
 }
+.saigak4 {
+  @include xs-only { top: 100px; left: 90px; transform: rotate(5deg); }
+  @include sm-up { top: 120px; left: 100px; transform: rotate(7deg); }
+  @include md-up { top: 140px; left: 110px; transform: rotate(10deg); }
+  @include lg-up { top: 160px; left: 120px; transform: rotate(12deg); }
+  @include xl-up { top: 180px; left: 130px; transform: rotate(15deg); }
+  @include xxl-up { top: 200px; left: 140px; transform: rotate(18deg); }
+  @include xxxl-up { top: 220px; left: 150px; transform: rotate(20deg); }
+  @include full-hd-up { top: 380px; left: 1200px; transform: rotate(-10deg); }
+}

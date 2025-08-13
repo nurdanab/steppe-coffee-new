@@ -66,8 +66,8 @@ const WelcomeDesk = () => {
       position: { top: 52, left: 1, transform: 'rotate(0deg)', zIndex: 9 },
       size: 'livePhotoSize-1',
       wrapperClass: styles.livePhotoWrapper1,
-      pinType: 'yellow',
-      pinOffset: { top: -260, left: 100, rotate: '0deg' },
+      // // pinType: 'yellow',
+      // pinOffset: { top: -260, left: 100, rotate: '0deg' },
     },
     {
       id: 'live-photo-2',
@@ -76,8 +76,8 @@ const WelcomeDesk = () => {
       position: { top: 65, left: 18, transform: 'rotate(1deg)', zIndex: 8 },
       size: 'livePhotoSize-2',
       wrapperClass: styles.livePhotoWrapper2,
-      pinType: 'red',
-      pinOffset: { top: -300, left: 150, rotate: '0deg' },
+      // pinType: 'red',
+      // pinOffset: { top: -300, left: 150, rotate: '0deg' },
     },
     {
       id: 'live-photo-3',
@@ -86,8 +86,8 @@ const WelcomeDesk = () => {
       position: { top: 62, left: 35, transform: 'rotate(-1deg)', zIndex: 7 },
       size: 'livePhotoSize-3',
       wrapperClass: styles.livePhotoWrapper3,
-      pinType: 'yellow',
-      pinOffset: { top: -340, left: 150, rotate: '0deg' },
+      // pinType: 'yellow',
+      // pinOffset: { top: -340, left: 150, rotate: '0deg' },
     },
     {
       id: 'live-photo-4',
@@ -96,8 +96,8 @@ const WelcomeDesk = () => {
       position: { top: 48, left: 60, transform: 'rotate(0deg)', zIndex: 5 },
       size: 'livePhotoSize-4',
       wrapperClass: styles.livePhotoWrapper4,
-      pinType: 'green',
-      pinOffset: { top: -350, left: 140, rotate: '0deg' },
+      // pinType: 'green',
+      // pinOffset: { top: -350, left: 140, rotate: '0deg' },
     },
     {
       id: 'live-photo-5',
@@ -106,8 +106,8 @@ const WelcomeDesk = () => {
       position: { top: 65, left: 80, transform: 'rotate(1deg)', zIndex: 6 },
       size: 'livePhotoSize-5',
       wrapperClass: styles.livePhotoWrapper5,
-      pinType: 'white',
-      pinOffset: { top: -450, left: 100, rotate: '0deg' },
+      // pinType: 'white',
+      // pinOffset: { top: -450, left: 100, rotate: '0deg' },
     },
   ];
 
@@ -152,7 +152,6 @@ const WelcomeDesk = () => {
     <section ref={ref} className={`${styles.welcomeSection} ${inView ? styles.visible : ''}`}>
       <div className="container">
         <div className={styles.corkBoard}>
-          {/* заголовок фото */}
           <div className={styles.boardTitle}>
             <LazyImage
               src="/images/desk/заголовок.webp"
@@ -204,12 +203,12 @@ const WelcomeDesk = () => {
                     }}>
                   <DeskItem item={{ ...item, position: undefined }} />
                 </div>
-
+{/* 
                 <img
                   src={pinImageMap[item.pinType]}
-                  alt="Прищепка"
+                  alt=""
                   className={pinClass}
-                />
+                /> */}
               </React.Fragment>
             );
           })}

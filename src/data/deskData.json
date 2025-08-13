@@ -25,8 +25,8 @@
       },
       "pinType": "paperClip",
       "pinOffset": {
-        "top": -15,
-        "left": 28,
+        "top": 15,
+        "left": 8,
         "rotate": "0deg",
         "zIndex": 50
       }
