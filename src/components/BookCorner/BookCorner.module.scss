@@ -100,7 +100,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: 30px;
+    // margin-bottom: 30px;
     padding: 0;
   }
 }
@@ -411,57 +411,57 @@
   z-index: 16;
   
   @include xs-only {
-    top: 10%;
-    right: 5%;
-    .bookStampImage {
-      width: 60px;
-    }
-  }
-  @include sm-up {
-    top: 15%;
-    right: 5%;
+    top: 85%;
+    right: -5%;
     .bookStampImage {
       width: 80px;
     }
   }
-  @include md-up {
-    top: 20%;
-    right: 10%;
+  @include sm-up {
+    top: 90%;
+    right: -7%;
     .bookStampImage {
       width: 100px;
     }
   }
+  @include md-up {
+    top: 85%;
+    right: -8%;
+    .bookStampImage {
+      width: 120px;
+    }
+  }
   @include lg-up {
-    top: 25%;
-    right: 10%;
+    top: 80%;
+    right: -15%;
     .bookStampImage {
       width: 120px;
     }
   }
   @include xl-up {
-    top: 25%;
-    right: 12%;
+    top: 80%;
+    right: -15%;
     .bookStampImage {
       width: 140px;
     }
   }
   @include xxl-up {
-    top: 25%;
-    right: 12%;
+    top: 75%;
+    right: -15%;
     .bookStampImage {
       width: 160px;
     }
   }
   @include xxxl-up {
-    top: 25%;
-    right: 15%;
+    top: 65%;
+    right: -15%;
     .bookStampImage {
       width: 200px;
     }
   }
   @include full-hd-up {
-    top: 25%;
-    right: 15%;
+    top: 70%;
+    right: -15%;
     .bookStampImage {
       width: 250px;
     }
@@ -521,7 +521,6 @@
   width: 100%;
   position: relative;
   padding-bottom: 50px;
-
   @include xs-only {
     margin-top: 0;
     padding: 30px 0 0;
@@ -533,19 +532,21 @@
     padding-bottom: 50px;
   }
   @include lg-up {
-    padding-bottom: 60px;
+    max-width: 500px;
   }
   @include xl-up {
-    padding-bottom: 70px;
+    max-width: 600px;
   }
   @include xxl-up {
     padding-bottom: 80px;
+    max-width: 800px;
   }
   @include xxxl-up {
-    padding-bottom: 90px;
+    // padding-bottom: 60px;
+    max-width: 1000px;
   }
   @include full-hd-up {
-    padding-bottom: 100px;
+    // padding-bottom: 80px;
     max-width: 1200px;
   }
 }
@@ -564,8 +565,11 @@
 .bookShelfCarouselContainer {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   position: relative;
+  @include lg-up {
+    margin-bottom: 100px;
+  }
 }
 
 .carouselButton {
@@ -650,42 +654,46 @@
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  padding-top: 80px;
-  
+  padding-top: 10px;
   &::-webkit-scrollbar {
     display: none;
   }
-  
   @include xs-only {
-    gap: 15px;
-    padding-top: 40px;
+    gap: 10px;
+    padding-top: 0px;
+    max-width: 300px;
   }
   @include sm-up {
-    gap: 25px;
-    padding-top: 50px;
+    gap: 10px;
+    padding-top: 0px;
+    max-width: 300px;
   }
   @include md-up {
-    gap: 30px;
-    padding-top: 60px;
+    gap: 10px;
+    padding-top: 0px;
+    max-width: 500px;
   }
   @include lg-up {
-    gap: 35px;
-    padding-top: 70px;
+    gap: 10px;
+    padding-top: 0px;
+    max-width: 400px; 
   }
   @include xl-up {
-    gap: 40px;
-    padding-top: 80px;
-  }
+    gap: 13px;
+    padding-top: 0px;
+    max-width: 550px;  }
   @include xxl-up {
-    gap: 45px;
-    padding-top: 90px;
+    gap: 15px;
+    padding-top: 0px;
+    max-width: 600px;
   }
   @include xxxl-up {
-    gap: 50px;
-    padding-top: 100px;
+    gap: 20px;
+    padding-top: 0px;
+    max-width: 700px;
   }
   @include full-hd-up {
-    gap: 55px;
+    gap: 25px;
     padding-top: 0px;
     max-width: 800px;
   }
@@ -725,7 +733,7 @@
 
 .bookCover {
   width: 100%;
-  height: 250px;
+  height: 100%;
   object-fit: cover;
   border-radius: 7px;
   box-shadow: $shadow-light;
@@ -744,10 +752,10 @@
     height: 230px;
   }
   @include xl-up {
-    height: 250px;
+    height: 240px;
   }
   @include xxl-up {
-    height: 260px;
+    height: 250px;
   }
   @include xxxl-up {
     height: 270px;
@@ -760,7 +768,7 @@
 
 .eventsBlock {
   width: 100%;
-  padding-bottom: 100px;
+  // padding-bottom: 100px;
 
   @include xs-only {
     padding-top: 10px;
@@ -772,20 +780,23 @@
   @include md-up {
     padding-bottom: 70px;
   }
+  // @include lg-up {
+  //   padding-bottom: 80px;
+  // }
+  // @include xl-up {
+  //   padding-bottom: 90px;
+  // }
+  // @include full-hd-up {
+  //   padding-bottom: 100px;
+  // }
+  // @include uhd-up {
+  //   padding-bottom: 120px;
+  // }
+  // @include uhd-4k-up {
+  //   padding-bottom: 150px;
+  // }
   @include lg-up {
-    padding-bottom: 80px;
-  }
-  @include xl-up {
-    padding-bottom: 90px;
-  }
-  @include full-hd-up {
-    padding-bottom: 100px;
-  }
-  @include uhd-up {
-    padding-bottom: 120px;
-  }
-  @include uhd-4k-up {
-    padding-bottom: 150px;
+    margin-bottom: 100px;
   }
 }
 
@@ -906,7 +917,10 @@
   padding: $spacing-sm;
   border: 1px dashed $gray-medium;
   border-radius: $border-radius-sm;
-
+  @include lg-down {
+    text-align: center;
+    display: block;
+  }
 }
 
 .viewMoreButton {
@@ -954,7 +968,7 @@
 }
 
 .viewMoreLink {
-  @include t.gilroy-18;
+  @include t.gilroy-16;
   color: $gray-dark;
   text-decoration: none;
   font-weight: 500;
@@ -994,23 +1008,23 @@
     display: none;
     
     @include lg-up {
-      border-radius: $border-radius-md;
+      border-radius: $border-radius-xxl;
       width: 300px;
     }
     @include xl-up {
-      border-radius: $border-radius-lg;
+      border-radius: $border-radius-xxl;
       width: 400px;
     }
     @include xxl-up {
-      border-radius: $border-radius-lg;
+      border-radius: $border-radius-xxl;
       width: 500px;
     }
     @include xxxl-up {
-      border-radius: $border-radius-xl;
+      border-radius: $border-radius-xxl;
       width: 600px;
     }
     @include full-hd-up {
-    border-radius: $border-radius-xl;
+    border-radius: $border-radius-xxl;
     width: 700px;
     }
     .mainBookImageWrapper & {
@@ -1054,7 +1068,7 @@
     }
   }
 
-  @include lg-down {
-   display: none;
-  }
+  // @include lg-down {
+  //  display: none;
+  // }
 }

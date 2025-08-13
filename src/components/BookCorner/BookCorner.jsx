@@ -269,9 +269,9 @@ const BookCorner = () => {
             )}
           </div>
           <div className={styles.bookStampContainer} style={{
-            top: `${bookCornerData.mainBook.stampOffset.top}%`,
-            right: `${bookCornerData.mainBook.stampOffset.right}%`,
-            transform: `rotate(${bookCornerData.mainBook.stampOffset.rotate || '0deg'})`
+            // top: `${bookCornerData.mainBook.stampOffset.top}%`,
+            // right: `${bookCornerData.mainBook.stampOffset.right}%`,
+            // transform: `rotate(${bookCornerData.mainBook.stampOffset.rotate || '0deg'})`
           }}>
             <p className={styles.textAboveStamp}>{bookCornerData.mainBook.textAboveStamp}</p>
             <LazyImage 
