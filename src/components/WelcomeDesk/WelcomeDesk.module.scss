@@ -22,16 +22,24 @@
   z-index: 100;
 }
 .pin-decoration-food-sticker {
-  // Настройте здесь размеры и позиции
   @include xs-only { width: 10px; top: 21%; left: 27%; transform: rotate(-11deg); }
   @include sm-up { width: 15px; top: 22%; left: 28%; transform: rotate(-12deg); }
-  // ...
+  @include md-up { width: 20px; top: 20%; left: 14%; transform: rotate(15deg); }
+  @include lg-up { width: 25px; top: 21%; left: 16%; transform: rotate(18deg); }
+  @include xl-up { width: 30px; top: 22%; left: 18%; transform: rotate(20deg); }
+  @include xxl-up { width: 35px; top: 23%; left: 20%; transform: rotate(22deg); }
+  @include xxxl-up { width: 40px; top: 24%; left: 22%; transform: rotate(25deg); }
+  @include full-hd-up { width: 30px; top: 0%; left: 0%; }
 }
-.decoration-food-sticker { // класс для декорации с едой
+.decoration-food-sticker { 
   @include xs-only { top: 21%; left: 27%; transform: rotate(-11deg); width: 30px;}
-  @include sm-up { width: 40px; }
-  @include md-up { width: 50px; }
-  @include lg-up { width: 120px; }
+  @include sm-up { width: 40px; top: 22%; left: 25%; transform: rotate(20deg);}
+  @include md-up { width: 50px; top: 22%; left: 25%; transform: rotate(20deg); }
+  @include lg-up { width: 60px; top: 22%; left: 25%; transform: rotate(20deg); }
+  @include xl-up { width: 80px; top: 22%; left: 25%; transform: rotate(20deg); }
+  @include xxl-up { width: 100px; top: 22%; left: 25%; transform: rotate(22deg); }
+  @include xxxl-up { width: 120px; top: 20%; left: 25%; transform: rotate(25deg); }
+  @include full-hd-up { width: 130px; top: 20%; left: 26%; transform: rotate(28deg); }
 }
 
 .tape-news-sticker { // класс для скотча на главном стикере
@@ -39,40 +47,43 @@
   @include sm-up { width: 30px; }
   @include md-up { width: 40px; }
   @include lg-up { width: 15зx; }
-  // ... (другие брейкпоинты)
-}
-// Прищепки для полароидов
-.pin-polaroid1 {
-  @include xs-only { width: 10px; top: 18%; left: 10%; transform: rotate(10deg); }
-  @include sm-up { width: 15px; top: 19%; left: 12%; transform: rotate(12deg); }
-  @include md-up { width: 20px; top: 20%; left: 14%; transform: rotate(15deg); }
-  @include lg-up { width: 25px; top: 21%; left: 16%; transform: rotate(18deg); }
   @include xl-up { width: 30px; top: 22%; left: 18%; transform: rotate(20deg); }
   @include xxl-up { width: 35px; top: 23%; left: 20%; transform: rotate(22deg); }
   @include xxxl-up { width: 40px; top: 24%; left: 22%; transform: rotate(25deg); }
-  @include full-hd-up { width: 50px; top: 25%; left: 24%; transform: rotate(28deg); }
+  @include full-hd-up { width: 90px; top: 100%; left: 34%; transform: rotate(28deg); }
+}
+// Прищепки для полароидов
+.pin-polaroid1 {
+  @include xs-only { width: 7px; top: 13%; left: 10%; transform: rotate(10deg); }
+  @include sm-up { width: 10px; top: 15%; left: 10%; transform: rotate(12deg); }
+  @include md-up { width: 13px; top: 15%; left: 14%; transform: rotate(15deg); }
+  @include lg-up { width: 15px; top: 14%; left: 14%; transform: rotate(18deg); }
+  @include xl-up { width: 17px; top: 15%; left: 14%; transform: rotate(20deg); }
+  @include xxl-up { width: 20px; top: 15%; left: 14%; transform: rotate(22deg); }
+  @include xxxl-up { width: 25px; top: 14%; left: 15%; transform: rotate(25deg); }
+  @include full-hd-up { width: 30px; top: 15%; left: 15%; transform: rotate(28deg); }
 }
 
 .pin-polaroid2 {
-  @include xs-only { width: 10px; top: 23%; left: 45%; transform: rotate(-8deg); }
-  @include sm-up { width: 15px; top: 24%; left: 48%; transform: rotate(-10deg); }
-  @include md-up { width: 20px; top: 25%; left: 50%; transform: rotate(-12deg); }
-  @include lg-up { width: 25px; top: 26%; left: 52%; transform: rotate(-15deg); }
-  @include xl-up { width: 30px; top: 27%; left: 54%; transform: rotate(-18deg); }
-  @include xxl-up { width: 35px; top: 28%; left: 56%; transform: rotate(-20deg); }
-  @include xxxl-up { width: 40px; top: 29%; left: 58%; transform: rotate(-22deg); }
-  @include full-hd-up { width: 50px; top: 30%; left: 60%; transform: rotate(-25deg); }
+  @include xs-only { width: 7px; top: 17%; left: 45%; transform: rotate(-8deg); }
+  @include sm-up { width: 10px; top: 17%; left: 48%; transform: rotate(-10deg); }
+  @include md-up { width: 13px; top: 17%; left: 50%; transform: rotate(-12deg); }
+  @include lg-up { width: 15px; top: 17%; left: 52%; transform: rotate(-15deg); }
+  @include xl-up { width: 17px; top: 17%; left: 50%; transform: rotate(-18deg); }
+  @include xxl-up { width: 20px; top: 17%; left: 50%; transform: rotate(-20deg); }
+  @include xxxl-up { width: 25px; top: 17%; left: 50%; transform: rotate(-22deg); }
+  @include full-hd-up { width: 30px; top: 16%; left: 50%; transform: rotate(-25deg); }
 }
 
 .pin-polaroid3 {
-  @include xs-only { width: 10px; top: 18%; left: 80%; transform: rotate(5deg); }
-  @include sm-up { width: 15px; top: 19%; left: 82%; transform: rotate(7deg); }
-  @include md-up { width: 20px; top: 20%; left: 84%; transform: rotate(10deg); }
-  @include lg-up { width: 25px; top: 21%; left: 86%; transform: rotate(12deg); }
-  @include xl-up { width: 30px; top: 22%; left: 88%; transform: rotate(15deg); }
-  @include xxl-up { width: 35px; top: 23%; left: 90%; transform: rotate(18deg); }
-  @include xxxl-up { width: 40px; top: 24%; left: 92%; transform: rotate(20deg); }
-  @include full-hd-up { width: 50px; top: 25%; left: 94%; transform: rotate(22deg); }
+  @include xs-only { width: 7px; top: 13%; left: 80%; transform: rotate(5deg); }
+  @include sm-up { width: 10px; top: 15%; left: 80%; transform: rotate(7deg); }
+  @include md-up { width: 13px; top: 15%; left: 80%; transform: rotate(10deg); }
+  @include lg-up { width: 15px; top: 15%; left: 80%; transform: rotate(12deg); }
+  @include xl-up { width: 17px; top: 16%; left: 80%; transform: rotate(15deg); }
+  @include xxl-up { width: 20px; top: 15%; left: 80%; transform: rotate(18deg); }
+  @include xxxl-up { width: 25px; top: 14%; left: 80%; transform: rotate(20deg); }
+  @include full-hd-up { width: 30px; top: 14%; left: 80%; transform: rotate(22deg); }
 }
 
 // Прищепки для живых фото
@@ -84,7 +95,7 @@
   @include xl-up { width: 30px; top: 60%; left: 8%; transform: rotate(10deg); }
   @include xxl-up { width: 35px; top: 62%; left: 9%; transform: rotate(12deg); }
   @include xxxl-up { width: 40px; top: 64%; left: 10%; transform: rotate(15deg); }
-  @include full-hd-up { width: 50px; top: 66%; left: 11%; transform: rotate(18deg); }
+  @include full-hd-up { width: 35px; top: 55%; left: 10%; transform: rotate(18deg); }
 }
 .pin-live-photo-2 {
   @include xs-only { width: 10px; top: 65%; left: 17%; transform: rotate(-10deg); }
@@ -94,10 +105,8 @@
   @include xl-up { width: 30px; top: 73%; left: 25%; transform: rotate(-20deg); }
   @include xxl-up { width: 35px; top: 75%; left: 27%; transform: rotate(-22deg); }
   @include xxxl-up { width: 40px; top: 77%; left: 29%; transform: rotate(-25deg); }
-  @include full-hd-up { width: 50px; top: 79%; left: 31%; transform: rotate(-28deg); }
+  @include full-hd-up { width: 35px; top: 66%; left: 27%; transform: rotate(-28deg); }
 }
-
-// ... (добавь аналогичные классы для pin-live-photo-3, pin-live-photo-4, pin-live-photo-5)
 
 .pin-live-photo-3 {
   @include xs-only { width: 10px; top: 62%; left: 34%; transform: rotate(-5deg); }
@@ -107,7 +116,7 @@
   @include xl-up { width: 30px; top: 70%; left: 42%; transform: rotate(-15deg); }
   @include xxl-up { width: 35px; top: 72%; left: 44%; transform: rotate(-18deg); }
   @include xxxl-up { width: 40px; top: 74%; left: 46%; transform: rotate(-20deg); }
-  @include full-hd-up { width: 50px; top: 6%; left: 6%; transform: rotate(-22deg); }
+  @include full-hd-up { width: 35px; top: 65%; left: 50%; transform: rotate(-22deg); }
 }
 
 .pin-live-photo-4 {
@@ -118,7 +127,7 @@
   @include xl-up { width: 30px; top: 56%; left: 67%; transform: rotate(10deg); }
   @include xxl-up { width: 35px; top: 58%; left: 69%; transform: rotate(12deg); }
   @include xxxl-up { width: 40px; top: 60%; left: 71%; transform: rotate(15deg); }
-  @include full-hd-up { width: 50px; top: 62%; left: 73%; transform: rotate(18deg); }
+  @include full-hd-up { width: 35px; top: 50%; left: 70%; transform: rotate(18deg); }
 }
 
 .pin-live-photo-5 {
@@ -129,7 +138,7 @@
   @include xl-up { width: 30px; top: 73%; left: 87%; transform: rotate(15deg); }
   @include xxl-up { width: 35px; top: 75%; left: 89%; transform: rotate(18deg); }
   @include xxxl-up { width: 40px; top: 77%; left: 91%; transform: rotate(20deg); }
-  @include full-hd-up { width: 50px; top: 79%; left: 93%; transform: rotate(22deg); }
+  @include full-hd-up { width: 35px; top: 79%; left: 93%; transform: rotate(22deg); }
 }
 .welcomeSection {
   width: 100%;
@@ -467,18 +476,18 @@
   }
 
 }
-.tape {  
-  position: absolute;  
-  width: 60px;
-  height: auto;
-  pointer-events: none; 
+// .tape {  
+//   position: absolute;  
+//   width: 60px;
+//   height: auto;
+//   pointer-events: none; 
  
-  @include mobile-only { 
-    width: 40px; 
-    top: -10px !important;
-    left: -5px !important; 
-  }
-}
+//   @include mobile-only { 
+//     width: 40px; 
+//     top: -10px !important;
+//     left: -5px !important; 
+//   }
+// }
 .saigakStickerWrapper { 
   position: absolute; 
   z-index: 1; 

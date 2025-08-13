@@ -1,11 +1,13 @@
+// src/components/FooterSection/FooterSection.jsx
 import React from 'react';
 import styles from './FooterSection.module.scss';
 import ScissorsIcon from '../../assets/icons/logo-icon.svg'; 
 import LazyImage from '../LazyImage/LazyImage.jsx';
+import AnimatedWave from '../AnimatedWave/AnimatedWave'; // Импортируем новый компонент
 
 const FooterSection = () => {
-     const whatsappPhoneNumber = "+77004792109"; 
-     const whatsappMessage = "Здравствуйте! Хочу узнать подробнее о подписке"; 
+    const whatsappPhoneNumber = "+77004792109"; 
+    const whatsappMessage = "Здравствуйте! Хочу узнать подробнее о подписке"; 
     
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodeURIComponent(whatsappMessage)}`;
     
@@ -33,27 +35,17 @@ const FooterSection = () => {
                     <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" className={styles.shapeFill}></path>
                 </svg>
             </div>
-            <div className={styles.footerDecorBackground} />
+            
+            <AnimatedWave />
 
-                <div className={styles.communityBlock}>
+            <div className={styles.communityBlock}>
                 <div className="container"> 
-
                     <div className={styles.communityContent}>
                         <h2 className={styles.communityTitle}>Присоединяйтесь к 1000+ любителям кофе!</h2>
                         <p className={styles.communityText}>
                         Заходи чаще и получай больше!
-Получайте доступ к эксклюзивным предложениям, бонусам и событиям, доступным только в приложении.
-Стать участником легко - просто активируйте подписку за 3000 тенге в месяц в нашем приложении<br/>Наша подписка — это не просто приглашение в нашу семью, а сервис.
-{/* <ul>
-  <li>Наша подписка — это не просто приглашение в нашу семью, а сервис.</li>
-  <li>Получите личные бонусы:
-    <ul>
-      <li>3 бесплатных напитка каждый месяц</li>
-      <li>Керамическую чашку, созданную для вас</li>
-      <li>Доступ к бонусной и реферальной программам</li>
-    </ul>
-  </li>
-</ul> */}
+Получайте доступ к эксклюзивным предложениям, бонусам и событиям, доступным только в приложении.<br/><br/>
+Стать участником легко - просто активируйте подписку за 3000 тенге в месяц в нашем приложении. Наша подписка — это не просто приглашение в нашу семью, а сервис.
                         </p>
                         <button className={styles.subscribeButton} onClick={handleSubscribeClick}>
                             Подробнее о подписке
@@ -64,72 +56,60 @@ const FooterSection = () => {
                     </div>
                 </div> 
             </div>
-
-            {/* Слой 1: Реклама приложения в нижней левой части */}
-                <div className={styles.appPromoBlock}>            <div className="container"> 
-
-                    <h3 className={styles.appPromoTitle}>Steppe Coffee: Membership app</h3>
-                    <p className={styles.appPromoDescription}>
-                        Оформляйте заказы, копите бонусы и участвуйте в мероприятиях.
-                    </p>
-                    <button className={styles.downloadAppButton} onClick={handleDownloadAppClick}>
-                        <span>Скачать приложение</span>
-                        {/* <LazyImage src={ScissorsIcon} alt="Иконка ножниц" className={styles.scissorsIcon} /> */}
-                    </button>
-                    {/* Логотип-ножницы отдельно, если он должен быть как декоративный элемент */}
-                    <LazyImage src={ScissorsIcon} alt="Декоративные ножницы" className={styles.appPromoLogo} />
-                </div>            
-            </div>
-
-
-            {/* Слой 2: footer-decor-1.png в правой нижней части */}
-            <div className={styles.footerDecorMid}></div>
-
-            {/* Слой 3: Основной контент футера - "Контакты" и "О нас" */}
-            <div className="container"> 
-                <div className={styles.mainFooterContent}>
-                    <div className={styles.footerColumn}>
-                        <h3 className={styles.columnTitle}>Контакты</h3>
-                        <p className={styles.contactInfo}>
-                            Улица Курмангазы, 63 1 этаж,<br/>
-                            Алмалинский район, Алматы
+            
+            <div className={styles.bottomContentWrapper}>
+                <div className="container">
+                    <div className={styles.appPromoBlock}>
+                        <h3 className={styles.appPromoTitle}>Steppe Coffee: Membership app</h3>
+                        <p className={styles.appPromoDescription}>
+                            Оформляйте заказы, копите бонусы и участвуйте в мероприятиях.
                         </p>
-                        <p className={styles.contactInfo}>
-                            <a href="mailto:contact@steppecoffee.kz" className={styles.contactLink}>contact@steppecoffee.kz</a>
-                        </p>
-                        <div className={styles.socialIcons}>
-                            <a href="https://www.instagram.com/steppecoffeekz/" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
-                                <LazyImage src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
-                            </a>
-                            <a href="tel:+77004792109" className={styles.socialLink} aria-label="Call">                             
-                                <LazyImage src="/images/phone-icon.webp" alt="Телефон" className={styles.icon} />
-                            </a>
-                            <a href="https://www.threads.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Threads">
-                                <LazyImage src="/images/threads-icon.webp" alt="Threads" className={styles.icon} />
-                            </a>
-                            <a href="https://www.tiktok.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="TikTok">
-                                <LazyImage src="/images/tiktok-icon.webp" alt="TikTok" className={styles.icon} />
-                            </a>
+                        <button className={styles.downloadAppButton} onClick={handleDownloadAppClick}>
+                            <span>Скачать приложение</span>
+                        </button>
+                    </div>
+                    <div className={styles.footerColumnsWrapper}>
+                        <div className={styles.footerColumn}>
+                            <h3 className={styles.columnTitle}>Контакты</h3>
+                            <p className={styles.contactInfo}>
+                                Улица Курмангазы, 63 1 этаж,<br/>
+                                Алмалинский район, Алматы
+                            </p>
+                            <p className={styles.contactInfo}>
+                                <a href="mailto:contact@steppecoffee.kz" className={styles.contactLink}>contact@steppecoffee.kz</a>
+                            </p>
+                            <div className={styles.socialIcons}>
+                                <a href="https://www.instagram.com/steppecoffeekz/" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
+                                    <LazyImage src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
+                                </a>
+                                <a href="tel:+77004792109" className={styles.socialLink} aria-label="Call">                             
+                                    <LazyImage src="/images/phone-icon.webp" alt="Телефон" className={styles.icon} />
+                                </a>
+                                <a href="https://www.threads.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Threads">
+                                    <LazyImage src="/images/threads-icon.webp" alt="Threads" className={styles.icon} />
+                                </a>
+                                <a href="https://www.tiktok.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="TikTok">
+                                    <LazyImage src="/images/tiktok-icon.webp" alt="TikTok" className={styles.icon} />
+                                </a>
+                            </div>
+                        </div>
+                        <div className={styles.footerColumn}>
+                            <h3 className={styles.columnTitle}>О нас</h3>
+                            <ul className={styles.documentLinks}>
+                                <li><a href="/documentsPdf/privacy-policy.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Политика конфиденциальности</a></li>
+                                <li><a href="/documentsPdf/legal-information.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Правовая информация</a></li>
+                                <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Сервисная информация</a></li>
+                                <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>О безопасности платежей</a></li>
+                                <li><a href="/documentsPdf/public-offer.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Договор публичной оферты</a></li>
+                            </ul>
                         </div>
                     </div>
-
-                    <div className={styles.footerColumn}>
-                        <h3 className={styles.columnTitle}>О нас</h3>
-                        <ul className={styles.documentLinks}>
-                            <li><a href="/documentsPdf/privacy-policy.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Политика конфиденциальности</a></li>
-                            <li><a href="/documentsPdf/legal-information.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Правовая информация</a></li>
-                            <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Сервисная информация</a></li>
-                            <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>О безопасности платежей</a></li>
-                            <li><a href="/documentsPdf/public-offer.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Договор публичной оферты</a></li>
-                        </ul>
-                    </div>
-                </div>            
+                </div>
             </div>
-
+            
             <div className={styles.copyright}>
                 <p>&copy; {new Date().getFullYear()} Steppe Coffee. Все права защищены.</p>
             </div>
-
         </footer>
     );
 };

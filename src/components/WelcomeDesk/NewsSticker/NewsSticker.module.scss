@@ -78,15 +78,15 @@
     z-index: 20; 
   }
 }
-.tape { 
-  position: absolute; 
-  width: 50px; 
-  height: auto;
-  pointer-events: none; 
+// .tape { 
+//   position: absolute; 
+//   width: 0px; 
+//   height: auto;
+//   pointer-events: none; 
 
-  @include mobile-only {
-    width: 20px !important;
-    top: -10px !important; 
-    left: -5px !important; 
-  }
-}
+//   @include mobile-only {
+//     width: 20px !important;
+//     top: -10px !important; 
+//     left: -5px !important; 
+//   }
+// }

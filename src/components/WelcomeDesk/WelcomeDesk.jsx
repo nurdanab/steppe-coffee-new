@@ -37,7 +37,7 @@ const WelcomeDesk = () => {
     },
     {
       id: 'polaroid2',
-      imageSrc: '/images/desk/polaroid2.png',
+      imageSrc: '/images/desk/polaroid2.webp',
       videoSrc: '/videos/desk/video2.webm',
       title: 'Ваше «четвертое\nпространство ждёт»!',
       position: { top: 23, left: 42, transform: 'rotate(-4deg)', zIndex: 11 },
@@ -48,7 +48,7 @@ const WelcomeDesk = () => {
     },
     {
       id: 'polaroid3',
-      imageSrc: '/images/desk/polaroid3.png',
+      imageSrc: '/images/desk/polaroid3.webp',
       videoSrc: '/videos/desk/video3.webm',
       position: { top: 20, left: 74, transform: 'rotate(-4deg)', zIndex: 10 },
       size: 'small',
@@ -61,7 +61,7 @@ const WelcomeDesk = () => {
   const bottomLivePhotos = [
     {
       id: 'live-photo-1',
-      imageSrc: '/images/desk/live/live-1.png',
+      imageSrc: '/images/desk/live/live-1.webp',
       videoSrc: '/videos/desk/video-live-1.webm',
       position: { top: 52, left: 1, transform: 'rotate(0deg)', zIndex: 9 },
       size: 'livePhotoSize-1',
@@ -71,8 +71,8 @@ const WelcomeDesk = () => {
     },
     {
       id: 'live-photo-2',
-      imageSrc: '/images/desk/live/live-2.png',
-      videoSrc: '/videos/desk/video-live-1.webm',
+      imageSrc: '/images/desk/live/live-3.png',
+      videoSrc: '/videos/desk/video-live-2.webm',
       position: { top: 65, left: 18, transform: 'rotate(1deg)', zIndex: 8 },
       size: 'livePhotoSize-2',
       wrapperClass: styles.livePhotoWrapper2,
@@ -81,8 +81,8 @@ const WelcomeDesk = () => {
     },
     {
       id: 'live-photo-3',
-      imageSrc: '/images/desk/live/live-3.png',
-      videoSrc: '/videos/desk/video-live-1.webm',
+      imageSrc: '/images/desk/live/live-2.png',
+      videoSrc: '/videos/desk/video-live-3.webm',
       position: { top: 62, left: 35, transform: 'rotate(-1deg)', zIndex: 7 },
       size: 'livePhotoSize-3',
       wrapperClass: styles.livePhotoWrapper3,
@@ -92,7 +92,7 @@ const WelcomeDesk = () => {
     {
       id: 'live-photo-4',
       imageSrc: '/images/desk/live/live-4.png',
-      videoSrc: '/videos/desk/video-live-1.webm',
+      videoSrc: '/videos/desk/video-live-4.webm',
       position: { top: 48, left: 60, transform: 'rotate(0deg)', zIndex: 5 },
       size: 'livePhotoSize-4',
       wrapperClass: styles.livePhotoWrapper4,
@@ -102,7 +102,7 @@ const WelcomeDesk = () => {
     {
       id: 'live-photo-5',
       imageSrc: '/images/desk/live/live-5.png',
-      videoSrc: '/videos/desk/video-live-1.webm',
+      videoSrc: '/videos/desk/video-live-5.webm',
       position: { top: 65, left: 80, transform: 'rotate(1deg)', zIndex: 6 },
       size: 'livePhotoSize-5',
       wrapperClass: styles.livePhotoWrapper5,
