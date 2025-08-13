@@ -5,8 +5,8 @@
 @use 'typography' as t;
 
 $event-colors: (
-  'second_hall': $orange, 
-  'summer_terrace': #5ecc69 
+  'second_hall': #C18356, 
+  'summer_terrace': #ebc400 
 );
 
 .fc {
@@ -27,18 +27,49 @@ $event-colors: (
       background-color: $yellow !important;
       color: $black !important;
     //   border: 1px solid $black !important;
-      border-radius: $border-radius-xl;
-      font-size: 14px;
-      padding: $spacing-xs $spacing-sm;
+      
 
       @include sm-up {
-        padding: $spacing-sm $spacing-md;
-        font-size: 16px;
+        padding: $spacing-xs $spacing-xs;
+        font-size: 10px;
+        border-radius: $border-radius-md;
       }
       
       @include xs-only {
-          font-size: 12px;
-          padding: $spacing-xs $spacing-sm;
+          font-size: 10px;
+          padding: $spacing-xs $spacing-xs;
+          border-radius: $border-radius-xl;
+      }
+      
+      @include md-up {
+        font-size: 12px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-xl;
+      }
+      @include lg-up {
+        font-size: 14px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-xl;
+      }
+      @include xl-up {
+        font-size: 14px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-xl;
+      }
+      @include xxl-up {
+        font-size: 16px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-xl;
+      }
+      @include xxxl-up {
+        font-size: 18px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-xl;
+      }
+      @include full-hd-up {
+        font-size: 20px;
+        padding: $spacing-xs $spacing-sm;
+        border-radius: $border-radius-xl;
       }
 
     //   &:hover {
