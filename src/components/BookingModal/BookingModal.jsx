@@ -31,7 +31,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [monthlyBookings, setMonthlyBookings] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
 
-  // 🛠️ ИСПРАВЛЕНИЕ: Используем Luxon для создания 'today' в нужной временной зоне.
   const today = useMemo(() => {
     return DateTime.now().setZone('Asia/Almaty').startOf('day').toJSDate();
   }, []);
@@ -54,21 +53,18 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   }, []);
 
   const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
-    // 🛠️ ИСПРАВЛЕНИЕ: Явно указываем зону при создании DateTime из JS Date.
     const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
     const dateString = luxonDate.toISODate();
     const allSlots = [];
     const intervalMinutes = 30;
     const durationMinutes = duration * 60;
     const bufferMinutes = bufferTimeHours * 60;
-    // 🛠️ ИСПРАВЛЕНИЕ: Получаем текущее время в правильной зоне.
     const now = DateTime.now().setZone('Asia/Almaty');
 
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
 
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
-      // 🛠️ ИСПРАВЛЕНИЕ: Явно указываем зону при создании DateTime из строки.
       const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
       const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
       
@@ -107,7 +103,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     setLoading(true);
     setError(null);
-    // 🛠️ ИСПРАВЛЕНИЕ: Убеждаемся, что мы работаем с датой в правильной зоне.
     const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
     const startOfMonth = luxonDate.startOf('month').toISODate();
     const endOfMonth = luxonDate.endOf('month').toISODate();
@@ -131,7 +126,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const now = DateTime.now().setZone('Asia/Almaty');
 
       for (const dateString of datesWithBookings) {
-        // 🛠️ ИСПРАВЛЕНИЕ: Создаем временный объект DateTime с нужной зоной.
         const tempDateLuxon = DateTime.fromISO(dateString, { zone: 'Asia/Almaty' });
         const tempDate = tempDateLuxon.toJSDate();
         const slots = calculateAvailableSlots(tempDate, room, duration, bookings);
@@ -190,7 +184,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
         body: {
           organizer_name: userName,
-          // 🛠️ ИСПРАВЛЕНИЕ: Преобразуем дату в ISO-строку с учетом зоны.
           booking_date: DateTime.fromJSDate(bookingDate, { zone: 'Asia/Almaty' }).toISODate(),
           start_time: startTime,
           end_time: endTime,
