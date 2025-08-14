@@ -5,39 +5,44 @@
 
 .animatedWaveContainer {
     position: absolute;
-    bottom: 0;
+    // bottom: -10;
     left: 0;
     width: 100%;
-    height: 600px;
+    height: 300px;
     z-index: -10;
     overflow: hidden;
     @include xs-only { 
-        height: 300px;
+        height: 2200px;
     }
     @include sm-up {
-        height: 500px;
+        height: 1900px;
     }
     @include md-up {
-        height: 500px;
+        height: 2000px;
     }
     @include lg-up {
-        height: 700px;
+        height: 1400px;
+    }
+    @include extra-large-desktop-only
+    {
+        bottom: -10px;
+    }
+    @include large-desktop-only {
+        bottom: -10;
+        
     }
     @include xl-up {
-        height: 700px;
+        height: 1400px;
     }
     @include xxl-up {
-        height: 790px;
+        height: 770px;
+    }
+    @include xxxl-up {
+        height: 1600px;
     }
     @include full-hd-up {
-        height: 930px;
+        height: 1900px;
     }
-    // @include uhd-up {
-    //     height: 1000px;
-    // }
-    // @include uhd-4k-up {
-    //     height: 1200px;
-    // }
 }
 
 .animatedWaveSvg {

@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './FooterSection.module.scss';
 import ScissorsIcon from '../../assets/icons/logo-icon.svg'; 
 import LazyImage from '../LazyImage/LazyImage.jsx';
-import AnimatedWave from '../AnimatedWave/AnimatedWave'; // Импортируем новый компонент
+import AnimatedWave from '../AnimatedWave/AnimatedWave';
 
 const FooterSection = () => {
     const whatsappPhoneNumber = "+77004792109"; 
