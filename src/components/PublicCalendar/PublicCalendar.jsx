@@ -11,11 +11,13 @@ import EventSection from './EventSection.jsx';
 import { supabase } from '../../supabaseClient';  
 import styles from './PublicCalendar.module.scss';
 import { DateTime } from 'luxon';  
+import EventModal from './EventModal.jsx';
 
 function PublicCalendar() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -34,15 +36,14 @@ function PublicCalendar() {
         }
 
         const calendarEvents = data.map(booking => {
-          const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
-         const endDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
+        const startDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
+        const endDateTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
 
           return {
             id: booking.id,
             title: `${booking.organizer_name} - ${booking.event_name}`,
             start: startDateTime.toISO(),
             end: endDateTime.toISO(),
-            // Добавляем className, который будет соответствовать ключам в нашей Sass-карте
             className: `event-${booking.selected_room}`, 
             extendedProps: {
               numPeople: booking.num_people,
@@ -75,6 +76,14 @@ function PublicCalendar() {
     return <p className={styles.errorMessage}>Ошибка: {error}</p>;   
   }
 
+  const openModal = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const closeModal = () => {
+    setSelectedEvent(null);
+  };
+
   return (
     <div className={styles.publicCalendarWrapper}>  
       <div className="container"> 
@@ -82,31 +91,39 @@ function PublicCalendar() {
           <h1 className={styles.calendarTitle}>Общее расписание бронирований</h1>
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="timeGridWeek" 
+            // initialView="timeGridWeek" 
+            // headerToolbar={{
+            //   left: 'prev,next today',
+            //   center: 'title',
+            //   right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            initialView="dayGridMonth"
             headerToolbar={{
               left: 'prev,next today',
               center: 'title',
-              right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              right: 'dayGridMonth,timeGridDay'
             }}
             events={events}
             slotMinTime="08:00:00"
             slotMaxTime="23:00:00"
             locale="ru"  
             height="auto" 
-            // className={styles.fc} 
+           
             eventClick={(info) => {
-              const eventProps = info.event.extendedProps;
-              const startStr = DateTime.fromISO(info.event.startStr, { zone: 'Asia/Almaty' });
-              const endStr = DateTime.fromISO(info.event.endStr, { zone: 'Asia/Almaty' });
-
-              alert(
-                `Название события: ${eventProps.eventName || 'Не указано'}\n` +
-                `Описание события: ${eventProps.eventDescription || 'Не указано'}\n` +
-                `Контакт для связи: ${eventProps.organizerContact || 'Не указано'}\n` +
-                `Дата: ${startStr.toFormat('dd.MM.yyyy')}\n` +
-                `Время: ${startStr.toFormat('HH:mm')} - ${endStr.toFormat('HH:mm')}`
-              );
+              openModal(info.event); // 👈 Теперь клик открывает наше модальное окно
             }}
+            // eventClick={(info) => {
+            //   const eventProps = info.event.extendedProps;
+            //   const startStr = DateTime.fromISO(info.event.startStr, { zone: 'Asia/Almaty' });
+            //   const endStr = DateTime.fromISO(info.event.endStr, { zone: 'Asia/Almaty' });
+
+            //   alert(
+            //     `Название события: ${eventProps.eventName || 'Не указано'}\n` +
+            //     `Описание события: ${eventProps.eventDescription || 'Не указано'}\n` +
+            //     `Контакт для связи: ${eventProps.organizerContact || 'Не указано'}\n` +
+            //     `Дата: ${startStr.toFormat('dd.MM.yyyy')}\n` +
+            //     `Время: ${startStr.toFormat('HH:mm')} - ${endStr.toFormat('HH:mm')}`
+            //   );
+            // }}
             allDaySlot={false} 
             nowIndicator={true} 
             slotLabelFormat={{
@@ -129,8 +146,9 @@ function PublicCalendar() {
           />
         </div>
       </div>
-      {/* Добавляем компонент EventSection здесь, после календаря */}
       <EventSection />
+      {selectedEvent && <EventModal event={selectedEvent} onClose={closeModal} />}
+
     </div>
   );
 }
