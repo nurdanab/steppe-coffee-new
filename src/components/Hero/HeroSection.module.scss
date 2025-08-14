@@ -10,13 +10,17 @@
   background-image: url('/images/hero-back.webp');
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
 
-
+  @include md-down{
+    background-attachment: scroll;
+  }
+  @include md-up{
+    background-attachment: fixed;
+  }
   @include lg-down {
     min-height: 80vh;
     flex-wrap: wrap;
