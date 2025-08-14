@@ -4,45 +4,47 @@
 @use '../../styles/mixins' as *;
 @use '../../styles/typography' as t;
 
+// events
 .saigak1 {
-  @include xs-only { top: 60px; left: 10px; transform: rotate(10deg); }
-  @include sm-up { top: 80px; left: 15px; transform: rotate(12deg); }
-  @include md-up { top: 100px; left: 20px; transform: rotate(15deg); }
-  @include lg-up { top: 120px; left: 25px; transform: rotate(18deg); }
-  @include xl-up { top: 140px; left: 30px; transform: rotate(20deg); }
-  @include xxl-up { top: 160px; left: 35px; transform: rotate(22deg); }
-  @include xxxl-up { top: 180px; left: 40px; transform: rotate(25deg); }
-  @include full-hd-up { top: 300px; left: 845px; transform: rotate(28deg); }
+  @include xs-only { top: 40px; left: 200px; transform: rotate(-10deg); }
+  @include sm-up { top: 50px; left: 320px; transform: rotate(-10deg); }
+  @include md-up { top: 70px; left: 350px; transform: rotate(-10deg); }
+  @include lg-up { top: 90px; left: 500px; transform: rotate(-10deg); }
+  @include xl-up { top: 100px; left: 600px; transform: rotate(-12deg); }
+  @include xxl-up { top: 120px; left: 650px; transform: rotate(-12deg); }
+  @include xxxl-up { top: 130px; left: 700px; transform: rotate(-13deg); }
+  @include full-hd-up { top: 150px; left: 900px; transform: rotate(-13deg); }
 }
-
+// 2112
 .saigak2 {
-  @include xs-only { top: 80px; left: 50px; transform: rotate(-8deg); }
-  @include sm-up { top: 100px; left: 60px; transform: rotate(-10deg); }
-  @include md-up { top: 120px; left: 70px; transform: rotate(-12deg); }
-  @include lg-up { top: 140px; left: 80px; transform: rotate(-15deg); }
-  @include xl-up { top: 160px; left: 90px; transform: rotate(-18deg); }
-  @include xxl-up { top: 180px; left: 100px; transform: rotate(-20deg); }
-  @include xxxl-up { top: 200px; left: 110px; transform: rotate(-22deg); }
+  @include xs-only { top: 170px; left: 100px; transform: rotate(-5deg); }
+  @include sm-up { top: 200px; left: 130px; transform: rotate(-14deg); }
+  @include md-up { top: 300px; left: 170px; transform: rotate(-17deg); }
+  @include lg-up { top: 400px; left: 230px; transform: rotate(-18deg); }
+  @include xl-up { top: 500px; left: 250px; transform: rotate(-20deg); }
+  @include xxl-up { top: 600px; left: 270px; transform: rotate(-21deg); }
+  @include xxxl-up { top: 700px; left: 300px; transform: rotate(-22deg); }
   @include full-hd-up { top: 750px; left: 400px; transform: rotate(-25deg); }
 }
-
+// atmos
 .saigak3 {
-  @include xs-only { top: 100px; left: 90px; transform: rotate(5deg); }
-  @include sm-up { top: 120px; left: 100px; transform: rotate(7deg); }
-  @include md-up { top: 140px; left: 110px; transform: rotate(10deg); }
-  @include lg-up { top: 160px; left: 120px; transform: rotate(12deg); }
-  @include xl-up { top: 180px; left: 130px; transform: rotate(15deg); }
-  @include xxl-up { top: 200px; left: 140px; transform: rotate(18deg); }
-  @include xxxl-up { top: 220px; left: 150px; transform: rotate(20deg); }
-  @include full-hd-up { top: 380px; left: 1200px; transform: rotate(-10deg); }
+  @include xs-only { top: 80px; left: 200px; transform: rotate(-15deg); }
+  @include sm-up { top: 150px; left: 400px; transform: rotate(7deg); }
+  @include md-up { top: 140px; left: 400px; transform: rotate(-10deg); }
+  @include lg-up { top: 200px; left: 700px; transform: rotate(12deg); }
+  @include xl-up { top: 270px; left: 830px; transform: rotate(15deg); }
+  @include xxl-up { top: 330px; left: 900px; transform: rotate(18deg); }
+  @include xxxl-up { top: 370px; left: 1000px; transform: rotate(20deg); }
+  @include full-hd-up { top: 390px; left: 1200px; transform: rotate(10deg); }
 }
+// rec
 .saigak4 {
-  @include xs-only { top: 100px; left: 90px; transform: rotate(5deg); }
-  @include sm-up { top: 120px; left: 100px; transform: rotate(7deg); }
-  @include md-up { top: 140px; left: 110px; transform: rotate(10deg); }
-  @include lg-up { top: 160px; left: 120px; transform: rotate(12deg); }
-  @include xl-up { top: 180px; left: 130px; transform: rotate(15deg); }
-  @include xxl-up { top: 200px; left: 140px; transform: rotate(18deg); }
-  @include xxxl-up { top: 220px; left: 150px; transform: rotate(20deg); }
-  @include full-hd-up { top: 380px; left: 1200px; transform: rotate(-10deg); }
+  @include xs-only { top: 2px; left: 10px; transform: rotate(-15deg); }
+  @include sm-up { top: 10px; left: 10px; transform: rotate(7deg); }
+  @include md-up { top: 10px; left: 10px; transform: rotate(10deg); }
+  @include lg-up { top: 10px; left: 30px; transform: rotate(12deg); }
+  @include xl-up { top: 10px; left: 70px; transform: rotate(15deg); }
+  @include xxl-up { top: 20px; left: 100px; transform: rotate(18deg); }
+  @include xxxl-up { top: 30px; left: 100px; transform: rotate(20deg); }
+  @include full-hd-up { top: 38px; left: 120px; transform: rotate(10deg); }
 }

@@ -36,9 +36,7 @@ const BookCorner = () => {
   const checkScrollState = () => {
     if (shelfRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = shelfRef.current;
-      // Проверяем, есть ли прокрутка влево
       setCanScrollLeft(scrollLeft > 5); 
-      // Проверяем, есть ли прокрутка вправо
       setCanScrollRight(Math.round(scrollLeft + clientWidth) < scrollWidth);
     }
   };
@@ -210,18 +208,21 @@ const BookCorner = () => {
             <div className={styles.booksContainer} ref={shelfRef}>
                 {bookCornerData.bookShelf.books.map(book => (
                     <div 
-                        key={book.id} 
-                        className={styles.bookCard}
-                    >
-                        <LazyImage  src={book.coverImage} alt={book.title} className={styles.bookCover} />
-                        <p className={styles.bookTitle}>{book.title}</p>
-                        <p className={styles.bookAuthor}>{book.author}</p>
-                        
-                         <div className={styles.bookTooltip}>
+                    key={book.id} 
+                    className={styles.bookCard}
+                >
+                    <LazyImage src={book.coverImage} alt={book.title} className={styles.bookCover} />
+                    <p className={styles.bookTitle}>{book.title}</p>
+                    <p className={styles.bookAuthor}>{book.author}</p>
+                    
+                    {/* Добавляем проверку, что описание существует, прежде чем рендерить тултип */}
+                    {book.description && (
+                        <div className={styles.bookTooltip}>
                             <p>{book.description}</p>
                         </div>
-                    </div>
-                ))}
+                    )}
+                </div>
+            ))}
             </div>
             <button
                 className={`${styles.carouselButton} ${styles.rightButton} ${!canScrollRight ? styles.disabled : ''}`}

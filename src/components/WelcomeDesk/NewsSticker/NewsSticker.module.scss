@@ -78,15 +78,23 @@
     z-index: 20; 
   }
 }
-// .tape { 
-//   position: absolute; 
-//   width: 0px; 
-//   height: auto;
-//   pointer-events: none; 
 
-//   @include mobile-only {
-//     width: 20px !important;
-//     top: -10px !important; 
-//     left: -5px !important; 
-//   }
-// }
+.tape {
+  position: absolute;
+  height: auto;
+  pointer-events: none;
+  transform-origin: center center;
+  z-index: 100;
+}
+
+// Перемещённые стили для конкретного скотча
+.tape-news-sticker {
+  @include xs-only { top: -2px; left: 9%; transform: translateX(-50%) rotate(10deg); width: 20px; }
+  @include sm-up { top: -4px; left: 9%; transform: translateX(-50%) rotate(10deg); width: 30px; }
+  @include md-up { top: -6px; left: 9%; transform: translateX(-50%) rotate(10deg); width: 40px; }
+  @include lg-up { top: -8px; left: 9%; transform: translateX(-50%) rotate(10deg); width: 50px; }
+  @include xl-up { width: 60px; top: -10px; left: 9%; transform: translateX(-50%) rotate(10deg); }
+  @include xxl-up { width: 70px; top: -12px; left: 9%; transform: translateX(-50%) rotate(10deg); }
+  @include xxxl-up { width: 80px; top: -15px; left: 9%; transform: translateX(-50%) rotate(10deg); }
+  @include full-hd-up { width: 100px; top: -20px; left: 9%; transform: translateX(-50%) rotate(10deg); }
+}

@@ -8,6 +8,8 @@ import SaigakSticker from './SaigakSticker/SaigakSticker';
 import LazyImage from '../LazyImage/LazyImage.jsx';
 import deskItemsDataWrapper from '../../data/deskData.json';
 import saigakPositions from './SaigakPositions.module.scss';
+import NewsStickerStyles from './NewsSticker/NewsSticker.module.scss';
+import DeskItemStyles from './DeskItem/DeskItem.module.scss';
 
 const WelcomeDesk = () => {
   const { ref, inView } = useInView({});
@@ -29,32 +31,32 @@ const WelcomeDesk = () => {
       imageSrc: '/images/desk/polaroid1.png',
       videoSrc: '/videos/desk/video1.webm',
       title: 'Каждая чашка-это\nискусство ♥',
-      position: { top: 20, left: 4, transform: 'rotate(7deg)', zIndex: 12 },
+      position: { top: 20, left: 4, transform: 'rotate(7deg)', zIndex: 18 },
       size: 'medium',
       wrapperClass: styles.polaroidWrapper1,
       pinType: 'wood',
-      pinOffset: { top: -40, left: 150, rotate: '24deg' },
+      pinClass: DeskItemStyles['pin-polaroid1'],
     },
     {
       id: 'polaroid2',
       imageSrc: '/images/desk/polaroid2.webp',
       videoSrc: '/videos/desk/video2.webm',
       title: 'Ваше «четвертое\nпространство ждёт»!',
-      position: { top: 23, left: 42, transform: 'rotate(-4deg)', zIndex: 11 },
+      position: { top: 23, left: 42, transform: 'rotate(-4deg)', zIndex: 17 },
       size: 'large',
       wrapperClass: styles.polaroidWrapper2,
       pinType: 'wood',
-      pinOffset: { top: -150, left: 90, rotate: '-10deg' },
+      pinClass: DeskItemStyles['pin-polaroid2'],
     },
     {
       id: 'polaroid3',
       imageSrc: '/images/desk/polaroid3.webp',
       videoSrc: '/videos/desk/video3.webm',
-      position: { top: 20, left: 74, transform: 'rotate(-4deg)', zIndex: 10 },
+      position: { top: 20, left: 74, transform: 'rotate(-4deg)', zIndex: 16 },
       size: 'small',
       wrapperClass: styles.polaroidWrapper3,
       pinType: 'wood',
-      pinOffset: { top: -240, left: 84, rotate: '7deg' },
+      pinClass: DeskItemStyles['pin-polaroid3'],
     },
   ];
 
@@ -66,8 +68,8 @@ const WelcomeDesk = () => {
       position: { top: 52, left: 1, transform: 'rotate(0deg)', zIndex: 9 },
       size: 'livePhotoSize-1',
       wrapperClass: styles.livePhotoWrapper1,
-      // // pinType: 'yellow',
-      // pinOffset: { top: -260, left: 100, rotate: '0deg' },
+      pinType: 'wood',
+      pinClass: DeskItemStyles['pin-live-photo-1'],
     },
     {
       id: 'live-photo-2',
@@ -76,8 +78,8 @@ const WelcomeDesk = () => {
       position: { top: 65, left: 18, transform: 'rotate(1deg)', zIndex: 8 },
       size: 'livePhotoSize-2',
       wrapperClass: styles.livePhotoWrapper2,
-      // pinType: 'red',
-      // pinOffset: { top: -300, left: 150, rotate: '0deg' },
+      pinType: 'red',
+      pinClass: DeskItemStyles['pin-live-photo-2'],
     },
     {
       id: 'live-photo-3',
@@ -86,8 +88,8 @@ const WelcomeDesk = () => {
       position: { top: 62, left: 35, transform: 'rotate(-1deg)', zIndex: 7 },
       size: 'livePhotoSize-3',
       wrapperClass: styles.livePhotoWrapper3,
-      // pinType: 'yellow',
-      // pinOffset: { top: -340, left: 150, rotate: '0deg' },
+      pinType: 'yellow',
+      pinClass: DeskItemStyles['pin-live-photo-3'],
     },
     {
       id: 'live-photo-4',
@@ -96,8 +98,8 @@ const WelcomeDesk = () => {
       position: { top: 48, left: 60, transform: 'rotate(0deg)', zIndex: 5 },
       size: 'livePhotoSize-4',
       wrapperClass: styles.livePhotoWrapper4,
-      // pinType: 'green',
-      // pinOffset: { top: -350, left: 140, rotate: '0deg' },
+      pinType: 'green',
+      pinClass: DeskItemStyles['pin-live-photo-4'],
     },
     {
       id: 'live-photo-5',
@@ -106,8 +108,8 @@ const WelcomeDesk = () => {
       position: { top: 65, left: 80, transform: 'rotate(1deg)', zIndex: 6 },
       size: 'livePhotoSize-5',
       wrapperClass: styles.livePhotoWrapper5,
-      // pinType: 'white',
-      // pinOffset: { top: -450, left: 100, rotate: '0deg' },
+      pinType: 'white',
+      pinClass: DeskItemStyles['pin-live-photo-5'],
     },
   ];
 
@@ -120,32 +122,19 @@ const WelcomeDesk = () => {
     'saigak-sticker-1': saigakPositions.saigak1,
     'saigak-sticker-2': saigakPositions.saigak2,
     'saigak-sticker-3': saigakPositions.saigak3,
+    'saigak-sticker-4': saigakPositions.saigak4,
   };
 
-  const polaroidPinMap = {
-    'polaroid1': styles['pin-polaroid1'],
-    'polaroid2': styles['pin-polaroid2'],
-    'polaroid3': styles['pin-polaroid3'],
-  };
-
-  const livePhotoPinMap = {
-    'live-photo-1': styles['pin-live-photo-1'],
-    'live-photo-2': styles['pin-live-photo-2'],
-    'live-photo-3': styles['pin-live-photo-3'],
-    'live-photo-4': styles['pin-live-photo-4'],
-    'live-photo-5': styles['pin-live-photo-5'],
-  };
-
-  const tapeMap = {
-    'news-sticker-1': styles['tape-news-sticker'],
-  };
-  
   const decorationMap = {
       'decoration-food-sticker': styles['decoration-food-sticker'],
   };
 
   const decorationWithPinMap = {
       'decoration-food-sticker': styles['pin-decoration-food-sticker'],
+  };
+
+  const tapeMap = {
+    'news-sticker-1': NewsStickerStyles['tape-news-sticker'],
   };
 
   return (
@@ -170,70 +159,64 @@ const WelcomeDesk = () => {
           </div>
           {/* Рендерим верхние 3 полароида */}
           {polaroidItems.map(item => {
-            const pinClass = polaroidPinMap[item.id];
             return (
-              <React.Fragment key={item.id}>
-                <div className={`${item.wrapperClass}`} style={{
-                    top: `${item.position.top}%`,
-                    left: `${item.position.left}%`,
-                    transform: item.position.transform,
-                    zIndex: item.position.zIndex,
-                  }}>
-                  <DeskItem item={{ ...item, position: undefined }} />
-                </div>
-                <img
-                  src={pinImageMap[item.pinType] || pinImageMap.wood}
-                  alt="Прищепка"
-                  className={pinClass}
+              <div 
+                key={item.id}
+                className={`${item.wrapperClass}`}
+                style={{
+                  top: `${item.position.top}%`,
+                  left: `${item.position.left}%`,
+                  transform: item.position.transform,
+                  zIndex: item.position.zIndex,
+                }}>
+                <DeskItem 
+                  item={{ ...item, position: undefined }}
+                  pinImageSrc={pinImageMap[item.pinType]}
+                  pinClassName={item.pinClass}
                 />
-              </React.Fragment>
+              </div>
             );
           })}
 
           {/* Рендерим нижние 5 живых фото */}
           {bottomLivePhotos.map(item => {
-            const pinClass = livePhotoPinMap[item.id];
             return (
-              <React.Fragment key={item.id}>
-                <div className={`${item.wrapperClass}`} style={{
-                      top: `${item.position.top}%`,
-                      left: `${item.position.left}%`,
-                      transform: item.position.transform,
-                      zIndex: item.position.zIndex,
-                    }}>
-                  <DeskItem item={{ ...item, position: undefined }} />
-                </div>
-{/* 
-                <img
-                  src={pinImageMap[item.pinType]}
-                  alt=""
-                  className={pinClass}
-                /> */}
-              </React.Fragment>
+              <div 
+                key={item.id}
+                className={`${item.wrapperClass}`} 
+                style={{
+                  top: `${item.position.top}%`,
+                  left: `${item.position.left}%`,
+                  transform: item.position.transform,
+                  zIndex: item.position.zIndex,
+                }}>
+                <DeskItem 
+                  item={{ ...item, position: undefined }}
+                  pinImageSrc={pinImageMap[item.pinType]}
+                  pinClassName={item.pinClass}
+                />
+              </div>
             );
           })}
           {/* Рендерим стикеры с изображением скотча */}
           {stickerItems.map(sticker => {
-            const tapeClass = tapeMap[sticker.id];
             return (
-              <React.Fragment key={sticker.id}>
-                <div className={styles.stickerWrapper} style={{
-                    top: `${sticker.position.top}%`,
-                    left: `${sticker.position.left}%`,
-                    transform: sticker.position.transform,
-                    zIndex: sticker.position.zIndex,
-                  }}>
-                  <NewsSticker
-                    text={sticker.text}
-                    stickerColor={sticker.stickerColor}
-                  />
-                  <img
-                    src="/images/desk/detail/stickerPin.png"
-                    alt="Скотч"
-                    className={tapeClass}
-                  />
-                </div>
-              </React.Fragment>
+              <div 
+                key={sticker.id} 
+                className={styles.stickerWrapper} 
+                style={{
+                  top: `${sticker.position.top}%`,
+                  left: `${sticker.position.left}%`,
+                  transform: sticker.position.transform,
+                  zIndex: sticker.position.zIndex,
+                }}>
+                <NewsSticker
+                  text={sticker.text}
+                  stickerColor={sticker.stickerColor}
+                  tapeImageSrc="/images/desk/detail/stickerPin.png"
+                  tapeClassName={tapeMap[sticker.id]}
+                />
+              </div>
             );
           })}
 

@@ -32,12 +32,12 @@
   transform: rotate(-5deg); 
   
   @include xs-only {
-    width: 30px;
+    width: 15px;
     margin-left: -10px;
     margin-right: -5px;
   }
   @include sm-up {
-    width: 40px;
+    width: 20px;
     margin-left: -12px;
     margin-right: -6px;
   }
@@ -115,7 +115,7 @@
 
 .shape_oval {
   border-radius: 50%;
-  @include xs-only { min-width: 40px; min-height: 25px; padding: 5px 10px; }
+  @include xs-only { min-width: 10px; min-height: 15px; padding: 2px 5px; }
   @include sm-up { min-width: 70px; min-height: 30px; padding: 6px 12px; }
   @include md-up { min-width: 70px; min-height: 30px; padding: 8px 15px; }
   @include lg-up { min-width: 110px; min-height: 40px; padding: 10px 20px; }
@@ -130,7 +130,7 @@
 .shape_circle {
   border-radius: 50%;
   flex-shrink: 0;
-  @include xs-only { width: 30px; height: 30px; }
+  @include xs-only { width: 20px; height: 20px; }
   @include sm-up { width: 50px; height: 50px; }
   @include md-up { width: 60px; height: 60px; }
   @include lg-up { width: 70px; height: 70px; }
@@ -138,22 +138,17 @@
   @include xxl-up { width: 90px; height: 90px; }
   @include xxxl-up { width: 110px; height: 110px; }
   @include full-hd-up { width: 130px; height: 90px; }
-  @include uhd-up { width: 180px; height: 180px; }
-  @include uhd-4k-up { width: 250px; height: 250px; }
 }
 
 .shape_rectangle {
   border-radius: 5px;
-  @include xs-only { min-width: 60px; min-height: 20px; padding: 1px 5px; }
-  @include sm-up { min-width: 100px; min-height: 35px; padding: 6px 12px; }
-  @include md-up { min-width: 120px; min-height: 40px; padding: 8px 15px; }
-  @include lg-up { min-width: 140px; min-height: 45px; padding: 5px 5px; }
-  @include xl-up { min-width: 160px; min-height: 50px; padding: 6px 6px; }
-  @include xxl-up { min-width: 180px; min-height: 55px; padding: 7px 7px; }
-  @include xxxl-up { min-width: 220px; min-height: 65px; padding: 8px 8px; }
-  @include full-hd-up { min-width: 200px; min-height: 70px; padding: 10px 10px; }
-  @include uhd-up { min-width: 350px; min-height: 90px; padding: 12px 12px; }
-  @include uhd-4k-up { min-width: 10px; min-height: 120px; padding: 15px 15px; }
+  @include xs-only { max-width: 100px; min-height: 10px; padding: 1px 3px; }
+  @include sm-up { max-width: 120px; min-height: 35px; padding: 6px 12px; }
+  @include md-up { max-width: 120px; min-height: 40px; padding: 8px 15px; }
+  @include lg-up { max-width: 140px; min-height: 45px; padding: 5px 5px; }
+  @include xl-up { max-width: 160px; min-height: 50px; padding: 6px 6px; }
+  @include xxl-up { max-width: 180px; min-height: 55px; padding: 7px 7px; }
+  @include full-hd-up { max-width: 300px; min-height: 70px; padding: 10px 10px; }
 }
 
 .bg_white {

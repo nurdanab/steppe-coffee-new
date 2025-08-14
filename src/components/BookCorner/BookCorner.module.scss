@@ -997,7 +997,7 @@
     position: absolute;
     bottom: calc(100% + 15px);
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(10px); 
     background-color: $light-yellow;
     color: $black;
     padding: $spacing-xs;
@@ -1005,8 +1005,9 @@
     z-index: 20;
     box-shadow: $shadow-medium;
     pointer-events: none;
-    display: none;
-    
+    opacity: 0;  
+    visibility: hidden;  
+    transition: opacity 0.3s ease, transform 0.3s ease;  
     @include lg-up {
       border-radius: $border-radius-xxl;
       width: 300px;
@@ -1024,23 +1025,8 @@
       width: 600px;
     }
     @include full-hd-up {
-    border-radius: $border-radius-xxl;
-    width: 700px;
-    }
-    .mainBookImageWrapper & {
-      text-align: center;
-      width: 400px;
-      &::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 100%; 
-        margin-top: -8px;
-        margin-left: 0;
-        border-width: 8px;
-        border-style: solid;
-        border-color: transparent transparent transparent rgba($black, 0.6);
-      }
+      border-radius: $border-radius-xxl;
+      width: 700px;
     }
 
     &::after {
@@ -1053,22 +1039,35 @@
       border-style: solid;
       border-color: $light-yellow transparent transparent transparent;
     }
-    
-    p {
-      @include t.gilroy-16;
-      margin: 0;
-      line-height: 1.4;
-      font-weight: 500;
-    }
   }
 
+  /* Показываем тултип при наведении на родительский элемент */
   &:hover > .bookTooltip {
     @include lg-up {
-      display: block;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0); /* Возвращаем на место */
     }
   }
 
-  // @include lg-down {
-  //  display: none;
-  // }
+  /* Отдельные стили для тултипа главной книги, если нужно */
+  .mainBookImageWrapper & {
+    .bookTooltip {
+      text-align: center;
+      width: 400px;
+      bottom: auto;
+      right: auto;
+      top: 50%;
+      left: calc(100% + 15px);
+      transform: translateY(-50%) translateX(-10px);
+      
+      &::after {
+        top: 50%;
+        left: -16px;
+        margin-left: 0;
+        margin-top: -8px;
+        border-color: transparent $light-yellow transparent transparent;
+      }
+    }
+  }
 }

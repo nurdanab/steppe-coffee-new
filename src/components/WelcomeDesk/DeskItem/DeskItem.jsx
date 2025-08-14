@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './DeskItem.module.scss';
 
-const DeskItem = ({ item, pinImageSrc }) => {
+const DeskItem = ({ item, pinImageSrc, pinClassName }) => {
   const [isHovered, setIsHovered] = useState(false);
   const videoRef = useRef(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -55,7 +55,7 @@ const DeskItem = ({ item, pinImageSrc }) => {
         <img
           src={pinImageSrc}
           alt="Прищепка"
-          className={styles.pin} 
+          className={`${styles.pin} ${pinClassName}`} 
         />
       )}
       <div className={styles.mediaContainer}>

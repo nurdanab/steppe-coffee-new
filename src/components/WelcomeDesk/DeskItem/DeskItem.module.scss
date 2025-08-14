@@ -8,20 +8,65 @@
   position: relative; 
   z-index: 1; 
 
-// .pin { 
-//   position: absolute;
-//   width: 30px; 
-//   height: auto;
-//   top: 15px; 
-//   left: 50%; 
-//   transform: translateX(-50%); 
-//   z-index: 10; 
+.pin { 
+  position: absolute;
+  width: 30px; 
+  height: auto;
+  top: 15px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  z-index: 10; 
 
-//   @include mobile-only {
-//     width: 20px; 
-//     top: -10px;
-//   }
-// }
+  @include mobile-only {
+    width: 20px; 
+    top: -10px;
+  }
+}
+.pin-polaroid1 {
+  @include xs-only { width: 7px; top: -10px; left: 50%; transform: translateX(-50%) rotate(10deg); }
+  @include sm-up { width: 10px; top: -15px; left: 50%; transform: translateX(-50%) rotate(12deg); }
+  @include md-up { width: 13px; top: -20px; left: 50%; transform: translateX(-50%) rotate(15deg); }
+  @include lg-up { width: 15px; top: -25px; left: 50%; transform: translateX(-50%) rotate(18deg); }
+  @include xl-up { width: 17px; top: -30px; left: 50%; transform: translateX(-50%) rotate(20deg); }
+  @include xxl-up { width: 20px; top: -35px; left: 50%; transform: translateX(-50%) rotate(22deg); }
+  @include xxxl-up { width: 25px; top: -40px; left: 50%; transform: translateX(-50%) rotate(25deg); }
+  @include full-hd-up { width: 30px; top: -45px; left: 50%; transform: translateX(-50%) rotate(28deg); }
+}
+
+.pin-polaroid2 {
+  @include xs-only { width: 7px; top: -10px; left: 50%; transform: translateX(-50%) rotate(-8deg); }
+  @include sm-up { width: 10px; top: -15px; left: 50%; transform: translateX(-50%) rotate(-10deg); }
+  @include md-up { width: 13px; top: -20px; left: 50%; transform: translateX(-50%) rotate(-12deg); }
+  @include lg-up { width: 15px; top: -25px; left: 50%; transform: translateX(-50%) rotate(-15deg); }
+  @include xl-up { width: 17px; top: -30px; left: 50%; transform: translateX(-50%) rotate(-18deg); }
+  @include xxl-up { width: 20px; top: -35px; left: 50%; transform: translateX(-50%) rotate(-20deg); }
+  @include xxxl-up { width: 25px; top: -40px; left: 50%; transform: translateX(-50%) rotate(-22deg); }
+  @include full-hd-up { width: 30px; top: -45px; left: 50%; transform: translateX(-50%) rotate(-25deg); }
+}
+
+.pin-polaroid3 {
+  @include xs-only { width: 7px; top: -10px; left: 50%; transform: translateX(-50%) rotate(5deg); }
+  @include sm-up { width: 10px; top: -15px; left: 50%; transform: translateX(-50%) rotate(7deg); }
+  @include md-up { width: 13px; top: -20px; left: 50%; transform: translateX(-50%) rotate(10deg); }
+  @include lg-up { width: 15px; top: -25px; left: 50%; transform: translateX(-50%) rotate(12deg); }
+  @include xl-up { width: 17px; top: -30px; left: 50%; transform: translateX(-50%) rotate(15deg); }
+  @include xxl-up { width: 20px; top: -40px; left: 50%; transform: translateX(-50%) rotate(18deg); }
+  @include xxxl-up { width: 25px; top: -45px; left: 50%; transform: translateX(-50%) rotate(20deg); }
+  @include full-hd-up { width: 30px; top: -50px; left: 50%; transform: translateX(-50%) rotate(22deg); }
+}
+
+.pin-live-photo-1,
+.pin-live-photo-2,
+.pin-live-photo-3,
+.pin-live-photo-4,
+.pin-live-photo-5 {
+  // // Общие стили для всех live photo, затем можно переопределить
+  // width: 25px;
+  // top: -10px;
+  // left: 50%;
+  // transform: translateX(-50%);
+  display: none;
+}
 
 .mediaContainer {
   padding: 10px; 
