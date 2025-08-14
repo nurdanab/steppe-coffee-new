@@ -34,21 +34,21 @@
     @include xl-up {
       padding: $spacing-xxxl 0;
     }
-      @include xxxl-up {
-        padding: 180px 0;
-      }
-      @include full-hd-up {
-        padding: 200px 0;
-      }
+    @include xxxl-up {
+      padding: 180px 0;
     }
+    @include full-hd-up {
+      padding: 200px 0;
+    }
+  }
 }
 
 .textAndPhotos {
   display: grid;
-  grid-template-columns: 1fr;  
-  gap: $spacing-xl; 
+  grid-template-columns: 1fr;
+  gap: $spacing-xl;
 
-  @include sm-down{ 
+  @include sm-down {
     margin-top: 150px;
     justify-content: center;
   }
@@ -73,87 +73,136 @@
   }
   @include xxl-up {
     margin-top: 70px;
-    gap: $spacing-xxxl; 
+    gap: $spacing-xxxl;
   }
   @include xxxl-up {
     margin-top: 60px;
-    gap: $spacing-xxl; 
+    gap: $spacing-xxl;
   }
   @include full-hd-up {
     margin-top: 30px;
-    gap: $spacing-xxl; 
+    gap: $spacing-xxl;
   }
 }
 
 .textBlock {
   @include t.gilroy-18;
 
-  @include sm-down{ 
+  @include sm-down {
     text-align: center;
   }
 }
 
 .photosBlock {
   position: relative;
-  min-height: 400px; 
-
-  .photoWrapper {
-    position: absolute;
-    width: 250px;
-    height: 150px;
-    overflow: hidden;
-    top: -30px;
-    left: 20%;  
-    z-index: 3;
-    width: 1000px;  
-    height: 750px; 
-
-
-    @include sm-down {
-      top: 80px;
-      left: 0%; 
+  min-height: 400px;
+  // Стили для sm-up и выше
+  @include sm-up {
+    height: 100%;
+    min-height: auto; // Убираем min-height для десктопа
+    display: flex;
+    justify-content: center; // Центрируем по горизонтали
+  }
+  
+  @include xs-only {
+    min-height: 300px;
+    // Стили для мобильных устройств
+    display: flex;
+    justify-content: center;
+    .photoWrapper {
       width: 200px;
-      height: 250px; 
-    }
-    @include sm-up {
-      width: 200px;
-      height: 250px; 
-    }
-    @include md-up {
-      width: 250px;
-      height: 300px; 
-    }
-    @include lg-up {
-      width: 300px;
-      height: 400px; 
-    }
-    @include xl-up {
-      width: 350px;
-      height: 450px; 
-    }
-    @include xxl-up {
-      width: 400px;
-      height: 500px; 
-    }
-    @include xxxl-up {
-      width: 450px;
-      height: 550px; 
-    }
-    @include full-hd-up {
-      width: 500px;
-      height: 600px;    
+      height: 250px;
+      top: 0;
+      left: 0;
+      position: relative;
     }
   }
 
-  @include xs-only {
-    min-height: 300px; 
+  .photoWrapper {
+    // Общие стили для всех размеров
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 250px;
+    height: 350px;
+    overflow: hidden;
+    z-index: 3;
+    border-radius: 16px; // Скругление углов
+    box-shadow: 0px 8px 24px rgba(228, 159, 9, 0.5); // Добавление тени
+    transform: rotate(3deg); // Небольшой поворот для эффекта
     
-    .photoWrapper {
-      width: 200px;  
-      height: 250px;  
-      
-      top: 0;
-      left: 20%;
+    .photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
+
+    // Медиазапросы для разных размеров экрана
+    @include sm-up {
+      width: 200px;
+      height: 250px;
+      top: -20px;
+      right: 0px;
+      left: auto; // Убедимся, что left не переопределяет right
+    }
+    @include md-up {
+      width: 250px;
+      height: 300px;
+      top: -30px;
+      right: -30px;
+    }
+    @include lg-up {
+      width: 300px;
+      height: 400px;
+      top: -30px;
+      right: 0px;
+    }
+    @include xl-up {
+      width: 350px;
+      height: 450px;
+      top: -30px;
+      right: 0px;
+    }
+    @include xxl-up {
+      width: 400px;
+      height: 500px;
+      top: -30px;
+      right: 0px;
+    }
+    @include xxxl-up {
+      width: 450px;
+      height: 550px;
+      top: -30px;
+      right: 0px;
+    }
+    @include full-hd-up {
+      width: 500px;
+      height: 600px;
+      top: -30px;
+      right: 0px;
+    }
+    
+    // Возвращаем стили для мобильных
+    @include sm-down {
+      position: relative;
+      top: 50px;
+      left: 40%;
+      transform: translateX(-50%);
+    }
+  }
+}
+
+.title {
+  @include t.riffic-medium;
+  @include sm-down {
+    text-align: center;
+  }
+}
+
+.text {
+  @include t.gilroy-18;
+  @include sm-down {
+    text-align: center;
   }
 }
