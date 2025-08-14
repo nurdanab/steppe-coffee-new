@@ -6,7 +6,7 @@ import LazyImage from '../LazyImage/LazyImage.jsx';
 import AnimatedWave from '../AnimatedWave/AnimatedWave';
 
 const FooterSection = () => {
-    const whatsappPhoneNumber = "+77004792109"; 
+    const whatsappPhoneNumber = "+77082591231"; 
     const whatsappMessage = "Здравствуйте! Хочу узнать подробнее о подписке"; 
     
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappPhoneNumber}&text=${encodeURIComponent(whatsappMessage)}`;
@@ -82,7 +82,7 @@ const FooterSection = () => {
                                 <a href="https://www.instagram.com/steppecoffeekz/" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
                                     <LazyImage src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
                                 </a>
-                                <a href="tel:+77004792109" className={styles.socialLink} aria-label="Call">                             
+                                <a href="tel:+77082591231" className={styles.socialLink} aria-label="Call">                             
                                     <LazyImage src="/images/phone-icon.webp" alt="Телефон" className={styles.icon} />
                                 </a>
                                 <a href="https://www.threads.com/@steppecoffeekz" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Threads">
