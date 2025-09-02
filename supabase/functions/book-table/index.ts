@@ -65,7 +65,7 @@ serve(async (req) => {
 
     const { data: existingBookings, error: fetchError } = await supabaseClient
       .from('bookings')
-      .select('start_time, end_time, status')
+      .select('start_time, end_time, status, booking_date') // 💡 ИЗМЕНЕНИЕ: Добавил 'booking_date', чтобы быть уверенным в контексте.
       .eq('booking_date', booking_date)
       .eq('selected_room', selected_room)
       .in('status', ['pending', 'confirmed']);
@@ -83,9 +83,11 @@ serve(async (req) => {
 
     for (const booking of existingBookings) {
       // 💡 ИСПРАВЛЕНИЕ: Так же явно указываем часовой пояс для существующих бронирований.
-      const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
-      const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
+      const existingBookingStart = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
+      const existingBookingEnd = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
 
+      // 💡 ИСПРАВЛЕНИЕ: Мы проверяем, пересекается ли предлагаемый интервал с занятым интервалом
+      // с учетом буфера. Эта логика верна.
       const occupiedStart = existingBookingStart.minus({ minutes: bufferMinutes });
       const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
 
@@ -157,7 +159,7 @@ serve(async (req) => {
 
     if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_ID) {
       const message = `
-        ⚡️ НОВАЯ БРОНЬ ⚡️
+        Новая бронь
         Организатор: ${organizer_name}
         Дата: ${booking_date}
         Время: с ${start_time} до ${end_time}

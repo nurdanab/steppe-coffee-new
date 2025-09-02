@@ -30,9 +30,13 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [monthlyBookings, setMonthlyBookings] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
 
+  // 💡 ИСПРАВЛЕНИЕ: Добавил константу для временной зоны, чтобы избежать
+  // дублирования и ошибок.
+  const TIME_ZONE = 'Asia/Almaty';
+
   const today = useMemo(() => {
-    return DateTime.now().setZone('Asia/Almaty').startOf('day').toJSDate();
-  }, []);
+    return DateTime.now().setZone(TIME_ZONE).startOf('day').toJSDate();
+  }, [TIME_ZONE]);
 
   const maxBookingDurationHours = 3;
   const bufferTimeHours = 1;
@@ -52,21 +56,25 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   }, []);
 
   const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
-    const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+    const luxonDate = DateTime.fromJSDate(date, { zone: TIME_ZONE });
     const dateString = luxonDate.toISODate();
     const allSlots = [];
     const intervalMinutes = 30;
     const durationMinutes = duration * 60;
     const bufferMinutes = bufferTimeHours * 60;
-    const nowWithZone = DateTime.now().setZone('Asia/Almaty');
+    const nowWithZone = DateTime.now().setZone(TIME_ZONE);
 
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
 
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
-      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
-      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'Asia/Almaty' });
+      // 💡 ИСПРАВЛЕНИЕ: Убеждаемся, что существующие бронирования
+      // также интерпретируются в правильной временной зоне.
+      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
+      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
       
+      // 💡 ИСПРАВЛЕНИЕ: Занятый интервал включает буферное время до и после
+      // бронирования.
       const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
       const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
       occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
@@ -79,7 +87,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-      // 💡 ИЗМЕНЕНИЕ: Добавлена проверка, что слот не пересекается с уже забронированным интервалом
+      // 💡 ИСПРАВЛЕНИЕ: Проверяем, что предлагаемый слот не пересекается
+      // ни с одним из занятых интервалов (включая буфер).
       const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > nowWithZone;
       
       allSlots.push({
@@ -92,7 +101,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
 
     return allSlots;
-  }, [bufferTimeHours]);
+  }, [bufferTimeHours, TIME_ZONE]); // 💡 ИЗМЕНЕНИЕ: Добавил TIME_ZONE в зависимости
 
   const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
     if (!room || !duration || !date) {
@@ -103,7 +112,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     setLoading(true);
     setError(null);
-    const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+    const luxonDate = DateTime.fromJSDate(date, { zone: TIME_ZONE });
     const startOfMonth = luxonDate.startOf('month').toISODate();
     const endOfMonth = luxonDate.endOf('month').toISODate();
 
@@ -127,16 +136,16 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
       const datesWithBookings = [...new Set(bookings.map(b => b.booking_date))];
       const fullyBooked = [];
-      const now = DateTime.now().setZone('Asia/Almaty');
+      const now = DateTime.now().setZone(TIME_ZONE);
 
       for (const dateString of datesWithBookings) {
-        const tempDateLuxon = DateTime.fromISO(dateString, { zone: 'Asia/Almaty' });
+        const tempDateLuxon = DateTime.fromISO(dateString, { zone: TIME_ZONE });
         const tempDate = tempDateLuxon.toJSDate();
         const slots = calculateAvailableSlots(tempDate, room, duration, bookings);
 
         const allSlotsUnavailable = slots.every(slot => !slot.isAvailable);
         const atLeastOneFutureSlotExists = slots.some(slot =>
-          DateTime.fromFormat(slot.start, 'HH:mm', { zone: 'Asia/Almaty' })
+          DateTime.fromFormat(slot.start, 'HH:mm', { zone: TIME_ZONE })
             .set({
               year: tempDateLuxon.year,
               month: tempDateLuxon.month,
@@ -159,9 +168,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     } finally {
       setLoading(false);
     }
-  }, [calculateAvailableSlots]);
+  }, [calculateAvailableSlots, TIME_ZONE]); // 💡 ИЗМЕНЕНИЕ: Добавил TIME_ZONE в зависимости
 
-  const sendBooking = async (statusToSet = 'pending') => {
+    const sendBooking = async (statusToSet = 'pending') => {
     setLoading(true);
     setMessage('');
     setError(null);
@@ -190,7 +199,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const { data: bookingResult, error: invokeError } = await supabase.functions.invoke('book-table', {
         body: {
           organizer_name: userName,
-          booking_date: DateTime.fromJSDate(bookingDate, { zone: 'Asia/Almaty' }).toISODate(),
+          booking_date: DateTime.fromJSDate(bookingDate, { zone: TIME_ZONE }).toISODate(),
           start_time: startTime,
           end_time: endTime,
           num_people: numberOfPeople,
@@ -344,8 +353,8 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     };
     
     const isDateDisabled = ({ date }) => {
-        const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
-        const luxonToday = DateTime.now().setZone('Asia/Almaty').startOf('day');
+        const luxonDate = DateTime.fromJSDate(date, { zone: TIME_ZONE });
+        const luxonToday = DateTime.now().setZone(TIME_ZONE).startOf('day');
         if (luxonDate < luxonToday) {
             return true;
         }
@@ -356,7 +365,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     
     const tileClassName = ({ date, view }) => {
         if (view === 'month') {
-            const dateString = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' }).toISODate();
+            const dateString = DateTime.fromJSDate(date, { zone: TIME_ZONE }).toISODate();
             if (fullyBookedDates.includes(dateString)) {
                 return styles.fullyBooked;
             }
