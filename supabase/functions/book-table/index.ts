@@ -1,4 +1,4 @@
-// // supabase/functions/book-table/index.ts
+// supabase/functions/book-table/index.ts
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.44.2';
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { DateTime, Interval } from 'https://esm.sh/luxon@3.4.4';
@@ -8,7 +8,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// 🔥 Добавляем часовой пояс по умолчанию.
+// 🕰️ Добавляем часовой пояс по умолчанию.
 const TIME_ZONE = 'Asia/Almaty';
 
 serve(async (req) => {
@@ -55,8 +55,8 @@ serve(async (req) => {
       }
     );
 
-    // 🔥 ИСПРАВЛЕНИЕ: Явно указываем часовой пояс 'Asia/Almaty'
-    // при создании объектов DateTime.
+    // 💡 ИСПРАВЛЕНИЕ: Мы будем проверять доступность, используя только
+    // `start_time` и `end_time` из запроса, без добавления буфера.
     const proposedBookingStart = DateTime.fromISO(`${booking_date}T${start_time}`, { zone: TIME_ZONE });
     const proposedBookingEnd = DateTime.fromISO(`${booking_date}T${end_time}`, { zone: TIME_ZONE });
 
@@ -82,7 +82,7 @@ serve(async (req) => {
     let hasPendingConflict = false;
 
     for (const booking of existingBookings) {
-      // 🔥 ИСПРАВЛЕНИЕ: Точно так же указываем часовой пояс для существующих бронирований.
+      // 💡 ИСПРАВЛЕНИЕ: Так же явно указываем часовой пояс для существующих бронирований.
       const existingBookingStart = DateTime.fromISO(`${booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
       const existingBookingEnd = DateTime.fromISO(`${booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
 
@@ -119,16 +119,17 @@ serve(async (req) => {
       statusToSet = status_to_set;
     }
     
+    // 💡 ИСПРАВЛЕНИЕ: Чтобы избежать проблем с часовыми поясами, мы будем
+    // сохранять время без смещения в базе данных. Luxon сам будет
+    // интерпретировать это время правильно, если мы будем явно указывать
+    // часовой пояс 'Asia/Almaty' при получении данных.
     const { data: newBooking, error: insertError } = await supabaseClient
       .from('bookings')
       .insert({
         organizer_name,
         booking_date,
-        // 🔥 ИСПРАВЛЕНИЕ: Чтобы убедиться, что время сохраняется правильно,
-        // мы можем явно добавить смещение +05.
-        // Или, как вариант, отправлять время в полном ISO-формате.
-        start_time: `${start_time}+05:00`,
-        end_time: `${end_time}+05:00`,
+        start_time: start_time,
+        end_time: end_time,
         num_people,
         comments: comments || null,
         user_id,
