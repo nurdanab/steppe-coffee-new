@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient';
 import styles from './AdminDashboard.module.scss';
 import { useNavigate } from 'react-router-dom';
 import BookingEditModal from './BookingEditModal';
+import { DateTime } from 'luxon'; // ДОБАВЛЯЕМ ИМПОРТ LUXON
 
 const AdminDashboard = ({ session }) => {
   const [bookings, setBookings] = useState([]);
@@ -19,6 +20,8 @@ const AdminDashboard = ({ session }) => {
 
   const navigate = useNavigate();
 
+  const TIME_ZONE = 'Asia/Almaty'; // ДОБАВЛЯЕМ КОНСТАНТУ ВРЕМЕННОЙ ЗОНЫ
+
   const getRoomName = useCallback((roomKey) => {
     switch (roomKey) {
       case 'second_hall':
@@ -27,6 +30,21 @@ const AdminDashboard = ({ session }) => {
         return 'Летняя терраса';
       default:
         return 'Неизвестный зал';
+    }
+  }, []);
+
+  // ДОБАВЛЯЕМ ФУНКЦИЮ ДЛЯ ФОРМАТИРОВАНИЯ ВРЕМЕНИ С ВРЕМЕННОЙ ЗОНОЙ
+  const formatBookingTime = useCallback((booking) => {
+    try {
+      // Парсим UTC время из БД и конвертируем в локальную зону
+      const startTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
+      const endTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
+      
+      return `${startTime.toFormat('HH:mm')} - ${endTime.toFormat('HH:mm')}`;
+    } catch (error) {
+      console.error('Ошибка при форматировании времени:', error);
+      // Fallback на старый способ отображения
+      return `${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`;
     }
   }, []);
 
@@ -117,7 +135,6 @@ const AdminDashboard = ({ session }) => {
       };
     }
   }, [isAdmin, fetchBookings]);
-  // Конец нового блока
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -137,12 +154,13 @@ const AdminDashboard = ({ session }) => {
         throw updateError;
       }
 
+      // ОБНОВЛЯЕМ ФОРМАТИРОВАНИЕ ВРЕМЕНИ В TELEGRAM СООБЩЕНИИ
       const telegramMessage = `
         <b>Изменение статуса бронирования:</b>
         #ID: <code>${currentBooking.id.substring(0, 8)}</code>
-        <b>Статус:</b> ${newStatus === 'confirmed' ? '✅ Подтверждено' : newStatus === 'pending' ? '⏳ В ожидании' : '❌ Отменено'}
+        <b>Статус:</b> ${newStatus === 'confirmed' ? 'Подтверждено' : newStatus === 'pending' ? 'В ожидании' : 'Отменено'}
         <b>Дата:</b> ${new Date(currentBooking.booking_date).toLocaleDateString('ru-RU')}
-        <b>Время:</b> ${currentBooking.start_time.substring(0, 5)} - ${currentBooking.end_time.substring(0, 5)}
+        <b>Время:</b> ${formatBookingTime(currentBooking)}
         <b>Зал:</b> ${getRoomName(currentBooking.selected_room)}
         <b>Организатор:</b> ${currentBooking.organizer_name}
         <b>Телефон:</b> ${currentBooking.phone_number}
@@ -186,11 +204,12 @@ const AdminDashboard = ({ session }) => {
           throw deleteError;
         }
 
+        // ОБНОВЛЯЕМ ФОРМАТИРОВАНИЕ ВРЕМЕНИ В TELEGRAM СООБЩЕНИИ
         const telegramMessage = `
           <b>Бронирование удалено:</b>
           #ID: <code>${currentBooking.id.substring(0, 8)}</code>
           <b>Дата:</b> ${new Date(currentBooking.booking_date).toLocaleDateString('ru-RU')}
-          <b>Время:</b> ${currentBooking.start_time.substring(0, 5)} - ${currentBooking.end_time.substring(0, 5)}
+          <b>Время:</b> ${formatBookingTime(currentBooking)}
           <b>Зал:</b> ${getRoomName(currentBooking.selected_room)}
           <b>Организатор:</b> ${currentBooking.organizer_name}
           <b>Телефон:</b> ${currentBooking.phone_number}
@@ -261,119 +280,118 @@ const AdminDashboard = ({ session }) => {
 
   return (
     <main className={styles.adminDashboard}>
-                <div className="container"> 
+      <div className="container"> 
+        <h1 className={styles.title}>Панель администратора</h1>
 
-      <h1 className={styles.title}> </h1>
+        <div className={styles.controls}>
+          <div className={styles.filterGroup}>
+            <label htmlFor="filterStatus">Статус:</label>
+            <select id="filterStatus" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+              <option value="all">Все</option>
+              <option value="pending">В ожидании</option>
+              <option value="confirmed">Подтверждено</option>
+              <option value="cancelled">Отменено</option>
+            </select>
+          </div>
 
-      <div className={styles.controls}>
-        <div className={styles.filterGroup}>
-          <label htmlFor="filterStatus">Статус:</label>
-          <select id="filterStatus" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-            <option value="all">Все</option>
-            <option value="pending">В ожидании</option>
-            <option value="confirmed">Подтверждено</option>
-            <option value="cancelled">Отменено</option>
-          </select>
+          <div className={styles.searchGroup}>
+            <label htmlFor="searchTerm">Поиск:</label>
+            <input
+              type="text"
+              id="searchTerm"
+              placeholder="Имя или телефон"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.sortGroup}>
+            <label htmlFor="sortByField">Сортировать по:</label>
+            <select
+              id="sortByField"
+              value={sortBy.field}
+              onChange={(e) => setSortBy({ ...sortBy, field: e.target.value })}
+            >
+              <option value="booking_date">Дата</option>
+              <option value="start_time">Время начала</option>
+              <option value="status">Статус</option>
+              <option value="num_people">Кол-во человек</option>
+            </select>
+            <button
+              onClick={() => setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' })}
+              className={styles.sortOrderButton}
+            >
+              {sortBy.order === 'asc' ? 'ASC ↑' : 'DESC ↓'}
+            </button>
+          </div>
         </div>
 
-        <div className={styles.searchGroup}>
-          <label htmlFor="searchTerm">Поиск:</label>
-          <input
-            type="text"
-            id="searchTerm"
-            placeholder="Имя или телефон"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.sortGroup}>
-          <label htmlFor="sortByField">Сортировать по:</label>
-          <select
-            id="sortByField"
-            value={sortBy.field}
-            onChange={(e) => setSortBy({ ...sortBy, field: e.target.value })}
-          >
-            <option value="booking_date">Дата</option>
-            <option value="start_time">Время начала</option>
-            <option value="status">Статус</option>
-            <option value="num_people">Кол-во человек</option>
-          </select>
-          <button
-            onClick={() => setSortBy({ ...sortBy, order: sortBy.order === 'asc' ? 'desc' : 'asc' })}
-            className={styles.sortOrderButton}
-          >
-            {sortBy.order === 'asc' ? 'ASC ↑' : 'DESC ↓'}
-          </button>
-        </div>
-      </div>
-
-      {bookings.length === 0 && !loading ? (
-        <p className={styles.noBookingsMessage}>Бронирования не найдены.</p>
-      ) : (
-        <div className={styles.bookingsTableContainer}>
-          <table className={styles.bookingsTable}>
-            <thead>
-              <tr>
-                <th>Дата</th>
-                <th>Время</th>
-                <th>Зал</th>
-                <th>Человек</th>
-                <th>Организатор</th>
-                <th>Название события</th>
-                <th>Описание события</th>
-                <th>Контакты организации</th>
-                <th>Телефон</th>
-                <th>Комментарий</th>
-                <th>Статус</th>
-                <th>Действия</th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookings.map((booking) => (
-                <tr key={booking.id} className={styles[booking.status]}>
-                  <td>{new Date(booking.booking_date).toLocaleDateString('ru-RU')}</td>
-                  <td>{booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}</td>
-                  <td>{getRoomName(booking.selected_room)}</td>
-                  <td>{booking.num_people}</td>
-                  <td>{booking.organizer_name}</td>
-                  <td>{booking.event_name}</td>
-                  <td>{booking.event_description}</td>
-                  <td>{booking.organizer_contact}</td>
-                  <td>{booking.phone_number}</td>
-                  <td>{booking.comments || 'Нет'}</td>
-                  <td>
-                    <select
-                      value={booking.status}
-                      onChange={(e) => handleStatusChange(booking.id, e.target.value)}
-                      className={styles.statusSelect}
-                    >
-                      <option value="pending">В ожидании</option>
-                      <option value="confirmed">Подтверждено</option>
-                      <option value="cancelled">Отменено</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button onClick={() => openEditModal(booking)} className={styles.editButton}>
-                      Редактировать
-                    </button>
-                    <button onClick={() => handleDeleteBooking(booking.id)} className={styles.deleteButton}>
-                      Удалить
-                    </button>
-                  </td>
+        {bookings.length === 0 && !loading ? (
+          <p className={styles.noBookingsMessage}>Бронирования не найдены.</p>
+        ) : (
+          <div className={styles.bookingsTableContainer}>
+            <table className={styles.bookingsTable}>
+              <thead>
+                <tr>
+                  <th>Дата</th>
+                  <th>Время</th>
+                  <th>Зал</th>
+                  <th>Человек</th>
+                  <th>Организатор</th>
+                  <th>Название события</th>
+                  <th>Описание события</th>
+                  <th>Контакты организации</th>
+                  <th>Телефон</th>
+                  <th>Комментарий</th>
+                  <th>Статус</th>
+                  <th>Действия</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {bookings.map((booking) => (
+                  <tr key={booking.id} className={styles[booking.status]}>
+                    <td>{new Date(booking.booking_date).toLocaleDateString('ru-RU')}</td>
+                    <td>{formatBookingTime(booking)}</td>
+                    <td>{getRoomName(booking.selected_room)}</td>
+                    <td>{booking.num_people}</td>
+                    <td>{booking.organizer_name}</td>
+                    <td>{booking.event_name}</td>
+                    <td>{booking.event_description}</td>
+                    <td>{booking.organizer_contact}</td>
+                    <td>{booking.phone_number}</td>
+                    <td>{booking.comments || 'Нет'}</td>
+                    <td>
+                      <select
+                        value={booking.status}
+                        onChange={(e) => handleStatusChange(booking.id, e.target.value)}
+                        className={styles.statusSelect}
+                      >
+                        <option value="pending">В ожидании</option>
+                        <option value="confirmed">Подтверждено</option>
+                        <option value="cancelled">Отменено</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button onClick={() => openEditModal(booking)} className={styles.editButton}>
+                        Редактировать
+                      </button>
+                      <button onClick={() => handleDeleteBooking(booking.id)} className={styles.deleteButton}>
+                        Удалить
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-      <BookingEditModal
-        isOpen={isEditModalOpen}
-        onClose={closeEditModal}
-        bookingToEdit={bookingToEdit}
-        onBookingUpdated={handleBookingUpdated}
-      />
+        <BookingEditModal
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          bookingToEdit={bookingToEdit}
+          onBookingUpdated={handleBookingUpdated}
+        />
       </div>
     </main>
   );
