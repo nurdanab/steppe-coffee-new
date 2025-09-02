@@ -60,9 +60,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const durationMinutes = duration * 60;
     const bufferMinutes = bufferTimeHours * 60;
     const now = DateTime.now().setZone('Asia/Almaty');
-
+  
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
-
+  
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
       const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
@@ -72,41 +72,35 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
       occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
     }
-
+  
     let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
     const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
-
+  
     while (currentStart <= lastPossibleSlotStart) {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
-  //     const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
+  
+      const isBooked = occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
       
-  //     allSlots.push({
-  //       start: currentStart.toFormat('HH:mm'),
-  //       end: currentEnd.toFormat('HH:mm'),
-  //       isAvailable: isAvailable
-  //     });
-
-  //     currentStart = currentStart.plus({ minutes: intervalMinutes });
-  //   }
-
-  //   return allSlots;
-  // }, [bufferTimeHours]);
-  const isBooked = occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
-  const isPast = currentStart <= now;
-    
-  allSlots.push({
-    start: currentStart.toFormat('HH:mm'),
-    end: currentEnd.toFormat('HH:mm'),
-    isAvailable: !isBooked && !isPast
-  });
-
-  currentStart = currentStart.plus({ minutes: intervalMinutes });
-}
-
-return allSlots;
-}, [bufferTimeHours]);
+      // ИСПРАВЛЕНИЕ: правильная проверка того, что слот в будущем
+      // Если выбранная дата - сегодня, проверяем время
+      // Если выбранная дата - будущая, все слоты доступны по времени
+      const isSelectedDateToday = luxonDate.hasSame(now, 'day');
+      const isPastTime = isSelectedDateToday ? currentStart <= now : false;
+      
+      const isAvailable = !isBooked && !isPastTime;
+      
+      allSlots.push({
+        start: currentStart.toFormat('HH:mm'),
+        end: currentEnd.toFormat('HH:mm'),
+        isAvailable: isAvailable
+      });
+  
+      currentStart = currentStart.plus({ minutes: intervalMinutes });
+    }
+  
+    return allSlots;
+  }, [bufferTimeHours]);
 
   const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
     if (!room || !duration || !date) {
