@@ -8,7 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// 🕰️ Добавляем часовой пояс по умолчанию.
 const TIME_ZONE = 'Asia/Almaty';
 
 serve(async (req) => {
@@ -55,17 +54,21 @@ serve(async (req) => {
       }
     );
 
-    // 💡 ИСПРАВЛЕНИЕ: Мы будем проверять доступность, используя только
-    // `start_time` и `end_time` из запроса, без добавления буфера.
-    const proposedBookingStart = DateTime.fromISO(`${booking_date}T${start_time}`, { zone: TIME_ZONE });
-    const proposedBookingEnd = DateTime.fromISO(`${booking_date}T${end_time}`, { zone: TIME_ZONE });
+    // ИСПРАВЛЕНИЕ: Конвертируем локальное время пользователя в UTC для проверки
+    const proposedBookingStart = DateTime.fromFormat(start_time, 'HH:mm', { zone: TIME_ZONE }).toUTC();
+    const proposedBookingEnd = DateTime.fromFormat(end_time, 'HH:mm', { zone: TIME_ZONE }).toUTC();
+
+    console.log('Предлагаемое время UTC:', {
+      start: proposedBookingStart.toISO(),
+      end: proposedBookingEnd.toISO()
+    });
 
     const bufferTimeHours = 1;
     const bufferMinutes = bufferTimeHours * 60;
 
     const { data: existingBookings, error: fetchError } = await supabaseClient
       .from('bookings')
-      .select('start_time, end_time, status, booking_date') // 💡 ИЗМЕНЕНИЕ: Добавил 'booking_date', чтобы быть уверенным в контексте.
+      .select('start_time, end_time, status, booking_date')
       .eq('booking_date', booking_date)
       .eq('selected_room', selected_room)
       .in('status', ['pending', 'confirmed']);
@@ -82,17 +85,28 @@ serve(async (req) => {
     let hasPendingConflict = false;
 
     for (const booking of existingBookings) {
-      // 💡 ИСПРАВЛЕНИЕ: Так же явно указываем часовой пояс для существующих бронирований.
-      const existingBookingStart = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
-      const existingBookingEnd = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
+      // ИСПРАВЛЕНИЕ: Правильно парсим UTC время из БД
+      const existingBookingStart = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`);
+      const existingBookingEnd = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`);
 
-      // 💡 ИСПРАВЛЕНИЕ: Мы проверяем, пересекается ли предлагаемый интервал с занятым интервалом
-      // с учетом буфера. Эта логика верна.
+      console.log('Существующая бронь UTC:', {
+        start: existingBookingStart.toISO(),
+        end: existingBookingEnd.toISO(),
+        status: booking.status
+      });
+
+      // Добавляем буфер к существующей брони
       const occupiedStart = existingBookingStart.minus({ minutes: bufferMinutes });
       const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
 
       const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
       const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
+
+      console.log('Проверка пересечения:', {
+        occupied: `${occupiedStart.toISO()} - ${occupiedEnd.toISO()}`,
+        proposed: `${proposedBookingStart.toISO()} - ${proposedBookingEnd.toISO()}`,
+        overlaps: proposedInterval.overlaps(occupiedInterval)
+      });
 
       if (proposedInterval.overlaps(occupiedInterval)) {
         if (booking.status === 'confirmed') {
@@ -120,18 +134,23 @@ serve(async (req) => {
     if (status_to_set) {
       statusToSet = status_to_set;
     }
-    
-    // 💡 ИСПРАВЛЕНИЕ: Чтобы избежать проблем с часовыми поясами, мы будем
-    // сохранять время без смещения в базе данных. Luxon сам будет
-    // интерпретировать это время правильно, если мы будем явно указывать
-    // часовой пояс 'Asia/Almaty' при получении данных.
+
+    // ИСПРАВЛЕНИЕ: Конвертируем локальное время в UTC для сохранения
+    const startTimeUTC = DateTime.fromFormat(start_time, 'HH:mm', { zone: TIME_ZONE }).toUTC().toFormat('HH:mm:ss');
+    const endTimeUTC = DateTime.fromFormat(end_time, 'HH:mm', { zone: TIME_ZONE }).toUTC().toFormat('HH:mm:ss');
+
+    console.log('Сохраняем в БД (UTC):', {
+      start_time: startTimeUTC,
+      end_time: endTimeUTC
+    });
+
     const { data: newBooking, error: insertError } = await supabaseClient
       .from('bookings')
       .insert({
         organizer_name,
         booking_date,
-        start_time: start_time,
-        end_time: end_time,
+        start_time: startTimeUTC,
+        end_time: endTimeUTC,
         num_people,
         comments: comments || null,
         user_id,
@@ -153,7 +172,7 @@ serve(async (req) => {
       });
     }
 
-    // ... (код для отправки в Telegram)
+    // Отправка в Telegram с локальным временем для читаемости
     const TELEGRAM_BOT_TOKEN = Deno.env.get('TELEGRAM_BOT_TOKEN');
     const TELEGRAM_CHAT_ID = Deno.env.get('TELEGRAM_CHAT_ID');
 
@@ -162,7 +181,7 @@ serve(async (req) => {
         Новая бронь
         Организатор: ${organizer_name}
         Дата: ${booking_date}
-        Время: с ${start_time} до ${end_time}
+        Время: с ${start_time} до ${end_time} (по Алматы)
         Зал: ${selected_room}
         Количество мест: ${num_people}
         ${comments ? `Комментарии: ${comments}` : ''}

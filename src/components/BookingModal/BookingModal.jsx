@@ -61,26 +61,32 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const durationMinutes = duration * 60;
     const bufferMinutes = bufferTimeHours * 60;
     const nowWithZone = DateTime.now().setZone(TIME_ZONE);
-
+  
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
-
+  
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
-      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
-      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
+      // ИСПРАВЛЕНИЕ: Правильно парсим UTC время из БД и конвертируем в локальную зону
+      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
+      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
+      
+      console.log('Существующая бронь:', {
+        original: `${booking.start_time} - ${booking.end_time}`,
+        converted: `${bookingStartTime.toFormat('HH:mm')} - ${bookingEndTime.toFormat('HH:mm')} (${TIME_ZONE})`
+      });
       
       const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
       const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
       occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
     }
-
+  
     let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
     const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
     
     while (currentStart <= lastPossibleSlotStart) {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-
+  
       const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > nowWithZone;
       
       allSlots.push({
@@ -88,10 +94,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         end: currentEnd.toFormat('HH:mm'),
         isAvailable: isAvailable
       });
-
+  
       currentStart = currentStart.plus({ minutes: intervalMinutes });
     }
-
+  
     return allSlots;
   }, [bufferTimeHours, TIME_ZONE]);
 
