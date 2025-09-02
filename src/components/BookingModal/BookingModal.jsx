@@ -94,19 +94,19 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   //   return allSlots;
   // }, [bufferTimeHours]);
   const isBooked = occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
-      const isPast = currentStart < now;
-      
-      allSlots.push({
-        start: currentStart.toFormat('HH:mm'),
-        end: currentEnd.toFormat('HH:mm'),
-        isAvailable: !isBooked && !isPast
-      });
+  const isPast = currentStart <= now;
+    
+  allSlots.push({
+    start: currentStart.toFormat('HH:mm'),
+    end: currentEnd.toFormat('HH:mm'),
+    isAvailable: !isBooked && !isPast
+  });
 
-      currentStart = currentStart.plus({ minutes: intervalMinutes });
-    }
+  currentStart = currentStart.plus({ minutes: intervalMinutes });
+}
 
-    return allSlots;
-  }, [bufferTimeHours]);
+return allSlots;
+}, [bufferTimeHours]);
 
   const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
     if (!room || !duration || !date) {
