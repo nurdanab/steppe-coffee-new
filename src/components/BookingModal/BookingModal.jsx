@@ -75,12 +75,16 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
     const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
+    
+    // 💡 ИСПРАВЛЕНИЕ: Теперь мы всегда сравниваем со временем
+    // с учётом часового пояса.
+    const nowWithZone = DateTime.now().setZone('Asia/Almaty');
 
     while (currentStart <= lastPossibleSlotStart) {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
+      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > nowWithZone;
       
       allSlots.push({
         start: currentStart.toFormat('HH:mm'),
