@@ -56,69 +56,67 @@ serve(async (req) => {
 
     // ИСПРАВЛЕНИЕ: Конвертируем локальное время пользователя в UTC для проверки
     const proposedBookingStart = DateTime.fromFormat(start_time, 'HH:mm', { zone: TIME_ZONE }).toUTC();
-    const proposedBookingEnd = DateTime.fromFormat(end_time, 'HH:mm', { zone: TIME_ZONE }).toUTC();
+const proposedBookingEnd = DateTime.fromFormat(end_time, 'HH:mm', { zone: TIME_ZONE }).toUTC();
 
-    console.log('Предлагаемое время UTC:', {
-      start: proposedBookingStart.toISO(),
-      end: proposedBookingEnd.toISO()
-    });
+console.log('Предлагаемое время UTC:', {
+  start: proposedBookingStart.toISO(),
+  end: proposedBookingEnd.toISO()
+});
 
-    const bufferTimeHours = 0.5;
-    const bufferMinutes = bufferTimeHours * 60;
-
+    // const bufferTimeHours = 0.5;
+    const bufferMinutes = 60;
     const { data: existingBookings, error: fetchError } = await supabaseClient
-      .from('bookings')
-      .select('start_time, end_time, status, booking_date')
-      .eq('booking_date', booking_date)
-      .eq('selected_room', selected_room)
-      .in('status', ['pending', 'confirmed']);
+  .from('bookings')
+  .select('start_time, end_time, status, booking_date')
+  .eq('booking_date', booking_date)
+  .eq('selected_room', selected_room)
+  .in('status', ['pending', 'confirmed']);
 
-    if (fetchError) {
-      console.error('Error fetching existing bookings:', fetchError);
-      return new Response(JSON.stringify({ error: 'Database error when checking availability' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
-      });
-    }
+if (fetchError) {
+  console.error('Error fetching existing bookings:', fetchError);
+  return new Response(JSON.stringify({ error: 'Database error when checking availability' }), {
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    status: 500,
+  });
+}
 
-    let hasConfirmedConflict = false;
-    let hasPendingConflict = false;
+let hasConfirmedConflict = false;
+let hasPendingConflict = false;
 
-    for (const booking of existingBookings) {
-      // ИСПРАВЛЕНИЕ: Правильно парсим UTC время из БД
-      const existingBookingStart = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`);
-      const existingBookingEnd = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`);
+for (const booking of existingBookings) {
+  // Правильно парсим UTC время из БД
+  const existingBookingStart = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`);
+  const existingBookingEnd = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`);
 
-      console.log('Существующая бронь UTC:', {
-        start: existingBookingStart.toISO(),
-        end: existingBookingEnd.toISO(),
-        status: booking.status
-      });
+  console.log('Существующая бронь UTC:', {
+    start: existingBookingStart.toISO(),
+    end: existingBookingEnd.toISO(),
+    status: booking.status
+  });
 
       // Добавляем буфер к существующей брони
       const occupiedStart = existingBookingStart.minus({ minutes: bufferMinutes });
-      const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
+  const occupiedEnd = existingBookingEnd.plus({ minutes: bufferMinutes });
 
-      const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
-      const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
+  const occupiedInterval = Interval.fromDateTimes(occupiedStart, occupiedEnd);
+  const proposedInterval = Interval.fromDateTimes(proposedBookingStart, proposedBookingEnd);
 
-      console.log('Проверка пересечения:', {
-        occupied: `${occupiedStart.toISO()} - ${occupiedEnd.toISO()}`,
-        proposed: `${proposedBookingStart.toISO()} - ${proposedBookingEnd.toISO()}`,
-        overlaps: proposedInterval.overlaps(occupiedInterval)
-      });
+  console.log('Проверка пересечения:', {
+    occupied: `${occupiedStart.toISO()} - ${occupiedEnd.toISO()}`,
+    proposed: `${proposedBookingStart.toISO()} - ${proposedBookingEnd.toISO()}`,
+    overlaps: proposedInterval.overlaps(occupiedInterval)
+  });
 
-      if (proposedInterval.overlaps(occupiedInterval)) {
-        if (booking.status === 'confirmed') {
-          hasConfirmedConflict = true;
-          break;
-        }
-        if (booking.status === 'pending') {
-          hasPendingConflict = true;
-        }
-      }
+  if (proposedInterval.overlaps(occupiedInterval)) {
+    if (booking.status === 'confirmed') {
+      hasConfirmedConflict = true;
+      break;
     }
-
+    if (booking.status === 'pending') {
+      hasPendingConflict = true;
+    }
+  }
+}
     if (hasConfirmedConflict) {
       console.log('Booking conflict detected with a confirmed reservation.');
       return new Response(JSON.stringify({ error: 'Selected room is already booked by a confirmed reservation.' }), {

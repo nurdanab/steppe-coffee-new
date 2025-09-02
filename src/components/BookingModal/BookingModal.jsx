@@ -53,60 +53,69 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   }, []);
 
-  const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
-    const luxonDate = DateTime.fromJSDate(date, { zone: TIME_ZONE });
-    const dateString = luxonDate.toISODate();
-    const allSlots = [];
-    const intervalMinutes = 30;
-    const durationMinutes = duration * 60;
-    // Если нужен общий буфер в 1 час (включая бронь), то добавляем по 0 минут
-    // Если нужен буфер по 30 минут с каждой стороны от брони:
-    const bufferMinutes = 30; // вместо bufferTimeHours * 60
-    const nowWithZone = DateTime.now().setZone(TIME_ZONE);
+ // В BookingModal.jsx - исправленная функция calculateAvailableSlots
+const calculateAvailableSlots = useCallback((date, room, duration, bookings) => {
+  const luxonDate = DateTime.fromJSDate(date, { zone: TIME_ZONE });
+  const dateString = luxonDate.toISODate();
+  const allSlots = [];
+  const intervalMinutes = 30;
+  const durationMinutes = duration * 60;
   
-    const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
-  
-    const occupiedIntervals = [];
-    for (const booking of dailyBookings) {
-      // ИСПРАВЛЕНИЕ: Правильно парсим UTC время из БД и конвертируем в локальную зону
-      const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
-      const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
-      
-      console.log('Существующая бронь:', {
-        original: `${booking.start_time} - ${booking.end_time}`,
-        converted: `${bookingStartTime.toFormat('HH:mm')} - ${bookingEndTime.toFormat('HH:mm')} (${TIME_ZONE})`
-      });
-      
-      const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
-      const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
-      occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
-    }
-  
-    let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
-    const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
+  // 🔧 ИСПРАВЛЕНИЕ: 1 час на подготовку + 1 час на уборку = 2 часа общий буфер
+  const bufferMinutes = 120; // 2 часа общий буфер (60 мин до + 60 мин после)
+  const nowWithZone = DateTime.now().setZone(TIME_ZONE);
+
+  const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
+
+  const occupiedIntervals = [];
+  for (const booking of dailyBookings) {
+    // Правильно парсим UTC время из БД и конвертируем в локальную зону
+    const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
+    const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
     
-    while (currentStart <= lastPossibleSlotStart) {
-      const currentEnd = currentStart.plus({ minutes: durationMinutes });
-      const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
+    console.log('Существующая бронь:', {
+      original: `${booking.start_time} - ${booking.end_time}`,
+      converted: `${bookingStartTime.toFormat('HH:mm')} - ${bookingEndTime.toFormat('HH:mm')} (${TIME_ZONE})`
+    });
+    
+    // 🔧 ИСПРАВЛЕНИЕ: Блокируем интервал от (начало брони - 60 мин) до (конец брони + 60 мин)
+    // Это означает, что бронь 13:00-14:00 блокирует 12:00-15:00
+    const occupiedStart = bookingStartTime.minus({ minutes: 60 }); // 1 час на подготовку
+    const occupiedEnd = bookingEndTime.plus({ minutes: 60 }); // 1 час на уборку
+    occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
+    
+    console.log('Заблокированный интервал:', {
+      start: occupiedStart.toFormat('HH:mm'),
+      end: occupiedEnd.toFormat('HH:mm')
+    });
+  }
+
+  let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
+  const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
   
-      // ИСПРАВЛЕНИЕ: Проверяем, пересекается ли слот с любым заблокированным интервалом
-      const isAvailable = !occupiedIntervals.some(occupiedInterval => {
-        const overlaps = slotInterval.overlaps(occupiedInterval);
-        console.log(`Слот ${currentStart.toFormat('HH:mm')}-${currentEnd.toFormat('HH:mm')} vs заблокированный ${occupiedInterval.start.toFormat('HH:mm')}-${occupiedInterval.end.toFormat('HH:mm')}: ${overlaps}`);
-        return overlaps;
-      }) && currentStart > nowWithZone;
-      
-      allSlots.push({
-        start: currentStart.toFormat('HH:mm'),
-        end: currentEnd.toFormat('HH:mm'),
-        isAvailable: isAvailable
-      });
-  
-      currentStart = currentStart.plus({ minutes: intervalMinutes });
-    }
-  
-    return allSlots;
-  }, [bufferTimeHours, TIME_ZONE]);
+  while (currentStart <= lastPossibleSlotStart) {
+    const currentEnd = currentStart.plus({ minutes: durationMinutes });
+    const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
+
+    // 🔧 ИСПРАВЛЕНИЕ: Слот доступен если он НЕ пересекается с заблокированными интервалами
+    // и находится в будущем
+    const isAvailable = !occupiedIntervals.some(occupiedInterval => {
+      const overlaps = slotInterval.overlaps(occupiedInterval);
+      console.log(`Слот ${currentStart.toFormat('HH:mm')}-${currentEnd.toFormat('HH:mm')} vs заблокированный ${occupiedInterval.start.toFormat('HH:mm')}-${occupiedInterval.end.toFormat('HH:mm')}: ${overlaps ? 'ПЕРЕСЕКАЕТСЯ' : 'НЕ ПЕРЕСЕКАЕТСЯ'}`);
+      return overlaps;
+    }) && currentStart > nowWithZone;
+    
+    allSlots.push({
+      start: currentStart.toFormat('HH:mm'),
+      end: currentEnd.toFormat('HH:mm'),
+      isAvailable: isAvailable
+    });
+
+    currentStart = currentStart.plus({ minutes: intervalMinutes });
+  }
+
+  return allSlots;
+}, [TIME_ZONE]);
 
   const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
     if (!room || !duration || !date) {
