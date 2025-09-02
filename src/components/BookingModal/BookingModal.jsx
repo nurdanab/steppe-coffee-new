@@ -60,9 +60,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const durationMinutes = duration * 60;
     const bufferMinutes = bufferTimeHours * 60;
     const now = DateTime.now().setZone('Asia/Almaty');
-  
+
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
-  
+
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
       const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'Asia/Almaty' });
@@ -72,41 +72,59 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
       occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
     }
-  
+
     let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
     const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
-  
+
     while (currentStart <= lastPossibleSlotStart) {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
-  
-      const isBooked = occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
-      
-      // ИСПРАВЛЕНИЕ: правильная проверка того, что слот в будущем
-      // Если выбранная дата - сегодня, проверяем время
-      // Если выбранная дата - будущая, все слоты доступны по времени
-      const isSelectedDateToday = luxonDate.hasSame(now, 'day');
-      const isPastTime = isSelectedDateToday ? currentStart <= now : false;
-      
-      const isAvailable = !isBooked && !isPastTime;
+
+      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
       
       allSlots.push({
         start: currentStart.toFormat('HH:mm'),
         end: currentEnd.toFormat('HH:mm'),
         isAvailable: isAvailable
       });
-  
+
       currentStart = currentStart.plus({ minutes: intervalMinutes });
     }
-  
+
     return allSlots;
   }, [bufferTimeHours]);
 
+  // const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
+  //   if (!room || !duration || !date) {
+  //     setMonthlyBookings([]);
+  //     setFullyBookedDates([]);
+  //     return;
+  //   }
+
+  //   setLoading(true);
+  //   setError(null);
+  //   const luxonDate = DateTime.fromJSDate(date, { zone: 'Asia/Almaty' });
+  //   const startOfMonth = luxonDate.startOf('month').toISODate();
+  //   const endOfMonth = luxonDate.endOf('month').toISODate();
+
+  //   try {
+  //     const { data: bookings, error: fetchError } = await supabase
+  //       .from('public_bookings_for_calendar')
+  //       .select('booking_date, start_time, end_time, selected_room, status')
+  //       .eq('selected_room', room)
+  //       .gte('booking_date', startOfMonth)
+  //       .lte('booking_date', endOfMonth);
+
+  //     if (fetchError) {
+  //       throw fetchError;
+  //     }
+
+  //     setMonthlyBookings(bookings);
   const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
     if (!room || !duration || !date) {
-      setMonthlyBookings([]);
-      setFullyBookedDates([]);
-      return;
+        setMonthlyBookings([]);
+        setFullyBookedDates([]);
+        return;
     }
 
     setLoading(true);
@@ -115,19 +133,23 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const startOfMonth = luxonDate.startOf('month').toISODate();
     const endOfMonth = luxonDate.endOf('month').toISODate();
 
+    console.log('Запрос на бронирования:', { room, startOfMonth, endOfMonth });  
+    
     try {
-      const { data: bookings, error: fetchError } = await supabase
-        .from('public_bookings_for_calendar')
-        .select('booking_date, start_time, end_time, selected_room, status')
-        .eq('selected_room', room)
-        .gte('booking_date', startOfMonth)
-        .lte('booking_date', endOfMonth);
+        const { data: bookings, error: fetchError } = await supabase
+            .from('public_bookings_for_calendar')
+            .select('booking_date, start_time, end_time, selected_room, status')
+            .eq('selected_room', room)
+            .gte('booking_date', startOfMonth)
+            .lte('booking_date', endOfMonth);
 
-      if (fetchError) {
-        throw fetchError;
-      }
+        if (fetchError) {
+            throw fetchError;
+        }
 
-      setMonthlyBookings(bookings);
+        console.log('Получены бронирования:', bookings); 
+
+        setMonthlyBookings(bookings);
 
       const datesWithBookings = [...new Set(bookings.map(b => b.booking_date))];
       const fullyBooked = [];
@@ -269,20 +291,35 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
   }, [isOpen]);
 
+  // useEffect(() => {
+  //   if (step === 2 && selectedRoom && durationHours && bookingDate) {
+  //     fetchMonthlyBookings(selectedRoom, durationHours, bookingDate);
+  //   }
+  // }, [step, selectedRoom, durationHours, bookingDate, fetchMonthlyBookings]);
   useEffect(() => {
     if (step === 2 && selectedRoom && durationHours && bookingDate) {
-      fetchMonthlyBookings(selectedRoom, durationHours, bookingDate);
+        fetchMonthlyBookings(selectedRoom, durationHours, bookingDate);
     }
-  }, [step, selectedRoom, durationHours, bookingDate, fetchMonthlyBookings]);
+}, [step, selectedRoom, durationHours, bookingDate, fetchMonthlyBookings]);
+  // useEffect(() => {
+  //   if (step === 2 && bookingDate && selectedRoom && durationHours && monthlyBookings.length > 0) {
+  //     const slots = calculateAvailableSlots(bookingDate, selectedRoom, durationHours, monthlyBookings);
+  //     setSuggestedSlots(slots);
+  //   }
+  // }, [step, bookingDate, selectedRoom, durationHours, monthlyBookings, calculateAvailableSlots]);
 
   useEffect(() => {
     if (step === 2 && bookingDate && selectedRoom && durationHours && monthlyBookings.length > 0) {
-      const slots = calculateAvailableSlots(bookingDate, selectedRoom, durationHours, monthlyBookings);
-      setSuggestedSlots(slots);
+        const slots = calculateAvailableSlots(bookingDate, selectedRoom, durationHours, monthlyBookings);
+        setSuggestedSlots(slots);
     }
-  }, [step, bookingDate, selectedRoom, durationHours, monthlyBookings, calculateAvailableSlots]);
+}, [step, bookingDate, selectedRoom, durationHours, monthlyBookings, calculateAvailableSlots]);
+useEffect(() => {
+  console.log('Список полностью забронированных дат:', fullyBookedDates);
+}, [fullyBookedDates]);
 
-  const validateStep1 = () => {
+
+const validateStep1 = () => {
     setError(null);
     if (!selectedRoom || !numberOfPeople || !durationHours) {
         setError('Пожалуйста, заполните все обязательные поля.');
