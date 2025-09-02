@@ -87,7 +87,12 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
   
-      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > nowWithZone;
+      // ИСПРАВЛЕНИЕ: Проверяем, пересекается ли слот с любым заблокированным интервалом
+      const isAvailable = !occupiedIntervals.some(occupiedInterval => {
+        const overlaps = slotInterval.overlaps(occupiedInterval);
+        console.log(`Слот ${currentStart.toFormat('HH:mm')}-${currentEnd.toFormat('HH:mm')} vs заблокированный ${occupiedInterval.start.toFormat('HH:mm')}-${occupiedInterval.end.toFormat('HH:mm')}: ${overlaps}`);
+        return overlaps;
+      }) && currentStart > nowWithZone;
       
       allSlots.push({
         start: currentStart.toFormat('HH:mm'),
