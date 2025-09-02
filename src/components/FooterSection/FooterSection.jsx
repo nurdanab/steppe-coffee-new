@@ -72,12 +72,12 @@ const FooterSection = () => {
                         <div className={styles.footerColumn}>
                             <h3 className={styles.columnTitle}>Контакты</h3>
                             <p className={styles.contactInfo}>
-                                Улица Курмангазы, 63 1 этаж,<br/>
-                                Алмалинский район, Алматы
+                            Город Алматы<br/>
+                            Улица Курмангазы, 63
                             </p>
-                            <p className={styles.contactInfo}>
+                            {/* <p className={styles.contactInfo}>
                                 <a href="mailto:contact@steppecoffee.kz" className={styles.contactLink}>contact@steppecoffee.kz</a>
-                            </p>
+                            </p> */}
                             <div className={styles.socialIcons}>
                                 <a href="https://www.instagram.com/steppecoffeekz/" target="_blank" rel="noopener noreferrer" className={styles.socialLink} aria-label="Instagram">
                                     <LazyImage src="/images/instagram-icon.webp" alt="Instagram" className={styles.icon} />
@@ -98,9 +98,9 @@ const FooterSection = () => {
                             <ul className={styles.documentLinks}>
                                 <li><a href="/documentsPdf/privacy-policy.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Политика конфиденциальности</a></li>
                                 <li><a href="/documentsPdf/legal-information.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Правовая информация</a></li>
-                                <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Сервисная информация</a></li>
-                                <li><a href="/documentsPdf/information-about-payments.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>О безопасности платежей</a></li>
-                                <li><a href="/documentsPdf/public-offer.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Договор публичной оферты</a></li>
+                                <li><a href="/documentsPdf/information-about-the-service.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Сервисная информация</a></li>
+                                <li><a href="/documentsPdf/information-about-payment-security.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>О безопасности платежей</a></li>
+                                <li><a href="/documentsPdf/public-offer-agreement.pdf" target="_blank" rel="noopener noreferrer" className={styles.documentLink}>Договор публичной оферты</a></li>
                             </ul>
                         </div>
                     </div>
