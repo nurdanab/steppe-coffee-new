@@ -80,12 +80,26 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-      const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
+  //     const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > now;
+      
+  //     allSlots.push({
+  //       start: currentStart.toFormat('HH:mm'),
+  //       end: currentEnd.toFormat('HH:mm'),
+  //       isAvailable: isAvailable
+  //     });
+
+  //     currentStart = currentStart.plus({ minutes: intervalMinutes });
+  //   }
+
+  //   return allSlots;
+  // }, [bufferTimeHours]);
+  const isBooked = occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval));
+      const isPast = currentStart < now;
       
       allSlots.push({
         start: currentStart.toFormat('HH:mm'),
         end: currentEnd.toFormat('HH:mm'),
-        isAvailable: isAvailable
+        isAvailable: !isBooked && !isPast
       });
 
       currentStart = currentStart.plus({ minutes: intervalMinutes });
