@@ -30,8 +30,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
   const [monthlyBookings, setMonthlyBookings] = useState([]);
   const [fullyBookedDates, setFullyBookedDates] = useState([]);
 
-  // 💡 ИСПРАВЛЕНИЕ: Добавил константу для временной зоны, чтобы избежать
-  // дублирования и ошибок.
   const TIME_ZONE = 'Asia/Almaty';
 
   const today = useMemo(() => {
@@ -68,13 +66,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
 
     const occupiedIntervals = [];
     for (const booking of dailyBookings) {
-      // 💡 ИСПРАВЛЕНИЕ: Убеждаемся, что существующие бронирования
-      // также интерпретируются в правильной временной зоне.
       const bookingStartTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: TIME_ZONE });
       const bookingEndTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: TIME_ZONE });
       
-      // 💡 ИСПРАВЛЕНИЕ: Занятый интервал включает буферное время до и после
-      // бронирования.
       const occupiedStart = bookingStartTime.minus({ minutes: bufferMinutes });
       const occupiedEnd = bookingEndTime.plus({ minutes: bufferMinutes });
       occupiedIntervals.push(Interval.fromDateTimes(occupiedStart, occupiedEnd));
@@ -87,8 +81,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
 
-      // 💡 ИСПРАВЛЕНИЕ: Проверяем, что предлагаемый слот не пересекается
-      // ни с одним из занятых интервалов (включая буфер).
       const isAvailable = !occupiedIntervals.some(occupiedInterval => slotInterval.overlaps(occupiedInterval)) && currentStart > nowWithZone;
       
       allSlots.push({
@@ -101,7 +93,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     }
 
     return allSlots;
-  }, [bufferTimeHours, TIME_ZONE]); // 💡 ИЗМЕНЕНИЕ: Добавил TIME_ZONE в зависимости
+  }, [bufferTimeHours, TIME_ZONE]);
 
   const fetchMonthlyBookings = useCallback(async (room, duration, date) => {
     if (!room || !duration || !date) {
@@ -124,7 +116,10 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             .select('booking_date, start_time, end_time, selected_room, status')
             .eq('selected_room', room)
             .gte('booking_date', startOfMonth)
-            .lte('booking_date', endOfMonth);
+            .lte('booking_date', endOfMonth)
+            // 💡 ИСПРАВЛЕНИЕ: Добавляем фильтр по статусу, чтобы получить только
+            // подтвержденные и ожидающие бронирования.
+            .in('status', ['pending', 'confirmed']);
 
         if (fetchError) {
             throw fetchError;
@@ -168,7 +163,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     } finally {
       setLoading(false);
     }
-  }, [calculateAvailableSlots, TIME_ZONE]); // 💡 ИЗМЕНЕНИЕ: Добавил TIME_ZONE в зависимости
+  }, [calculateAvailableSlots, TIME_ZONE]);
 
     const sendBooking = async (statusToSet = 'pending') => {
     setLoading(true);
