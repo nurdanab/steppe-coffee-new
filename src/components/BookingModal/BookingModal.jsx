@@ -1,5 +1,4 @@
 // src/components/BookingModal/BookingModal.jsx
-
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { IMaskInput } from 'react-imask';
 import styles from './BookingModal.module.scss';
@@ -59,7 +58,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const intervalMinutes = 30;
     const durationMinutes = duration * 60;
     const bufferMinutes = bufferTimeHours * 60;
-    const now = DateTime.now().setZone('Asia/Almaty');
+    const nowWithZone = DateTime.now().setZone('Asia/Almaty');
 
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
 
@@ -76,10 +75,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     let currentStart = luxonDate.set({ hour: cafeOpenHour, minute: 0, second: 0, millisecond: 0 });
     const lastPossibleSlotStart = luxonDate.set({ hour: cafeCloseHour, minute: 0, second: 0, millisecond: 0 }).minus({ minutes: durationMinutes });
     
-    // 💡 ИСПРАВЛЕНИЕ: Теперь мы всегда сравниваем со временем
-    // с учётом часового пояса.
-    const nowWithZone = DateTime.now().setZone('Asia/Almaty');
-
     while (currentStart <= lastPossibleSlotStart) {
       const currentEnd = currentStart.plus({ minutes: durationMinutes });
       const slotInterval = Interval.fromDateTimes(currentStart, currentEnd);
@@ -115,7 +110,7 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     
     try {
         const { data: bookings, error: fetchError } = await supabase
-            .from('public_bookings_for_calendar')
+            .from('bookings') // 💡 ИЗМЕНЕНИЕ: Запрашиваем данные из таблицы 'bookings'
             .select('booking_date, start_time, end_time, selected_room, status')
             .eq('selected_room', room)
             .gte('booking_date', startOfMonth)
@@ -138,8 +133,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
         const tempDate = tempDateLuxon.toJSDate();
         const slots = calculateAvailableSlots(tempDate, room, duration, bookings);
 
-        // 💡 ИСПРАВЛЕНИЕ: Мы проверяем, что все слоты недоступны и есть хотя бы один будущий слот.
-        // Если все слоты недоступны, то это значит, что день полностью забронирован.
         const allSlotsUnavailable = slots.every(slot => !slot.isAvailable);
         const atLeastOneFutureSlotExists = slots.some(slot =>
           DateTime.fromFormat(slot.start, 'HH:mm', { zone: 'Asia/Almaty' })
@@ -150,8 +143,6 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
             }) > now
         );
         
-        // 💡 ИСПРАВЛЕНИЕ: Мы добавили дополнительную проверку, чтобы исключить дни, 
-        // которые уже прошли. Это позволит избежать лишних вычислений.
         const isPastDay = tempDateLuxon.startOf('day') < now.startOf('day');
 
         if (allSlotsUnavailable && atLeastOneFutureSlotExists && !isPastDay) {
