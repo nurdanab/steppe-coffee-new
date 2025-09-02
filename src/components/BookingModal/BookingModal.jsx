@@ -59,7 +59,9 @@ const BookingModal = ({ isOpen, onClose, currentUserId, currentUserEmail }) => {
     const allSlots = [];
     const intervalMinutes = 30;
     const durationMinutes = duration * 60;
-    const bufferMinutes = bufferTimeHours * 60;
+    // Если нужен общий буфер в 1 час (включая бронь), то добавляем по 0 минут
+    // Если нужен буфер по 30 минут с каждой стороны от брони:
+    const bufferMinutes = 30; // вместо bufferTimeHours * 60
     const nowWithZone = DateTime.now().setZone(TIME_ZONE);
   
     const dailyBookings = bookings.filter(b => b.booking_date === dateString && b.selected_room === room);
