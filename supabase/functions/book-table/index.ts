@@ -63,7 +63,7 @@ serve(async (req) => {
       end: proposedBookingEnd.toISO()
     });
 
-    const bufferTimeHours = 1;
+    const bufferTimeHours = 0.5;
     const bufferMinutes = bufferTimeHours * 60;
 
     const { data: existingBookings, error: fetchError } = await supabaseClient

@@ -4,7 +4,7 @@ import { supabase } from '../../supabaseClient';
 import styles from './ProfilePage.module.scss'; 
 import { useNavigate } from 'react-router-dom';
 import WhatsAppFeedback from './WhatsAppFeedback';
-
+import { DateTime } from 'luxon'; // ДОБАВИТЬ ИМПОРТ
 
 const ProfilePage = ({ session, onLogout }) => {
   const [userBookings, setUserBookings] = useState([]);
@@ -12,8 +12,9 @@ const ProfilePage = ({ session, onLogout }) => {
   const [errorBookings, setErrorBookings] = useState(null);
   const navigate = useNavigate();
 
+  const TIME_ZONE = 'Asia/Almaty'; // ДОБАВИТЬ КОНСТАНТУ
+
   useEffect(() => {
-   
     if (!session) {
       return; 
     }
@@ -55,12 +56,26 @@ const ProfilePage = ({ session, onLogout }) => {
     }
   };
 
+  // ДОБАВИТЬ ФУНКЦИЮ ДЛЯ КОНВЕРТАЦИИ ВРЕМЕНИ
+  const formatBookingTime = (booking) => {
+    try {
+      // Парсим UTC время из БД и конвертируем в локальную зону
+      const startTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
+      const endTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
+      
+      return `${startTime.toFormat('HH:mm')} - ${endTime.toFormat('HH:mm')}`;
+    } catch (error) {
+      console.error('Ошибка при форматировании времени:', error);
+      // Fallback на старый способ отображения
+      return `${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`;
+    }
+  };
+
   const handleChangePassword = () => {
     navigate('/update-password');
   };
 
   if (!session) {
-    
     return (
       <main className={styles.profilePage}>
         <div className="container">
@@ -104,7 +119,7 @@ const ProfilePage = ({ session, onLogout }) => {
                     Дата: {new Date(booking.booking_date).toLocaleDateString('ru-RU')}
                   </p>
                   <p className={styles.bookingTime}>
-                    Время: {booking.start_time.substring(0, 5)} - {booking.end_time.substring(0, 5)}
+                    Время: {formatBookingTime(booking)}
                   </p>
                   <p className={styles.bookingRoom}>
                     Зал: {getRoomName(booking.selected_room)}
