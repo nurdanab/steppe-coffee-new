@@ -124,23 +124,26 @@ const AdminDashboard = ({ session }) => {
     }
   }, [isAdmin, fetchBookings]);
 
-  // Экспорт в Google Sheets
-  const handleExportToSheets = async (bookingsToExport) => {
+  // Выносим логику экспорта в отдельную функцию для повторного использования
+  const exportBookingToSheets = async (bookingToExport) => {
     try {
       const { data, error } = await supabase.functions.invoke('export-to-sheets', {
-        body: { confirmedBookings: bookingsToExport }
+        body: { confirmedBookings: [bookingToExport] }
       });
 
       if (error) {
-        console.error('Ошибка при вызове функции:', error);
+        console.error('Ошибка при вызове функции экспорта:', error);
         alert('Ошибка при экспорте данных в Google Sheets.');
+        return false;
       } else {
         console.log('Данные успешно экспортированы:', data);
         alert('Бронирование успешно экспортировано в Google Sheets!');
+        return true;
       }
     } catch (err) {
       console.error('Неожиданная ошибка при экспорте:', err);
       alert('Произошла неожиданная ошибка при экспорте.');
+      return false;
     }
   };
 
@@ -163,20 +166,10 @@ const AdminDashboard = ({ session }) => {
   
       if (updateError) throw updateError;
   
-      // Если новый статус 'confirmed', вызываем функцию экспорта
+      // Если новый статус 'confirmed', вызываем вынесенную функцию экспорта
       if (newStatus === 'confirmed') {
-        console.log('Вызов export-to-sheets с данными:', updatedBooking);
-        const { data, error } = await supabase.functions.invoke('export-to-sheets', {
-          body: { confirmedBookings: [updatedBooking] }
-        });
-  
-        if (error) {
-          console.error('Ошибка при вызове функции:', error);
-          alert('Ошибка при экспорте данных в Google Sheets.');
-        } else {
-          console.log('Данные успешно экспортированы:', data);
-          alert('Бронирование успешно экспортировано в Google Sheets!');
-        }
+        console.log('Вызов функции экспорта для бронирования:', updatedBooking);
+        await exportBookingToSheets(updatedBooking);
       }
 
       const telegramMessage = `

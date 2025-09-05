@@ -2,14 +2,25 @@
 import { google } from "npm:googleapis";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
+// Заголовки CORS для разрешения доступа с фронтенда
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*', // Замените на домен вашего сайта, например 'https://steppecoffee.kz'
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+};
+
 const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 const RAW_CREDS = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
 
 serve(async (req) => {
   try {
+    // Обработка предварительного запроса OPTIONS для CORS
     if (req.method === 'OPTIONS') {
       console.log("Handling OPTIONS preflight request.");
-      return new Response("ok", { status: 200 });
+      return new Response("ok", { 
+        headers: corsHeaders,
+        status: 200,
+      });
     }
 
     console.log(`Received ${req.method} request.`);
@@ -21,25 +32,37 @@ serve(async (req) => {
       console.log("Request body text received.");
       if (!text) {
         console.error("Received an empty request body.");
-        return new Response(JSON.stringify({ error: "Empty request body" }), { status: 400 });
+        return new Response(JSON.stringify({ error: "Empty request body" }), { 
+          status: 400,
+          headers: corsHeaders,
+        });
       }
       const parsed = JSON.parse(text);
       confirmedBookings = parsed.confirmedBookings || [];
       console.log(`Successfully parsed JSON. Found ${confirmedBookings.length} bookings.`);
     } catch (e) {
       console.error("Ошибка парсинга тела запроса:", e.message);
-      return new Response(JSON.stringify({ error: "Invalid JSON body" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), { 
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     if (!confirmedBookings.length) {
       console.error("No confirmed bookings found in request body.");
-      return new Response(JSON.stringify({ error: "No confirmed bookings" }), { status: 400 });
+      return new Response(JSON.stringify({ error: "No confirmed bookings" }), { 
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     // --- Проверка секрета ---
     if (!RAW_CREDS) {
       console.error("GOOGLE_SHEETS_SERVICE_ACCOUNT not set.");
-      return new Response(JSON.stringify({ error: "Missing Google service account credentials" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "Missing Google service account credentials" }), { 
+        status: 500,
+        headers: corsHeaders,
+      });
     }
     
     let serviceAccountCredentials;
@@ -48,12 +71,18 @@ serve(async (req) => {
       console.log("Service account JSON parsed successfully.");
     } catch (e) {
       console.error("Invalid GOOGLE_SHEETS_SERVICE_ACCOUNT JSON:", e.message);
-      return new Response(JSON.stringify({ error: "Invalid service account JSON" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "Invalid service account JSON" }), { 
+        status: 500,
+        headers: corsHeaders,
+      });
     }
 
     if (!SPREADSHEET_ID) {
       console.error("SPREADSHEET_ID is not set.");
-      return new Response(JSON.stringify({ error: "SPREADSHEET_ID is not set" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "SPREADSHEET_ID is not set" }), { 
+        status: 500,
+        headers: corsHeaders,
+      });
     }
 
     // --- Авторизация Google API ---
@@ -98,10 +127,16 @@ serve(async (req) => {
     });
     console.log("Data successfully appended.");
 
-    return new Response(JSON.stringify({ message: "Экспорт успешно завершен!" }), { status: 200 });
+    return new Response(JSON.stringify({ message: "Экспорт успешно завершен!" }), { 
+      status: 200,
+      headers: corsHeaders,
+    });
   } catch (error) {
     console.error("Full Error Stack:", error.stack);
     console.error("Error Message:", error.message);
-    return new Response(JSON.stringify({ error: "Internal server error" }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Internal server error" }), { 
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 });
