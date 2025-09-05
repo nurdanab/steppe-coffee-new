@@ -1,20 +1,26 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { google } from 'npm:googleapis';
 
-const SPREADSHEET_ID = Deno.env.get('SPREADSHEET_ID'); 
+const SPREADSHEET_ID = Deno.env.get('SPREADSHEET_ID');
+
 serve(async (req) => {
   try {
     const { confirmedBookings } = await req.json();
 
-    if (!confirmedBookings || !Array.isArray(confirmedBookings) || confirmedBookings.length === 0) {
-      return new Response(JSON.stringify({ error: 'Data is missing or empty' }), {
+    if (!confirmedBookings) {
+      return new Response(JSON.stringify({ error: 'Data is missing' }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
+    // --- ДОБАВЬ ЭТИ ДВЕ СТРОКИ ДЛЯ ОТЛАДКИ ---
+    const serviceAccountJson = Deno.env.get('GOOGLE_SHEETS_SERVICE_ACCOUNT');
+    console.log('Raw Service Account JSON:', serviceAccountJson);
+    // ------------------------------------------
+
     const serviceAccountCredentials = JSON.parse(
-      Deno.env.get('GOOGLE_SHEETS_SERVICE_ACCOUNT')
+      serviceAccountJson
     );
 
     const auth = new google.auth.GoogleAuth({
@@ -27,26 +33,29 @@ serve(async (req) => {
 
     const sheets = google.sheets({ version: 'v4', auth });
 
-    // Мы будем добавлять данные, поэтому заголовки нам не нужны каждый раз
-    const dataToExport = confirmedBookings.map(booking => [
-      booking.booking_date,
-      booking.start_time,
-      booking.end_time,
-      booking.selected_room,
-      booking.num_people,
-      booking.organizer_name,
-      booking.event_name || '',
-      booking.event_description || '',
-      booking.organizer_contact || '',
-      booking.phone_number,
-      booking.comments || '',
-      booking.status
-    ]);
+    // Форматируем данные: первый массив - заголовки
+    const dataToExport = [
+      ['Дата', 'Время начала', 'Время зав', 'Зал', 'Человек', 'Организатор', 'Название события', 'Описание события', 'Контакты организации', 'Телефон', 'Комментарий', 'Статус'],
+      ...confirmedBookings.map(booking => [
+        booking.booking_date,
+        booking.start_time,
+        booking.end_time,
+        booking.selected_room,
+        booking.num_people,
+        booking.organizer_name,
+        booking.event_name || '',
+        booking.event_description || '',
+        booking.organizer_contact || '',
+        booking.phone_number,
+        booking.comments || '',
+        booking.status
+      ]),
+    ];
 
-    const range = 'Подтвержденные бронирования!A:L'; // A:L это столбец с данными, который ты хочешь записывать
+    const range = 'Подтвержденные бронирования!A1';
 
-    // Записываем данные в таблицу, добавляя их в конец
-    await sheets.spreadsheets.values.append({
+    // Записываем данные в таблицу
+    await sheets.spreadsheets.values.update({
       spreadsheetId: SPREADSHEET_ID,
       range,
       valueInputOption: 'USER_ENTERED',
