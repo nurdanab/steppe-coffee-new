@@ -1,34 +1,34 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+// supabase/functions/export-to-sheets/index.ts
 import { google } from "npm:googleapis";
 
 const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 
-serve(async (req) => {
+export default async (req: Request): Promise<Response> => {
   try {
-    // Читаем тело запроса безопасно
+    // --- Чтение тела запроса ---
     let confirmedBookings: any[] = [];
     try {
-      const text = await req.text(); // читаем как текст
+      const text = await req.text();
       if (text) {
         const parsed = JSON.parse(text);
         confirmedBookings = parsed.confirmedBookings || [];
       }
-    } catch (parseErr) {
-      console.error("Ошибка парсинга тела запроса:", parseErr.message);
-      return new Response(
-        JSON.stringify({ error: "Invalid JSON body" }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
+    } catch (e) {
+      console.error("Ошибка парсинга тела запроса:", e.message);
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    if (!confirmedBookings || !Array.isArray(confirmedBookings) || confirmedBookings.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No confirmed bookings provided" }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
+    if (!confirmedBookings.length) {
+      return new Response(JSON.stringify({ error: "No confirmed bookings" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Проверка наличия секретов
+    // --- Проверка секрета ---
     const rawCreds = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
     if (!rawCreds) {
       console.error("GOOGLE_SHEETS_SERVICE_ACCOUNT not set");
@@ -56,7 +56,7 @@ serve(async (req) => {
       );
     }
 
-    // Авторизация
+    // --- Авторизация Google API ---
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: serviceAccountCredentials.client_email,
@@ -67,7 +67,7 @@ serve(async (req) => {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    // Подготовка данных для экспорта
+    // --- Подготовка данных ---
     const dataToExport = confirmedBookings.map((booking) => [
       booking.booking_date,
       booking.start_time,
@@ -83,11 +83,10 @@ serve(async (req) => {
       booking.status,
     ]);
 
-    const range = "Подтвержденные бронирования!A:L";
-
+    // --- Запись в таблицу ---
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range,
+      range: "Подтвержденные бронирования!A:L",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: dataToExport,
@@ -105,4 +104,4 @@ serve(async (req) => {
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
-});
+};
