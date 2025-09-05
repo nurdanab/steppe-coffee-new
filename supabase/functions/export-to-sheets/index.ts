@@ -58,6 +58,59 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   });
   console.log("Заголовки добавлены на новый лист.");
 
+  // Форматирование заголовков и заморозка строки
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: {
+      requests: [
+        {
+          // Замораживаем первую строку
+          updateSheetProperties: {
+            properties: {
+              sheetId: newSheetId,
+              gridProperties: {
+                frozenRowCount: 1,
+              },
+            },
+            fields: "gridProperties.frozenRowCount",
+          },
+        },
+        {
+          // Применяем форматирование к заголовкам
+          repeatCell: {
+            range: {
+              sheetId: newSheetId,
+              startRowIndex: 0,
+              endRowIndex: 1,
+              startColumnIndex: 0,
+              endColumnIndex: headers[0].length,
+            },
+            cell: {
+              userEnteredFormat: {
+                backgroundColor: {
+                  red: 0.1,
+                  green: 0.8,
+                  blue: 0.1,
+                },
+                textFormat: {
+                  bold: true,
+                  foregroundColor: {
+                    red: 1.0,
+                    green: 1.0,
+                    blue: 1.0,
+                  },
+                },
+                horizontalAlignment: 'CENTER',
+              },
+            },
+            fields: 'userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)',
+          },
+        },
+      ],
+    },
+  });
+  console.log("Форматирование заголовков и заморозка строки успешно применены.");
+
   return newSheetId;
 };
 
@@ -270,6 +323,8 @@ serve(async (req) => {
       });
       
       const rows = response.data.values || [];
+      // Мы ищем строку, где ID бронирования в первом столбце (индекс 0) совпадает с нашим ID.
+      // Используем slice(1) для пропуска заголовков.
       const rowIndex = rows.slice(1).findIndex(row => row[0] === bookingId);
       
       if (rowIndex === -1) {
@@ -280,6 +335,8 @@ serve(async (req) => {
         });
       }
       
+      // rowToDelete - это индекс строки в таблице Google Sheets (1-based), 
+      // где 1 - это строка заголовков.
       const rowToDelete = rowIndex + 2;
       console.log(`Found booking at row ${rowToDelete}. Deleting...`);
       
@@ -292,8 +349,8 @@ serve(async (req) => {
                 range: {
                   sheetId,
                   dimension: "ROWS",
-                  startIndex: rowIndex + 1,
-                  endIndex: rowIndex + 2,
+                  startIndex: rowToDelete - 1, // API использует 0-based index
+                  endIndex: rowToDelete,
                 },
               },
             },
@@ -303,14 +360,15 @@ serve(async (req) => {
       
       console.log("Row successfully deleted.");
 
-      // Проверяем, остался ли на листе только заголовок
+      // Проверяем, остались ли на листе какие-либо данные (бронирования)
       const updatedSheetResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${sheetName}!A:A`,
+        range: `${sheetName}!A2:A`, // Проверяем данные, начиная со второй строки
       });
 
       const updatedRows = updatedSheetResponse.data.values || [];
-      if (updatedRows.length <= 1) {
+      // Если массив с данными пуст, это значит, что на листе остался только заголовок.
+      if (updatedRows.length === 0) {
         console.log(`Лист "${sheetName}" пуст. Удаляем лист.`);
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: SPREADSHEET_ID,
