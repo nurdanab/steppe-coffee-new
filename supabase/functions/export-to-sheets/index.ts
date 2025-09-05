@@ -6,20 +6,33 @@ const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 const RAW_CREDS = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response("ok", { status: 200 });
-  }
-
   try {
-    console.log("Function started. SPREADSHEET_ID:", SPREADSHEET_ID ? "Set" : "Not Set");
-    
+    if (req.method === 'OPTIONS') {
+      console.log("Handling OPTIONS preflight request.");
+      return new Response("ok", { status: 200 });
+    }
+
+    console.log(`Received ${req.method} request.`);
+
     // --- Чтение тела запроса ---
-    const text = await req.text();
-    const parsed = JSON.parse(text);
-    const confirmedBookings = parsed.confirmedBookings || [];
-    console.log("Confirmed bookings received:", confirmedBookings.length);
+    let confirmedBookings: any[] = [];
+    try {
+      const text = await req.text();
+      console.log("Request body text received.");
+      if (!text) {
+        console.error("Received an empty request body.");
+        return new Response(JSON.stringify({ error: "Empty request body" }), { status: 400 });
+      }
+      const parsed = JSON.parse(text);
+      confirmedBookings = parsed.confirmedBookings || [];
+      console.log(`Successfully parsed JSON. Found ${confirmedBookings.length} bookings.`);
+    } catch (e) {
+      console.error("Ошибка парсинга тела запроса:", e.message);
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), { status: 400 });
+    }
 
     if (!confirmedBookings.length) {
+      console.error("No confirmed bookings found in request body.");
       return new Response(JSON.stringify({ error: "No confirmed bookings" }), { status: 400 });
     }
 
@@ -32,7 +45,7 @@ serve(async (req) => {
     let serviceAccountCredentials;
     try {
       serviceAccountCredentials = JSON.parse(RAW_CREDS);
-      console.log("Service account JSON parsed.");
+      console.log("Service account JSON parsed successfully.");
     } catch (e) {
       console.error("Invalid GOOGLE_SHEETS_SERVICE_ACCOUNT JSON:", e.message);
       return new Response(JSON.stringify({ error: "Invalid service account JSON" }), { status: 500 });
@@ -44,7 +57,7 @@ serve(async (req) => {
     }
 
     // --- Авторизация Google API ---
-    console.log("Attempting to authenticate.");
+    console.log("Attempting to authenticate with Google API.");
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: serviceAccountCredentials.client_email,
@@ -74,7 +87,7 @@ serve(async (req) => {
     console.log("Data to be exported:", dataToExport);
 
     // --- Запись в таблицу ---
-    console.log("Appending data to spreadsheet.");
+    console.log("Attempting to append data to the spreadsheet.");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: "Подтвержденные бронирования!A:L",
