@@ -13,7 +13,6 @@ const corsHeaders = {
 const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 const RAW_CREDS = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
 
-// Функция для проверки существования и создания листа
 const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
   const sheetsList = spreadsheet.data.sheets;
@@ -44,7 +43,6 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   const newSheetId = addSheetResponse.data.replies[0].addSheet.properties.sheetId;
   console.log(`Новый лист "${sheetName}" создан с ID: ${newSheetId}`);
 
-  // Добавляем заголовки на новый лист
   const headers = [
     ["ID бронирования", "Дата", "Время начала", "Время окончания", "Зал", "Кол-во человек", "Организатор", "Название события", "Описание события", "Контакты организации", "Телефон", "Комментарий", "Статус"]
   ];
@@ -58,13 +56,11 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   });
   console.log("Заголовки добавлены на новый лист.");
 
-  // Форматирование заголовков и заморозка строки
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId,
     requestBody: {
       requests: [
         {
-          // Замораживаем первую строку
           updateSheetProperties: {
             properties: {
               sheetId: newSheetId,
@@ -76,7 +72,6 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
           },
         },
         {
-          // Применяем форматирование к заголовкам
           repeatCell: {
             range: {
               sheetId: newSheetId,
@@ -114,7 +109,6 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   return newSheetId;
 };
 
-// Функция для поиска ID листа по имени
 const findSheetIdByName = async (sheets, spreadsheetId, sheetName) => {
   const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
   const sheet = spreadsheet.data.sheets.find(s => s.properties.title === sheetName);
@@ -124,30 +118,16 @@ const findSheetIdByName = async (sheets, spreadsheetId, sheetName) => {
 serve(async (req) => {
   try {
     if (req.method === 'OPTIONS') {
-      console.log("Handling OPTIONS preflight request.");
       return new Response("ok", { 
         headers: corsHeaders,
         status: 200,
       });
     }
 
-    console.log(`Received ${req.method} request.`);
-
     let requestBody;
     try {
-      const text = await req.text();
-      console.log("Request body text received.");
-      if (!text) {
-        console.error("Received an empty request body.");
-        return new Response(JSON.stringify({ error: "Empty request body" }), { 
-          status: 400,
-          headers: corsHeaders,
-        });
-      }
-      requestBody = JSON.parse(text);
-      console.log(`Successfully parsed JSON. Action: ${requestBody.action}`);
+      requestBody = await req.json();
     } catch (e) {
-      console.error("Ошибка парсинга тела запроса:", e.message);
       return new Response(JSON.stringify({ error: "Invalid JSON body" }), { 
         status: 400,
         headers: corsHeaders,
@@ -156,9 +136,8 @@ serve(async (req) => {
 
     const { action, data } = requestBody;
 
-    if (!RAW_CREDS) {
-      console.error("GOOGLE_SHEETS_SERVICE_ACCOUNT not set.");
-      return new Response(JSON.stringify({ error: "Missing Google service account credentials" }), { 
+    if (!RAW_CREDS || !SPREADSHEET_ID) {
+      return new Response(JSON.stringify({ error: "Missing environment variables" }), { 
         status: 500,
         headers: corsHeaders,
       });
@@ -167,18 +146,8 @@ serve(async (req) => {
     let serviceAccountCredentials;
     try {
       serviceAccountCredentials = JSON.parse(RAW_CREDS);
-      console.log("Service account JSON parsed successfully.");
     } catch (e) {
-      console.error("Invalid GOOGLE_SHEETS_SERVICE_ACCOUNT JSON:", e.message);
       return new Response(JSON.stringify({ error: "Invalid service account JSON" }), { 
-        status: 500,
-        headers: corsHeaders,
-      });
-    }
-
-    if (!SPREADSHEET_ID) {
-      console.error("SPREADSHEET_ID is not set.");
-      return new Response(JSON.stringify({ error: "SPREADSHEET_ID is not set" }), { 
         status: 500,
         headers: corsHeaders,
       });
@@ -193,8 +162,6 @@ serve(async (req) => {
     });
 
     const sheets = google.sheets({ version: "v4", auth });
-    console.log("Authentication successful.");
-
     const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
     if (action === 'append') {
@@ -206,7 +173,6 @@ serve(async (req) => {
         });
       }
 
-      // Сортировка от новых к старым
       confirmedBookings.sort((a, b) => {
         const dateA = DateTime.fromISO(`${a.booking_date}T${a.start_time}`);
         const dateB = DateTime.fromISO(`${b.booking_date}T${b.start_time}`);
@@ -249,8 +215,6 @@ serve(async (req) => {
         ];
       });
       
-      console.log("Data to be exported:", dataToExport);
-      
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
         requestBody: {
@@ -285,7 +249,6 @@ serve(async (req) => {
           ],
         },
       });
-      console.log("Data successfully appended.");
       
       return new Response(JSON.stringify({ message: "Экспорт успешно завершен!" }), { 
         status: 200,
@@ -305,12 +268,9 @@ serve(async (req) => {
 
       const bookingDateObj = DateTime.fromISO(bookingDate);
       const sheetName = `${monthNames[bookingDateObj.month - 1]} ${bookingDateObj.year}`;
-
-      console.log(`Attempting to delete booking with ID: ${bookingId} from sheet "${sheetName}".`);
       const sheetId = await findSheetIdByName(sheets, SPREADSHEET_ID, sheetName);
 
       if (sheetId === null) {
-        console.warn(`Sheet "${sheetName}" not found. Cannot delete booking.`);
         return new Response(JSON.stringify({ message: "Лист для данного бронирования не найден." }), {
           status: 200,
           headers: corsHeaders,
@@ -323,22 +283,16 @@ serve(async (req) => {
       });
       
       const rows = response.data.values || [];
-      // Мы ищем строку, где ID бронирования в первом столбце (индекс 0) совпадает с нашим ID.
-      // Используем slice(1) для пропуска заголовков.
       const rowIndex = rows.slice(1).findIndex(row => row[0] === bookingId);
       
       if (rowIndex === -1) {
-        console.warn(`Booking with ID ${bookingId} not found in the spreadsheet.`);
         return new Response(JSON.stringify({ message: "Бронирование не найдено в таблице." }), {
           status: 200,
           headers: corsHeaders,
         });
       }
       
-      // rowToDelete - это индекс строки в таблице Google Sheets (1-based), 
-      // где 1 - это строка заголовков.
       const rowToDelete = rowIndex + 2;
-      console.log(`Found booking at row ${rowToDelete}. Deleting...`);
       
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
@@ -349,7 +303,7 @@ serve(async (req) => {
                 range: {
                   sheetId,
                   dimension: "ROWS",
-                  startIndex: rowToDelete - 1, // API использует 0-based index
+                  startIndex: rowToDelete - 1,
                   endIndex: rowToDelete,
                 },
               },
@@ -358,18 +312,13 @@ serve(async (req) => {
         },
       });
       
-      console.log("Row successfully deleted.");
-
-      // Проверяем, остались ли на листе какие-либо данные (бронирования)
       const updatedSheetResponse = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${sheetName}!A2:A`, // Проверяем данные, начиная со второй строки
+        range: `${sheetName}!A2:A`,
       });
 
       const updatedRows = updatedSheetResponse.data.values || [];
-      // Если массив с данными пуст, это значит, что на листе остался только заголовок.
       if (updatedRows.length === 0) {
-        console.log(`Лист "${sheetName}" пуст. Удаляем лист.`);
         await sheets.spreadsheets.batchUpdate({
           spreadsheetId: SPREADSHEET_ID,
           requestBody: {
@@ -382,7 +331,6 @@ serve(async (req) => {
             ],
           },
         });
-        console.log(`Лист "${sheetName}" успешно удален.`);
       }
 
       return new Response(JSON.stringify({ message: "Бронирование успешно удалено." }), {
@@ -398,8 +346,6 @@ serve(async (req) => {
     }
 
   } catch (error) {
-    console.error("Full Error Stack:", error.stack);
-    console.error("Error Message:", error.message);
     return new Response(JSON.stringify({ error: "Internal server error" }), { 
       status: 500,
       headers: corsHeaders,
