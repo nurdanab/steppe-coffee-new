@@ -13,6 +13,7 @@ const corsHeaders = {
 const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 const RAW_CREDS = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
 
+// Function to check if a sheet exists and create it if it doesn't
 const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
   const sheetsList = spreadsheet.data.sheets;
@@ -43,6 +44,7 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   const newSheetId = addSheetResponse.data.replies[0].addSheet.properties.sheetId;
   console.log(`Новый лист "${sheetName}" создан с ID: ${newSheetId}`);
 
+  // Add headers to the new sheet
   const headers = [
     ["ID бронирования", "Дата", "Время начала", "Время окончания", "Зал", "Кол-во человек", "Организатор", "Название события", "Описание события", "Контакты организации", "Телефон", "Комментарий", "Статус"]
   ];
@@ -56,11 +58,13 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   });
   console.log("Заголовки добавлены на новый лист.");
 
+  // Format headers and freeze the top row
   await sheets.spreadsheets.batchUpdate({
     spreadsheetId,
     requestBody: {
       requests: [
         {
+          // Freeze the first row
           updateSheetProperties: {
             properties: {
               sheetId: newSheetId,
@@ -72,6 +76,7 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
           },
         },
         {
+          // Apply formatting to headers
           repeatCell: {
             range: {
               sheetId: newSheetId,
@@ -109,6 +114,7 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
   return newSheetId;
 };
 
+// Function to find a sheet ID by name
 const findSheetIdByName = async (sheets, spreadsheetId, sheetName) => {
   const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
   const sheet = spreadsheet.data.sheets.find(s => s.properties.title === sheetName);
@@ -283,7 +289,7 @@ serve(async (req) => {
       });
       
       const rows = response.data.values || [];
-      const rowIndex = rows.slice(1).findIndex(row => row[0] === bookingId);
+      const rowIndex = rows.slice(1).findIndex(row => row && row[0] === bookingId);
       
       if (rowIndex === -1) {
         return new Response(JSON.stringify({ message: "Бронирование не найдено в таблице." }), {
