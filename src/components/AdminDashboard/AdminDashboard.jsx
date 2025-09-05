@@ -124,25 +124,25 @@ const AdminDashboard = ({ session }) => {
     }
   }, [isAdmin, fetchBookings]);
 
-  // Выносим логику экспорта в отдельную функцию для повторного использования
-  const exportBookingToSheets = async (bookingToExport) => {
+  // Выносим логику взаимодействия с функцией sheets в одну, переиспользуемую функцию
+  const handleSheetsAction = async (action, bookingData) => {
     try {
       const { data, error } = await supabase.functions.invoke('export-to-sheets', {
-        body: { confirmedBookings: [bookingToExport] }
+        body: { action, data: bookingData }
       });
 
       if (error) {
-        console.error('Ошибка при вызове функции экспорта:', error);
-        alert('Ошибка при экспорте данных в Google Sheets.');
+        console.error(`Ошибка при ${action === 'append' ? 'экспорте' : 'удалении'} данных в Google Sheets:`, error);
+        alert(`Ошибка при ${action === 'append' ? 'экспорте' : 'удалении'} данных в Google Sheets.`);
         return false;
       } else {
-        console.log('Данные успешно экспортированы:', data);
-        alert('Бронирование успешно экспортировано в Google Sheets!');
+        console.log(`Данные успешно ${action === 'append' ? 'экспортированы' : 'удалены'}:`, data);
+        alert(`Бронирование успешно ${action === 'append' ? 'экспортировано' : 'удалено'} из Google Sheets!`);
         return true;
       }
     } catch (err) {
-      console.error('Неожиданная ошибка при экспорте:', err);
-      alert('Произошла неожиданная ошибка при экспорте.');
+      console.error(`Неожиданная ошибка при ${action === 'append' ? 'экспорте' : 'удалении'}:`, err);
+      alert(`Произошла неожиданная ошибка при ${action === 'append' ? 'экспорте' : 'удалении'}.`);
       return false;
     }
   };
@@ -155,10 +155,8 @@ const AdminDashboard = ({ session }) => {
         return;
       }
   
-      // Создаем новый объект бронирования с обновленным статусом
       const updatedBooking = { ...currentBooking, status: newStatus };
   
-      // Обновляем статус в базе данных
       const { error: updateError } = await supabase
         .from('bookings')
         .update({ status: newStatus })
@@ -166,10 +164,12 @@ const AdminDashboard = ({ session }) => {
   
       if (updateError) throw updateError;
   
-      // Если новый статус 'confirmed', вызываем вынесенную функцию экспорта
       if (newStatus === 'confirmed') {
-        console.log('Вызов функции экспорта для бронирования:', updatedBooking);
-        await exportBookingToSheets(updatedBooking);
+        // Добавляем данные, если статус "Подтверждено"
+        await handleSheetsAction('append', updatedBooking);
+      } else if (currentBooking.status === 'confirmed' && (newStatus === 'cancelled' || newStatus === 'pending')) {
+        // Удаляем данные, если статус изменился с "Подтверждено" на другой
+        await handleSheetsAction('delete', { id: updatedBooking.id });
       }
 
       const telegramMessage = `
@@ -221,6 +221,11 @@ const AdminDashboard = ({ session }) => {
           throw deleteError;
         }
 
+        // Вызываем функцию для удаления из Google Sheets
+        if (currentBooking.status === 'confirmed') {
+          await handleSheetsAction('delete', { id: currentBooking.id });
+        }
+
         const telegramMessage = `
           <b>Бронирование удалено:</b>
           #ID: <code>${currentBooking.id.substring(0, 8)}</code>
@@ -251,7 +256,6 @@ const AdminDashboard = ({ session }) => {
       }
     }
   };
-
 
   const openEditModal = (booking) => {
     setBookingToEdit(booking);
@@ -341,7 +345,6 @@ const AdminDashboard = ({ session }) => {
               {sortBy.order === 'asc' ? 'ASC ↑' : 'DESC ↓'}
             </button>
           </div>
-          
           
         </div>
 
