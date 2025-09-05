@@ -12,6 +12,61 @@ const corsHeaders = {
 const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 const RAW_CREDS = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
 
+// Функция для проверки существования и создания листа
+const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
+  const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
+  const sheetsList = spreadsheet.data.sheets;
+  
+  const existingSheet = sheetsList.find(sheet => sheet.properties.title === sheetName);
+
+  if (existingSheet) {
+    console.log(`Лист "${sheetName}" уже существует. Возвращаем его ID.`);
+    return existingSheet.properties.sheetId;
+  }
+
+  console.log(`Лист "${sheetName}" не найден. Создаем новый лист.`);
+  const addSheetRequest = {
+    requests: [{
+      addSheet: {
+        properties: {
+          title: sheetName
+        }
+      }
+    }]
+  };
+  
+  const addSheetResponse = await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: addSheetRequest,
+  });
+
+  const newSheetId = addSheetResponse.data.replies[0].addSheet.properties.sheetId;
+  console.log(`Новый лист "${sheetName}" создан с ID: ${newSheetId}`);
+
+  // Добавляем заголовки на новый лист
+  const headers = [
+    ["Дата", "Время начала", "Время окончания", "Зал", "Кол-во человек", "Организатор", "Название события", "Описание события", "Контакты организации", "Телефон", "Комментарий", "Статус"]
+  ];
+  await sheets.spreadsheets.values.append({
+    spreadsheetId,
+    range: `${sheetName}!A1`,
+    valueInputOption: "USER_ENTERED",
+    requestBody: {
+      values: headers
+    },
+  });
+  console.log("Заголовки добавлены на новый лист.");
+
+  return newSheetId;
+};
+
+// Функция для поиска ID листа по имени
+const findSheetIdByName = async (sheets, spreadsheetId, sheetName) => {
+  const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
+  const sheet = spreadsheet.data.sheets.find(s => s.properties.title === sheetName);
+  return sheet ? sheet.properties.sheetId : null;
+};
+
 serve(async (req) => {
   try {
     if (req.method === 'OPTIONS') {
@@ -47,7 +102,6 @@ serve(async (req) => {
 
     const { action, data } = requestBody;
 
-    // --- Проверка секрета ---
     if (!RAW_CREDS) {
       console.error("GOOGLE_SHEETS_SERVICE_ACCOUNT not set.");
       return new Response(JSON.stringify({ error: "Missing Google service account credentials" }), { 
@@ -76,8 +130,6 @@ serve(async (req) => {
       });
     }
 
-    // --- Авторизация Google API ---
-    console.log("Attempting to authenticate with Google API.");
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: serviceAccountCredentials.client_email,
@@ -89,6 +141,8 @@ serve(async (req) => {
     const sheets = google.sheets({ version: "v4", auth });
     console.log("Authentication successful.");
 
+    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+
     if (action === 'append') {
       const confirmedBookings = Array.isArray(data) ? data : [data];
       if (!confirmedBookings.length) {
@@ -98,14 +152,17 @@ serve(async (req) => {
         });
       }
 
-      // Сортируем бронирования по дате и времени для упорядоченного экспорта
+      const firstBookingDate = DateTime.fromISO(confirmedBookings[0].booking_date);
+      const sheetName = `${monthNames[firstBookingDate.month - 1]} ${firstBookingDate.year}`;
+      
+      await ensureSheetExists(sheets, SPREADSHEET_ID, sheetName);
+
       confirmedBookings.sort((a, b) => {
         const dateA = DateTime.fromISO(`${a.booking_date}T${a.start_time}`);
         const dateB = DateTime.fromISO(`${b.booking_date}T${b.start_time}`);
         return dateA.toMillis() - dateB.toMillis();
       });
 
-      // Функция для преобразования названий залов
       const getRoomName = (roomKey) => {
         switch (roomKey) {
           case 'second_hall':
@@ -119,9 +176,9 @@ serve(async (req) => {
 
       const dataToExport = confirmedBookings.map((booking) => [
         booking.booking_date,
-        booking.start_time,
-        booking.end_time,
-        getRoomName(booking.selected_room), 
+        booking.start_time.substring(0, 5),
+        booking.end_time.substring(0, 5),
+        getRoomName(booking.selected_room),
         booking.num_people,
         booking.organizer_name,
         booking.event_name || "",
@@ -129,14 +186,14 @@ serve(async (req) => {
         booking.organizer_contact || "",
         `'${booking.phone_number}`,
         booking.comments || "",
-        "Подтвержден", 
+        "Подтвержден",
       ]);
       
       console.log("Data to be exported:", dataToExport);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: "Подтвержденные бронирования!A:L",
+        range: `${sheetName}!A:L`,
         valueInputOption: "USER_ENTERED",
         requestBody: {
           values: dataToExport,
@@ -151,19 +208,32 @@ serve(async (req) => {
 
     } else if (action === 'delete') {
       const bookingId = data.id;
-      if (!bookingId) {
-        return new Response(JSON.stringify({ error: "Missing booking ID for deletion" }), { 
+      const bookingDate = data.booking_date; // Теперь нам нужна дата для поиска листа
+
+      if (!bookingId || !bookingDate) {
+        return new Response(JSON.stringify({ error: "Missing booking ID or date for deletion" }), { 
           status: 400,
           headers: corsHeaders,
         });
       }
 
-      console.log(`Attempting to delete booking with ID: ${bookingId}`);
+      const bookingDateObj = DateTime.fromISO(bookingDate);
+      const sheetName = `${monthNames[bookingDateObj.month - 1]} ${bookingDateObj.year}`;
 
-      // Шаг 1: Читаем все данные из таблицы
+      console.log(`Attempting to delete booking with ID: ${bookingId} from sheet "${sheetName}".`);
+      const sheetId = await findSheetIdByName(sheets, SPREADSHEET_ID, sheetName);
+
+      if (sheetId === null) {
+        console.warn(`Sheet "${sheetName}" not found. Cannot delete booking.`);
+        return new Response(JSON.stringify({ message: "Лист для данного бронирования не найден." }), {
+          status: 200,
+          headers: corsHeaders,
+        });
+      }
+      
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: SPREADSHEET_ID,
-        range: "Подтвержденные бронирования!A:A", // Читаем только колонку с ID
+        range: `${sheetName}!A:A`,
       });
       
       const rows = response.data.values || [];
@@ -177,8 +247,7 @@ serve(async (req) => {
         });
       }
       
-      // Шаг 2: Удаляем строку
-      const rowToDelete = rowIndex + 1; // Индексы Google Sheets начинаются с 1
+      const rowToDelete = rowIndex + 1;
       console.log(`Found booking at row ${rowToDelete}. Deleting...`);
       
       await sheets.spreadsheets.batchUpdate({
@@ -188,7 +257,7 @@ serve(async (req) => {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 0,
+                  sheetId,
                   dimension: "ROWS",
                   startIndex: rowIndex,
                   endIndex: rowIndex + 1,
