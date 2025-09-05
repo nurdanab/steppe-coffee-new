@@ -5,16 +5,30 @@ const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 
 serve(async (req) => {
   try {
-    const { confirmedBookings } = await req.json();
-
-    if (!confirmedBookings || !Array.isArray(confirmedBookings) || confirmedBookings.length === 0) {
+    // Читаем тело запроса безопасно
+    let confirmedBookings: any[] = [];
+    try {
+      const text = await req.text(); // читаем как текст
+      if (text) {
+        const parsed = JSON.parse(text);
+        confirmedBookings = parsed.confirmedBookings || [];
+      }
+    } catch (parseErr) {
+      console.error("Ошибка парсинга тела запроса:", parseErr.message);
       return new Response(
-        JSON.stringify({ error: "Data is missing or empty" }),
+        JSON.stringify({ error: "Invalid JSON body" }),
         { status: 400, headers: { "Content-Type": "application/json" } },
       );
     }
 
-    // Проверяем, что секрет существует
+    if (!confirmedBookings || !Array.isArray(confirmedBookings) || confirmedBookings.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "No confirmed bookings provided" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
+    // Проверка наличия секретов
     const rawCreds = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
     if (!rawCreds) {
       console.error("GOOGLE_SHEETS_SERVICE_ACCOUNT not set");
@@ -28,7 +42,7 @@ serve(async (req) => {
     try {
       serviceAccountCredentials = JSON.parse(rawCreds);
     } catch (e) {
-      console.error("Failed to parse GOOGLE_SHEETS_SERVICE_ACCOUNT:", e.message);
+      console.error("Invalid GOOGLE_SHEETS_SERVICE_ACCOUNT JSON:", e.message);
       return new Response(
         JSON.stringify({ error: "Invalid service account JSON" }),
         { status: 500, headers: { "Content-Type": "application/json" } },
@@ -42,6 +56,7 @@ serve(async (req) => {
       );
     }
 
+    // Авторизация
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: serviceAccountCredentials.client_email,
@@ -52,6 +67,7 @@ serve(async (req) => {
 
     const sheets = google.sheets({ version: "v4", auth });
 
+    // Подготовка данных для экспорта
     const dataToExport = confirmedBookings.map((booking) => [
       booking.booking_date,
       booking.start_time,
@@ -67,7 +83,7 @@ serve(async (req) => {
       booking.status,
     ]);
 
-    const range = "Подтвержденные бронирования!A:L"; // Убедись, что лист называется точно так же
+    const range = "Подтвержденные бронирования!A:L";
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
@@ -85,7 +101,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Ошибка при экспорте:", error.message, error.stack);
     return new Response(
-      JSON.stringify({ error: "Ошибка сервера" }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }

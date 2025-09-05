@@ -19,7 +19,6 @@ const AdminDashboard = ({ session }) => {
   const [bookingToEdit, setBookingToEdit] = useState(null);
 
   const navigate = useNavigate();
-
   const TIME_ZONE = 'Asia/Almaty';
 
   const getRoomName = useCallback((roomKey) => {
@@ -37,7 +36,6 @@ const AdminDashboard = ({ session }) => {
     try {
       const startTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
       const endTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
-      
       return `${startTime.toFormat('HH:mm')} - ${endTime.toFormat('HH:mm')}`;
     } catch (error) {
       console.error('Ошибка при форматировании времени:', error);
@@ -62,13 +60,11 @@ const AdminDashboard = ({ session }) => {
       query = query.order(sortBy.field, { ascending: sortBy.order === 'asc' });
 
       const { data, error: fetchError } = await query;
+      if (fetchError) throw fetchError;
 
-      if (fetchError) {
-        throw fetchError;
-      }
       setBookings(data);
     } catch (err) {
-      console.error('Ошибка при загрузке бронирований:', err.message);
+      console.error('Ошибка при загрузке бронирований:', err);
       setError('Не удалось загрузить бронирования. Пожалуйста, попробуйте позже.');
     } finally {
       setLoading(false);
@@ -93,7 +89,7 @@ const AdminDashboard = ({ session }) => {
           .single();
 
         if (profileError || !profile || profile.role !== 'admin') {
-          setError("У вас нет прав для доступа к этой панели. Только администраторы могут просматривать эту страницу.");
+          setError("У вас нет прав для доступа к этой панели.");
           setIsAdmin(false);
           setLoading(false);
           return;
@@ -102,8 +98,8 @@ const AdminDashboard = ({ session }) => {
         setIsAdmin(true);
         fetchBookings();
       } catch (err) {
-        console.error("Ошибка проверки прав администратора:", err.message);
-        setError("Ошибка авторизации. Пожалуйста, попробуйте позже.");
+        console.error("Ошибка проверки прав администратора:", err);
+        setError("Ошибка авторизации. Попробуйте позже.");
         setIsAdmin(false);
         setLoading(false);
       }
@@ -111,16 +107,14 @@ const AdminDashboard = ({ session }) => {
 
     checkAdminAccess();
   }, [session, fetchBookings, navigate]);
-  
-   useEffect(() => {
+
+  useEffect(() => {
     if (isAdmin) {
       const channel = supabase.channel('realtime:public:bookings')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'bookings' },
-          (payload) => {
-            fetchBookings();
-          }
+          () => fetchBookings()
         )
         .subscribe();
 
@@ -129,13 +123,12 @@ const AdminDashboard = ({ session }) => {
       };
     }
   }, [isAdmin, fetchBookings]);
-  
-  // Новая функция для экспорта в Google Sheets
+
+  // Экспорт в Google Sheets
   const handleExportToSheets = async (bookingsToExport) => {
     try {
       const { data, error } = await supabase.functions.invoke('export-to-sheets', {
-        body: { confirmedBookings: bookingsToExport },
-        method: 'POST',
+        body: { confirmedBookings: bookingsToExport }
       });
 
       if (error) {
@@ -146,7 +139,7 @@ const AdminDashboard = ({ session }) => {
         alert('Бронирование успешно экспортировано в Google Sheets!');
       }
     } catch (err) {
-      console.error('Неожиданная ошибка:', err);
+      console.error('Неожиданная ошибка при экспорте:', err);
       alert('Произошла неожиданная ошибка при экспорте.');
     }
   };
@@ -154,26 +147,18 @@ const AdminDashboard = ({ session }) => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       const currentBooking = bookings.find(b => b.id === id);
-      if (!currentBooking) {
-        console.error('Бронирование не найдено для обновления статуса.');
-        return;
-      }
-  
-      const { data, error: updateError } = await supabase
+      if (!currentBooking) return;
+
+      const { error: updateError } = await supabase
         .from('bookings')
         .update({ status: newStatus })
-        .eq('id', id)
-        .select();
-  
-      if (updateError) {
-        throw updateError;
-      }
-      
-      // ВАЖНО: УБЕДИСЬ, ЧТО ЭТОТ БЛОК ЕСТЬ В ТВОЕМ КОДЕ!
+        .eq('id', id);
+
+      if (updateError) throw updateError;
+
       if (newStatus === 'confirmed') {
         await supabase.functions.invoke('export-to-sheets', {
-          body: { confirmedBookings: [currentBooking] },
-          method: 'POST',
+          body: { confirmedBookings: [currentBooking] }
         });
       }
 
@@ -257,52 +242,6 @@ const AdminDashboard = ({ session }) => {
     }
   };
 
-  // const handleExportCsv = () => {
-  //   const headers = [
-  //     'ID',
-  //     'Дата',
-  //     'Время',
-  //     'Зал',
-  //     'Количество человек',
-  //     'Организатор',
-  //     'Название события',
-  //     'Описание события',
-  //     'Контакты организации',
-  //     'Телефон',
-  //     'Комментарий',
-  //     'Статус',
-  //   ];
-
-  //   const rows = bookings.map(booking => [
-  //     booking.id,
-  //     new Date(booking.booking_date).toLocaleDateString('ru-RU'),
-  //     formatBookingTime(booking),
-  //     getRoomName(booking.selected_room),
-  //     booking.num_people,
-  //     booking.organizer_name || '',
-  //     booking.event_name || '',
-  //     booking.event_description || '',
-  //     booking.organizer_contact || '',
-  //     booking.phone_number,
-  //     booking.comments || '',
-  //     booking.status,
-  //   ]);
-
-  //   const csvContent = [
-  //     headers.join(','),
-  //     ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
-  //   ].join('\n');
-    
-  //   const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
-  //   const url = URL.createObjectURL(blob);
-    
-  //   const link = document.createElement('a');
-  //   link.setAttribute('href', url);
-  //   link.setAttribute('download', 'bookings.csv');
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
 
   const openEditModal = (booking) => {
     setBookingToEdit(booking);
@@ -393,9 +332,7 @@ const AdminDashboard = ({ session }) => {
             </button>
           </div>
           
-          {/* <button onClick={handleExportCsv} className={styles.exportButton}>
-            Экспорт в CSV
-          </button> */}
+          
         </div>
 
         {bookings.length === 0 && !loading ? (
