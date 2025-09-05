@@ -147,19 +147,36 @@ const AdminDashboard = ({ session }) => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       const currentBooking = bookings.find(b => b.id === id);
-      if (!currentBooking) return;
-
+      if (!currentBooking) {
+        console.error('Бронирование не найдено в состоянии.');
+        return;
+      }
+  
+      // Создаем новый объект бронирования с обновленным статусом
+      const updatedBooking = { ...currentBooking, status: newStatus };
+  
+      // Обновляем статус в базе данных
       const { error: updateError } = await supabase
         .from('bookings')
         .update({ status: newStatus })
         .eq('id', id);
-
+  
       if (updateError) throw updateError;
-
+  
+      // Если новый статус 'confirmed', вызываем функцию экспорта
       if (newStatus === 'confirmed') {
-        await supabase.functions.invoke('export-to-sheets', {
-          body: { confirmedBookings: [currentBooking] }
+        console.log('Вызов export-to-sheets с данными:', updatedBooking);
+        const { data, error } = await supabase.functions.invoke('export-to-sheets', {
+          body: { confirmedBookings: [updatedBooking] }
         });
+  
+        if (error) {
+          console.error('Ошибка при вызове функции:', error);
+          alert('Ошибка при экспорте данных в Google Sheets.');
+        } else {
+          console.log('Данные успешно экспортированы:', data);
+          alert('Бронирование успешно экспортировано в Google Sheets!');
+        }
       }
 
       const telegramMessage = `
