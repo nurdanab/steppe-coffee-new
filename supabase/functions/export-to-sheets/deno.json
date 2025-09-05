@@ -1,0 +1,13 @@
+{
+  "imports": {
+    "https://deno.land/std@0.168.0/http/server.ts": "https://deno.land/std@0.168.0/http/server.ts"
+  },
+  "compilerOptions": {
+    "lib": [
+      "deno.ns"
+    ],
+    "types": [
+      "https://deno.land/x/deno_shims@0.1.0/types/google-cloud-functions/v2.d.ts"
+    ]
+  }
+}

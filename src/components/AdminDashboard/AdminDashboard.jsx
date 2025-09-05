@@ -129,6 +129,27 @@ const AdminDashboard = ({ session }) => {
       };
     }
   }, [isAdmin, fetchBookings]);
+  
+  // Новая функция для экспорта в Google Sheets
+  const handleExportToSheets = async (bookingsToExport) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('export-to-sheets', {
+        body: { confirmedBookings: bookingsToExport },
+        method: 'POST',
+      });
+
+      if (error) {
+        console.error('Ошибка при вызове функции:', error);
+        alert('Ошибка при экспорте данных в Google Sheets.');
+      } else {
+        console.log('Данные успешно экспортированы:', data);
+        alert('Бронирование успешно экспортировано в Google Sheets!');
+      }
+    } catch (err) {
+      console.error('Неожиданная ошибка:', err);
+      alert('Произошла неожиданная ошибка при экспорте.');
+    }
+  };
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -137,15 +158,23 @@ const AdminDashboard = ({ session }) => {
         console.error('Бронирование не найдено для обновления статуса.');
         return;
       }
-
+  
       const { data, error: updateError } = await supabase
         .from('bookings')
         .update({ status: newStatus })
         .eq('id', id)
         .select();
-
+  
       if (updateError) {
         throw updateError;
+      }
+      
+      // ВАЖНО: УБЕДИСЬ, ЧТО ЭТОТ БЛОК ЕСТЬ В ТВОЕМ КОДЕ!
+      if (newStatus === 'confirmed') {
+        await supabase.functions.invoke('export-to-sheets', {
+          body: { confirmedBookings: [currentBooking] },
+          method: 'POST',
+        });
       }
 
       const telegramMessage = `
@@ -228,52 +257,52 @@ const AdminDashboard = ({ session }) => {
     }
   };
 
-  const handleExportCsv = () => {
-    const headers = [
-      'ID',
-      'Дата',
-      'Время',
-      'Зал',
-      'Количество человек',
-      'Организатор',
-      'Название события',
-      'Описание события',
-      'Контакты организации',
-      'Телефон',
-      'Комментарий',
-      'Статус',
-    ];
+  // const handleExportCsv = () => {
+  //   const headers = [
+  //     'ID',
+  //     'Дата',
+  //     'Время',
+  //     'Зал',
+  //     'Количество человек',
+  //     'Организатор',
+  //     'Название события',
+  //     'Описание события',
+  //     'Контакты организации',
+  //     'Телефон',
+  //     'Комментарий',
+  //     'Статус',
+  //   ];
 
-    const rows = bookings.map(booking => [
-      booking.id,
-      new Date(booking.booking_date).toLocaleDateString('ru-RU'),
-      formatBookingTime(booking),
-      getRoomName(booking.selected_room),
-      booking.num_people,
-      booking.organizer_name || '',
-      booking.event_name || '',
-      booking.event_description || '',
-      booking.organizer_contact || '',
-      booking.phone_number,
-      booking.comments || '',
-      booking.status,
-    ]);
+  //   const rows = bookings.map(booking => [
+  //     booking.id,
+  //     new Date(booking.booking_date).toLocaleDateString('ru-RU'),
+  //     formatBookingTime(booking),
+  //     getRoomName(booking.selected_room),
+  //     booking.num_people,
+  //     booking.organizer_name || '',
+  //     booking.event_name || '',
+  //     booking.event_description || '',
+  //     booking.organizer_contact || '',
+  //     booking.phone_number,
+  //     booking.comments || '',
+  //     booking.status,
+  //   ]);
 
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
-    ].join('\n');
+  //   const csvContent = [
+  //     headers.join(','),
+  //     ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+  //   ].join('\n');
     
-    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+  //   const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+  //   const url = URL.createObjectURL(blob);
     
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'bookings.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  //   const link = document.createElement('a');
+  //   link.setAttribute('href', url);
+  //   link.setAttribute('download', 'bookings.csv');
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
   const openEditModal = (booking) => {
     setBookingToEdit(booking);
@@ -364,9 +393,9 @@ const AdminDashboard = ({ session }) => {
             </button>
           </div>
           
-          <button onClick={handleExportCsv} className={styles.exportButton}>
+          {/* <button onClick={handleExportCsv} className={styles.exportButton}>
             Экспорт в CSV
-          </button>
+          </button> */}
         </div>
 
         {bookings.length === 0 && !loading ? (
