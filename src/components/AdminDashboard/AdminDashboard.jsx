@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient';
 import styles from './AdminDashboard.module.scss';
 import { useNavigate } from 'react-router-dom';
 import BookingEditModal from './BookingEditModal';
+import { DateTime } from 'luxon';
 
 const AdminDashboard = ({ session }) => {
   const [bookings, setBookings] = useState([]);
@@ -19,6 +20,8 @@ const AdminDashboard = ({ session }) => {
 
   const navigate = useNavigate();
 
+  const TIME_ZONE = 'Asia/Almaty';
+
   const getRoomName = useCallback((roomKey) => {
     switch (roomKey) {
       case 'second_hall':
@@ -31,7 +34,15 @@ const AdminDashboard = ({ session }) => {
   }, []);
 
   const formatBookingTime = useCallback((booking) => {
-    return `${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`;
+    try {
+      const startTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
+      const endTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
+      
+      return `${startTime.toFormat('HH:mm')} - ${endTime.toFormat('HH:mm')}`;
+    } catch (error) {
+      console.error('Ошибка при форматировании времени:', error);
+      return `${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`;
+    }
   }, []);
 
   const fetchBookings = useCallback(async () => {
@@ -100,8 +111,8 @@ const AdminDashboard = ({ session }) => {
 
     checkAdminAccess();
   }, [session, fetchBookings, navigate]);
-
-  useEffect(() => {
+  
+   useEffect(() => {
     if (isAdmin) {
       const channel = supabase.channel('realtime:public:bookings')
         .on(
@@ -308,7 +319,7 @@ const AdminDashboard = ({ session }) => {
 
   return (
     <main className={styles.adminDashboard}>
-      <div className="container">
+      <div className="container"> 
         <h1 className={styles.title}>Панель администратора</h1>
 
         <div className={styles.controls}>
