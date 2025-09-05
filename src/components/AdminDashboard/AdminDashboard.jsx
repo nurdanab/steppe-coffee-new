@@ -4,7 +4,6 @@ import { supabase } from '../../supabaseClient';
 import styles from './AdminDashboard.module.scss';
 import { useNavigate } from 'react-router-dom';
 import BookingEditModal from './BookingEditModal';
-import { DateTime } from 'luxon'; // ДОБАВЛЯЕМ ИМПОРТ LUXON
 
 const AdminDashboard = ({ session }) => {
   const [bookings, setBookings] = useState([]);
@@ -20,8 +19,6 @@ const AdminDashboard = ({ session }) => {
 
   const navigate = useNavigate();
 
-  const TIME_ZONE = 'Asia/Almaty'; // ДОБАВЛЯЕМ КОНСТАНТУ ВРЕМЕННОЙ ЗОНЫ
-
   const getRoomName = useCallback((roomKey) => {
     switch (roomKey) {
       case 'second_hall':
@@ -33,19 +30,8 @@ const AdminDashboard = ({ session }) => {
     }
   }, []);
 
-  // ДОБАВЛЯЕМ ФУНКЦИЮ ДЛЯ ФОРМАТИРОВАНИЯ ВРЕМЕНИ С ВРЕМЕННОЙ ЗОНОЙ
   const formatBookingTime = useCallback((booking) => {
-    try {
-      // Парсим UTC время из БД и конвертируем в локальную зону
-      const startTime = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`).setZone(TIME_ZONE);
-      const endTime = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`).setZone(TIME_ZONE);
-      
-      return `${startTime.toFormat('HH:mm')} - ${endTime.toFormat('HH:mm')}`;
-    } catch (error) {
-      console.error('Ошибка при форматировании времени:', error);
-      // Fallback на старый способ отображения
-      return `${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`;
-    }
+    return `${booking.start_time.substring(0, 5)} - ${booking.end_time.substring(0, 5)}`;
   }, []);
 
   const fetchBookings = useCallback(async () => {
@@ -114,16 +100,14 @@ const AdminDashboard = ({ session }) => {
 
     checkAdminAccess();
   }, [session, fetchBookings, navigate]);
-  
-   useEffect(() => {
+
+  useEffect(() => {
     if (isAdmin) {
-      console.log("Подписываемся на изменения в таблице 'bookings'...");
       const channel = supabase.channel('realtime:public:bookings')
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'bookings' },
           (payload) => {
-            console.log('Изменение получено!', payload);
             fetchBookings();
           }
         )
@@ -131,7 +115,6 @@ const AdminDashboard = ({ session }) => {
 
       return () => {
         supabase.removeChannel(channel);
-        console.log("Отписываемся от канала 'realtime:public:bookings'");
       };
     }
   }, [isAdmin, fetchBookings]);
@@ -154,7 +137,6 @@ const AdminDashboard = ({ session }) => {
         throw updateError;
       }
 
-      // ОБНОВЛЯЕМ ФОРМАТИРОВАНИЕ ВРЕМЕНИ В TELEGRAM СООБЩЕНИИ
       const telegramMessage = `
         <b>Изменение статуса бронирования:</b>
         #ID: <code>${currentBooking.id.substring(0, 8)}</code>
@@ -204,7 +186,6 @@ const AdminDashboard = ({ session }) => {
           throw deleteError;
         }
 
-        // ОБНОВЛЯЕМ ФОРМАТИРОВАНИЕ ВРЕМЕНИ В TELEGRAM СООБЩЕНИИ
         const telegramMessage = `
           <b>Бронирование удалено:</b>
           #ID: <code>${currentBooking.id.substring(0, 8)}</code>
@@ -234,6 +215,53 @@ const AdminDashboard = ({ session }) => {
         alert('Ошибка при удалении бронирования: ' + err.message);
       }
     }
+  };
+
+  const handleExportCsv = () => {
+    const headers = [
+      'ID',
+      'Дата',
+      'Время',
+      'Зал',
+      'Количество человек',
+      'Организатор',
+      'Название события',
+      'Описание события',
+      'Контакты организации',
+      'Телефон',
+      'Комментарий',
+      'Статус',
+    ];
+
+    const rows = bookings.map(booking => [
+      booking.id,
+      new Date(booking.booking_date).toLocaleDateString('ru-RU'),
+      formatBookingTime(booking),
+      getRoomName(booking.selected_room),
+      booking.num_people,
+      booking.organizer_name || '',
+      booking.event_name || '',
+      booking.event_description || '',
+      booking.organizer_contact || '',
+      booking.phone_number,
+      booking.comments || '',
+      booking.status,
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'bookings.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const openEditModal = (booking) => {
@@ -280,7 +308,7 @@ const AdminDashboard = ({ session }) => {
 
   return (
     <main className={styles.adminDashboard}>
-      <div className="container"> 
+      <div className="container">
         <h1 className={styles.title}>Панель администратора</h1>
 
         <div className={styles.controls}>
@@ -324,6 +352,10 @@ const AdminDashboard = ({ session }) => {
               {sortBy.order === 'asc' ? 'ASC ↑' : 'DESC ↓'}
             </button>
           </div>
+          
+          <button onClick={handleExportCsv} className={styles.exportButton}>
+            Экспорт в CSV
+          </button>
         </div>
 
         {bookings.length === 0 && !loading ? (
