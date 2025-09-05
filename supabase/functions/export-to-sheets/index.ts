@@ -152,17 +152,17 @@ serve(async (req) => {
         });
       }
 
-      const firstBookingDate = DateTime.fromISO(confirmedBookings[0].booking_date);
-      const sheetName = `${monthNames[firstBookingDate.month - 1]} ${firstBookingDate.year}`;
-      
-      await ensureSheetExists(sheets, SPREADSHEET_ID, sheetName);
-
+      // Сортируем бронирования по дате и времени для упорядоченного экспорта
       confirmedBookings.sort((a, b) => {
         const dateA = DateTime.fromISO(`${a.booking_date}T${a.start_time}`);
         const dateB = DateTime.fromISO(`${b.booking_date}T${b.start_time}`);
-        return dateA.toMillis() - dateB.toMillis();
+        return dateB.toMillis() - dateA.toMillis(); // Сортировка от новых к старым
       });
 
+      const firstBookingDate = DateTime.fromISO(confirmedBookings[0].booking_date);
+      const sheetName = `${monthNames[firstBookingDate.month - 1]} ${firstBookingDate.year}`;
+      const sheetId = await ensureSheetExists(sheets, SPREADSHEET_ID, sheetName);
+      
       const getRoomName = (roomKey) => {
         switch (roomKey) {
           case 'second_hall':
@@ -173,34 +173,59 @@ serve(async (req) => {
             return 'Неизвестный зал';
         }
       };
-
-      const dataToExport = confirmedBookings.map((booking) => [
-        booking.booking_date,
-        booking.start_time.substring(0, 5),
-        booking.end_time.substring(0, 5),
-        getRoomName(booking.selected_room),
-        booking.num_people,
-        booking.organizer_name,
-        booking.event_name || "",
-        booking.event_description || "",
-        booking.organizer_contact || "",
-        `'${booking.phone_number}`,
-        booking.comments || "",
-        "Подтвержден",
-      ]);
+      
+      const dataToExport = confirmedBookings.map((booking) => {
+        // Преобразуем UTC-время в местное время Алматы
+        const startTimeAlmaty = DateTime.fromISO(`${booking.booking_date}T${booking.start_time}`, { zone: 'utc' }).setZone('Asia/Almaty');
+        const endTimeAlmaty = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'utc' }).setZone('Asia/Almaty');
+        
+        return [
+          booking.booking_date,
+          startTimeAlmaty.toFormat('HH:mm'),
+          endTimeAlmaty.toFormat('HH:mm'),
+          getRoomName(booking.selected_room),
+          booking.num_people,
+          booking.organizer_name,
+          booking.event_name || "",
+          booking.event_description || "",
+          booking.organizer_contact || "",
+          `'${booking.phone_number}`,
+          booking.comments || "",
+          "Подтвержден",
+        ];
+      });
       
       console.log("Data to be exported:", dataToExport);
-
-      await sheets.spreadsheets.values.append({
+      
+      // Используем batchUpdate для вставки строк вверху таблицы
+      await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${sheetName}!A:L`,
-        valueInputOption: "USER_ENTERED",
         requestBody: {
-          values: dataToExport,
+          requests: [
+            {
+              insertDimension: {
+                range: {
+                  sheetId: sheetId,
+                  dimension: "ROWS",
+                  startIndex: 1,
+                  endIndex: dataToExport.length + 1,
+                },
+              },
+            },
+            {
+              updateCells: {
+                start: { sheetId: sheetId, rowIndex: 1, columnIndex: 0 },
+                rows: dataToExport.map(row => ({
+                  values: row.map(value => ({ userEnteredValue: { stringValue: value } }))
+                })),
+                fields: "userEnteredValue.stringValue",
+              },
+            },
+          ],
         },
       });
       console.log("Data successfully appended.");
-
+      
       return new Response(JSON.stringify({ message: "Экспорт успешно завершен!" }), { 
         status: 200,
         headers: corsHeaders,
@@ -208,7 +233,7 @@ serve(async (req) => {
 
     } else if (action === 'delete') {
       const bookingId = data.id;
-      const bookingDate = data.booking_date; // Теперь нам нужна дата для поиска листа
+      const bookingDate = data.booking_date;
 
       if (!bookingId || !bookingDate) {
         return new Response(JSON.stringify({ error: "Missing booking ID or date for deletion" }), { 
