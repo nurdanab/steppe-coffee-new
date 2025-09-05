@@ -5,10 +5,13 @@ const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 
 export default async (req: Request): Promise<Response> => {
   try {
+    console.log("Starting export-to-sheets function.");
+
     // --- Чтение тела запроса ---
     let confirmedBookings: any[] = [];
     try {
       const text = await req.text();
+      console.log("Request body text:", text);
       if (text) {
         const parsed = JSON.parse(text);
         confirmedBookings = parsed.confirmedBookings || [];
@@ -22,11 +25,13 @@ export default async (req: Request): Promise<Response> => {
     }
 
     if (!confirmedBookings.length) {
+      console.error("No confirmed bookings received.");
       return new Response(JSON.stringify({ error: "No confirmed bookings" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
+    console.log(`Received ${confirmedBookings.length} confirmed bookings.`);
 
     // --- Проверка секрета ---
     const rawCreds = Deno.env.get("GOOGLE_SHEETS_SERVICE_ACCOUNT");
@@ -37,10 +42,13 @@ export default async (req: Request): Promise<Response> => {
         { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
+    console.log("GOOGLE_SHEETS_SERVICE_ACCOUNT secret found.");
 
     let serviceAccountCredentials;
     try {
       serviceAccountCredentials = JSON.parse(rawCreds);
+      // Логируем только часть данных, чтобы не раскрывать секретный ключ
+      console.log(`Parsed service account JSON. Client email: ${serviceAccountCredentials.client_email}`);
     } catch (e) {
       console.error("Invalid GOOGLE_SHEETS_SERVICE_ACCOUNT JSON:", e.message);
       return new Response(
@@ -50,13 +58,16 @@ export default async (req: Request): Promise<Response> => {
     }
 
     if (!SPREADSHEET_ID) {
+      console.error("SPREADSHEET_ID is not set");
       return new Response(
         JSON.stringify({ error: "SPREADSHEET_ID is not set" }),
         { status: 500, headers: { "Content-Type": "application/json" } },
       );
     }
+    console.log(`SPREADSHEET_ID is set to: ${SPREADSHEET_ID}`);
 
     // --- Авторизация Google API ---
+    console.log("Authenticating with Google API...");
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: serviceAccountCredentials.client_email,
@@ -64,6 +75,7 @@ export default async (req: Request): Promise<Response> => {
       },
       scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
+    console.log("Authentication successful. Creating sheets instance.");
 
     const sheets = google.sheets({ version: "v4", auth });
 
@@ -82,8 +94,10 @@ export default async (req: Request): Promise<Response> => {
       booking.comments || "",
       booking.status,
     ]);
+    console.log("Data prepared for export:", dataToExport);
 
     // --- Запись в таблицу ---
+    console.log("Attempting to append data to the spreadsheet...");
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: "Подтвержденные бронирования!A:L",
@@ -92,6 +106,7 @@ export default async (req: Request): Promise<Response> => {
         values: dataToExport,
       },
     });
+    console.log("Data successfully appended to the spreadsheet.");
 
     return new Response(
       JSON.stringify({ message: "Экспорт успешно завершен!" }),
