@@ -5,7 +5,7 @@ const SPREADSHEET_ID = Deno.env.get("SPREADSHEET_ID");
 
 function handleCORS(req: Request): Response {
   const headers = {
-    'Access-Control-Allow-Origin': 'https://steppecoffee.kz/', 
+    'Access-Control-Allow-Origin': 'https://steppecoffee.kz', 
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   };
