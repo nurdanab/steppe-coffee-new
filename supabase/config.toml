@@ -376,3 +376,14 @@ entrypoint = "./functions/export-to-sheets/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/export-to-sheets/*.html" ]
+
+[functions.export-all-confirmed-bookings]
+enabled = true
+verify_jwt = true
+import_map = "./functions/export-all-confirmed-bookings/deno.json"
+# Uncomment to specify a custom file path to the entrypoint.
+# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
+entrypoint = "./functions/export-all-confirmed-bookings/index.ts"
+# Specifies static files to be bundled with the function. Supports glob patterns.
+# For example, if you want to serve static HTML pages in your function:
+# static_files = [ "./functions/export-all-confirmed-bookings/*.html" ]
