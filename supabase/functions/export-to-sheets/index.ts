@@ -1,6 +1,7 @@
 // supabase/functions/export-to-sheets/index.ts
 import { google } from "npm:googleapis";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { DateTime } from "https://esm.sh/luxon@3.4.4";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://steppecoffee.kz',
@@ -97,12 +98,30 @@ serve(async (req) => {
         });
       }
 
+      // Сортируем бронирования по дате и времени для упорядоченного экспорта
+      confirmedBookings.sort((a, b) => {
+        const dateA = DateTime.fromISO(`${a.booking_date}T${a.start_time}`);
+        const dateB = DateTime.fromISO(`${b.booking_date}T${b.start_time}`);
+        return dateA.toMillis() - dateB.toMillis();
+      });
+
+      // Функция для преобразования названий залов
+      const getRoomName = (roomKey) => {
+        switch (roomKey) {
+          case 'second_hall':
+            return 'Второй зал';
+          case 'summer_terrace':
+            return 'Летник';
+          default:
+            return 'Неизвестный зал';
+        }
+      };
+
       const dataToExport = confirmedBookings.map((booking) => [
-        booking.id, // Добавляем ID бронирования
         booking.booking_date,
         booking.start_time,
         booking.end_time,
-        booking.selected_room,
+        getRoomName(booking.selected_room), 
         booking.num_people,
         booking.organizer_name,
         booking.event_name || "",
@@ -110,13 +129,14 @@ serve(async (req) => {
         booking.organizer_contact || "",
         `'${booking.phone_number}`,
         booking.comments || "",
-        booking.status,
+        "Подтвержден", 
       ]);
+      
       console.log("Data to be exported:", dataToExport);
 
       await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: "Подтвержденные бронирования!A:M", // Увеличиваем диапазон
+        range: "Подтвержденные бронирования!A:L",
         valueInputOption: "USER_ENTERED",
         requestBody: {
           values: dataToExport,
@@ -168,7 +188,7 @@ serve(async (req) => {
             {
               deleteDimension: {
                 range: {
-                  sheetId: 0, // ID листа, 0 - это первый лист
+                  sheetId: 0,
                   dimension: "ROWS",
                   startIndex: rowIndex,
                   endIndex: rowIndex + 1,
