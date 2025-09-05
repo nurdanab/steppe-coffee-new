@@ -45,7 +45,7 @@ const ensureSheetExists = async (sheets, spreadsheetId, sheetName) => {
 
   // Добавляем заголовки на новый лист
   const headers = [
-    ["Дата", "Время начала", "Время окончания", "Зал", "Кол-во человек", "Организатор", "Название события", "Описание события", "Контакты организации", "Телефон", "Комментарий", "Статус"]
+    ["ID бронирования", "Дата", "Время начала", "Время окончания", "Зал", "Кол-во человек", "Организатор", "Название события", "Описание события", "Контакты организации", "Телефон", "Комментарий", "Статус"]
   ];
   await sheets.spreadsheets.values.append({
     spreadsheetId,
@@ -180,6 +180,7 @@ serve(async (req) => {
         const endTimeAlmaty = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'utc' }).setZone('Asia/Almaty');
         
         return [
+          booking.id, // Возвращаем ID бронирования
           booking.booking_date,
           startTimeAlmaty.toFormat('HH:mm'),
           endTimeAlmaty.toFormat('HH:mm'),
@@ -197,7 +198,6 @@ serve(async (req) => {
       
       console.log("Data to be exported:", dataToExport);
       
-      // Используем batchUpdate для вставки строк вверху таблицы
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
         requestBody: {
@@ -262,7 +262,8 @@ serve(async (req) => {
       });
       
       const rows = response.data.values || [];
-      const rowIndex = rows.findIndex(row => row[0] === bookingId);
+      // Нам нужно пропустить заголовки, поэтому начинаем поиск с 1
+      const rowIndex = rows.slice(1).findIndex(row => row[0] === bookingId);
       
       if (rowIndex === -1) {
         console.warn(`Booking with ID ${bookingId} not found in the spreadsheet.`);
@@ -272,7 +273,7 @@ serve(async (req) => {
         });
       }
       
-      const rowToDelete = rowIndex + 1;
+      const rowToDelete = rowIndex + 2; // +2 потому что индексация начинается с 0, и мы пропустили строку заголовка
       console.log(`Found booking at row ${rowToDelete}. Deleting...`);
       
       await sheets.spreadsheets.batchUpdate({
@@ -284,8 +285,8 @@ serve(async (req) => {
                 range: {
                   sheetId,
                   dimension: "ROWS",
-                  startIndex: rowIndex,
-                  endIndex: rowIndex + 1,
+                  startIndex: rowIndex + 1,
+                  endIndex: rowIndex + 2,
                 },
               },
             },
