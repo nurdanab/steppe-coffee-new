@@ -1,4 +1,5 @@
 // supabase/functions/export-to-sheets/index.ts
+
 import { google } from "npm:googleapis";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { DateTime } from "https://esm.sh/luxon@3.4.4";
@@ -79,7 +80,7 @@ serve(async (req) => {
 
     console.log(`Received ${req.method} request.`);
 
-    let requestBody: { action: string, data: any };
+    let requestBody;
     try {
       const text = await req.text();
       console.log("Request body text received.");
@@ -152,7 +153,7 @@ serve(async (req) => {
         });
       }
 
-      // Сортировка от новых к старым, как и было запрошено.
+      // Сортировка от новых к старым
       confirmedBookings.sort((a, b) => {
         const dateA = DateTime.fromISO(`${a.booking_date}T${a.start_time}`);
         const dateB = DateTime.fromISO(`${b.booking_date}T${b.start_time}`);
@@ -179,7 +180,7 @@ serve(async (req) => {
         const endTimeAlmaty = DateTime.fromISO(`${booking.booking_date}T${booking.end_time}`, { zone: 'utc' }).setZone('Asia/Almaty');
         
         return [
-          booking.id, // Возвращаем ID бронирования
+          booking.id,
           booking.booking_date,
           startTimeAlmaty.toFormat('HH:mm'),
           endTimeAlmaty.toFormat('HH:mm'),
@@ -301,6 +302,31 @@ serve(async (req) => {
       });
       
       console.log("Row successfully deleted.");
+
+      // Проверяем, остался ли на листе только заголовок
+      const updatedSheetResponse = await sheets.spreadsheets.values.get({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${sheetName}!A:A`,
+      });
+
+      const updatedRows = updatedSheetResponse.data.values || [];
+      if (updatedRows.length <= 1) {
+        console.log(`Лист "${sheetName}" пуст. Удаляем лист.`);
+        await sheets.spreadsheets.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requestBody: {
+            requests: [
+              {
+                deleteSheet: {
+                  sheetId: sheetId,
+                },
+              },
+            ],
+          },
+        });
+        console.log(`Лист "${sheetName}" успешно удален.`);
+      }
+
       return new Response(JSON.stringify({ message: "Бронирование успешно удалено." }), {
         status: 200,
         headers: corsHeaders,
