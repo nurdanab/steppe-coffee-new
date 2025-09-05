@@ -185,7 +185,7 @@ serve(async (req) => {
           startTimeAlmaty.toFormat('HH:mm'),
           endTimeAlmaty.toFormat('HH:mm'),
           getRoomName(booking.selected_room),
-          booking.num_people,
+          booking.num_people, // Это число
           booking.organizer_name,
           booking.event_name || "",
           booking.event_description || "",
@@ -195,9 +195,23 @@ serve(async (req) => {
           "Подтвержден",
         ];
       });
-      
+
       console.log("Data to be exported:", dataToExport);
       
+      const toGridData = (data) => {
+        return data.map(row => ({
+          values: row.map(cell => {
+            if (typeof cell === 'number') {
+              return { userEnteredValue: { numberValue: cell } };
+            } else if (cell === null || cell === "") {
+              return { userEnteredValue: { stringValue: "" } };
+            } else {
+              return { userEnteredValue: { stringValue: cell.toString() } };
+            }
+          })
+        }));
+      };
+
       await sheets.spreadsheets.batchUpdate({
         spreadsheetId: SPREADSHEET_ID,
         requestBody: {
@@ -215,10 +229,8 @@ serve(async (req) => {
             {
               updateCells: {
                 start: { sheetId: sheetId, rowIndex: 1, columnIndex: 0 },
-                rows: dataToExport.map(row => ({
-                  values: row.map(value => ({ userEnteredValue: { stringValue: value } }))
-                })),
-                fields: "userEnteredValue.stringValue",
+                rows: toGridData(dataToExport),
+                fields: "userEnteredValue", // Убираем .stringValue
               },
             },
           ],
