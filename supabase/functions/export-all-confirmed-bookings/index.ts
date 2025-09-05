@@ -72,7 +72,6 @@ serve(async (req) => {
 
       if (invokeError) {
         console.error(`Error invoking 'export-to-sheets' for ${monthYearKey}:`, invokeError);
-        // Продолжаем, даже если один месяц не экспортировался
       } else {
         console.log(`Successfully exported bookings for ${monthYearKey}.`);
       }
