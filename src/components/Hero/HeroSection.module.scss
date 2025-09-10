@@ -249,27 +249,27 @@
     display: none;
   }
   @include lg-up {
-    max-width: 200px;
+    max-width: 230px;
     top: -110px;
     right: 60px;
   }
   @include xl-up {
-    max-width: 230px;
+    max-width: 250px;
     top: -140px;
     right: 10px;
   }
   @include xxl-up {
-    max-width: 250px;
+    max-width: 300px;
     top: -140px;
     right: 80px;
   }
   @include xxxl-up {
-    max-width: 400px;
+    max-width: 450px;
     top: -150px;
     right: 110px;
   }
   @include full-hd-up {
-    max-width: 350px;
+    max-width: 500px;
     top: -200px;
     right: -30px;
   }
