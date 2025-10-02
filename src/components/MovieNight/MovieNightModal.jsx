@@ -26,17 +26,24 @@ const MovieNightModal = ({ isOpen, onClose }) => {
 
     try {
       // Формируем сообщение для Telegram
-      const message = `<b>Новая регистрация на киновечер!</b>\n\n` +
+      const message = `<b>🎬 🎬 🎬 Новая регистрация на киновечер! 🎬 🎬 🎬</b>\n\n` +
         `<b>Имя:</b> ${formData.name}\n` +
         `<b>Телефон:</b> ${formData.phone}\n` +
         `<b>Количество гостей:</b> ${formData.guests}\n`;
+
+      console.log('Отправка сообщения в Telegram:', message);
 
       // Отправляем уведомление в Telegram
       const { data, error } = await supabase.functions.invoke('telegram-notification', {
         body: { message }
       });
 
-      if (error) throw error;
+      console.log('Ответ от Telegram функции:', { data, error });
+
+      if (error) {
+        console.error('Ошибка от Supabase функции:', error);
+        throw error;
+      }
 
       setSubmitStatus('success');
       setFormData({ name: '', phone: '', guests: 1 });
@@ -47,7 +54,8 @@ const MovieNightModal = ({ isOpen, onClose }) => {
       }, 2000);
 
     } catch (error) {
-      console.error('Ошибка при отправке:', error);
+      console.error('Полная ошибка при отправке:', error);
+      console.error('Детали ошибки:', JSON.stringify(error, null, 2));
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
