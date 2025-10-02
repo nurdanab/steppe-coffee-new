@@ -1,0 +1,72 @@
+.movie-night-button {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  background: #8B0000;
+  color: white;
+  border: 3px solid #fab731;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  padding: 12px;
+
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+
+  box-shadow: 0 4px 20px rgba(139, 0, 0, 0.6);
+  transition: all 0.3s ease;
+
+  animation: pulse 2s infinite;
+}
+
+.movie-night-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(139, 0, 0, 0.8);
+}
+
+.movie-night-icon {
+  font-size: 32px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.movie-night-text {
+  line-height: 1.2;
+  word-wrap: break-word;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(139, 0, 0, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 6px 30px rgba(139, 0, 0, 0.9);
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 768px) {
+  .movie-night-button {
+    top: 80px;
+    right: 10px;
+    width: 90px;
+    height: 90px;
+    font-size: 10px;
+  }
+
+  .movie-night-icon {
+    font-size: 26px;
+  }
+}

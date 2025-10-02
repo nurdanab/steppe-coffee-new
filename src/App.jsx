@@ -21,6 +21,8 @@ import ProfilePage from './components/ProfilePage/ProfilePage.jsx';
 import UpdatePassword from './components/UpdatePassword/UpdatePassword.jsx';
 import AdminDashboard from './components/AdminDashboard/AdminDashboard';
 import MenuDisplay from './components/MenuDisplay/MenuDisplay';
+import MovieNightButton from './components/MovieNight/MovieNightButton';
+import MovieNightModal from './components/MovieNight/MovieNightModal';
 
 import { supabase } from './supabaseClient';
 
@@ -38,6 +40,7 @@ const EventsPageContent = () => (
 function App() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isMovieNightModalOpen, setIsMovieNightModalOpen] = useState(false);
   const [session, setSession] = useState(null);
   const previousPathRef = useRef('/');
 
@@ -194,6 +197,8 @@ function App() {
         onLogout={handleLogout}
       />
 
+      <MovieNightButton onClick={() => setIsMovieNightModalOpen(true)} />
+
       <Routes>
         <Route path="/" element={
           <main>
@@ -254,6 +259,11 @@ function App() {
         isOpen={isAuthModalOpen}
         onClose={handleCloseAuthModal}
         onAuthSuccess={handleAuthSuccess}
+      />
+
+      <MovieNightModal
+        isOpen={isMovieNightModalOpen}
+        onClose={() => setIsMovieNightModalOpen(false)}
       />
     </div>
   );
